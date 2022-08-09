@@ -27,7 +27,7 @@ public class HomeController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
-	@GetMapping(value = "/", produces = "application/json; charset=UTF-8")
+	@GetMapping(value = "/")
 	@ResponseBody
 	public String home(HttpServletRequest req) {
 		logger.info("Main");

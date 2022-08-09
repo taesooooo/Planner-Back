@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("file:src/main/webapp/WEB-INF/spring/root-context.xml")
+@ContextConfiguration("classpath:root-context.xml")
 public class DBConnectionTest {
 	private static final Logger logger = LoggerFactory.getLogger(DBConnectionTest.class);
 	
