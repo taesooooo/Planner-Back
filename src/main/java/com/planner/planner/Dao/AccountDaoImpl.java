@@ -29,10 +29,11 @@ public class AccountDaoImpl implements AccountDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private final String createSQL = "INSERT INTO ACCOUNT(email,password,name,nickname) VALUES(?,?,?,?);";
-	private final String readSQL = "SELECT account_id, email, password, name, nickname FROM account WHERE email = ?";
-	private final String updateSQL = "UPDATE ACCOUNT SET name = ?, nickname = ? WHERE email = ?;";
+	private final String createSQL = "INSERT INTO ACCOUNT(email,password,name,nickname,create_date,update_date) VALUES(?,?,?,?, now(), now());";
+	private final String readSQL = "SELECT account_id, email, password, name, nickname, create_date, update_date FROM account WHERE email = ?";
+	private final String updateSQL = "UPDATE ACCOUNT SET name = ?, nickname = ?, update_date = now() WHERE email = ?;";
 	private final String deleteSQL = "DELETE FROM ACCOUNT WHERE email = ?;";
+	private final String passwordUpdateSQL = "UPDATE account SET password = ?, update_date = now() WHERE email = ?";
 
 	@Override
 	public boolean create(Account account) {

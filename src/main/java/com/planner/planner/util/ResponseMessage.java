@@ -1,26 +1,19 @@
 package com.planner.planner.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 public class ResponseMessage {
 	private boolean state;
 	private String message;
+	private Object data;
 
 	public ResponseMessage(boolean state,String message) {
 		this.state = state;
 		this.message = message;
 	}
-	
-	public ResponseMessage(boolean state, Object object) {
+	public ResponseMessage(boolean state,String message, Object data) {
 		this.state = state;
-		ObjectMapper om = new ObjectMapper();
-		try {
-			this.message = om.writeValueAsString(object);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+		this.message = message;
+		this.data = data;
 	}
 	
 	public boolean getState() {
@@ -37,6 +30,14 @@ public class ResponseMessage {
 
 	public String getMessage() {
 		return message;
+	}
+
+	public Object getData() {
+		return data;
+	}
+
+	public void setData(Object data) {
+		this.data = data;
 	}
 	
 }

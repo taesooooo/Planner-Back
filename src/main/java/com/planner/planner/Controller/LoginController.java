@@ -50,7 +50,7 @@ public class LoginController {
 				if(passwordEncoder.matches(accountDto.getPassword(),user.getPassword())) {
 					HttpSession session = req.getSession();
 					session.setAttribute(session.getId(), user);
-					return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true,user));			
+					return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true,"로그인 성공", user));			
 				}
 				else {
 					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false,"아이디 또는 비밀번호를 잘 못입력헀습니다."));

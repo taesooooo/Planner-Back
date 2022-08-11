@@ -23,13 +23,12 @@ public class Account {
 		this.update_date = update_date;
 	}
 	
-	public Account(String email, String password, String name, String nickName, LocalDateTime update_date) {
+	public Account(String email, String password, String name, String nickName) {
 		this.account_id = 0000;
 		this.email = email;
 		this.password = password;
 		this.name = name;
 		this.nickName = nickName;
-		this.update_date = update_date;
 	}
 	
 	public int getId() {
@@ -53,20 +52,12 @@ public class Account {
 		return create_date;
 	}
 
-	public void setCreate_date(LocalDateTime create_date) {
-		this.create_date = create_date;
-	}
-
 	public LocalDateTime getUpdate_date() {
 		return update_date;
 	}
 
-	public void setUpdate_date(LocalDateTime update_date) {
-		this.update_date = update_date;
-	}
-
 	public AccountDto toDto() {
-		return new AccountDto(email,password,name,nickName,update_date);
+		return new AccountDto(email,password,name,nickName);
 	}
 
 	@Override
