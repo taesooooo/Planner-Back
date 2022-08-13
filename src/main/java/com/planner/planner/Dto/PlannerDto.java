@@ -3,12 +3,16 @@ package com.planner.planner.Dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.planner.planner.Entity.Planner;
 
 public class PlannerDto {
 	private int plannerId;
 	private int accountId;
+	private String title;
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate planDateStart;
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate planDateEnd;
 	private int memberCount;
 	private String member;
@@ -20,6 +24,7 @@ public class PlannerDto {
 	public static class Builder {
 		private int plannerId = 0;
 		private int accountId = 0;
+		private String title;
 		private LocalDate planDateStart;
 		private LocalDate planDateEnd;
 		private int memberCount = 1;
@@ -36,6 +41,11 @@ public class PlannerDto {
 
 		public Builder setAccountId(int accountId) {
 			this.accountId = accountId;
+			return this;
+		}
+
+		public Builder setTitle(String title) {
+			this.title = title;
 			return this;
 		}
 
@@ -91,6 +101,7 @@ public class PlannerDto {
 	public PlannerDto(Builder builder) {
 		this.plannerId = builder.plannerId;
 		this.accountId = builder.accountId;
+		this.title = builder.title;
 		this.planDateStart = builder.planDateStart;
 		this.planDateEnd = builder.planDateEnd;
 		this.memberCount = builder.memberCount;
@@ -115,6 +126,14 @@ public class PlannerDto {
 
 	public void setAccountId(int accountId) {
 		this.accountId = accountId;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public LocalDate getPlanDateStart() {
@@ -185,6 +204,7 @@ public class PlannerDto {
 		return new Planner.Builder()
 				.setPlannerId(plannerId)
 				.setAccountId(accountId)
+				.setTitle(title)
 				.setPlanDateStart(planDateStart)
 				.setPlanDateEnd(planDateEnd)
 				.setMemberCount(memberCount)
@@ -198,10 +218,9 @@ public class PlannerDto {
 
 	@Override
 	public String toString() {
-		return "PlannerDto [plannerId=" + plannerId + ", accountId=" + accountId + ", planDateStart=" + planDateStart
-				+ ", planDateEnd=" + planDateEnd + ", memberCount=" + memberCount + ", member=" + member + ", plan="
-				+ plan + ", recommendCount=" + recommendCount + ", createDate=" + createDate + ", updateDate="
-				+ updateDate + "]";
+		return "PlannerDto [plannerId=" + plannerId + ", accountId=" + accountId + ", title=" + title
+				+ ", planDateStart=" + planDateStart + ", planDateEnd=" + planDateEnd + ", memberCount=" + memberCount
+				+ ", member=" + member + ", plan=" + plan + ", recommendCount=" + recommendCount + ", createDate="
+				+ createDate + ", updateDate=" + updateDate + "]";
 	}
-	
 }

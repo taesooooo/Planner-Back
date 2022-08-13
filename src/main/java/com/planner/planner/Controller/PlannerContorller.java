@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PlannerDto;
+import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.PlannerService;
 import com.planner.planner.util.ResponseMessage;
 
@@ -27,12 +29,15 @@ public class PlannerContorller {
 	private static final Logger logger = LoggerFactory.getLogger(PlannerContorller.class);
 	@Autowired
 	private PlannerService plannerService;
+	@Autowired
+	private AccountService accountService;
 	
 	@PostMapping
 	public ResponseEntity<Object> createPlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto) {
 		logger.info(plannerDto.toString());
 		HttpSession session = req.getSession(false);
 		if(session == null) {
+			AccountDto user = (AccountDto)session.getAttribute(session.getId());
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
 		}
 		
@@ -52,14 +57,14 @@ public class PlannerContorller {
 		
 		PlannerDto planner = plannerService.read(plannerId);
 		if(planner == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "일정을 가져오지 못헀습니다."));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "일정을 가져오지 못헀습니다."));
 		}
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",planner));
 	}
 	
 	@PutMapping(value="/{plannerId}")
-	public ResponseEntity<Object> updatePlanner(HttpServletRequest req, PlannerDto plannerDto) {
+	public ResponseEntity<Object> updatePlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto) {
 		HttpSession session = req.getSession(false);
 		if(session == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
@@ -83,5 +88,20 @@ public class PlannerContorller {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "플래너 삭제가 완료되었습니다."));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "삭제를 실패했습니다."));
+	}
+	
+	@PutMapping(value="/{plannerId}/like")
+	public ResponseEntity<Object> likePlanner(HttpServletRequest req, @PathVariable int plannerId) {
+		HttpSession session = req.getSession(false);
+		if(session == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
+		}
+		else {
+			AccountDto user = (AccountDto)session.getAttribute(session.getId());
+			if(plannerService.like(plannerId,user.getAccountId())) {
+				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+			}			
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "실패했습니다."));
 	}
 }

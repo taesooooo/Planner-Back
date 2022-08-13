@@ -8,5 +8,6 @@ public interface PlannerDao {
 	public PlannerDto read(int plannerId);
 	public boolean update(Planner planner);
 	public boolean delete(int plannerId);
-
+	public boolean likePlanner(int plannerId, int accountId);
+	public boolean like(int plannerId);
 }

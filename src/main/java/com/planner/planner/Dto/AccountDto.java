@@ -8,23 +8,70 @@ import com.planner.planner.Entity.Account;
 
 public class AccountDto {
 	
+	private int accountId;
 	private String email;
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
 	private String name;
 	private String nickName;
 	
+	public static class Builder {
+		private int accountId;
+		private String email;
+		private String password;
+		private String name;
+		private String nickName;
+		
+		public Builder setAccountId(int accountId) {
+			this.accountId = accountId;
+			return this;
+		}
+		
+		public Builder setEmail(String email) {
+			this.email = email;
+			return this;
+		}
+		
+		public Builder setPassword(String password) {
+			this.password = password;
+			return this;
+		}
+		
+		public Builder setName(String name) {
+			this.name = name;
+			return this;
+		}
+		
+		public Builder setNickName(String nickName) {
+			this.nickName = nickName;
+			return this;
+		}
+		
+		public AccountDto build() {
+			return new AccountDto(this);
+		}
+	}
+	
 	public AccountDto() {
 		
 	}
-
-	public AccountDto(String email, String password, String name, String nickName) {
-		this.email = email;
-		this.password = password;
-		this.name = name;
-		this.nickName = nickName;
+	
+	public AccountDto(Builder builder) {
+		this.accountId = builder.accountId;
+		this.email = builder.email;
+		this.password = builder.password;
+		this.name = builder.name;
+		this.nickName = builder.nickName;
 	}
 	
+	public int getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(int accountId) {
+		this.accountId = accountId;
+	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -49,7 +96,6 @@ public class AccountDto {
 		this.name = name;
 	}
 
-	
 	public String getNickName() {
 		return nickName;
 	}
@@ -59,16 +105,12 @@ public class AccountDto {
 	}
 
 	public Account toEntity() {
-		return new Account(email, password, name, nickName);
+		return new Account.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setName(name).setNickName(nickName).build();
 	}
 
 	@Override
 	public String toString() {
-		return "AccountDto [email=" + email + ", password=" + password + ", name=" + name + ", nickName=" + nickName
-				+ "]";
+		return "AccountDto [accountId=" + accountId + ", email=" + email + ", password=" + password + ", name=" + name
+				+ ", nickName=" + nickName + "]";
 	}
-	
-	
-	
-	
 }

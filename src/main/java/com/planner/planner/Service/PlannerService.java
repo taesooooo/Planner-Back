@@ -8,5 +8,6 @@ public interface PlannerService {
 	public PlannerDto read(int plannerId);
 	public boolean update(PlannerDto plannerDto);
 	public boolean delete(int plannerId);
+	public boolean like(int plannerId, int accountId);
 
 }

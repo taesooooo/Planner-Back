@@ -11,16 +11,17 @@ public class PlannerRowMapper implements RowMapper<Planner> {
 
 	@Override
 	public Planner mapRow(ResultSet rs, int rowNum) throws SQLException {
-		Planner planner = new Planner.Builder().setPlannerId(rs.getInt(0))
-				.setAccountId(rs.getInt(1))
-				.setPlanDateStart(rs.getTimestamp(2).toLocalDateTime().toLocalDate())
-				.setPlanDateEnd(rs.getTimestamp((3)).toLocalDateTime().toLocalDate())
-				.setMemberCount(rs.getInt(4))
-				.setMember(rs.getString(5))
-				.setPlan(rs.getString(6))
-				.setRecommendCount(rs.getInt(7))
-				.setCreateDate(rs.getTimestamp(8).toLocalDateTime())
-				.setUpdateDate(rs.getTimestamp(8).toLocalDateTime())
+		Planner planner = new Planner.Builder().setPlannerId(rs.getInt(1))
+				.setAccountId(rs.getInt(2))
+				.setTitle(rs.getString(3))
+				.setPlanDateStart(rs.getTimestamp(4).toLocalDateTime().toLocalDate())
+				.setPlanDateEnd(rs.getTimestamp((5)).toLocalDateTime().toLocalDate())
+				.setMemberCount(rs.getInt(6))
+				.setMember(rs.getString(7))
+				.setPlan(rs.getString(8))
+				.setRecommendCount(rs.getInt(9))
+				.setCreateDate(rs.getTimestamp(10).toLocalDateTime())
+				.setUpdateDate(rs.getTimestamp(11).toLocalDateTime())
 				.build();
 		return planner;
 	}

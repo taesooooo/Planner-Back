@@ -17,12 +17,5 @@ public class AccountDaoTest {
 	@Autowired
 	private AccountService ser;
 	
-	@Test
-	@Transactional
-	public void createTest() {
-		AccountDto dto = new AccountDto("test","test","test","test");
-		ser.login(dto);
-		
-	}
-
+	
 }

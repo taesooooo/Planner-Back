@@ -8,6 +8,7 @@ import com.planner.planner.Dto.PlannerDto;
 public class Planner {
 	private int plannerId;
 	private int accountId;
+	private String title;
 	private LocalDate planDateStart;
 	private LocalDate planDateEnd;
 	private int memberCount;
@@ -20,6 +21,7 @@ public class Planner {
 	public static class Builder {
 		private int plannerId = 0;
 		private int accountId = 0;
+		private String title;
 		private LocalDate planDateStart;
 		private LocalDate planDateEnd;
 		private int memberCount = 1;
@@ -36,6 +38,11 @@ public class Planner {
 
 		public Builder setAccountId(int accountId) {
 			this.accountId = accountId;
+			return this;
+		}
+
+		public Builder setTitle(String title) {
+			this.title = title;
 			return this;
 		}
 
@@ -87,6 +94,7 @@ public class Planner {
 	public Planner(Builder builder) {
 		this.plannerId = builder.plannerId;
 		this.accountId = builder.accountId;
+		this.title = builder.title;
 		this.planDateStart = builder.planDateStart;
 		this.planDateEnd = builder.planDateEnd;
 		this.memberCount = builder.memberCount;
@@ -103,6 +111,10 @@ public class Planner {
 
 	public int getAccountId() {
 		return accountId;
+	}
+
+	public String getTitle() {
+		return title;
 	}
 
 	public LocalDate getPlanDateStart() {
@@ -141,6 +153,7 @@ public class Planner {
 		return new PlannerDto.Builder()
 				.setPlannerId(plannerId)
 				.setAccountId(accountId)
+				.setTitle(title)
 				.setPlanDateStart(planDateStart)
 				.setPlanDateEnd(planDateEnd)
 				.setMemberCount(memberCount)
@@ -152,11 +165,9 @@ public class Planner {
 
 	@Override
 	public String toString() {
-		return "Planner [plannerId=" + plannerId + ", accountId=" + accountId + ", planDateStart=" + planDateStart
-				+ ", planDateEnd=" + planDateEnd + ", memberCount=" + memberCount + ", member=" + member + ", plan="
-				+ plan + ", recommendCount=" + recommendCount + ", createDate=" + createDate + ", updateDate="
-				+ updateDate + "]";
+		return "Planner [plannerId=" + plannerId + ", accountId=" + accountId + ", title=" + title + ", planDateStart="
+				+ planDateStart + ", planDateEnd=" + planDateEnd + ", memberCount=" + memberCount + ", member=" + member
+				+ ", plan=" + plan + ", recommendCount=" + recommendCount + ", createDate=" + createDate
+				+ ", updateDate=" + updateDate + "]";
 	}
-	
-	
 }

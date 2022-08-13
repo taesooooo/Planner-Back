@@ -23,7 +23,7 @@ import com.planner.planner.util.ResponseMessage;
 
 @RestController
 @RequestMapping("/api/auth")
-public class LoginController {
+public class AuthController {
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
 	@Autowired
