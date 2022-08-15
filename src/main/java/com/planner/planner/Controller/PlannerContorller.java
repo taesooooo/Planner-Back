@@ -37,7 +37,6 @@ public class PlannerContorller {
 		logger.info(plannerDto.toString());
 		HttpSession session = req.getSession(false);
 		if(session == null) {
-			AccountDto user = (AccountDto)session.getAttribute(session.getId());
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
 		}
 		

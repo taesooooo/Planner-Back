@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.LikeDto;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -26,6 +27,10 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public AccountDto login(AccountDto accountDto) {
 		return accountDao.read(accountDto.toEntity());
+	}
+	
+	public LikeDto getLikes(int accountId) {
+		return null;
 	}
 
 }
