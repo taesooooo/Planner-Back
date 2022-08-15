@@ -29,6 +29,11 @@ public class AccountServiceImpl implements AccountService {
 		return accountDao.read(accountDto.toEntity());
 	}
 	
+	@Override
+	public boolean passwordUpdate(AccountDto accountDto) {
+		return accountDao.passwordUpdate(accountDto.toEntity());
+	}
+
 	public LikeDto getLikes(int accountId) {
 		return null;
 	}

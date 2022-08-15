@@ -29,7 +29,7 @@ public class AccountController {
 		if(user == null) return null;
 		if(!user.getEmail().equals(email)) return null;
 		
-		accountService.getLike(email);
+		//accountService.getLike(email);
 		
 		return null;
 	}

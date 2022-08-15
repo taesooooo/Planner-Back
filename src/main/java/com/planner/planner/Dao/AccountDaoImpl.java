@@ -1,27 +1,18 @@
 package com.planner.planner.Dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.tomcat.jdbc.pool.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Entity.Like;
 import com.planner.planner.RowMapper.AccountRowMapper;
-import com.planner.planner.util.ResponseMessage;
 
 @Repository
 public class AccountDaoImpl implements AccountDao {
@@ -73,12 +64,12 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public boolean passwordUpdate(Account account) {
-		int result = jdbcTemplate.update(passwordUpdateSQL, account.getPassword());
+		int result = jdbcTemplate.update(passwordUpdateSQL, account.getPassword(),account.getEmail());
 		return result > 0 ? true : false;
 	}
 
 	@Override
-	public List<LikeDto> getLikes(int accountId) {
+	public List<Like> getLikes(int accountId) {
 		return null;
 	}
 
