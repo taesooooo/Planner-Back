@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.planner.planner.Entity.Account;
@@ -22,6 +23,7 @@ public class AccountRowMapper implements RowMapper<Account> {
 				.setUpdateDate(rs.getTimestamp(7).toLocalDateTime())
 				.build();
 		return account;
+
 	}
-	
+
 }

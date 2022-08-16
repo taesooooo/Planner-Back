@@ -85,7 +85,8 @@ public class Like {
 	}
 	
 	public LikeDto toDto() {
-		return new LikeDto.Builder().setLikeId(likeId).setLikeDate(likeDate).setId(accountId).setAccountId(accountId).build();
+		return null;
+		//return new LikeDto.Builder().setLikeId(likeId).setLikeDate(likeDate).setId(accountId).setAccountId(accountId).build();
 	}
 
 	@Override

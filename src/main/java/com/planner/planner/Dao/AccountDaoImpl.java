@@ -12,7 +12,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Entity.Like;
+import com.planner.planner.Entity.Planner;
 import com.planner.planner.RowMapper.AccountRowMapper;
+import com.planner.planner.RowMapper.LikePlannersRowMapper;
+import com.planner.planner.RowMapper.PlannerRowMapper;
 
 @Repository
 public class AccountDaoImpl implements AccountDao {
@@ -29,6 +32,7 @@ public class AccountDaoImpl implements AccountDao {
 	private final String updateSQL = "UPDATE ACCOUNT SET name = ?, nickname = ?, update_date = now() WHERE email = ?;";
 	private final String deleteSQL = "DELETE FROM ACCOUNT WHERE email = ?;";
 	private final String passwordUpdateSQL = "UPDATE account SET password = ?, update_date = now() WHERE email = ?";
+	private final String nicknameUpdateSQL = "UPDATE account SET nickname = ?, update_date = now() WHERE email = ?";
 	private final String likeReadSQL = "SELECT planner_id, title, plan_date_start, plan_date_end FROM planner WHERE planner_id "
 			+ "IN (SELECT planner_id FROM plannerlike WHERE account_id = ?);";
 
@@ -40,14 +44,8 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public AccountDto read(Account account) {
-		Account user = jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), account.getEmail());
-		if (user != null) {
-			return user.toDto();
-		} else {
-
-			return null;
-		}
+	public Account read(Account account) {
+		return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), account.getEmail());
 	}
 
 	@Override
@@ -69,8 +67,13 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public List<Like> getLikes(int accountId) {
-		return null;
+	public boolean nickNameUpdate(Account account) {
+		int result = jdbcTemplate.update(nicknameUpdateSQL, account.getNickName(),account.getEmail());
+		return result > 0 ? true : false;
 	}
 
+	@Override
+	public List<Planner> getLikes(int accountId) {
+		return jdbcTemplate.query(likeReadSQL, new LikePlannersRowMapper(),accountId);
+	}
 }
