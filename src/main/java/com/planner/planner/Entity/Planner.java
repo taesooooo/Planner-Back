@@ -159,7 +159,7 @@ public class Planner {
 				.setMemberCount(memberCount)
 				.setMember(member)
 				.setPlan(plan)
-				.setRecommendCount(recommendCount)
+				.setLikeCount(recommendCount)
 				.build();
 	}
 

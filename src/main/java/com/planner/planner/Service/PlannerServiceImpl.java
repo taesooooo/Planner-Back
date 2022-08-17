@@ -1,5 +1,8 @@
 package com.planner.planner.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +43,11 @@ public class PlannerServiceImpl implements PlannerService {
 		result = plannerDao.likePlanner(plannerId, accountId);
 		
 		return result;
+	}
+
+	@Override
+	public List<PlannerDto> getAllPlanners() {
+		return plannerDao.getAllPlanners().stream().map((p) -> p.toDto()).collect(Collectors.toList());
 	}
 
 }

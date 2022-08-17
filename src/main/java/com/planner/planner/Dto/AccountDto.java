@@ -2,12 +2,16 @@ package com.planner.planner.Dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.planner.planner.Entity.Account;
 
+@JsonInclude(value = Include.NON_NULL)
 public class AccountDto {
 	
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private int accountId;
 	private String email;
 	@JsonProperty(access = Access.WRITE_ONLY)

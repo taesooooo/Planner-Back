@@ -1,11 +1,14 @@
 package com.planner.planner.Controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,10 +30,9 @@ import com.planner.planner.util.ResponseMessage;
 @RequestMapping(value="/api/planners")
 public class PlannerContorller {
 	private static final Logger logger = LoggerFactory.getLogger(PlannerContorller.class);
+	
 	@Autowired
 	private PlannerService plannerService;
-	@Autowired
-	private AccountService accountService;
 	
 	@PostMapping
 	public ResponseEntity<Object> createPlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto) {
@@ -47,19 +49,19 @@ public class PlannerContorller {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, ""));
 	}
 	
-	@GetMapping(value="/{plannerId}")
-	public ResponseEntity<Object> readPlanner(HttpServletRequest req, @PathVariable int plannerId) {
+	@GetMapping
+	public ResponseEntity<Object> readPlanner(HttpServletRequest req) {
 		HttpSession session = req.getSession(false);
 		if(session == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
 		}
-		
-		PlannerDto planner = plannerService.read(plannerId);
-		if(planner == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "일정을 가져오지 못헀습니다."));
+		try {
+			List<PlannerDto> planners = plannerService.getAllPlanners();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "", planners));
 		}
-		
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",planner));
+		catch (EmptyResultDataAccessException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "가져오지 못헀습니다."));
+		}
 	}
 	
 	@PutMapping(value="/{plannerId}")
@@ -102,5 +104,20 @@ public class PlannerContorller {
 			}			
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "실패했습니다."));
+	}
+	
+	@GetMapping(value="/{plannerId}")
+	public ResponseEntity<Object> getPlannersById(HttpServletRequest req, @PathVariable int plannerId) {
+		HttpSession session = req.getSession(false);
+		if(session == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
+		}
+		try {
+			PlannerDto planner = plannerService.read(plannerId);
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",planner));
+		}
+		catch (EmptyResultDataAccessException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "일정이 존재하지 않습니다."));
+		}
 	}
 }

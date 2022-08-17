@@ -56,7 +56,7 @@ public class AuthController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 						.body(new ResponseMessage(false, "아이디 또는 비밀번호를 잘 못입력헀습니다."));
 			}
-		} 
+		}
 		catch (EmptyResultDataAccessException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "아이디가 존재하지 않습니다."));
 		}

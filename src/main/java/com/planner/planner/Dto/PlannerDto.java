@@ -4,33 +4,39 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.planner.planner.Entity.Planner;
 
+@JsonInclude(value = Include.NON_NULL)
 public class PlannerDto {
 	private int plannerId;
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private int accountId;
 	private String title;
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate planDateStart;
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate planDateEnd;
-	private int memberCount;
+	private int memberCount = 1;
 	private String member;
 	private String plan;
-	private int recommendCount;
+	private int likeCount;
 	private LocalDateTime createDate;
 	private LocalDateTime updateDate;
 	
 	public static class Builder {
-		private int plannerId = 0;
-		private int accountId = 0;
+		private int plannerId;
+		private int accountId;
 		private String title;
 		private LocalDate planDateStart;
 		private LocalDate planDateEnd;
 		private int memberCount = 1;
 		private String member;
 		private String plan;
-		private int recommendCount = 0;
+		private int likeCount;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
 
@@ -74,8 +80,8 @@ public class PlannerDto {
 			return this;
 		}
 
-		public Builder setRecommendCount(int recommendCount) {
-			this.recommendCount = recommendCount;
+		public Builder setLikeCount(int recommendCount) {
+			this.likeCount = recommendCount;
 			return this;
 		}
 
@@ -107,7 +113,7 @@ public class PlannerDto {
 		this.memberCount = builder.memberCount;
 		this.member = builder.member;
 		this.plan = builder.plan;
-		this.recommendCount = builder.recommendCount;
+		this.likeCount = builder.likeCount;
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
 	}
@@ -176,12 +182,12 @@ public class PlannerDto {
 		this.plan = plan;
 	}
 
-	public int getRecommendCount() {
-		return recommendCount;
+	public int getLikeCount() {
+		return likeCount;
 	}
 
-	public void setRecommendCount(int recommendCount) {
-		this.recommendCount = recommendCount;
+	public void setLikeCount(int recommendCount) {
+		this.likeCount = recommendCount;
 	}
 
 	public LocalDateTime getCreateDate() {
@@ -210,7 +216,7 @@ public class PlannerDto {
 				.setMemberCount(memberCount)
 				.setMember(member)
 				.setPlan(plan)
-				.setRecommendCount(recommendCount)
+				.setRecommendCount(likeCount)
 				.setCreateDate(createDate)
 				.setUpdateDate(updateDate)
 				.build();
@@ -220,7 +226,7 @@ public class PlannerDto {
 	public String toString() {
 		return "PlannerDto [plannerId=" + plannerId + ", accountId=" + accountId + ", title=" + title
 				+ ", planDateStart=" + planDateStart + ", planDateEnd=" + planDateEnd + ", memberCount=" + memberCount
-				+ ", member=" + member + ", plan=" + plan + ", recommendCount=" + recommendCount + ", createDate="
+				+ ", member=" + member + ", plan=" + plan + ", recommendCount=" + likeCount + ", createDate="
 				+ createDate + ", updateDate=" + updateDate + "]";
 	}
 }

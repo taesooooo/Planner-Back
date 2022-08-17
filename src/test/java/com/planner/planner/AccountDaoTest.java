@@ -18,7 +18,7 @@ import com.planner.planner.Service.AccountService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:root-context.xml","classpath:servlet-context.xml"})
 public class AccountDaoTest {
-	private static final Logger logger = LoggerFactory.getLogger(AccountDaoImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(AccountDaoTest.class);
 	
 	@Autowired
 	private AccountService accountSerivce;
@@ -38,7 +38,6 @@ public class AccountDaoTest {
 	}
 	
 	@Test
-	@Transactional
 	public void getLikesTest() {
 		LikeDto likes = accountSerivce.getLikes(1);
 		logger.info(likes.toString());

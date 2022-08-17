@@ -25,7 +25,7 @@ public class AccountController {
 	private AccountService accountService;
 	
 	@GetMapping(value="/{email}/likes")
-	public ResponseEntity<Object> likeData(HttpServletRequest req, @PathVariable String email) {
+	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable String email) {
 		HttpSession session = req.getSession(false);
 		if(session == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
 		
