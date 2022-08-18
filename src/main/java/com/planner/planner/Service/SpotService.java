@@ -7,6 +7,6 @@ import com.planner.planner.Entity.Spot;
 
 public interface SpotService {
 	public List<SpotDto> getAllSpot();
-	public List<SpotDto> getSpotLikesByAccountId(int accountId);
-	public boolean spotLike(int accountId);
+	public boolean spotLike(int accountId, int spotId);
+	public boolean spotLikeCancel(int accountId, int spotId);
 }

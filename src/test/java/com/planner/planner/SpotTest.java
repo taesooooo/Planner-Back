@@ -26,4 +26,9 @@ public class SpotTest {
 		List<SpotDto> spots = service.getAllSpot();
 		logger.info(spots.toString());
 	}
+	
+	@Test
+	public void SpotCancel() {
+		service.spotLikeCancel(1, 2);
+	}
 }

@@ -9,17 +9,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Dto.SpotDto;
+import com.planner.planner.Entity.Account;
 import com.planner.planner.Service.SpotService;
 import com.planner.planner.util.ResponseMessage;
 
 @RestController
-@RequestMapping(value = "api/spot")
+@RequestMapping(value = "api/spots")
 public class SpotController {
 	private static final Logger logger = LoggerFactory.getLogger(SpotController.class);
 	
@@ -27,21 +31,24 @@ public class SpotController {
 	private SpotService spotService;
 	
 	@GetMapping
-	public ResponseEntity<Object> getSpots(HttpServletRequest req) {
+	public ResponseEntity<Object> spots(HttpServletRequest req) {
 		List<SpotDto> spots = spotService.getAllSpot();
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true,"", spots));
 	}
 	
-	@PutMapping(value = "/{spotId}/like")
-	public ResponseEntity<Object> spotLike(HttpServletRequest req) {
-		
-		return null;
+	@PostMapping(value = "/{spotId}")
+	public ResponseEntity<Object> spotLike(HttpServletRequest req, @PathVariable int spotId) {
+		Account user = (Account)req.getSession(false).getAttribute(req.getSession().getId());
+		boolean result = spotService.spotLike(user.getAccountId(), spotId);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,""));
 	}
 	
-	@GetMapping
-	public ResponseEntity<Object> getSpotLikes(HttpServletRequest req) {
-		
-		return null;
+	@DeleteMapping(value = "/{spotId}")
+	public ResponseEntity<Object> spotCancelLike(HttpServletRequest req, @PathVariable int spotId) {
+		Account user = (Account)req.getSession(false).getAttribute(req.getSession().getId());
+		boolean result = spotService.spotLike(user.getAccountId(), spotId);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,""));
 	}
+	
 }

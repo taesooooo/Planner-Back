@@ -8,15 +8,22 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(value = Include.NON_NULL)
 public class LikeDto {
 	List<PlannerDto> likePlanners;
+	List<SpotDto> likeSpots;
 	
 	public static class Builder {
 		List<PlannerDto> likePlanners;
+		List<SpotDto> likeSpots;
 
 		public Builder setLikePlanners(List<PlannerDto> likePlanners) {
 			this.likePlanners = likePlanners;
 			return this;
 		}
 		
+		public Builder setLikeSpots(List<SpotDto> likeSpots) {
+			this.likeSpots = likeSpots;
+			return this;
+		}
+
 		public LikeDto build() {
 			return new LikeDto(this);
 		}
@@ -27,6 +34,7 @@ public class LikeDto {
 
 	public LikeDto(Builder builder) {
 		this.likePlanners = builder.likePlanners;
+		this.likeSpots = builder.likeSpots;
 	}
 
 	public List<PlannerDto> getLikePlanners() {
@@ -37,9 +45,16 @@ public class LikeDto {
 		this.likePlanners = likePlanners;
 	}
 
+	public List<SpotDto> getLikeSpots() {
+		return likeSpots;
+	}
+
+	public void setLikeSpots(List<SpotDto> likeSpots) {
+		this.likeSpots = likeSpots;
+	}
+
 	@Override
 	public String toString() {
-		return "LikeDto [likePlanners=" + likePlanners + "]";
+		return "LikeDto [likePlanners=" + likePlanners + ", likeSpots=" + likeSpots + "]";
 	}
-	
 }

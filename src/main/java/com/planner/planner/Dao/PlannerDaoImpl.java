@@ -28,8 +28,10 @@ public class PlannerDaoImpl implements PlannerDao {
 			+ "FROM planner WHERE planner_id = ?;";
 	private String updateSQL = "UPDATE `planner` SET title = ?, plan_date_start = ?, plan_date_end = ?, member_count = ?, member = ?, plan = ?, update_date = now() WHERE planner_id = ?;";
 	private String deleteSQL = "DELETE FROM planner WHERE planner_id = ?;";
-	private String likeAddSQL = "INSERT INTO like_planner (planner_id, account_id) VALUES(?, ?);";
 	private String likeSQL = "UPDATE planner SET like_count = +1 WHERE planner_id = ?";
+	private String likeAddSQL = "INSERT INTO like_planner (planner_id, account_id) VALUES(?, ?);";
+	private String likeCancelSQL = "UPDATE planner SET like_count = -1 WHERE planner_id = ?";
+	private String likeDeleteSQL = "DELETE FROM `plannerlike` WHERE account_id = ? and planner_id = ?;";
 	private String readAllSQL = "SELECT planner_id, title, plan_date_start, plan_date_end, like_count FROM planner;";
 	
 	@Override
@@ -89,6 +91,18 @@ public class PlannerDaoImpl implements PlannerDao {
 	@Override
 	public boolean like(int plannerId) {
 		int result = jdbcTemplate.update(likeSQL, plannerId);
+		return result > 0 ? true : false;
+	}
+
+	@Override
+	public boolean likeCancel(int plannerId) {
+		int result = jdbcTemplate.update(likeCancelSQL, plannerId);
+		return result > 0 ? true : false;
+	}
+
+	@Override
+	public boolean likeDelete(int accountId, int plannerId) {
+		int result = jdbcTemplate.update(likeDeleteSQL, accountId, plannerId);
 		return result > 0 ? true : false;
 	}
 

@@ -32,4 +32,15 @@ public class PlannerTest {
 		List<PlannerDto> planners = pService.getAllPlanners();
 		logger.info(planners.toString());
 	}
+	
+	@Test
+	public void likePlannerTest() {
+		pService.like(1, 2);
+	}
+	
+	@Test
+	public void likeCancelPlannerTest() {
+		pService.likeCancel(2, 1);
+	}
+	
 }

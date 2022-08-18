@@ -5,12 +5,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.planner.planner.Dao.SpotDao;
 import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Entity.Spot;
 
 @Service
+@Transactional
 public class SpotServiceImpl implements SpotService {
 
 	@Autowired
@@ -32,21 +34,19 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public List<SpotDto> getSpotLikesByAccountId(int accountId) {
-		return spotDao.getSpotLikesByAccountId(accountId).stream().map((s) -> {
-			return new SpotDto.Builder()
-					.setSpotId(s.getSpotId())
-					.setSpotName(s.getSpotName())
-					.setSpotImage(s.getSpotImage())
-					.setContryName(s.getContryName())
-					.setCityName(s.getCityName())
-					.build();
-		}).collect(Collectors.toList());
+	public boolean spotLike(int accountId, int spotId) {
+		boolean result =  spotDao.spotLike(spotId);
+		result = spotDao.spotLikeAdd(accountId, spotId);
+		
+		return result;
 	}
 
 	@Override
-	public boolean spotLike(int accountId) {
-		return spotDao.spotLike(accountId);
+	public boolean spotLikeCancel(int accountId, int spotId) {
+		boolean result = spotDao.spotLikeCancel(spotId);
+		result = spotDao.spotLikeDelete(accountId, spotId);
+
+		return result;
 	}
 
 }

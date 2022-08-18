@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,19 @@ public class AccountController {
 
 	@Autowired
 	private AccountService accountService;
+	
+	@GetMapping(value="/{email}")
+	public ResponseEntity<Object> account(HttpServletRequest req, @PathVariable String email) {
+		HttpSession session = req.getSession(false);
+		if(session == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
+		try {
+			AccountDto user = (AccountDto)session.getAttribute(session.getId());
+			return ResponseEntity.ok(new ResponseMessage(true, "",user));
+		}
+		catch (EmptyResultDataAccessException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "찾지 못했습니다."));
+		}
+	}
 	
 	@GetMapping(value="/{email}/likes")
 	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable String email) {

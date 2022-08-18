@@ -46,6 +46,14 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
+	public boolean likeCancel(int plannerId, int accountId) {
+		boolean result = plannerDao.likeCancel(plannerId);
+		result = plannerDao.likeDelete(plannerId, accountId);
+		
+		return result;
+	}
+
+	@Override
 	public List<PlannerDto> getAllPlanners() {
 		return plannerDao.getAllPlanners().stream().map((p) -> p.toDto()).collect(Collectors.toList());
 	}

@@ -11,5 +11,6 @@ public interface PlannerService {
 	public boolean update(PlannerDto plannerDto);
 	public boolean delete(int plannerId);
 	public boolean like(int plannerId, int accountId);
+	public boolean likeCancel(int plannerId, int accountId);
 	public List<PlannerDto> getAllPlanners(); 
 }

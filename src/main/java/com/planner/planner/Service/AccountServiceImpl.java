@@ -17,6 +17,7 @@ import com.planner.planner.Dao.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.PlannerDto;
+import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Entity.Like;
 
@@ -51,8 +52,17 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public LikeDto getLikes(int accountId) {
-		List<PlannerDto> likeP = accountDao.getLikes(accountId).stream().map((p) -> p.toDto()).collect(Collectors.toList());
-		return new LikeDto.Builder().setLikePlanners(likeP).build();
+		List<PlannerDto> likeP = accountDao.likePlanners(accountId).stream().map((p) -> p.toDto()).collect(Collectors.toList());
+		List<SpotDto> likeS = accountDao.likeSpots(accountId).stream().map((s) -> {
+			return new SpotDto.Builder()
+					.setSpotId(s.getSpotId())
+					.setSpotName(s.getSpotName())
+					.setSpotImage(s.getSpotImage())
+					.setContryName(s.getContryName())
+					.setCityName(s.getCityName())
+					.build();
+		}).collect(Collectors.toList());
+		return new LikeDto.Builder().setLikePlanners(likeP).setLikeSpots(likeS).build();
 	}
 
 }

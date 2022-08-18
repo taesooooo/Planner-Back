@@ -12,5 +12,7 @@ public interface PlannerDao {
 	public boolean delete(int plannerId);
 	public boolean likePlanner(int plannerId, int accountId);
 	public boolean like(int plannerId);
+	public boolean likeCancel(int plannerId);
+	public boolean likeDelete(int accountId, int plannerId);
 	public List<Planner> getAllPlanners(); 
 }

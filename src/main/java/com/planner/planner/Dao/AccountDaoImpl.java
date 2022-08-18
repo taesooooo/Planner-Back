@@ -13,16 +13,16 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Entity.Like;
 import com.planner.planner.Entity.Planner;
+import com.planner.planner.Entity.Spot;
 import com.planner.planner.RowMapper.AccountRowMapper;
 import com.planner.planner.RowMapper.LikePlannersRowMapper;
+import com.planner.planner.RowMapper.LikeSpotsRowMapper;
 import com.planner.planner.RowMapper.PlannerRowMapper;
 
 @Repository
 public class AccountDaoImpl implements AccountDao {
 
 	private static final Logger logger = LoggerFactory.getLogger(AccountDaoImpl.class);
-
-	private ObjectMapper jsonMapper = new ObjectMapper();
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -33,8 +33,10 @@ public class AccountDaoImpl implements AccountDao {
 	private final String deleteSQL = "DELETE FROM ACCOUNT WHERE email = ?;";
 	private final String passwordUpdateSQL = "UPDATE account SET password = ?, update_date = now() WHERE email = ?";
 	private final String nicknameUpdateSQL = "UPDATE account SET nickname = ?, update_date = now() WHERE email = ?";
-	private final String likeReadSQL = "SELECT planner_id, title, plan_date_start, plan_date_end FROM planner WHERE planner_id "
+	private final String likePlannersSQL = "SELECT planner_id, title, plan_date_start, plan_date_end FROM planner WHERE planner_id "
 			+ "IN (SELECT planner_id FROM plannerlike WHERE account_id = ?);";
+	private final String likeSpotsSQL = "SELECT spot_id, spot_name, spot_image, country_name, city_name FROM spot WHERE spot_id "
+			+ "IN (SELECT spot_id FROM spotlike WHERE account_id = ?);";
 
 	@Override
 	public boolean create(Account account) {
@@ -73,7 +75,13 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public List<Planner> getLikes(int accountId) {
-		return jdbcTemplate.query(likeReadSQL, new LikePlannersRowMapper(),accountId);
+	public List<Planner> likePlanners(int accountId) {
+		return jdbcTemplate.query(likePlannersSQL, new LikePlannersRowMapper(),accountId);
 	}
+
+	@Override
+	public List<Spot> likeSpots(int accountId) {
+		return jdbcTemplate.query(likeSpotsSQL, new LikeSpotsRowMapper(),accountId);
+	}
+	
 }
