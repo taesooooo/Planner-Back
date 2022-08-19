@@ -91,21 +91,6 @@ public class PlannerContorller {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "삭제를 실패했습니다."));
 	}
 	
-	@PutMapping(value="/{plannerId}/like")
-	public ResponseEntity<Object> likePlanner(HttpServletRequest req, @PathVariable int plannerId) {
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
-		}
-		else {
-			AccountDto user = (AccountDto)session.getAttribute(session.getId());
-			if(plannerService.like(plannerId,user.getAccountId())) {
-				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
-			}			
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "실패했습니다."));
-	}
-	
 	@GetMapping(value="/{plannerId}")
 	public ResponseEntity<Object> getPlannersById(HttpServletRequest req, @PathVariable int plannerId) {
 		HttpSession session = req.getSession(false);
@@ -120,4 +105,35 @@ public class PlannerContorller {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "일정이 존재하지 않습니다."));
 		}
 	}
+	
+	@PostMapping(value="/{plannerId}/likes")
+	public ResponseEntity<Object> likePlanner(HttpServletRequest req, @PathVariable int plannerId) {
+		HttpSession session = req.getSession(false);
+		if(session == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
+		}
+		else {
+			AccountDto user = (AccountDto)session.getAttribute(session.getId());
+			if(plannerService.like(plannerId,user.getAccountId())) {
+				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+			}			
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "실패했습니다."));
+	}
+	
+	@DeleteMapping(value= "/{plannerId}/likes")
+	public ResponseEntity<Object> likeCancelPlanner(HttpServletRequest req, @PathVariable int plannerId) {
+		HttpSession session = req.getSession(false);
+		if(session == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
+		}
+		else {
+			AccountDto user = (AccountDto)session.getAttribute(session.getId());
+			if(plannerService.likeCancel(plannerId,user.getAccountId())) {
+				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+			}			
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "실패했습니다."));
+	}
+	
 }

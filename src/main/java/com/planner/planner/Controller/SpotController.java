@@ -37,14 +37,14 @@ public class SpotController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true,"", spots));
 	}
 	
-	@PostMapping(value = "/{spotId}")
+	@PostMapping(value = "/{spotId}/likes")
 	public ResponseEntity<Object> spotLike(HttpServletRequest req, @PathVariable int spotId) {
 		Account user = (Account)req.getSession(false).getAttribute(req.getSession().getId());
 		boolean result = spotService.spotLike(user.getAccountId(), spotId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,""));
 	}
 	
-	@DeleteMapping(value = "/{spotId}")
+	@DeleteMapping(value = "/{spotId}/likes")
 	public ResponseEntity<Object> spotCancelLike(HttpServletRequest req, @PathVariable int spotId) {
 		Account user = (Account)req.getSession(false).getAttribute(req.getSession().getId());
 		boolean result = spotService.spotLike(user.getAccountId(), spotId);

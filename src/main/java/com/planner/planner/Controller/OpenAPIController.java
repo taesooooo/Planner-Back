@@ -2,10 +2,66 @@ package com.planner.planner.Controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.planner.planner.Service.OpenAPIService;
+import com.planner.planner.util.ResponseMessage;
+
 @RestController
+@RequestMapping(value= "/api/tours")
 public class OpenAPIController {
 	private static final Logger logger = LoggerFactory.getLogger(OpenAPIController.class);
 	
+	@Autowired
+	private OpenAPIService oService;
+	
+	@GetMapping(value= "/area-codes")
+	public ResponseEntity<Object> areaNum() {
+		ObjectNode data = oService.getAreaNum();
+		if(data.get("error") != null) {
+			return ResponseEntity.status(data.get("error").get("code").asInt()).body(new ResponseMessage(false, data.get("error").get("message").asText()));
+		}
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", data));
+	}
+	
+	@GetMapping(value= "/lists-base")
+	public ResponseEntity<Object> TouristAreaList(@RequestParam int areaCode, @RequestParam int contentTypeId, @RequestParam int index) {
+		ObjectNode data = oService.getTouristAreaList(areaCode, contentTypeId, index);
+		if(data.get("error") != null) {
+			return ResponseEntity.status(data.get("error").get("code").asInt()).body(new ResponseMessage(false, data.get("error").get("message").asText()));
+		}
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", data));
+	}
+	
+	@GetMapping(value= "/lists-keyword")
+	public ResponseEntity<Object> TouristKeyword(@RequestParam int areaCode, @RequestParam int contentTypeId,@RequestParam String keyword, @RequestParam int index) {
+		ObjectNode data = oService.getTouristKeyword(areaCode, contentTypeId, keyword, index);
+		if(data.get("error") != null) {
+			return ResponseEntity.status(data.get("error").get("code").asInt()).body(new ResponseMessage(false, data.get("error").get("message").asText()));
+		}
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", data));
+	}
+	
+	@GetMapping(value= "/lists/{contentId}")
+	public ResponseEntity<Object> TouristDetail(@PathVariable int contentId) {
+		ObjectNode data = oService.getTouristDetail(contentId);
+		if(data.get("error") != null) {
+			return ResponseEntity.status(data.get("error").get("code").asInt()).body(new ResponseMessage(false, data.get("error").get("message").asText()));
+		}
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", data));
+	}
 }

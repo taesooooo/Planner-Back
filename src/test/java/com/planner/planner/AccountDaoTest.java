@@ -24,6 +24,11 @@ public class AccountDaoTest {
 	private AccountService accountSerivce;
 	
 	@Test
+	public void accountInfoTest() {
+		//AccountDto account = accountSerivce.
+	}
+	
+	@Test
 	@Transactional
 	public void pwUpdateTest() {
 		AccountDto test = new AccountDto.Builder().setAccountId(2).setEmail("test2@naver.com").setPassword("5678").build();
