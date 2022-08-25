@@ -34,27 +34,12 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<version>5.7.2</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>5.7.2</version>
+			<version>5.7.3</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>5.7.2</version>
-		</dependency>
-
 
 
 		<!-- Logging -->
@@ -149,7 +134,25 @@
 			<version>9.0.58</version>
 		</dependency>
 
-
+		<!-- JWT -->
+		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
 
 		<!-- Test -->
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
@@ -199,10 +202,12 @@
 				<version>2.9</version>
 				<configuration>
 					<additionalProjectnatures>
-						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+						<projectnature>org.springframework.ide.eclipse.core.springnature
+						</projectnature>
 					</additionalProjectnatures>
 					<additionalBuildcommands>
-						<buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+						<buildcommand>org.springframework.ide.eclipse.core.springbuilder
+						</buildcommand>
 					</additionalBuildcommands>
 					<downloadSources>true</downloadSources>
 					<downloadJavadocs>true</downloadJavadocs>
