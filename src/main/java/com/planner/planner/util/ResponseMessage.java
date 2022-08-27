@@ -1,19 +1,30 @@
 package com.planner.planner.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class ResponseMessage {
 	private boolean state;
 	private String message;
 	private Object data;
+	@JsonInclude(value = Include.NON_NULL)
+	private String token;
 
 	public ResponseMessage(boolean state,String message) {
 		this.state = state;
 		this.message = message;
 	}
+	
 	public ResponseMessage(boolean state,String message, Object data) {
 		this.state = state;
 		this.message = message;
 		this.data = data;
+	}
+	public ResponseMessage(boolean state,String message, Object data, String token) {
+		this.state = state;
+		this.message = message;
+		this.data = data;
+		this.token = token;
 	}
 	
 	public boolean getState() {
@@ -38,6 +49,14 @@ public class ResponseMessage {
 
 	public void setData(Object data) {
 		this.data = data;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 	
 }

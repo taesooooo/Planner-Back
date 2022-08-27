@@ -11,7 +11,6 @@ import com.planner.planner.Entity.Account;
 @JsonInclude(value = Include.NON_NULL)
 public class AccountDto {
 	
-	@JsonProperty(access = Access.WRITE_ONLY)
 	private int accountId;
 	private String email;
 	@JsonProperty(access = Access.WRITE_ONLY)

@@ -32,12 +32,12 @@ public class JwtUtil {
 		key = Keys.hmacShaKeyFor(secretKey.getBytes());
 	}
 	
-	public String createToken(String userId) {
+	public String createToken(int userId) {
 		Date date = new Date();
 		String token = Jwts.builder()
 				.setIssuedAt(date)
 				.setExpiration(new Date(date.getTime() + expiationTime))
-				.claim("user", userId)
+				.claim("userId", userId)
 				.signWith(key,SignatureAlgorithm.HS256)
 				.compact();
 		return token;

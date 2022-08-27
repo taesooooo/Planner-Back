@@ -20,12 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Service.AccountService;
+import com.planner.planner.util.JwtUtil;
 import com.planner.planner.util.ResponseMessage;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	
+	@Autowired
+	private JwtUtil jwtUtil;
 
 	@Autowired
 	private AccountService accountService;
@@ -48,9 +52,8 @@ public class AuthController {
 		try {
 			AccountDto user = accountService.login(accountDto);
 			if (passwordEncoder.matches(accountDto.getPassword(), user.getPassword())) {
-				HttpSession session = req.getSession();
-				session.setAttribute(session.getId(), user);
-				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "로그인 성공", user));
+				String token = jwtUtil.createToken(user.getAccountId());
+				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "로그인 성공", user,token));
 			}
 			else {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "아이디 또는 비밀번호를 잘 못입력헀습니다."));
