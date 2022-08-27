@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Entity.Account;
+import com.planner.planner.Exception.NotFoundToken;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.util.ResponseMessage;
 
@@ -25,30 +27,26 @@ public class AccountController {
 	@Autowired
 	private AccountService accountService;
 	
-	@GetMapping(value="/{email}")
-	public ResponseEntity<Object> account(HttpServletRequest req, @PathVariable String email) {
-		HttpSession session = req.getSession(false);
-		if(session == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
-		try {
-			AccountDto user = (AccountDto)session.getAttribute(session.getId());
-			return ResponseEntity.ok(new ResponseMessage(true, "",user));
+	@GetMapping(value="/{accountId}")
+	public ResponseEntity<Object> account(HttpServletRequest req, @PathVariable int accountId) throws Exception {
+		int id = Integer.parseInt(req.getAttribute("userId").toString());
+		if (id != accountId) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
 		}
-		catch (EmptyResultDataAccessException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "찾지 못했습니다."));
-		}
+		
+		AccountDto user = accountService.findById(accountId);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", user));
 	}
 	
-	@GetMapping(value="/{email}/likes")
-	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable String email) {
-		HttpSession session = req.getSession(false);
-		if(session == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
+	@GetMapping(value="/{accountId}/likes")
+	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId) {
+		int id = Integer.parseInt(req.getAttribute("userId").toString());
+		if (id != accountId) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
+		}
 		
-		AccountDto user = (AccountDto)session.getAttribute(session.getId());
-		if(user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
-		if(!user.getEmail().equals(email)) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		
-		LikeDto likes =  accountService.getLikes(user.getAccountId());
-		
-		return ResponseEntity.ok(new ResponseMessage(true, "",likes));
+		LikeDto likes =  accountService.getLikes(accountId);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",likes));
+
 	}
 }

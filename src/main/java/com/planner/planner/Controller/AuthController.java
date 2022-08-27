@@ -53,21 +53,16 @@ public class AuthController {
 				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "로그인 성공", user));
 			}
 			else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(new ResponseMessage(false, "아이디 또는 비밀번호를 잘 못입력헀습니다."));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "아이디 또는 비밀번호를 잘 못입력헀습니다."));
 			}
 		}
 		catch (EmptyResultDataAccessException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "아이디가 존재하지 않습니다."));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "아이디 또는 비밀번호를 잘 못입력헀습니다."));
 		}
 	}
 
 	@GetMapping(value = "/logout")
 	public ResponseEntity<Object> logout(HttpServletRequest req) {
-		HttpSession session = req.getSession(false);
-		if (session != null) {
-			session.invalidate();
-		}
-		return ResponseEntity.ok(new ResponseMessage(true, "정상"));
+		return ResponseEntity.ok(new ResponseMessage(true, "로그아웃 되었습니다."));
 	}
 }

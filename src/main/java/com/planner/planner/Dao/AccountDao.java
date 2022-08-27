@@ -13,6 +13,7 @@ public interface AccountDao {
 	public Account read(Account account);
 	public boolean update(Account account);
 	public boolean delete(Account account);
+	public Account findById(int accountId);
 	public boolean passwordUpdate(Account account);
 	public boolean nickNameUpdate(Account account);
 	public List<Planner> likePlanners(int accountId);

@@ -75,6 +75,11 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
+	public Account findById(int accountId) {
+		return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), accountId);
+	}
+
+	@Override
 	public List<Planner> likePlanners(int accountId) {
 		return jdbcTemplate.query(likePlannersSQL, new LikePlannersRowMapper(),accountId);
 	}

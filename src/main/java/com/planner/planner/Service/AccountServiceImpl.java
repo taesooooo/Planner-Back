@@ -29,6 +29,12 @@ public class AccountServiceImpl implements AccountService {
 	private AccountDao accountDao;
 
 	@Override
+	public AccountDto findById(int accountId) {
+		Account user = accountDao.findById(accountId);
+		return user.toDto();
+	}
+
+	@Override
 	@Transactional
 	public boolean register(AccountDto accountDto) {
 		return accountDao.create(accountDto.toEntity());

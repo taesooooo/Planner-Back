@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PlannerDto;
+import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.PlannerService;
 import com.planner.planner.util.ResponseMessage;
@@ -36,12 +37,6 @@ public class PlannerContorller {
 	
 	@PostMapping
 	public ResponseEntity<Object> createPlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto) {
-		logger.info(plannerDto.toString());
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
-		}
-		
 		boolean result = plannerService.create(plannerDto);
 		if(result) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
@@ -51,10 +46,6 @@ public class PlannerContorller {
 	
 	@GetMapping
 	public ResponseEntity<Object> readPlanner(HttpServletRequest req) {
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
-		}
 		try {
 			List<PlannerDto> planners = plannerService.getAllPlanners();
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "", planners));
@@ -64,13 +55,26 @@ public class PlannerContorller {
 		}
 	}
 	
-	@PutMapping(value="/{plannerId}")
-	public ResponseEntity<Object> updatePlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto) {
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
+	@GetMapping(value="/{plannerId}")
+	public ResponseEntity<Object> plannersById(HttpServletRequest req, @PathVariable int plannerId) {
+		int id = Integer.parseInt(req.getAttribute("userId").toString());
+		if(id != plannerId) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
 		}
+			
+		PlannerDto planner = plannerService.read(plannerId);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",planner));
+	}
+	 
+	@PutMapping(value="/{plannerId}")
+	public ResponseEntity<Object> updatePlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto, @PathVariable int plannerId) {
+		int id = Integer.parseInt(req.getAttribute("userId").toString());
+		PlannerDto planner = plannerService.read(plannerId);
 		
+		if(id != planner.getAccountId()) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
+		}
+					
 		if(plannerService.update(plannerDto)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",plannerDto));
 		}
@@ -80,59 +84,44 @@ public class PlannerContorller {
 	
 	@DeleteMapping(value="/{plannerId}")
 	public ResponseEntity<Object> deletePlanner(HttpServletRequest req, @PathVariable int plannerId) {
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
+		int id = Integer.parseInt(req.getAttribute("userId").toString());
+		if(id != plannerId) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
 		}
 		
 		if(plannerService.delete(plannerId)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "플래너 삭제가 완료되었습니다."));
 		}
+		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "삭제를 실패했습니다."));
 	}
 	
-	@GetMapping(value="/{plannerId}")
-	public ResponseEntity<Object> getPlannersById(HttpServletRequest req, @PathVariable int plannerId) {
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
-		}
-		try {
-			PlannerDto planner = plannerService.read(plannerId);
-			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",planner));
-		}
-		catch (EmptyResultDataAccessException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "일정이 존재하지 않습니다."));
-		}
-	}
 	
 	@PostMapping(value="/{plannerId}/likes")
 	public ResponseEntity<Object> likePlanner(HttpServletRequest req, @PathVariable int plannerId) {
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
+		int id = Integer.parseInt(req.getAttribute("userId").toString());
+		if(id != plannerId) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
 		}
-		else {
-			AccountDto user = (AccountDto)session.getAttribute(session.getId());
-			if(plannerService.like(plannerId,user.getAccountId())) {
-				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
-			}			
+		
+		if(plannerService.like(plannerId, id)) {
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 		}
+		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "실패했습니다."));
 	}
 	
 	@DeleteMapping(value= "/{plannerId}/likes")
 	public ResponseEntity<Object> likeCancelPlanner(HttpServletRequest req, @PathVariable int plannerId) {
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "로그인이 필요합니다."));
+		int id = Integer.parseInt(req.getAttribute("userId").toString());
+		if(id != plannerId) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
 		}
-		else {
-			AccountDto user = (AccountDto)session.getAttribute(session.getId());
-			if(plannerService.likeCancel(plannerId,user.getAccountId())) {
-				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
-			}			
+		
+		if(plannerService.likeCancel(plannerId, id)) {
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 		}
+		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "실패했습니다."));
 	}
 	
