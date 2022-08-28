@@ -48,7 +48,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> readPlanner(HttpServletRequest req) {
 		try {
 			List<PlannerDto> planners = plannerService.getAllPlanners();
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "", planners));
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, "", planners));
 		}
 		catch (EmptyResultDataAccessException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "가져오지 못헀습니다."));
@@ -85,7 +85,9 @@ public class PlannerContorller {
 	@DeleteMapping(value="/{plannerId}")
 	public ResponseEntity<Object> deletePlanner(HttpServletRequest req, @PathVariable int plannerId) {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		if(id != plannerId) {
+		PlannerDto planner = plannerService.read(plannerId);
+		
+		if(id != planner.getAccountId()) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
 		}
 		
@@ -100,9 +102,6 @@ public class PlannerContorller {
 	@PostMapping(value="/{plannerId}/likes")
 	public ResponseEntity<Object> likePlanner(HttpServletRequest req, @PathVariable int plannerId) {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		if(id != plannerId) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
 		
 		if(plannerService.like(plannerId, id)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
@@ -114,9 +113,6 @@ public class PlannerContorller {
 	@DeleteMapping(value= "/{plannerId}/likes")
 	public ResponseEntity<Object> likeCancelPlanner(HttpServletRequest req, @PathVariable int plannerId) {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		if(id != plannerId) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
 		
 		if(plannerService.likeCancel(plannerId, id)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));

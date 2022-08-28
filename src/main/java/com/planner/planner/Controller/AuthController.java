@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,11 +41,16 @@ public class AuthController {
 	@PostMapping(value = "/register")
 	public ResponseEntity<Object> register(HttpServletRequest req, @RequestBody AccountDto accountDto) {
 		accountDto.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-		boolean result = accountService.register(accountDto);
-		if (result) {
-			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result, "회원 가입 성공"));
+		try {
+			boolean result = accountService.register(accountDto);
+			if (result) {
+				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "회원 가입 성공"));
+			}			
 		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(result, "회원 가입 실패"));
+		catch (DuplicateKeyException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(false, "중복된 아이디 입니다."));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "회원 가입 실패"));
 	}
 
 	@PostMapping(value = "/login")

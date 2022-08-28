@@ -1,5 +1,7 @@
 package com.planner.planner;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.junit.Test;
@@ -40,7 +42,8 @@ public class PlannerTest {
 	
 	@Test
 	public void likeCancelPlannerTest() {
-		pService.likeCancel(2, 1);
+		boolean result = pService.likeCancel(1, 2);
+		assertTrue(result);
 	}
 	
 }
