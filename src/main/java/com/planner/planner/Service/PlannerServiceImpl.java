@@ -47,8 +47,10 @@ public class PlannerServiceImpl implements PlannerService {
 
 	@Override
 	public boolean likeCancel(int plannerId, int accountId) {
-		boolean result = plannerDao.likeCancel(plannerId);
-		result = plannerDao.likeDelete(plannerId, accountId);
+//		boolean result = plannerDao.likeCancel(plannerId);
+//		result = plannerDao.likeDelete(plannerId, accountId);
+		
+		boolean result = plannerDao.likeDelete(plannerId, accountId);
 		
 		return result;
 	}
