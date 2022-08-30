@@ -1,5 +1,7 @@
 package com.planner.planner;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.junit.Test;
@@ -29,6 +31,6 @@ public class SpotTest {
 	
 	@Test
 	public void SpotCancel() {
-		service.spotLikeCancel(1, 2);
+		assertTrue(service.spotLikeCancel(2, 2));
 	}
 }

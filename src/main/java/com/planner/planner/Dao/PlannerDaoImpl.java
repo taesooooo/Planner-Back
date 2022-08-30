@@ -24,12 +24,13 @@ public class PlannerDaoImpl implements PlannerDao {
 	private JdbcTemplate jdbcTemplate;
 	
 	private String createSQL = "INSERT INTO planner (account_id, title, plan_date_start, plan_date_end, member_count, member, plan, create_date, update_date) VALUES (?, ?, ?, ?, ?, ?, ?, now(), now());";
-	private String readSQL = "SELECT `planner_id`, `account_id`, `plan_date_start`, `plan_date_end`, `member_count`, `member`, `plan`, `create_date`, `update_date`, (SELECT count(planner_id) FROM `plannerlike` WHERE planner_id = ?) as like_count FROM `planner` WHERE planner_id = ?;";
+	private String readSQL = "SELECT planner_id, account_id, title, plan_date_start, plan_date_end, member_count, member, plan, like_count, create_date, update_date "
+			+ "FROM planner WHERE planner_id = ?;";
 	private String updateSQL = "UPDATE `planner` SET title = ?, plan_date_start = ?, plan_date_end = ?, member_count = ?, member = ?, plan = ?, update_date = now() WHERE planner_id = ?;";
 	private String deleteSQL = "DELETE FROM planner WHERE planner_id = ?;";
-	private String likeSQL = "UPDATE planner SET like_count = +1 WHERE planner_id = ?";
+	private String likeSQL = "UPDATE planner SET like_count = like_count + 1 WHERE planner_id = ?";
 	private String likeAddSQL = "INSERT INTO `plannerlike` (planner_id, account_id, like_date) VALUES(?, ?, now());";
-	private String likeCancelSQL = "UPDATE planner SET like_count = -1 WHERE planner_id = ?";
+	private String likeCancelSQL = "UPDATE planner SET like_count = like_count - 1 WHERE planner_id = ?";
 	private String likeDeleteSQL = "DELETE FROM `plannerlike` WHERE planner_id = ? and account_id = ?;";
 	private String readAllSQL = "SELECT planner_id, title, plan_date_start, plan_date_end, like_count FROM planner;";
 	
@@ -61,7 +62,7 @@ public class PlannerDaoImpl implements PlannerDao {
 						.toLocalDateTime()).build();
 				return planner;
 			}
-		}, plannerId, plannerId);
+		}, plannerId);
 		if(plan != null) {
 			return plan.toDto();
 		}

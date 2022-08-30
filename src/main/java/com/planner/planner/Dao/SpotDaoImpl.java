@@ -24,10 +24,10 @@ public class SpotDaoImpl implements SpotDao {
 	
 	private final String AllSpotSQL = "SELECT spot_id, spot_name, spot_image, country_name, city_name, detail, like_count FROM planner.spot;";
 	private final String spotLikesByAccountId = "SELECT spot_id, spot_name, spot_image, country_name, city_name FROM spot WHERE spot_id IN (SELECT spot_id FROM spotlike WHERE account_id = 1);";
-	private final String likeSQL = "UPDATE spot SET like_count = +1 WHERE spot_id = ?;";
-	private final String likeCancelSQL = "UPDATE spot SET like_count = -1 WHERE spot_id = ?;";
-	private final String spotLikeAddSQL = "INSERT INTO spotlike (account_id, spot_id, like_date) VALUES (?, ?, now());";
-	private final String spotLikeDeleteSQL = "DELETE FROM `spotlike` WHERE account_id = ? and spot_id = ?;";
+	private final String likeSQL = "UPDATE spot SET like_count = like_count + 1 WHERE spot_id = ?;";
+	private final String likeCancelSQL = "UPDATE spot SET like_count = IF(like_count > 0, like_count - 1, 0) WHERE spot_id = ?;";
+	private final String likeAddSQL = "INSERT INTO spotlike (account_id, spot_id, like_date) VALUES (?, ?, now());";
+	private final String likeDeleteSQL = "DELETE FROM `spotlike` WHERE account_id = ? and spot_id = ?;";
 
 	@Override
 	public List<Spot> getAllSpot() {
@@ -62,7 +62,7 @@ public class SpotDaoImpl implements SpotDao {
 
 	@Override
 	public boolean spotLikeAdd(int spotId, int accountId) {
-		int result = jdbcTemplate.update(spotLikeAddSQL, accountId, spotId);
+		int result = jdbcTemplate.update(likeAddSQL, accountId, spotId);
 		return result > 0 ? true : false;
 	}
 
@@ -74,7 +74,7 @@ public class SpotDaoImpl implements SpotDao {
 
 	@Override
 	public boolean spotLikeDelete(int accountId, int spotId) {
-		int result = jdbcTemplate.update(spotLikeDeleteSQL, accountId, spotId);
+		int result = jdbcTemplate.update(likeDeleteSQL, accountId, spotId);
 		return result > 0 ? true : false;
 	}
 
