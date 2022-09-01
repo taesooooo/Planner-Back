@@ -41,7 +41,7 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public boolean create(Account account) {
-		int result = jdbcTemplate.update(createSQL, account.getEmail(), account.getPassword(), account.getName(),
+		int result = jdbcTemplate.update(createSQL, account.getEmail(), account.getPassword(), account.getUserName(),
 				account.getNickName());
 		return result > 0 ? true : false;
 	}
@@ -53,7 +53,7 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public boolean update(Account account) {
-		int result = jdbcTemplate.update(updateSQL, account.getName(), account.getNickName(), account.getEmail());
+		int result = jdbcTemplate.update(updateSQL, account.getUserName(), account.getNickName(), account.getEmail());
 		return result > 0 ? true : false;
 	}
 

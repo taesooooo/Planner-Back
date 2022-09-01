@@ -17,7 +17,7 @@ public class AccountRowMapper implements RowMapper<Account> {
 				.setAccountId(rs.getInt(1))
 				.setEmail(rs.getString(2))
 				.setPassword(rs.getString(3))
-				.setName(rs.getString(4))
+				.setUserName(rs.getString(4))
 				.setNickName(rs.getString(5))
 				.setCreateDate(rs.getTimestamp(6).toLocalDateTime())
 				.setUpdateDate(rs.getTimestamp(7).toLocalDateTime())

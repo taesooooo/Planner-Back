@@ -11,7 +11,7 @@ public class Account {
 	private int accountId;
 	private String email;
 	private String password;
-	private String name;
+	private String userName;
 	private String nickName;
 	private LocalDateTime createDate;
 	private LocalDateTime updateDate;
@@ -20,7 +20,7 @@ public class Account {
 		private int accountId;
 		private String email;
 		private String password;
-		private String name;
+		private String userName;
 		private String nickName;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
@@ -40,8 +40,8 @@ public class Account {
 			return this;
 		}
 		
-		public Builder setName(String name) {
-			this.name = name;
+		public Builder setUserName(String userName) {
+			this.userName = userName;
 			return this;
 		}
 		
@@ -73,7 +73,7 @@ public class Account {
 		this.accountId = builder.accountId;
 		this.email = builder.email;
 		this.password = builder.password;
-		this.name = builder.name;
+		this.userName = builder.userName;
 		this.nickName = builder.nickName;
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
@@ -91,8 +91,8 @@ public class Account {
 		return password;
 	}
 
-	public String getName() {
-		return name;
+	public String getUserName() {
+		return userName;
 	}
 
 	public String getNickName() {
@@ -108,12 +108,12 @@ public class Account {
 	}
 
 	public AccountDto toDto() {
-		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setName(name).setNickName(nickName).build();
+		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).build();
 	}
 
 	@Override
 	public String toString() {
-		return "Account [accountId=" + accountId + ", email=" + email + ", password=" + password + ", name=" + name
+		return "Account [accountId=" + accountId + ", email=" + email + ", password=" + password + ", userName=" + userName
 				+ ", nickName=" + nickName + ", createDate=" + createDate + ", updateDate=" + updateDate + "]";
 	}	
 }

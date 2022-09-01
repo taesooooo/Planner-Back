@@ -13,14 +13,16 @@ public class AccountDto {
 	private String email;
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String password;
-	private String name;
+	@JsonProperty("username")
+	private String userName;
+	@JsonProperty("nickname")
 	private String nickName;
 	
 	public static class Builder {
 		private int accountId;
 		private String email;
 		private String password;
-		private String name;
+		private String userName;
 		private String nickName;
 		
 		public Builder setAccountId(int accountId) {
@@ -38,8 +40,8 @@ public class AccountDto {
 			return this;
 		}
 		
-		public Builder setName(String name) {
-			this.name = name;
+		public Builder setUserName(String userName) {
+			this.userName = userName;
 			return this;
 		}
 		
@@ -61,7 +63,7 @@ public class AccountDto {
 		this.accountId = builder.accountId;
 		this.email = builder.email;
 		this.password = builder.password;
-		this.name = builder.name;
+		this.userName = builder.userName;
 		this.nickName = builder.nickName;
 	}
 	
@@ -90,11 +92,11 @@ public class AccountDto {
 	}
 
 	public String getName() {
-		return name;
+		return userName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public String getNickName() {
@@ -106,12 +108,12 @@ public class AccountDto {
 	}
 
 	public Account toEntity() {
-		return new Account.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setName(name).setNickName(nickName).build();
+		return new Account.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).build();
 	}
 
 	@Override
 	public String toString() {
-		return "AccountDto [accountId=" + accountId + ", email=" + email + ", password=" + password + ", name=" + name
+		return "AccountDto [accountId=" + accountId + ", email=" + email + ", password=" + password + ", userName=" + userName
 				+ ", nickName=" + nickName + "]";
 	}
 }
