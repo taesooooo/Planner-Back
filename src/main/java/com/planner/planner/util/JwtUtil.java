@@ -25,7 +25,7 @@ public class JwtUtil {
 	private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 	
 	private Key key;
-	private int expiationTime = 60*60*24*7; // 만료기간 7일
+	private int expiationTime = 60*60*24*1; // 만료기간 7일
 	private Claims claims;
 	
 	public JwtUtil(String secretKey) {
@@ -36,7 +36,7 @@ public class JwtUtil {
 		Date date = new Date();
 		String token = Jwts.builder()
 				.setIssuedAt(date)
-				.setExpiration(new Date(date.getTime() + expiationTime))
+				.setExpiration(new Date(System.currentTimeMillis() + expiationTime*1000))
 				.claim("userId", userId)
 				.signWith(key,SignatureAlgorithm.HS256)
 				.compact();
