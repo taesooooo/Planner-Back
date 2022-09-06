@@ -13,6 +13,7 @@ public class Account {
 	private String password;
 	private String userName;
 	private String nickName;
+	private String image;
 	private LocalDateTime createDate;
 	private LocalDateTime updateDate;
 
@@ -22,6 +23,7 @@ public class Account {
 		private String password;
 		private String userName;
 		private String nickName;
+		private String image;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
 		
@@ -60,6 +62,11 @@ public class Account {
 			return this;
 		}
 		
+		public Builder setImage(String image) {
+			this.image = image;
+			return this;
+		}
+
 		public Account build() {
 			return new Account(this);
 		}
@@ -75,6 +82,7 @@ public class Account {
 		this.password = builder.password;
 		this.userName = builder.userName;
 		this.nickName = builder.nickName;
+		this.image = builder.image;
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
 	}
@@ -99,6 +107,14 @@ public class Account {
 		return nickName;
 	}
 
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
 	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
@@ -108,12 +124,13 @@ public class Account {
 	}
 
 	public AccountDto toDto() {
-		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).build();
+		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).setImage(image).build();
 	}
 
 	@Override
 	public String toString() {
-		return "Account [accountId=" + accountId + ", email=" + email + ", password=" + password + ", userName=" + userName
-				+ ", nickName=" + nickName + ", createDate=" + createDate + ", updateDate=" + updateDate + "]";
-	}	
+		return "Account [accountId=" + accountId + ", email=" + email + ", password=" + password + ", userName="
+				+ userName + ", nickName=" + nickName + ", image=" + image + ", createDate=" + createDate
+				+ ", updateDate=" + updateDate + "]";
+	}
 }

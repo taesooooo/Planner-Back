@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.AccountDaoImpl;
@@ -20,6 +21,8 @@ import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Entity.Like;
+import com.planner.planner.util.FileStore;
+import com.planner.planner.util.FileStore.FileLocation;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -27,6 +30,8 @@ public class AccountServiceImpl implements AccountService {
 	
 	@Autowired
 	private AccountDao accountDao;
+	
+	private FileStore fileStore;
 
 	@Override
 	public AccountDto findById(int accountId) {
@@ -46,6 +51,17 @@ public class AccountServiceImpl implements AccountService {
 		return user.toDto();
 	}
 	
+	@Override
+	public AccountDto accountUpdate(AccountDto accountDto, MultipartFile image) {
+		String path = fileStore.createFilePath(FileLocation.USER, image, "1");
+		
+		// 이미지 저장
+		
+		// DB 업데이트
+		
+		return null;
+	}
+
 	@Override
 	public boolean passwordUpdate(AccountDto accountDto) {
 		return accountDao.passwordUpdate(accountDto.toEntity());

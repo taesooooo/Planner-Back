@@ -1,5 +1,7 @@
 package com.planner.planner.Dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,12 +20,17 @@ public class AccountDto {
 	@JsonProperty("nickname")
 	private String nickName;
 	
+	private String image;
+	private MultipartFile imageFile;
+	
 	public static class Builder {
 		private int accountId;
 		private String email;
 		private String password;
 		private String userName;
 		private String nickName;
+		private String image;
+		private MultipartFile imageFile;
 		
 		public Builder setAccountId(int accountId) {
 			this.accountId = accountId;
@@ -49,7 +56,17 @@ public class AccountDto {
 			this.nickName = nickName;
 			return this;
 		}
-		
+
+		public Builder setImage(String image) {
+			this.image = image;
+			return this;
+		}
+
+		public Builder setImageFile(MultipartFile imageFile) {
+			this.imageFile = imageFile;
+			return this;
+		}
+
 		public AccountDto build() {
 			return new AccountDto(this);
 		}
@@ -65,6 +82,8 @@ public class AccountDto {
 		this.password = builder.password;
 		this.userName = builder.userName;
 		this.nickName = builder.nickName;
+		this.image = builder.image;
+		this.imageFile = builder.imageFile;
 	}
 	
 	public int getAccountId() {
@@ -91,7 +110,7 @@ public class AccountDto {
 		this.password = password;
 	}
 
-	public String getName() {
+	public String getUserName() {
 		return userName;
 	}
 
@@ -106,14 +125,31 @@ public class AccountDto {
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
 	}
+	
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public MultipartFile getImageFile() {
+		return imageFile;
+	}
+
+	public void setImageFile(MultipartFile imageFile) {
+		this.imageFile = imageFile;
+	}
 
 	public Account toEntity() {
-		return new Account.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).build();
+		return new Account.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).setImage(image).build();
 	}
 
 	@Override
 	public String toString() {
-		return "AccountDto [accountId=" + accountId + ", email=" + email + ", password=" + password + ", userName=" + userName
-				+ ", nickName=" + nickName + "]";
+		return "AccountDto [accountId=" + accountId + ", email=" + email + ", password=" + password + ", userName="
+				+ userName + ", nickName=" + nickName + ", image=" + image + ", imageFile=" + imageFile.getOriginalFilename() + "]";
 	}
+
 }
