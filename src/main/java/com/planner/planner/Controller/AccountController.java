@@ -50,7 +50,7 @@ public class AccountController {
 	}
 	
 	@PutMapping(value="/{accountId}")
-	public ResponseEntity<Object> accountUpdate(@PathVariable int accountId, @RequestPart(value="data") AccountDto accountDto, @RequestPart(value="image") MultipartFile images) {
+	public ResponseEntity<Object> accountUpdate(@PathVariable int accountId, @RequestPart(value="data") AccountDto accountDto, @RequestPart(value="image") MultipartFile images) throws Exception {
 		accountDto.setImageFile(images);
 		logger.info(accountDto.toString());
 		//String path = fileStore.createFilePath(FileLocation.USER, images, "1");

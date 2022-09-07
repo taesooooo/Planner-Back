@@ -1,5 +1,6 @@
 package com.planner.planner.util;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -20,16 +21,17 @@ public class FileStore {
 		}
 	}
 	
-	//private static final String location = "image";
-	public FileStore() {
-		
-	}
+	private String baseLocation;
 	
-	public String createFilePath(FileLocation location, MultipartFile file, String subLocation) {
+	public FileStore(String baseLocation) {
+		this.baseLocation = baseLocation;
+	}
+
+	public String createFilePath(MultipartFile file, String subLocation){
 		StringBuilder builder = new StringBuilder();
-		builder.append(location).append("\\");
+		builder.append(baseLocation).append("\\");
 		builder.append(subLocation).append("\\");
-		builder.append(UUID.randomUUID().toString()).append("\\");
+		//builder.append(UUID.randomUUID().toString()).append("\\");
 		builder.append(file.getOriginalFilename());
 		return builder.toString();
 	}

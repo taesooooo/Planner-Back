@@ -11,7 +11,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@ComponentScan(basePackages = {"com.planner.planner.Service", "com.planner.planner.Dao"})
+@ComponentScan(basePackages = {"com.planner.planner.Service", "com.planner.planner.Dao", "com.planner.planner.util"})
 @PropertySource("classpath:config/config.properties")
 @EnableTransactionManagement
 public class RootAppContext {

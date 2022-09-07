@@ -1,5 +1,7 @@
 package com.planner.planner.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,6 +34,10 @@ public class AccountServiceImpl implements AccountService {
 	private AccountDao accountDao;
 	
 	private FileStore fileStore;
+	
+	public AccountServiceImpl(FileStore fileStore) {
+		this.fileStore = fileStore;
+	}
 
 	@Override
 	public AccountDto findById(int accountId) {
@@ -52,11 +58,22 @@ public class AccountServiceImpl implements AccountService {
 	}
 	
 	@Override
-	public AccountDto accountUpdate(AccountDto accountDto, MultipartFile image) {
-		String path = fileStore.createFilePath(FileLocation.USER, image, "1");
-		
+	public AccountDto accountUpdate(AccountDto accountDto, MultipartFile image) throws Exception {
+		String path = fileStore.createFilePath(image, "1");
+		logger.info(path);
 		// 이미지 저장
+		//C:\Users\Bear\Desktop\Planner\images
+		File file = new File("C:\\planner\\images");
 		
+		if(!file.exists()) {
+			file.mkdir();
+		}
+		
+		
+		
+//		file.setWritable(true);
+//		file.setReadable(true);
+		image.transferTo(file);
 		// DB 업데이트
 		
 		return null;

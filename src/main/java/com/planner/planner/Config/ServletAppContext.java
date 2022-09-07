@@ -18,7 +18,7 @@ import com.planner.planner.util.FileStore;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = { "com.planner.planner.Controller", "com.planner.planner.Util" })
+@ComponentScan(basePackages = { "com.planner.planner.Controller"})
 public class ServletAppContext implements WebMvcConfigurer {
 
 	@Bean
@@ -30,11 +30,6 @@ public class ServletAppContext implements WebMvcConfigurer {
 	}
 
 	@Bean
-	public FileStore fileStore() {
-		return new FileStore();
-	}
-
-	@Bean
 	public AuthInterceptor authInterceptor() {
 		return new AuthInterceptor();
 	}
@@ -42,11 +37,12 @@ public class ServletAppContext implements WebMvcConfigurer {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+		registry.addResourceHandler("/images/**").addResourceLocations("file:///planner\\images\\");
 	}
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(authInterceptor()).excludePathPatterns("/api/auth/**");
+		registry.addInterceptor(authInterceptor()).excludePathPatterns("/api/auth/**").excludePathPatterns("/images/**");
 	}
 
 }
