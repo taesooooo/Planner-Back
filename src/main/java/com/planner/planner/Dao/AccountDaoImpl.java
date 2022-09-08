@@ -27,13 +27,13 @@ public class AccountDaoImpl implements AccountDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private final String createSQL = "INSERT INTO ACCOUNT(email,password,name,nickname,create_date,update_date) VALUES(?,?,?,?, now(), now());";
-	private final String readSQL = "SELECT account_id, email, password, name, nickname, create_date, update_date FROM account WHERE email = ?";
+	private final String createSQL = "INSERT INTO ACCOUNT(email,password,name,nickname,image,create_date,update_date) VALUES(?,?,?,?,?, now(), now());";
+	private final String readSQL = "SELECT account_id, email, password, name, nickname, image, create_date, update_date FROM account WHERE account_id = ?";
 	private final String findByIdSQL = "SELECT account_id, email, password, name, nickname, create_date, update_date FROM account WHERE account_id = ?";
-	private final String updateSQL = "UPDATE ACCOUNT SET name = ?, nickname = ?, update_date = now() WHERE email = ?;";
+	private final String updateSQL = "UPDATE ACCOUNT SET name = ?, nickname = ?, image = ?, update_date = now() WHERE account_id = ?;";
 	private final String deleteSQL = "DELETE FROM ACCOUNT WHERE email = ?;";
-	private final String passwordUpdateSQL = "UPDATE account SET password = ?, update_date = now() WHERE email = ?";
-	private final String nicknameUpdateSQL = "UPDATE account SET nickname = ?, update_date = now() WHERE email = ?";
+	private final String passwordUpdateSQL = "UPDATE account SET password = ?, update_date = now() WHERE account_id = ?";
+	private final String nicknameUpdateSQL = "UPDATE account SET nickname = ?, update_date = now() WHERE account_id = ?";
 	private final String likePlannersSQL = "SELECT planner_id, title, plan_date_start, plan_date_end FROM planner WHERE planner_id "
 			+ "IN (SELECT planner_id FROM plannerlike WHERE account_id = ?);";
 	private final String likeSpotsSQL = "SELECT spot_id, spot_name, spot_image, country_name, city_name FROM spot WHERE spot_id "
@@ -42,36 +42,36 @@ public class AccountDaoImpl implements AccountDao {
 	@Override
 	public boolean create(Account account) {
 		int result = jdbcTemplate.update(createSQL, account.getEmail(), account.getPassword(), account.getUserName(),
-				account.getNickName());
+				account.getNickName(), "");
 		return result > 0 ? true : false;
 	}
 
 	@Override
 	public Account read(Account account) {
-		return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), account.getEmail());
+		return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), account.getAccountId());
 	}
 
 	@Override
 	public boolean update(Account account) {
-		int result = jdbcTemplate.update(updateSQL, account.getUserName(), account.getNickName(), account.getEmail());
+		int result = jdbcTemplate.update(updateSQL, account.getUserName(), account.getNickName(), account.getImage(), account.getAccountId());
 		return result > 0 ? true : false;
 	}
 
 	@Override
 	public boolean delete(Account account) {
-		int result = jdbcTemplate.update(deleteSQL, account.getEmail());
+		int result = jdbcTemplate.update(deleteSQL, account.getAccountId());
 		return result > 0 ? true : false;
 	}
 
 	@Override
 	public boolean passwordUpdate(Account account) {
-		int result = jdbcTemplate.update(passwordUpdateSQL, account.getPassword(),account.getEmail());
+		int result = jdbcTemplate.update(passwordUpdateSQL, account.getPassword(),account.getAccountId());
 		return result > 0 ? true : false;
 	}
 
 	@Override
 	public boolean nickNameUpdate(Account account) {
-		int result = jdbcTemplate.update(nicknameUpdateSQL, account.getNickName(),account.getEmail());
+		int result = jdbcTemplate.update(nicknameUpdateSQL, account.getNickName(),account.getAccountId());
 		return result > 0 ? true : false;
 	}
 

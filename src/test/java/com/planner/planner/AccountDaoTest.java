@@ -36,13 +36,6 @@ public class AccountDaoTest {
 	}
 	
 	@Test
-	@Transactional
-	public void nickUpdateTest() {
-		AccountDto test = new AccountDto.Builder().setAccountId(2).setEmail("test2@naver.com").setNickName("테스트 닉네임").build();
-		accountSerivce.nickNameUpdate(test);
-	}
-	
-	@Test
 	public void getLikesTest() {
 		LikeDto likes = accountSerivce.getLikes(1);
 		logger.info(likes.toString());

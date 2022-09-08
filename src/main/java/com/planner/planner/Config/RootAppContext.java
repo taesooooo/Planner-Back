@@ -10,8 +10,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.planner.planner.util.FileStore;
+
 @Configuration
-@ComponentScan(basePackages = {"com.planner.planner.Service", "com.planner.planner.Dao", "com.planner.planner.util"})
+@ComponentScan(basePackages = {"com.planner.planner.Service", "com.planner.planner.Dao"})
 @PropertySource("classpath:config/config.properties")
 @EnableTransactionManagement
 public class RootAppContext {
@@ -28,6 +30,9 @@ public class RootAppContext {
 	@Value("${jdbc.password}")
 	private String password;
 	
+	@Value("${upload.path}")
+	private String baseLocation;
+	
 	@Bean
 	public DataSource dataSource() {
 		DataSource dataSource = new DataSource();
@@ -36,6 +41,11 @@ public class RootAppContext {
 		dataSource.setUsername(username);
 		dataSource.setPassword(password);
 		return dataSource;
+	}
+	
+	@Bean
+	public FileStore fileStore() {
+		return new FileStore(baseLocation);
 	}
 	
 	@Bean

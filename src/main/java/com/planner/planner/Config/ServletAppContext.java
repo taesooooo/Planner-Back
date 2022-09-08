@@ -2,9 +2,11 @@ package com.planner.planner.Config;
 
 import javax.servlet.MultipartConfigElement;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -19,7 +21,11 @@ import com.planner.planner.util.FileStore;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "com.planner.planner.Controller"})
+@PropertySource("classpath:config/config.properties")
 public class ServletAppContext implements WebMvcConfigurer {
+	
+	@Value("${upload.path}")
+	private String baseLocation;
 
 	@Bean
 	public InternalResourceViewResolver viewResolver() {
@@ -37,7 +43,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-		registry.addResourceHandler("/images/**").addResourceLocations("file:///planner\\images\\");
+		registry.addResourceHandler("/images/**").addResourceLocations("file:///" + baseLocation);
 	}
 
 	@Override
