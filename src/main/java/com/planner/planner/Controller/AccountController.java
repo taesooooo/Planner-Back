@@ -53,7 +53,7 @@ public class AccountController {
 	public ResponseEntity<Object> accountUpdate(@PathVariable int accountId, @RequestPart(value="data") AccountDto accountDto, @RequestPart(value="image") MultipartFile images) throws Exception {
 		AccountDto account = accountService.accountUpdate(accountDto, images);
 		
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",account));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", account));
 	}
 	
 	@GetMapping(value="/{accountId}/likes")

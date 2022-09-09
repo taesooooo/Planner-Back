@@ -27,7 +27,7 @@ import com.planner.planner.util.ResponseMessage;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 	
 	@Autowired
 	private JwtUtil jwtUtil;
