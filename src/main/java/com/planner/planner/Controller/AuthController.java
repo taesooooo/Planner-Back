@@ -44,7 +44,7 @@ public class AuthController {
 		try {
 			boolean result = accountService.register(accountDto);
 			if (result) {
-				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "회원 가입 성공"));
+				return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "회원 가입 성공"));
 			}			
 		}
 		catch (DuplicateKeyException e) {
