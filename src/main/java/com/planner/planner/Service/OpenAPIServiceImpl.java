@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,7 +20,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Service
 public class OpenAPIServiceImpl implements OpenAPIService {
 
-	private String serviceKey = "QpWblNAbNFefMYdShDqp0elSoLQQ5xs0Ux6wWDIf0slglvoTxEreHROiRDHwbJ5O0iGuF3K4S7C8r43T5j7mkg%3D%3D";
+	private String baseUrl = "http://apis.data.go.kr/B551011/KorService";
+	
+	@Value("${openAPI.serviceKey}")
+	private String serviceKey;
 	private String mobileOS = "ETC";
 	private String mobileApp = "planner";
 	private int numOfRows = 10;
@@ -27,7 +31,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	@Override
 	public ObjectNode getAreaNum()
 	{
-		String apiUrl = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaCode?ServiceKey="+serviceKey
+		String apiUrl = baseUrl+"/areaCode?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
 				+"&numOfRows="+numOfRows
@@ -39,9 +43,9 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	}
 
 	@Override
-	public ObjectNode getTouristAreaList(int areaCode, int contentTypeId, int index)
+	public ObjectNode getAreaList(int areaCode, int contentTypeId, int index)
 	{
-		String apiUrl = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaBasedList?ServiceKey="+serviceKey
+		String apiUrl = baseUrl+"/areaBasedList?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
 				+"&numOfRows="+numOfRows
@@ -53,15 +57,30 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		ObjectNode data = getApiData(apiUrl);
 		return data;
 	}
-	
 
 	@Override
-	public ObjectNode getTouristKeyword(int areaCode, int contentTypeId, String keyword, int index)
+	public ObjectNode getLocationBasedList(double mapX, double mapY, int radius, int index) {
+		String apiUrl = baseUrl+"/areaBasedList?ServiceKey="+serviceKey
+				+"&MobileOS="+mobileOS
+				+"&MobileApp="+mobileApp
+				+"&numOfRows="+numOfRows
+				+"&pageNo="+index
+				+"&mapX="+mapX
+				+"&mapY="+mapY
+				+"&radius="+radius
+				+"&_type=json";
+		
+		ObjectNode data = getApiData(apiUrl);
+		return data;
+	}
+
+	@Override
+	public ObjectNode getKeyword(int areaCode, int contentTypeId, String keyword, int index)
 	{
 		ObjectNode data = null;
 		try
 		{
-			String apiUrl = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?ServiceKey="+serviceKey
+			String apiUrl = baseUrl+"/searchKeyword?ServiceKey="+serviceKey
 					+"&MobileOS="+mobileOS
 					+"&MobileApp="+mobileApp
 					+"&numOfRows="+numOfRows
@@ -82,11 +101,11 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	}
 
 	@Override
-	public ObjectNode getTouristDetail(int contentId)
+	public ObjectNode getDetail(int contentId)
 	{
 		ObjectNode data = null;
 
-		String apiUrl = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailCommon?ServiceKey="+serviceKey
+		String apiUrl = baseUrl+"/detailCommon?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
 				+"&contentId="+contentId
@@ -97,7 +116,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 				+"&_type=json";
 		
 		data = getApiData(apiUrl);
-		System.out.println(apiUrl);
+
 		return data;
 	}
 

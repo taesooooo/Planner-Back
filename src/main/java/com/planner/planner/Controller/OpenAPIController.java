@@ -35,9 +35,19 @@ public class OpenAPIController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", data));
 	}
 	
-	@GetMapping(value= "/lists-base")
-	public ResponseEntity<Object> TouristAreaList(@RequestParam int areaCode, @RequestParam int contentTypeId, @RequestParam int index) {
-		ObjectNode data = oService.getTouristAreaList(areaCode, contentTypeId, index);
+	@GetMapping(value= "/lists-area")
+	public ResponseEntity<Object> getAreaList(@RequestParam int areaCode, @RequestParam int contentTypeId, @RequestParam int index) {
+		ObjectNode data = oService.getAreaList(areaCode, contentTypeId, index);
+		if(data.get("error") != null) {
+			return ResponseEntity.status(data.get("error").get("code").asInt()).body(new ResponseMessage(false, data.get("error").get("message").asText()));
+		}
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", data));
+	}
+	
+	@GetMapping(value="/list-location")
+	public ResponseEntity<Object> getLocationList(@RequestParam double mapX, @RequestParam double mapY, @RequestParam int radius, @RequestParam int index) {
+		ObjectNode data = oService.getLocationBasedList(mapX, mapY, radius, index);
 		if(data.get("error") != null) {
 			return ResponseEntity.status(data.get("error").get("code").asInt()).body(new ResponseMessage(false, data.get("error").get("message").asText()));
 		}
@@ -46,8 +56,8 @@ public class OpenAPIController {
 	}
 	
 	@GetMapping(value= "/lists-keyword")
-	public ResponseEntity<Object> TouristKeyword(@RequestParam int areaCode, @RequestParam int contentTypeId,@RequestParam String keyword, @RequestParam int index) {
-		ObjectNode data = oService.getTouristKeyword(areaCode, contentTypeId, keyword, index);
+	public ResponseEntity<Object> getKeyword(@RequestParam int areaCode, @RequestParam int contentTypeId,@RequestParam String keyword, @RequestParam int index) {
+		ObjectNode data = oService.getKeyword(areaCode, contentTypeId, keyword, index);
 		if(data.get("error") != null) {
 			return ResponseEntity.status(data.get("error").get("code").asInt()).body(new ResponseMessage(false, data.get("error").get("message").asText()));
 		}
@@ -56,8 +66,8 @@ public class OpenAPIController {
 	}
 	
 	@GetMapping(value= "/lists/{contentId}")
-	public ResponseEntity<Object> TouristDetail(@PathVariable int contentId) {
-		ObjectNode data = oService.getTouristDetail(contentId);
+	public ResponseEntity<Object> getDetail(@PathVariable int contentId) {
+		ObjectNode data = oService.getDetail(contentId);
 		if(data.get("error") != null) {
 			return ResponseEntity.status(data.get("error").get("code").asInt()).body(new ResponseMessage(false, data.get("error").get("message").asText()));
 		}
