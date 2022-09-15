@@ -42,7 +42,7 @@ public class PlannerTest {
 	
 	@Test
 	public void likeCancelPlannerTest() {
-		boolean result = pService.likeCancel(3, 2);
+		boolean result = pService.likeCancel(1, 3);
 		assertTrue(result);
 	}
 	

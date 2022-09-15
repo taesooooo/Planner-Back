@@ -9,44 +9,39 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.planner.planner.Dao.SpotDao;
 import com.planner.planner.Dto.SpotDto;
+import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Entity.Spot;
+import com.planner.planner.Entity.SpotLike;
 
 @Service
 @Transactional
 public class SpotServiceImpl implements SpotService {
 
-	@Autowired
 	private SpotDao spotDao;
 	
-	@Override
-	public List<SpotDto> getAllSpot() {
-		return spotDao.getAllSpot().stream().map((s) -> {
-			return new SpotDto.Builder()
-					.setSpotId(s.getSpotId())
-					.setSpotName(s.getSpotName())
-					.setSpotImage(s.getSpotImage())
-					.setContryName(s.getContryName())
-					.setCityName(s.getCityName())
-					.setDetail(s.getDetail())
-					.setLikeCount(s.getLikeCount())
-					.build();
-		}).collect(Collectors.toList());
+	public SpotServiceImpl(SpotDao spotDao) {
+		this.spotDao = spotDao;
 	}
 
 	@Override
-	public boolean spotLike(int accountId, int spotId) {
-		boolean result =  spotDao.spotLike(spotId);
-		result = spotDao.spotLikeAdd(accountId, spotId);
+	public List<SpotLikeDto> spotLikesFindByAccountId(int accountId) {
+		return spotDao.spotLikesByAccountId(accountId);
+	}
+
+	@Override
+	public boolean spotLike(int accountId, int contentId) {
+		//boolean result =  spotDao.spotLike(contentId);
+		//result = spotDao.spotLikeAdd(contentId, accountId);
 		
-		return result;
+		return spotDao.spotLikeAdd(accountId, contentId);
 	}
 
 	@Override
-	public boolean spotLikeCancel(int accountId, int spotId) {
-		boolean result = spotDao.spotLikeCancel(spotId);
-		result = spotDao.spotLikeDelete(accountId, spotId);
+	public boolean spotLikeCancel(int accountId, int contentId) {
+//		boolean result = spotDao.spotLikeCancel(contentId);
+//		result = spotDao.spotLikeDelete(accountId, contentId);
 
-		return result;
+		return spotDao.spotLikeDelete(accountId, contentId);
 	}
 
 }

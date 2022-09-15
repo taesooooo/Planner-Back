@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Dto.SpotDto;
+import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Service.SpotService;
 import com.planner.planner.util.ResponseMessage;
@@ -27,28 +28,31 @@ import com.planner.planner.util.ResponseMessage;
 public class SpotController {
 	private static final Logger logger = LoggerFactory.getLogger(SpotController.class);
 	
-	@Autowired
 	private SpotService spotService;
 	
-	@GetMapping
-	public ResponseEntity<Object> spots(HttpServletRequest req) {
-		List<SpotDto> spots = spotService.getAllSpot();
+	public SpotController(SpotService spotService) {
+		this.spotService = spotService;
+	}
+	
+	@GetMapping(value = "/{accountId}")
+	public ResponseEntity<Object> spots(HttpServletRequest req, @PathVariable int accountId) {
+		List<SpotLikeDto> spots = spotService.spotLikesFindByAccountId(accountId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true,"", spots));
 	}
 	
-	@PostMapping(value = "/{spotId}/likes")
-	public ResponseEntity<Object> spotLike(HttpServletRequest req, @PathVariable int spotId) {
+	@PostMapping(value = "/likes/{contentId}")
+	public ResponseEntity<Object> spotLike(HttpServletRequest req, @PathVariable int contentId) {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		boolean result = spotService.spotLike(id, spotId);
+		boolean result = spotService.spotLike(id, contentId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,""));
 	}
 	
-	@DeleteMapping(value = "/{spotId}/likes")
-	public ResponseEntity<Object> spotCancelLike(HttpServletRequest req, @PathVariable int spotId) {
+	@DeleteMapping(value = "/likes/{contentId}")
+	public ResponseEntity<Object> spotCancelLike(HttpServletRequest req, @PathVariable int contentId) {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		boolean result = spotService.spotLike(id, spotId);
+		boolean result = spotService.spotLike(id, contentId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,""));
 	}
 	
