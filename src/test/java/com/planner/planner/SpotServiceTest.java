@@ -26,8 +26,8 @@ import com.planner.planner.Service.SpotService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class})
 @Transactional
-public class SpotTest {
-	private static final Logger logger = LoggerFactory.getLogger(SpotTest.class);
+public class SpotServiceTest {
+	private static final Logger logger = LoggerFactory.getLogger(SpotServiceTest.class);
 	
 	@Autowired
 	private SpotService service;

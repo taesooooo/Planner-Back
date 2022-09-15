@@ -21,7 +21,6 @@ public class AccountDto {
 	private String nickName;
 	
 	private String image;
-	private MultipartFile imageFile;
 	
 	public static class Builder {
 		private int accountId;
@@ -30,7 +29,6 @@ public class AccountDto {
 		private String userName;
 		private String nickName;
 		private String image;
-		private MultipartFile imageFile;
 		
 		public Builder setAccountId(int accountId) {
 			this.accountId = accountId;
@@ -62,11 +60,6 @@ public class AccountDto {
 			return this;
 		}
 
-		public Builder setImageFile(MultipartFile imageFile) {
-			this.imageFile = imageFile;
-			return this;
-		}
-
 		public AccountDto build() {
 			return new AccountDto(this);
 		}
@@ -83,7 +76,6 @@ public class AccountDto {
 		this.userName = builder.userName;
 		this.nickName = builder.nickName;
 		this.image = builder.image;
-		this.imageFile = builder.imageFile;
 	}
 	
 	public int getAccountId() {
@@ -134,14 +126,6 @@ public class AccountDto {
 		this.image = image;
 	}
 
-	public MultipartFile getImageFile() {
-		return imageFile;
-	}
-
-	public void setImageFile(MultipartFile imageFile) {
-		this.imageFile = imageFile;
-	}
-
 	public Account toEntity() {
 		return new Account.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).setImage(image).build();
 	}
@@ -149,7 +133,6 @@ public class AccountDto {
 	@Override
 	public String toString() {
 		return "AccountDto [accountId=" + accountId + ", email=" + email + ", password=" + password + ", userName="
-				+ userName + ", nickName=" + nickName + ", image=" + image + ", imageFile=" + imageFile.getOriginalFilename() + "]";
+				+ userName + ", nickName=" + nickName + ", image=" + image + "]";
 	}
-
 }

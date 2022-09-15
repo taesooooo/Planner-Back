@@ -44,6 +44,7 @@ import com.planner.planner.util.JwtUtil;
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
+@Transactional
 public class AccountTest {
 	private static final Logger logger = LoggerFactory.getLogger(AccountTest.class);
 	@Autowired
@@ -67,7 +68,6 @@ public class AccountTest {
 	}
 	
 	@Test
-	@Transactional
 	public void 계정생성테스트() throws Exception{
 		AccountDto test = new AccountDto.Builder().setAccountId(0).setEmail("test0@naver.com").setPassword("1234").setUserName("test0").setNickName("test0").build();
 		ObjectNode node = mapper.createObjectNode();
@@ -91,7 +91,7 @@ public class AccountTest {
 		MockMultipartFile data = new MockMultipartFile("data", "data", MediaType.APPLICATION_JSON_VALUE, jsonConvert.getBytes());
 		MockMultipartFile image = new MockMultipartFile("image", "test.jpg", MediaType.IMAGE_JPEG_VALUE,"<<jpeg data>>".getBytes());
 		
-		mockMvc.perform(multipart("/api/users/0")
+		mockMvc.perform(multipart("/api/users/1")
 				.file(data)
 				.file(image)
 				.with(request -> {request.setMethod("PUT"); return request;})

@@ -28,6 +28,7 @@ import com.planner.planner.util.FileStore;
 import com.planner.planner.util.FileStore.FileLocation;
 
 @Service
+@Transactional
 public class AccountServiceImpl implements AccountService {
 	private static final Logger logger = LoggerFactory.getLogger(AccountDaoImpl.class);
 	
