@@ -132,7 +132,7 @@ public class AccountDto {
 
 	@Override
 	public String toString() {
-		return "AccountDto [accountId=" + accountId + ", email=" + email + ", password=" + password + ", userName="
+		return "AccountDto [accountId=" + accountId + ", email=" + email + ", userName="
 				+ userName + ", nickName=" + nickName + ", image=" + image + "]";
 	}
 }

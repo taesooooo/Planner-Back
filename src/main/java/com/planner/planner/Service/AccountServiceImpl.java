@@ -22,22 +22,22 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotDto;
+import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Entity.Like;
 import com.planner.planner.util.FileStore;
-import com.planner.planner.util.FileStore.FileLocation;
 
 @Service
 @Transactional
 public class AccountServiceImpl implements AccountService {
 	private static final Logger logger = LoggerFactory.getLogger(AccountDaoImpl.class);
 	
-	@Autowired
 	private AccountDao accountDao;
 	
 	private FileStore fileStore;
 	
-	public AccountServiceImpl(FileStore fileStore) {
+	public AccountServiceImpl(AccountDao accountDao,FileStore fileStore) {
+		this.accountDao = accountDao;
 		this.fileStore = fileStore;
 	}
 
@@ -50,6 +50,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	@Transactional
 	public boolean register(AccountDto accountDto) {
+		logger.info("test");
 		return accountDao.create(accountDto.toEntity());
 	}
 
@@ -90,22 +91,38 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
+	public boolean accountImageUpdate(int accountId, MultipartFile image) throws Exception {
+		// 이미지 경로 생성
+		Image path = fileStore.createFilePath(image, "Account");
+		
+		// 기존 이미지 확인 후 삭제
+		File previousImage = fileStore.getFile(fileStore.getBaseLocation() + path);
+		if(previousImage != null) {
+			previousImage.delete();
+		}
+		
+		// 이미지 저장
+		File file = new File(path.getAbsolutePath());
+		if(!file.getParentFile().exists()) {
+			file.getParentFile().mkdir();
+		}
+		
+		image.transferTo(file);
+		
+		// DB 업데이트
+		return accountDao.accountImageUpdate(accountId, path.getPath());
+	}
+
+	@Override
 	public boolean passwordUpdate(AccountDto accountDto) {
 		return accountDao.passwordUpdate(accountDto.toEntity());
 	}
 
 	@Override
-	public LikeDto getLikes(int accountId) {
-		List<PlannerDto> likeP = accountDao.likePlanners(accountId).stream().map((p) -> p.toDto()).collect(Collectors.toList());
-		List<SpotDto> likeS = accountDao.likeSpots(accountId).stream().map((s) -> {
-			return new SpotDto.Builder()
-					.setSpotId(s.getSpotId())
-					.setSpotName(s.getSpotName())
-					.setSpotImage(s.getSpotImage())
-					.setContryName(s.getContryName())
-					.setCityName(s.getCityName())
-					.build();
-		}).collect(Collectors.toList());
+	public LikeDto allLikes(int accountId) {
+		List<PlannerDto> likeP = accountDao.likePlanners(accountId);
+		List<SpotLikeDto> likeS = accountDao.likeSpots(accountId);
+		
 		return new LikeDto.Builder().setLikePlanners(likeP).setLikeSpots(likeS).build();
 	}
 

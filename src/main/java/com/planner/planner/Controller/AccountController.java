@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,6 @@ import com.planner.planner.Entity.Account;
 import com.planner.planner.Exception.NotFoundToken;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.util.FileStore;
-import com.planner.planner.util.FileStore.FileLocation;
 import com.planner.planner.util.ResponseMessage;
 
 @RestController
@@ -56,6 +56,16 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", account));
 	}
 	
+	@PatchMapping(value="/{accountId}")
+	public ResponseEntity<Object> accountImageUpdate(@PathVariable int accountId, @RequestPart(value="image") MultipartFile image) throws Exception {
+		if(accountService.accountImageUpdate(accountId, image)) {
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "계정 이미지 변경을 성공헀습니다."));
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(false, "계정 이미지 변경을 실패헀습니다."));
+		}
+	}
+	
 	@GetMapping(value="/{accountId}/likes")
 	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId) {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
@@ -63,7 +73,7 @@ public class AccountController {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
 		}
 		
-		LikeDto likes =  accountService.getLikes(accountId);
+		LikeDto likes =  accountService.allLikes(accountId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",likes));
 	}
 	

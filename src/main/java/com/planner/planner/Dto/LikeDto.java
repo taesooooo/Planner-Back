@@ -8,18 +8,18 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(value = Include.NON_NULL)
 public class LikeDto {
 	List<PlannerDto> likePlanners;
-	List<SpotDto> likeSpots;
+	List<SpotLikeDto> likeSpots;
 	
 	public static class Builder {
 		List<PlannerDto> likePlanners;
-		List<SpotDto> likeSpots;
+		List<SpotLikeDto> likeSpots;
 
 		public Builder setLikePlanners(List<PlannerDto> likePlanners) {
 			this.likePlanners = likePlanners;
 			return this;
 		}
 		
-		public Builder setLikeSpots(List<SpotDto> likeSpots) {
+		public Builder setLikeSpots(List<SpotLikeDto> likeSpots) {
 			this.likeSpots = likeSpots;
 			return this;
 		}
@@ -45,11 +45,11 @@ public class LikeDto {
 		this.likePlanners = likePlanners;
 	}
 
-	public List<SpotDto> getLikeSpots() {
+	public List<SpotLikeDto> getLikeSpots() {
 		return likeSpots;
 	}
 
-	public void setLikeSpots(List<SpotDto> likeSpots) {
+	public void setLikeSpots(List<SpotLikeDto> likeSpots) {
 		this.likeSpots = likeSpots;
 	}
 

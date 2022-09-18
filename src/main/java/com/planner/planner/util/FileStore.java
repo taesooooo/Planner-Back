@@ -16,18 +16,6 @@ import com.planner.planner.Common.Image;
 
 @Component
 public class FileStore {
-	public enum FileLocation {
-		USER("user");
-		
-		private String location;
-		FileLocation(String location) {
-			this.location = location;
-		}
-		
-		public String locationName() {
-			return location;
-		}
-	}
 	
 	private String baseLocation;
 	

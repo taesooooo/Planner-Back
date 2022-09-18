@@ -6,6 +6,16 @@ public class Image {
 	private String absolutePath;
 	private String name;
 	
+	public Image() {
+		
+	}
+
+	public Image(String path, String absolutePath, String name) {
+		this.path = path;
+		this.absolutePath = absolutePath;
+		this.name = name;
+	}
+	
 	public String getPath() {
 		return path;
 	}
