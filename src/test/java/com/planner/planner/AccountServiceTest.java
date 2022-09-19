@@ -74,33 +74,6 @@ public class AccountServiceTest {
 	}
 	
 	@Test
-	public void 계정생성() {
-		Account ac = testDto.toEntity();
-		when(accountDao.create(ac)).thenReturn(true);
-		
-		boolean result = accountService.register(testDto);
-		
-		verify(accountDao).create(ac);
-		assertTrue(result);
-	}
-	
-	@Test
-	public void 계정가져오기() {
-		Account ac = testDto.toEntity();
-		when(accountDao.findById(testDto.getAccountId())).thenReturn(ac);
-		
-		AccountDto user = accountService.findById(testDto.getAccountId());
-		
-		verify(accountDao).findById(testDto.getAccountId());
-		
-		assertEquals(user.getAccountId(), testDto.getAccountId());
-		assertEquals(user.getEmail(), testDto.getEmail());
-		assertEquals(user.getUserName(), testDto.getUserName());
-		assertEquals(user.getNickName(), testDto.getNickName());
-		assertEquals(user.getImage(), testDto.getImage());
-	}
-	
-	@Test
 	public void 계정이미지변경() throws Exception {
 		MockMultipartFile imageFile = new MockMultipartFile("image", "test.jpg", MediaType.IMAGE_JPEG_VALUE,"<<jpeg data>>".getBytes());
 		File dir = folder.newFolder("image\\test");

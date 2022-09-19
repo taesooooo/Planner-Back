@@ -45,8 +45,8 @@ import com.planner.planner.util.JwtUtil;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
 @Transactional
-public class AccountTest {
-	private static final Logger logger = LoggerFactory.getLogger(AccountTest.class);
+public class AccountControllerTest {
+	private static final Logger logger = LoggerFactory.getLogger(AccountControllerTest.class);
 	@Autowired
 	private WebApplicationContext context;
 	
@@ -58,26 +58,24 @@ public class AccountTest {
 	private ObjectMapper mapper = new ObjectMapper();
 	
 	private String token;
-	private AccountDto testDto;
 
 	@Before
 	public void setUp() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		token = jwtUtil.createToken(0);
-		testDto = new AccountDto.Builder().setAccountId(1).setEmail("test@naver.com").setUserName("test").setNickName("test").build();
+		token = jwtUtil.createToken(1);
 	}
 	
 	@Test
-	public void 계정생성테스트() throws Exception{
-		AccountDto test = new AccountDto.Builder().setAccountId(0).setEmail("test0@naver.com").setPassword("1234").setUserName("test0").setNickName("test0").build();
+	public void 회원가입() throws Exception{
+		AccountDto testDto = new AccountDto.Builder().setAccountId(0).setEmail("test0@naver.com").setPassword("1234").setUserName("test0").setNickName("test0").build();
 		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", test.getAccountId());
-		node.put("email", test.getEmail());
-		node.put("password", test.getPassword());
-		node.put("username",test.getUserName());
-		node.put("nickname", test.getNickName());
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUserName());
+		node.put("nickname", testDto.getNickName());
 		
-		mockMvc.perform(post("/api/auth/register")
+		mockMvc.perform(post("/api/users/register")
 				.content(node.toString())
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(print())
@@ -85,20 +83,59 @@ public class AccountTest {
 	}
 	
 	@Test
-	public void 계정프로필수정테스트() throws Exception {
-		String jsonConvert = mapper.writeValueAsString(testDto);
+	public void 로그인() throws Exception {
+		ObjectNode node = mapper.createObjectNode();
+		node.put("email","test@naver.com");
+		node.put("password", "1234");
 		
-		MockMultipartFile data = new MockMultipartFile("data", "data", MediaType.APPLICATION_JSON_VALUE, jsonConvert.getBytes());
+		mockMvc.perform(post("/api/users/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 계정가져오기() throws Exception {
+		mockMvc.perform(get("/api/users/1")
+				.header("Authorization", token)
+				.accept(MediaType.APPLICATION_JSON))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 계정정보수정() throws Exception {
+		AccountDto test = new AccountDto.Builder().setAccountId(1).setEmail("test@naver.com").setUserName("test").setNickName("test").build();
+		mockMvc.perform(put("/api/users/1")
+				.content(mapper.writeValueAsString(test))
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.accept(MediaType.APPLICATION_JSON))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 계정이미지수정() throws Exception {
 		MockMultipartFile image = new MockMultipartFile("image", "test.jpg", MediaType.IMAGE_JPEG_VALUE,"<<jpeg data>>".getBytes());
 		
 		mockMvc.perform(multipart("/api/users/1")
-				.file(data)
 				.file(image)
-				.with(request -> {request.setMethod("PUT"); return request;})
+				.with(request -> {request.setMethod("PATCH"); return request;})
 				//.contentType(MediaType.MULTIPART_FORM_DATA)
 				.header("Authorization", token)
 				.accept(MediaType.APPLICATION_JSON)
 				)
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 계정좋아요모두가져오기() throws Exception {
+		mockMvc.perform(get("/api/users/1/likes")
+				.header("Authorization", token)
+				.accept(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isOk());
 	}

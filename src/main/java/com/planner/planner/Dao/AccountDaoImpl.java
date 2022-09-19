@@ -31,13 +31,12 @@ public class AccountDaoImpl implements AccountDao {
 
 	private static final Logger logger = LoggerFactory.getLogger(AccountDaoImpl.class);
 
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
 	private final String createSQL = "INSERT INTO ACCOUNT(email,password,name,nickname, image,create_date,update_date) VALUES(?,?,?,?,?, now(), now());";
 	private final String readSQL = "SELECT account_id, email, password, name, nickname, image, create_date, update_date FROM account WHERE email = ?";
 	private final String findByIdSQL = "SELECT account_id, email, password, name, nickname, image, create_date, update_date FROM account WHERE account_id = ?";
-	private final String updateSQL = "UPDATE ACCOUNT SET name = ?, nickname = ?, image = ?, update_date = now() WHERE account_id = ?;";
+	private final String updateSQL = "UPDATE ACCOUNT SET name = ?, nickname = ?, update_date = now() WHERE account_id = ?;";
 	private final String deleteSQL = "DELETE FROM ACCOUNT WHERE email = ?;";
 	private final String imageUpdateSQL = "UPDATE account SET image = ?, update_date = now() WHERE account_id = ?";
 	private final String passwordUpdateSQL = "UPDATE account SET password = ?, update_date = now() WHERE account_id = ?";
@@ -46,6 +45,10 @@ public class AccountDaoImpl implements AccountDao {
 			+ "IN (SELECT planner_id FROM plannerlike WHERE account_id = ?);";
 	private final String likeSpotsSQL = "SELECT like_id, account_id, content_id, like_date FROM spotlike WHERE account_id = ?;";
 
+	public AccountDaoImpl(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
+	
 	@Override
 	public boolean create(Account account) {
 		int result = jdbcTemplate.update(createSQL, account.getEmail(), account.getPassword(), account.getUserName(),
@@ -60,7 +63,7 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public boolean update(Account account) {
-		int result = jdbcTemplate.update(updateSQL, account.getUserName(), account.getNickName(), account.getImage(),
+		int result = jdbcTemplate.update(updateSQL, account.getUserName(), account.getNickName(),
 				account.getAccountId());
 		return result > 0 ? true : false;
 	}

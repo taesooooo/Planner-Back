@@ -6,13 +6,16 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +30,7 @@ import com.planner.planner.Entity.Account;
 import com.planner.planner.Exception.NotFoundToken;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.util.FileStore;
+import com.planner.planner.util.JwtUtil;
 import com.planner.planner.util.ResponseMessage;
 
 @RestController
@@ -34,9 +38,11 @@ import com.planner.planner.util.ResponseMessage;
 public class AccountController {
 	private final static Logger logger = LoggerFactory.getLogger(AccountController.class);
 
-	@Autowired
 	private AccountService accountService;
-
+	
+	public AccountController(AccountService accountService) {
+		this.accountService = accountService;
+	}
 	
 	@GetMapping(value="/{accountId}")
 	public ResponseEntity<Object> account(HttpServletRequest req, @PathVariable int accountId) throws Exception {
@@ -50,10 +56,12 @@ public class AccountController {
 	}
 	
 	@PutMapping(value="/{accountId}")
-	public ResponseEntity<Object> accountUpdate(@PathVariable int accountId, @RequestPart(value="data") AccountDto accountDto, @RequestPart(value="image") MultipartFile images) throws Exception {
-		AccountDto account = accountService.accountUpdate(accountDto, images);
+	public ResponseEntity<Object> accountUpdate(@PathVariable int accountId, @RequestBody AccountDto accountDto) throws Exception {
+		if(accountService.accountUpdate(accountDto)) {
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "계정 정보 변경을 성공헀습니다."));
+		}
 		
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", account));
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(true, "계정 정보 변경을 실패했습니다."));
 	}
 	
 	@PatchMapping(value="/{accountId}")

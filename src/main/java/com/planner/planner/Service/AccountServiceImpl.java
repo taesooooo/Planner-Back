@@ -46,48 +46,10 @@ public class AccountServiceImpl implements AccountService {
 		Account user = accountDao.findById(accountId);
 		return user.toDto();
 	}
-
-	@Override
-	@Transactional
-	public boolean register(AccountDto accountDto) {
-		logger.info("test");
-		return accountDao.create(accountDto.toEntity());
-	}
-
-	@Override
-	public AccountDto login(AccountDto accountDto) {
-		Account user = accountDao.read(accountDto.toEntity());
-		return user.toDto();
-	}
 	
 	@Override
-	public AccountDto accountUpdate(AccountDto accountDto, MultipartFile image) throws Exception {
-		// 이미지 경로 생성
-		Image path = fileStore.createFilePath(image, "Account");
-		
-		// 기존 이미지 확인 후 삭제
-		File previousImage = fileStore.getFile(fileStore.getBaseLocation() + path);
-		if(previousImage != null) {
-			previousImage.delete();
-		}
-		
-		// 이미지 저장
-		File file = new File(path.getAbsolutePath());
-		if(!file.getParentFile().exists()) {
-			file.getParentFile().mkdir();
-		}
-		
-		accountDto.setImage(path.getPath());
-		
-		image.transferTo(file);
-		
-		// DB 업데이트
-		accountDao.update(accountDto.toEntity());
-		
-		// 변경된 DB 가져오기
-		AccountDto account = accountDao.read(accountDto.toEntity()).toDto();
-		
-		return account;
+	public boolean accountUpdate(AccountDto accountDto) throws Exception {
+		return accountDao.update(accountDto.toEntity());
 	}
 
 	@Override

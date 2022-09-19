@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Service.AccountService;
+import com.planner.planner.Service.AuthService;
 import com.planner.planner.util.JwtUtil;
 import com.planner.planner.util.ResponseMessage;
 
@@ -29,20 +30,23 @@ import com.planner.planner.util.ResponseMessage;
 public class AuthController {
 	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 	
-	@Autowired
+	private AuthService authService;
+	
 	private JwtUtil jwtUtil;
 
-	@Autowired
-	private AccountService accountService;
-
-	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	
+	public AuthController(AuthService authService, BCryptPasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+		this.authService = authService;
+		this.passwordEncoder = passwordEncoder;
+		this.jwtUtil = jwtUtil;
+	}
 
 	@PostMapping(value = "/register")
 	public ResponseEntity<Object> register(HttpServletRequest req, @RequestBody AccountDto accountDto) {
 		accountDto.setPassword(passwordEncoder.encode(accountDto.getPassword()));
 		try {
-			boolean result = accountService.register(accountDto);
+			boolean result = authService.register(accountDto);
 			if (result) {
 				return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "회원 가입 성공"));
 			}			
@@ -56,7 +60,7 @@ public class AuthController {
 	@PostMapping(value = "/login")
 	public ResponseEntity<Object> login(HttpServletRequest req, @RequestBody AccountDto accountDto) {
 		try {
-			AccountDto user = accountService.login(accountDto);
+			AccountDto user = authService.login(accountDto);
 			if (passwordEncoder.matches(accountDto.getPassword(), user.getPassword())) {
 				String token = jwtUtil.createToken(user.getAccountId());
 				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "로그인 성공", user,token));
