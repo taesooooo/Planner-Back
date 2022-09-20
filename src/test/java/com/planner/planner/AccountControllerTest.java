@@ -75,7 +75,7 @@ public class AccountControllerTest {
 		node.put("username",testDto.getUserName());
 		node.put("nickname", testDto.getNickName());
 		
-		mockMvc.perform(post("/api/users/register")
+		mockMvc.perform(post("/api/auth/register")
 				.content(node.toString())
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(print())
@@ -88,7 +88,7 @@ public class AccountControllerTest {
 		node.put("email","test@naver.com");
 		node.put("password", "1234");
 		
-		mockMvc.perform(post("/api/users/login")
+		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
 		.andDo(print())
