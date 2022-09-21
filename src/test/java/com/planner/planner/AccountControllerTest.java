@@ -3,6 +3,7 @@ package com.planner.planner;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -66,36 +67,6 @@ public class AccountControllerTest {
 	}
 	
 	@Test
-	public void 회원가입() throws Exception{
-		AccountDto testDto = new AccountDto.Builder().setAccountId(0).setEmail("test0@naver.com").setPassword("1234").setUserName("test0").setNickName("test0").build();
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUserName());
-		node.put("nickname", testDto.getNickName());
-		
-		mockMvc.perform(post("/api/auth/register")
-				.content(node.toString())
-				.contentType(MediaType.APPLICATION_JSON))
-		.andDo(print())
-		.andExpect(status().isCreated());
-	}
-	
-	@Test
-	public void 로그인() throws Exception {
-		ObjectNode node = mapper.createObjectNode();
-		node.put("email","test@naver.com");
-		node.put("password", "1234");
-		
-		mockMvc.perform(post("/api/auth/login")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isOk());
-	}
-	
-	@Test
 	public void 계정가져오기() throws Exception {
 		mockMvc.perform(get("/api/users/1")
 				.header("Authorization", token)
@@ -106,8 +77,8 @@ public class AccountControllerTest {
 	
 	@Test
 	public void 계정정보수정() throws Exception {
-		AccountDto test = new AccountDto.Builder().setAccountId(1).setEmail("test@naver.com").setUserName("test").setNickName("test").build();
-		mockMvc.perform(put("/api/users/1")
+		AccountDto test = new AccountDto.Builder().setAccountId(1).setNickName("test").setPhone("01012341234").build();
+		mockMvc.perform(patch("/api/users/1")
 				.content(mapper.writeValueAsString(test))
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -120,7 +91,7 @@ public class AccountControllerTest {
 	public void 계정이미지수정() throws Exception {
 		MockMultipartFile image = new MockMultipartFile("image", "test.jpg", MediaType.IMAGE_JPEG_VALUE,"<<jpeg data>>".getBytes());
 		
-		mockMvc.perform(multipart("/api/users/1")
+		mockMvc.perform(multipart("/api/users/images/1")
 				.file(image)
 				.with(request -> {request.setMethod("PATCH"); return request;})
 				//.contentType(MediaType.MULTIPART_FORM_DATA)
@@ -133,7 +104,7 @@ public class AccountControllerTest {
 	
 	@Test
 	public void 계정좋아요모두가져오기() throws Exception {
-		mockMvc.perform(get("/api/users/1/likes")
+		mockMvc.perform(get("/api/users/likes/1")
 				.header("Authorization", token)
 				.accept(MediaType.APPLICATION_JSON))
 		.andDo(print())

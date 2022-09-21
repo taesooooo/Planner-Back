@@ -33,10 +33,10 @@ public class AccountDaoImpl implements AccountDao {
 
 	private JdbcTemplate jdbcTemplate;
 
-	private final String createSQL = "INSERT INTO ACCOUNT(email,password,name,nickname, image,create_date,update_date) VALUES(?,?,?,?,?, now(), now());";
-	private final String readSQL = "SELECT account_id, email, password, name, nickname, image, create_date, update_date FROM account WHERE email = ?";
-	private final String findByIdSQL = "SELECT account_id, email, password, name, nickname, image, create_date, update_date FROM account WHERE account_id = ?";
-	private final String updateSQL = "UPDATE ACCOUNT SET name = ?, nickname = ?, update_date = now() WHERE account_id = ?;";
+	private final String createSQL = "INSERT INTO ACCOUNT(email, password, name, nickname, phone, image,create_date,update_date) VALUES(?,?,?,?,?,?, now(), now());";
+	private final String readSQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE email = ?";
+	private final String findByIdSQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE account_id = ?";
+	private final String updateSQL = "UPDATE ACCOUNT SET nickname = ?, phone = ?, update_date = now() WHERE account_id = ?;";
 	private final String deleteSQL = "DELETE FROM ACCOUNT WHERE email = ?;";
 	private final String imageUpdateSQL = "UPDATE account SET image = ?, update_date = now() WHERE account_id = ?";
 	private final String passwordUpdateSQL = "UPDATE account SET password = ?, update_date = now() WHERE account_id = ?";
@@ -52,7 +52,7 @@ public class AccountDaoImpl implements AccountDao {
 	@Override
 	public boolean create(Account account) {
 		int result = jdbcTemplate.update(createSQL, account.getEmail(), account.getPassword(), account.getUserName(),
-				account.getNickName(), "");
+				account.getNickName(), account.getPhone(), "");
 		return result > 0 ? true : false;
 	}
 
@@ -63,7 +63,7 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public boolean update(Account account) {
-		int result = jdbcTemplate.update(updateSQL, account.getUserName(), account.getNickName(),
+		int result = jdbcTemplate.update(updateSQL, account.getNickName(), account.getPhone(),
 				account.getAccountId());
 		return result > 0 ? true : false;
 	}

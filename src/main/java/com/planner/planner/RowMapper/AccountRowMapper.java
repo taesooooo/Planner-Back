@@ -19,9 +19,10 @@ public class AccountRowMapper implements RowMapper<Account> {
 				.setPassword(rs.getString(3))
 				.setUserName(rs.getString(4))
 				.setNickName(rs.getString(5))
-				.setImage(rs.getString(6))
-				.setCreateDate(rs.getTimestamp(7).toLocalDateTime())
-				.setUpdateDate(rs.getTimestamp(8).toLocalDateTime())
+				.setPhone(rs.getString(6))
+				.setImage(rs.getString(7))
+				.setCreateDate(rs.getTimestamp(8).toLocalDateTime())
+				.setUpdateDate(rs.getTimestamp(9).toLocalDateTime())
 				.build();
 		return account;
 

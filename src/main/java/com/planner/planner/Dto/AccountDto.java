@@ -19,6 +19,7 @@ public class AccountDto {
 	private String userName;
 	@JsonProperty("nickname")
 	private String nickName;
+	private String phone;
 	
 	private String image;
 	
@@ -28,6 +29,7 @@ public class AccountDto {
 		private String password;
 		private String userName;
 		private String nickName;
+		private String phone;
 		private String image;
 		
 		public Builder setAccountId(int accountId) {
@@ -60,6 +62,11 @@ public class AccountDto {
 			return this;
 		}
 
+		public Builder setPhone(String phone) {
+			this.phone = phone;
+			return this;
+		}
+
 		public AccountDto build() {
 			return new AccountDto(this);
 		}
@@ -75,6 +82,7 @@ public class AccountDto {
 		this.password = builder.password;
 		this.userName = builder.userName;
 		this.nickName = builder.nickName;
+		this.phone = builder.phone;
 		this.image = builder.image;
 	}
 	
@@ -126,13 +134,21 @@ public class AccountDto {
 		this.image = image;
 	}
 
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
 	public Account toEntity() {
-		return new Account.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).setImage(image).build();
+		return new Account.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).setPhone(phone).setImage(image).build();
 	}
 
 	@Override
 	public String toString() {
-		return "AccountDto [accountId=" + accountId + ", email=" + email + ", userName="
-				+ userName + ", nickName=" + nickName + ", image=" + image + "]";
+		return "AccountDto [accountId=" + accountId + ", email=" + email + ", userName=" + userName + ", nickName="
+				+ nickName + ", phone=" + phone + ", image=" + image + "]";
 	}
 }

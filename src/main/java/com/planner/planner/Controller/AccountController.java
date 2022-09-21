@@ -55,7 +55,7 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", user));
 	}
 	
-	@PutMapping(value="/{accountId}")
+	@PatchMapping(value="/{accountId}")
 	public ResponseEntity<Object> accountUpdate(@PathVariable int accountId, @RequestBody AccountDto accountDto) throws Exception {
 		if(accountService.accountUpdate(accountDto)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "계정 정보 변경을 성공헀습니다."));
@@ -64,7 +64,7 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(true, "계정 정보 변경을 실패했습니다."));
 	}
 	
-	@PatchMapping(value="/{accountId}")
+	@PatchMapping(value="/images/{accountId}")
 	public ResponseEntity<Object> accountImageUpdate(@PathVariable int accountId, @RequestPart(value="image") MultipartFile image) throws Exception {
 		if(accountService.accountImageUpdate(accountId, image)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "계정 이미지 변경을 성공헀습니다."));
@@ -74,7 +74,7 @@ public class AccountController {
 		}
 	}
 	
-	@GetMapping(value="/{accountId}/likes")
+	@GetMapping(value="/likes/{accountId}")
 	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId) {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
 		if (id != accountId) {

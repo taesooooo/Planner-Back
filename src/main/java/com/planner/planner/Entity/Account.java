@@ -14,6 +14,7 @@ public class Account {
 	private String password;
 	private String userName;
 	private String nickName;
+	private String phone;
 	private String image;
 	private LocalDateTime createDate;
 	private LocalDateTime updateDate;
@@ -24,6 +25,7 @@ public class Account {
 		private String password;
 		private String userName;
 		private String nickName;
+		private String phone;
 		private String image;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
@@ -53,6 +55,11 @@ public class Account {
 			return this;
 		}
 		
+		public Builder setPhone(String phone) {
+			this.phone = phone;
+			return this;
+		}
+
 		public Builder setCreateDate(LocalDateTime createDate) {
 			this.createDate = createDate;
 			return this;
@@ -83,6 +90,7 @@ public class Account {
 		this.password = builder.password;
 		this.userName = builder.userName;
 		this.nickName = builder.nickName;
+		this.phone = builder.phone;
 		this.image = builder.image;
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
@@ -116,6 +124,14 @@ public class Account {
 		this.image = image;
 	}
 
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
 	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
@@ -125,19 +141,19 @@ public class Account {
 	}
 
 	public AccountDto toDto() {
-		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).setImage(image).build();
+		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).setPhone(phone).setImage(image).build();
 	}
 	
 	@Override
 	public String toString() {
 		return "Account [accountId=" + accountId + ", email=" + email + ", password=" + password + ", userName="
-				+ userName + ", nickName=" + nickName + ", image=" + image + ", createDate=" + createDate
-				+ ", updateDate=" + updateDate + "]";
+				+ userName + ", nickName=" + nickName + ", phone=" + phone + ", image=" + image + ", createDate="
+				+ createDate + ", updateDate=" + updateDate + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(accountId, createDate, email, image, nickName, password, updateDate, userName);
+		return Objects.hash(accountId, createDate, email, image, nickName, password, phone, updateDate, userName);
 	}
 
 	@Override
@@ -152,7 +168,8 @@ public class Account {
 		return accountId == other.accountId && Objects.equals(createDate, other.createDate)
 				&& Objects.equals(email, other.email) && Objects.equals(image, other.image)
 				&& Objects.equals(nickName, other.nickName) && Objects.equals(password, other.password)
-				&& Objects.equals(updateDate, other.updateDate) && Objects.equals(userName, other.userName);
+				&& Objects.equals(phone, other.phone) && Objects.equals(updateDate, other.updateDate)
+				&& Objects.equals(userName, other.userName);
 	}
 	
 }
