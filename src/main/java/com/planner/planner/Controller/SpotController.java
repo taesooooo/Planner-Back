@@ -52,7 +52,7 @@ public class SpotController {
 	@DeleteMapping(value = "/likes/{contentId}")
 	public ResponseEntity<Object> spotCancelLike(HttpServletRequest req, @PathVariable int contentId) {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		boolean result = spotService.spotLike(id, contentId);
+		boolean result = spotService.spotLikeCancel(id, contentId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,""));
 	}
 	
