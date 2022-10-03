@@ -45,37 +45,21 @@ public class SpotLikeDto {
 		this.contentId = builder.contentId;
 		this.likeDate = builder.likeDate;
 	}
-
+	
 	public int getLikeId() {
 		return likeId;
-	}
-
-	public void setLikeId(int likeId) {
-		this.likeId = likeId;
 	}
 
 	public int getAccountId() {
 		return accountId;
 	}
 
-	public void setAccountId(int accountId) {
-		this.accountId = accountId;
-	}
-
 	public int getContentId() {
 		return contentId;
 	}
 
-	public void setContentId(int contentId) {
-		this.contentId = contentId;
-	}
-
 	public LocalDate getLikeDate() {
 		return likeDate;
-	}
-
-	public void setLikeDate(LocalDate likeDate) {
-		this.likeDate = likeDate;
 	}
 
 	@Override

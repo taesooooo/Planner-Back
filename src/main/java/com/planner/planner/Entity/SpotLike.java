@@ -83,4 +83,10 @@ public class SpotLike {
 	public SpotLikeDto toDto() {
 		return new SpotLikeDto.Builder().setLikeId(likeId).setAccountId(accountId).setContentId(contentId).setLikeDate(likeDate).build();
 	}
+
+	@Override
+	public String toString() {
+		return "SpotLike [likeId=" + likeId + ", accountId=" + accountId + ", contentId=" + contentId + ", likeDate="
+				+ likeDate + "]";
+	}
 }

@@ -46,7 +46,9 @@ public class AuthController {
 	public ResponseEntity<Object> register(HttpServletRequest req, @RequestBody AccountDto accountDto) {
 		accountDto.setPassword(passwordEncoder.encode(accountDto.getPassword()));
 		try {
+			logger.info(accountDto.toString());
 			boolean result = authService.register(accountDto);
+			
 			if (result) {
 				return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "회원 가입 성공"));
 			}			

@@ -1,4 +1,4 @@
-package com.planner.planner;
+package com.planner.planner.Controller;
 
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

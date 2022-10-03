@@ -1,4 +1,4 @@
-package com.planner.planner;
+package com.planner.planner.Service;
 
 
 import static org.junit.Assert.assertArrayEquals;

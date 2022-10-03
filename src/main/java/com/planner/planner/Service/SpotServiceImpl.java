@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.planner.planner.Dao.SpotDao;
 import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Dto.SpotLikeDto;
+import com.planner.planner.Dto.SpotLikeStateDto;
 import com.planner.planner.Entity.Spot;
 import com.planner.planner.Entity.SpotLike;
 
@@ -34,6 +35,23 @@ public class SpotServiceImpl implements SpotService {
 		//result = spotDao.spotLikeAdd(contentId, accountId);
 		
 		return spotDao.spotLikeAdd(accountId, contentId);
+	}
+
+	@Override
+	public List<SpotLikeStateDto> spotLikeStateCheck(int accountId, List<Integer> contentList) {
+		List<SpotLikeDto> list = spotDao.spotLikeByContentIds(accountId, contentList);
+
+		List<SpotLikeStateDto> likeStates = contentList.stream().map((i) -> {
+			SpotLikeStateDto item;
+			if (list.stream().anyMatch(like -> like.getContentId() == i)) {
+				item = new SpotLikeStateDto(i, true);
+			} else {
+				item = new SpotLikeStateDto(i, false);
+			}
+			return item;
+		}).collect(Collectors.toList());
+
+		return likeStates;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.planner.planner;
+package com.planner.planner.Controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
