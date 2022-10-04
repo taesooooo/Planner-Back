@@ -8,10 +8,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -109,6 +112,21 @@ public class AccountControllerTest {
 				.accept(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 여행지_콘텐츠아이디별_좋아요_가져오기() throws Exception {
+		List<Integer> list = Arrays.asList(3,4,5,6);
+
+		mockMvc.perform(get("/api/users/likes/1/check")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", jwtUtil.createToken(1))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(list)))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data[0].contentId").isNumber())
+		.andExpect(jsonPath("$.data[0].state").isBoolean());
 	}
 
 }

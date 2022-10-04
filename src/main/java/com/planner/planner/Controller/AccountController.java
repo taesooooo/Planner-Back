@@ -1,5 +1,7 @@
 package com.planner.planner.Controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -26,9 +28,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.LikeDto;
+import com.planner.planner.Dto.SpotLikeStateDto;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Exception.NotFoundToken;
 import com.planner.planner.Service.AccountService;
+import com.planner.planner.Service.SpotService;
 import com.planner.planner.util.FileStore;
 import com.planner.planner.util.JwtUtil;
 import com.planner.planner.util.ResponseMessage;
@@ -84,5 +88,13 @@ public class AccountController {
 		LikeDto likes =  accountService.allLikes(accountId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",likes));
 	}
+	
+//	@GetMapping(value ="/likes/{accountId}/check")
+//	public ResponseEntity<Object> spotLikeState(HttpServletRequest req, @PathVariable int accountId, @RequestBody List<Integer> contentIds) {
+//
+//		List<SpotLikeStateDto> stateList = accountService.spotLikeStateCheck(accountId, contentIds);
+//		
+//		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", stateList));
+//	}
 	
 }
