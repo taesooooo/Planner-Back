@@ -38,10 +38,14 @@ public class JwtUtil {
 				.compact();
 		return token;
 	}
+	
+	public String seperateToken(String authorizationToken) {
+		return authorizationToken.substring("Bearer".length());
+	}
 
 	public Boolean verifyToken(String token) {
 		try {
-			claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 			return true;
 		} catch (SignatureException e) {
 			logger.info("토큰 검증 실패!");
@@ -58,12 +62,7 @@ public class JwtUtil {
 		}
 	}
 
-	public String getUserId() {
-		if(claims != null) {
-			return claims.get("userId").toString();
-		}
-		else {
-			return null;
-		}
+	public String getUserId(String token) {
+			return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("userId").toString();
 	}
 }

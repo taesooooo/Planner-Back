@@ -14,6 +14,7 @@ import com.planner.planner.Common.Image;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
@@ -88,7 +89,8 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public List<SpotLikeStateDto> spotLikeStateCheck(int accountId, List<Integer> contentList) {
+	public List<SpotLikeStateDto> spotLikeStateCheck(int accountId, ContentIdListDto contentIds) {
+		List<Integer> contentList = contentIds.getContentIds();
 		List<SpotLikeDto> list = accountDao.spotLikesByContentIds(accountId, contentList);
 
 		List<SpotLikeStateDto> likeStates = contentList.stream().map((i) -> {

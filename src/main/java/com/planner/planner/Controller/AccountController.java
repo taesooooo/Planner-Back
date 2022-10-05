@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
 import com.planner.planner.Service.AccountService;
@@ -76,7 +77,7 @@ public class AccountController {
 	}
 
 	@GetMapping(value ="/likes/{accountId}/check")
-	public ResponseEntity<Object> spotLikeState(HttpServletRequest req, @PathVariable int accountId, @RequestBody List<Integer> contentIds) {
+	public ResponseEntity<Object> spotLikeState(HttpServletRequest req, @PathVariable int accountId, @RequestBody ContentIdListDto contentIds) {
 
 		List<SpotLikeStateDto> stateList = accountService.spotLikeStateCheck(accountId, contentIds);
 

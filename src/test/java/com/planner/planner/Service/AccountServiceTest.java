@@ -31,6 +31,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import com.planner.planner.Common.Image;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
@@ -140,7 +141,7 @@ public class AccountServiceTest {
 
 	@Test
 	public void 좋아요한여행지확인() {
-		List<Integer> contentIds = Arrays.asList(3,4,5);
+		ContentIdListDto contentIds = new ContentIdListDto(Arrays.asList(3,4,5));
 		List<SpotLikeDto> list = new ArrayList<>();
 		list.add(new SpotLikeDto.Builder().setAccountId(1).setContentId(3).setLikeId(1).build());
 		list.add(new SpotLikeDto.Builder().setAccountId(1).setContentId(4).setLikeId(2).build());
@@ -151,7 +152,7 @@ public class AccountServiceTest {
 		resultList.add(new SpotLikeStateDto(4,true));
 		resultList.add(new SpotLikeStateDto(5,true));
 
-		when(accountDao.spotLikesByContentIds(1, contentIds)).thenReturn(list);
+		when(accountDao.spotLikesByContentIds(1, contentIds.getContentIds())).thenReturn(list);
 
 		//
 		List<SpotLikeStateDto> likes = accountService.spotLikeStateCheck(1, contentIds);

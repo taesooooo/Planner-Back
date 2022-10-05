@@ -23,10 +23,10 @@ public class AuthInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		// 토큰확인
-		String token = request.getHeader("Authorization");
+		String token = jwtUtil.seperateToken(request.getHeader("Authorization"));
 		if (token != null) {
 			if (jwtUtil.verifyToken(token)) {
-				request.setAttribute("userId", jwtUtil.getUserId());
+				request.setAttribute("userId", jwtUtil.getUserId(token));
 				return true;
 			} else {
 				throw new AuthCheckFail("검증에 실패헀습니다.");

@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,6 +33,7 @@ import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.util.JwtUtil;
 
 @WebAppConfiguration
@@ -55,7 +57,7 @@ public class AccountControllerTest {
 	@Before
 	public void setUp() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		token = jwtUtil.createToken(1);
+		token = "Bearer " + jwtUtil.createToken(1);
 	}
 
 	@Test
@@ -105,11 +107,12 @@ public class AccountControllerTest {
 
 	@Test
 	public void 좋아요여행지확인() throws Exception {
-		List<Integer> list = Arrays.asList(3,4,5,6);
+		ContentIdListDto list = new ContentIdListDto(Arrays.asList(3,4,5,6));
 
 		mockMvc.perform(get("/api/users/likes/1/check")
+				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
-				.header("Authorization", jwtUtil.createToken(1))
+				.header("Authorization", token)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(list)))
 		.andDo(print())

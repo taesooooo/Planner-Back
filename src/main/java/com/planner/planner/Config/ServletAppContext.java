@@ -15,7 +15,7 @@ import com.planner.planner.Interceptor.AuthInterceptor;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = { "com.planner.planner.Controller"})
+@ComponentScan(basePackages = { "com.planner.planner.Controller", "com.planner.planner.Handler"})
 @PropertySource("classpath:config/config.properties")
 public class ServletAppContext implements WebMvcConfigurer {
 

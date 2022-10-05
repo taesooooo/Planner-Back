@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
@@ -16,5 +17,5 @@ public interface AccountService {
 	public boolean passwordUpdate(AccountDto accountDto);
 	public LikeDto allLikes(int accountId);
 	public List<SpotLikeDto> spotLikesByAccountId(int accountId);
-	public List<SpotLikeStateDto> spotLikeStateCheck(int accountId, List<Integer> contentList);
+	public List<SpotLikeStateDto> spotLikeStateCheck(int accountId, ContentIdListDto contentIds);
 }
