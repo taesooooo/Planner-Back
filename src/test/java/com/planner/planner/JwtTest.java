@@ -17,15 +17,15 @@ import com.planner.planner.util.JwtUtil;
 @ContextConfiguration(classes = JwtContext.class)
 public class JwtTest {
 	private static final Logger logger = LoggerFactory.getLogger(JwtTest.class);
-	
+
 	@Autowired
 	private JwtUtil util;
-	
+
 	@Test
 	public void jwtCreateTest() {
 		logger.info(util.createToken(1000));
 	}
-	
+
 	@Test
 	public void jwtVerifyTest() {
 		//"eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NjE0Mjg0MDMsImV4cCI6MTY2MjAzMzIwMywidXNlcklkIjoiMTAwMCJ9.ANY3F5Q0EUB1qBlcqLLq5muxYJTgirR4so-xwEK0O3Q"

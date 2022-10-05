@@ -11,9 +11,9 @@ import com.planner.planner.Entity.Account;
 @Service
 public class AuthServiceImpl implements AuthService {
 	private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
-	
+
 	private AccountDao accountDao;
-	
+
 	public AuthServiceImpl(AccountDao accountDao) {
 		this.accountDao = accountDao;
 	}

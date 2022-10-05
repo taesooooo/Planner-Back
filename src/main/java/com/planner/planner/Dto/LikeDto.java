@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class LikeDto {
 	List<PlannerDto> likePlanners;
 	List<SpotLikeDto> likeSpots;
-	
+
 	public static class Builder {
 		List<PlannerDto> likePlanners;
 		List<SpotLikeDto> likeSpots;
@@ -18,7 +18,7 @@ public class LikeDto {
 			this.likePlanners = likePlanners;
 			return this;
 		}
-		
+
 		public Builder setLikeSpots(List<SpotLikeDto> likeSpots) {
 			this.likeSpots = likeSpots;
 			return this;
@@ -28,7 +28,7 @@ public class LikeDto {
 			return new LikeDto(this);
 		}
 	}
-	
+
 	public LikeDto() {
 	}
 

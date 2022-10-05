@@ -25,7 +25,7 @@ public class PlannerRowMapper implements RowMapper<Planner> {
 				.build();
 		return planner;
 	}
-	
+
 
 }
 

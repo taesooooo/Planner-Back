@@ -17,22 +17,22 @@ import com.planner.planner.util.FileStore;
 @PropertySource("classpath:config/config.properties")
 @EnableTransactionManagement
 public class RootAppContext {
-	
+
 	@Value("${jdbc.driver}")
 	private String driver;
-	
+
 	@Value("${jdbc.url}")
 	private String url;
-	
+
 	@Value("${jdbc.username}")
 	private String username;
-	
+
 	@Value("${jdbc.password}")
 	private String password;
-	
+
 	@Value("${upload.path}")
 	private String baseLocation;
-	
+
 	@Bean
 	public DataSource dataSource() {
 		DataSource dataSource = new DataSource();
@@ -42,19 +42,19 @@ public class RootAppContext {
 		dataSource.setPassword(password);
 		return dataSource;
 	}
-	
+
 	@Bean
 	public FileStore fileStore() {
 		return new FileStore(baseLocation);
 	}
-	
+
 	@Bean
 	public DataSourceTransactionManager transactionalManager() {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
 		transactionManager.setDataSource(dataSource());
 		return transactionManager;
 	}
-	
+
 	@Bean
 	public JdbcTemplate jdbcTemplate() {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate();

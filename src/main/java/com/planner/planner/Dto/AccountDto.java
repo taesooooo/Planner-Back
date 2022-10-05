@@ -1,7 +1,5 @@
 package com.planner.planner.Dto;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +8,7 @@ import com.planner.planner.Entity.Account;
 
 @JsonInclude(value = Include.NON_NULL)
 public class AccountDto {
-	
+
 	private int accountId;
 	private String email;
 	@JsonProperty(access = Access.WRITE_ONLY)
@@ -20,9 +18,9 @@ public class AccountDto {
 	@JsonProperty("nickname")
 	private String nickName;
 	private String phone;
-	
+
 	private String image;
-	
+
 	public static class Builder {
 		private int accountId;
 		private String email;
@@ -31,27 +29,27 @@ public class AccountDto {
 		private String nickName;
 		private String phone;
 		private String image;
-		
+
 		public Builder setAccountId(int accountId) {
 			this.accountId = accountId;
 			return this;
 		}
-		
+
 		public Builder setEmail(String email) {
 			this.email = email;
 			return this;
 		}
-		
+
 		public Builder setPassword(String password) {
 			this.password = password;
 			return this;
 		}
-		
+
 		public Builder setUserName(String userName) {
 			this.userName = userName;
 			return this;
 		}
-		
+
 		public Builder setNickName(String nickName) {
 			this.nickName = nickName;
 			return this;
@@ -71,11 +69,11 @@ public class AccountDto {
 			return new AccountDto(this);
 		}
 	}
-	
+
 	public AccountDto() {
-		
+
 	}
-	
+
 	public AccountDto(Builder builder) {
 		this.accountId = builder.accountId;
 		this.email = builder.email;
@@ -85,7 +83,7 @@ public class AccountDto {
 		this.phone = builder.phone;
 		this.image = builder.image;
 	}
-	
+
 	public int getAccountId() {
 		return accountId;
 	}
@@ -125,7 +123,7 @@ public class AccountDto {
 	public void setNickName(String nickName) {
 		this.nickName = nickName;
 	}
-	
+
 	public String getImage() {
 		return image;
 	}

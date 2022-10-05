@@ -12,7 +12,7 @@ public class SpotDto {
 	private String cityName;
 	private String detail;
 	private int likeCount;
-	
+
 	public static class Builder {
 		private int spotId;
 		private String spotName;
@@ -21,7 +21,7 @@ public class SpotDto {
 		private String cityName;
 		private String detail;
 		private int likeCount;
-		
+
 		public Builder setSpotId(int spotId) {
 			this.spotId = spotId;
 			return this;
@@ -54,11 +54,11 @@ public class SpotDto {
 			return new SpotDto(this);
 		}
 	}
-	
+
 	public SpotDto() {
-		
+
 	}
-	
+
 	public SpotDto(Builder builder) {
 		this.spotId = builder.spotId;
 		this.spotName = builder.spotName;
@@ -130,5 +130,5 @@ public class SpotDto {
 		return "SpotDto [spotId=" + spotId + ", spotName=" + spotName + ", spotImage=" + spotImage + ", contryName="
 				+ contryName + ", cityName=" + cityName + ", detail=" + detail + ", likeCount=" + likeCount + "]";
 	}
-	
+
 }

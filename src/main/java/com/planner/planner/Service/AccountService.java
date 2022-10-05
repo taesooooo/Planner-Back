@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.LikeDto;
+import com.planner.planner.Dto.SpotLikeDto;
+import com.planner.planner.Dto.SpotLikeStateDto;
 
 public interface AccountService {
 	public AccountDto findById(int accountId);
@@ -13,4 +15,6 @@ public interface AccountService {
 	public boolean accountImageUpdate(int accountId, MultipartFile image) throws Exception;
 	public boolean passwordUpdate(AccountDto accountDto);
 	public LikeDto allLikes(int accountId);
+	public List<SpotLikeDto> spotLikesByAccountId(int accountId);
+	public List<SpotLikeStateDto> spotLikeStateCheck(int accountId, List<Integer> contentList);
 }

@@ -7,13 +7,13 @@ public class SpotLikeDto {
 	private int accountId;
 	private int contentId;
 	private LocalDate likeDate;
-	
+
 	public static class Builder {
 		private int likeId;
 		private int accountId;
 		private int contentId;
 		private LocalDate likeDate;
-		
+
 		public Builder setLikeId(int likeId) {
 			this.likeId = likeId;
 			return this;
@@ -34,9 +34,9 @@ public class SpotLikeDto {
 			return new SpotLikeDto(this);
 		}
 	}
-	
+
 	public SpotLikeDto() {
-		
+
 	}
 
 	public SpotLikeDto(Builder builder) {
@@ -45,7 +45,7 @@ public class SpotLikeDto {
 		this.contentId = builder.contentId;
 		this.likeDate = builder.likeDate;
 	}
-	
+
 	public int getLikeId() {
 		return likeId;
 	}

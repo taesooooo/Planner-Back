@@ -7,24 +7,16 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Entity.Account;
-import com.planner.planner.Entity.Like;
-import com.planner.planner.Entity.Planner;
-import com.planner.planner.Entity.Spot;
 import com.planner.planner.Entity.SpotLike;
 import com.planner.planner.RowMapper.AccountRowMapper;
 import com.planner.planner.RowMapper.LikePlannersRowMapper;
-import com.planner.planner.RowMapper.LikeSpotsRowMapper;
-import com.planner.planner.RowMapper.PlannerRowMapper;
 
 @Repository
 public class AccountDaoImpl implements AccountDao {
@@ -44,11 +36,13 @@ public class AccountDaoImpl implements AccountDao {
 	private final String likePlannersSQL = "SELECT planner_id, title, plan_date_start, plan_date_end FROM planner WHERE planner_id "
 			+ "IN (SELECT planner_id FROM plannerlike WHERE account_id = ?);";
 	private final String likeSpotsSQL = "SELECT like_id, account_id, content_id, like_date FROM spotlike WHERE account_id = ?;";
+	private final String spotLikesByAccountId = "SELECT like_id, account_id, content_id, like_date FROM spotlike WHERE account_id = ?;";
+	private final String spotLikeStateSQL = "SELECT like_id, account_id, content_id, like_date FROM spotlike WHERE content_id IN (%s) and account_id = ?;";
 
 	public AccountDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
-	
+
 	@Override
 	public boolean create(Account account) {
 		int result = jdbcTemplate.update(createSQL, account.getEmail(), account.getPassword(), account.getUserName(),
@@ -113,6 +107,40 @@ public class AccountDaoImpl implements AccountDao {
 			}
 		}, accountId);
 		return likes.stream().map(like -> like.toDto()).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<SpotLikeDto> spotLikesByAccountId(int accountId) {
+		List<SpotLike> likes =  jdbcTemplate.query(spotLikesByAccountId, new RowMapper<SpotLike>() {
+			@Override
+			public SpotLike mapRow(ResultSet rs, int rowNum) throws SQLException {
+				SpotLike spotLike = new SpotLike.Builder()
+						.setLikeId(rs.getInt(1))
+						.setAccountId(rs.getInt(2))
+						.setContentId(rs.getInt(3))
+						.setLikeDate(rs.getDate(4).toLocalDate())
+						.build();
+				return spotLike;
+			}
+		}, accountId);
+		return likes.stream().map(like -> like.toDto()).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<SpotLikeDto> spotLikesByContentIds(int accountId, List<Integer> contentId) {
+		String contentList = contentId.stream().map(String::valueOf).collect(Collectors.joining(","));
+		String sql = String.format(spotLikeStateSQL, contentList);
+		List<SpotLike> states = jdbcTemplate.query(sql, (rs, rowNum) -> {
+			SpotLike spotLike = new SpotLike.Builder()
+					.setLikeId(rs.getInt(1))
+					.setAccountId(rs.getInt(2))
+					.setContentId(rs.getInt(3))
+					.setLikeDate(rs.getDate(4).toLocalDate())
+					.build();
+			return spotLike;
+		}, accountId);
+
+		return states.stream().map(like -> like.toDto()).collect(Collectors.toList());
 	}
 
 }

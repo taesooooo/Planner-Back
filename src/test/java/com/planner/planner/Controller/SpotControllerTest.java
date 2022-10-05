@@ -1,21 +1,10 @@
 package com.planner.planner.Controller;
 
-import static org.hamcrest.CoreMatchers.isA;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -37,21 +26,21 @@ import com.planner.planner.util.JwtUtil;
 @Transactional
 public class SpotControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(SpotControllerTest.class);
-	
+
 	@Autowired
 	private JwtUtil jwtUtil;
-	
+
 	@Autowired
 	private WebApplicationContext context;
-	
+
 	private MockMvc mvc;
-	
+
 	private ObjectMapper mapper = new ObjectMapper();
 
 	@Before
 	public void setUp() throws Exception {
 		this.mvc = MockMvcBuilders.webAppContextSetup(context).build();
-		
+
 	}
 
 }

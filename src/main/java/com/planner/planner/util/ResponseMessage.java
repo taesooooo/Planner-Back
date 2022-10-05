@@ -14,7 +14,7 @@ public class ResponseMessage {
 		this.state = state;
 		this.message = message;
 	}
-	
+
 	public ResponseMessage(boolean state,String message, Object data) {
 		this.state = state;
 		this.message = message;
@@ -26,7 +26,7 @@ public class ResponseMessage {
 		this.data = data;
 		this.token = token;
 	}
-	
+
 	public boolean getState() {
 		return state;
 	}
@@ -58,5 +58,5 @@ public class ResponseMessage {
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
+
 }

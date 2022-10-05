@@ -1,26 +1,21 @@
 package com.planner.planner.Controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.AuthService;
 import com.planner.planner.util.JwtUtil;
 import com.planner.planner.util.ResponseMessage;
@@ -29,13 +24,13 @@ import com.planner.planner.util.ResponseMessage;
 @RequestMapping("/api/auth")
 public class AuthController {
 	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-	
+
 	private AuthService authService;
-	
+
 	private JwtUtil jwtUtil;
 
 	private BCryptPasswordEncoder passwordEncoder;
-	
+
 	public AuthController(AuthService authService, BCryptPasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
 		this.authService = authService;
 		this.passwordEncoder = passwordEncoder;
@@ -48,10 +43,10 @@ public class AuthController {
 		try {
 			logger.info(accountDto.toString());
 			boolean result = authService.register(accountDto);
-			
+
 			if (result) {
 				return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "회원 가입 성공"));
-			}			
+			}
 		}
 		catch (DuplicateKeyException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(false, "중복된 아이디 입니다."));

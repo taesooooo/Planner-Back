@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.planner.planner.Entity.Planner;
 
@@ -26,7 +26,7 @@ public class PlannerDto {
 	private int likeCount;
 	private LocalDateTime createDate;
 	private LocalDateTime updateDate;
-	
+
 	public static class Builder {
 		private int plannerId;
 		private int accountId;
@@ -99,11 +99,11 @@ public class PlannerDto {
 			return new PlannerDto(this);
 		}
 	}
-	
+
 	public PlannerDto() {
-		
+
 	}
-	
+
 	public PlannerDto(Builder builder) {
 		this.plannerId = builder.plannerId;
 		this.accountId = builder.accountId;
@@ -117,7 +117,7 @@ public class PlannerDto {
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
 	}
-	
+
 	public int getPlannerId() {
 		return plannerId;
 	}
@@ -205,7 +205,7 @@ public class PlannerDto {
 	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
-	
+
 	public Planner toEntity() {
 		return new Planner.Builder()
 				.setPlannerId(plannerId)

@@ -9,40 +9,40 @@ public class Like {
 	private LocalDate likeDate;
 	private int id;
 	private int accountId;
-	
+
 	public static class Builder {
 		private int likeId;
 		private LocalDate likeDate;
 		private int id;
 		private int accountId;
-		
+
 		public Builder setLikeId(int likeId) {
 			this.likeId = likeId;
 			return this;
 		}
-		
+
 		public Builder setLikeDate(LocalDate likeDate) {
 			this.likeDate = likeDate;
 			return this;
 		}
-		
+
 		public Builder setId(int id) {
 			this.id = id;
 			return this;
 		}
-		
+
 		public Builder setAccountId(int accountId) {
 			this.accountId = accountId;
 			return this;
 		}
-		
+
 		public Like build() {
 			return new Like(this);
 		}
 	}
 
 	public Like() {
-		
+
 	}
 
 	public Like(Builder builder) {
@@ -83,7 +83,7 @@ public class Like {
 	public void setAccountId(int accountId) {
 		this.accountId = accountId;
 	}
-	
+
 	public LikeDto toDto() {
 		return null;
 		//return new LikeDto.Builder().setLikeId(likeId).setLikeDate(likeDate).setId(accountId).setAccountId(accountId).build();
@@ -93,5 +93,5 @@ public class Like {
 	public String toString() {
 		return "Like [likeId=" + likeId + ", likeDate=" + likeDate + ", id=" + id + ", accountId=" + accountId + "]";
 	}
-	
+
 }

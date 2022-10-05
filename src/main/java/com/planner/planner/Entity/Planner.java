@@ -17,7 +17,7 @@ public class Planner {
 	private int recommendCount;
 	private LocalDateTime createDate;
 	private LocalDateTime updateDate;
-	
+
 	public static class Builder {
 		private int plannerId = 0;
 		private int accountId = 0;
@@ -27,10 +27,10 @@ public class Planner {
 		private int memberCount = 1;
 		private String member;
 		private String plan;
-		private int recommendCount = 0; 
+		private int recommendCount = 0;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
-		
+
 		public Builder setPlannerId(int plannerId) {
 			this.plannerId = plannerId;
 			return this;
@@ -90,7 +90,7 @@ public class Planner {
 			return new Planner(this);
 		}
 	}
-	
+
 	public Planner(Builder builder) {
 		this.plannerId = builder.plannerId;
 		this.accountId = builder.accountId;
@@ -148,7 +148,7 @@ public class Planner {
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
-	
+
 	public PlannerDto toDto() {
 		return new PlannerDto.Builder()
 				.setPlannerId(plannerId)

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class OpenAPIServiceImpl implements OpenAPIService {
 
 	private String baseUrl = "http://apis.data.go.kr/B551011/KorService";
-	
+
 	@Value("${openAPI.serviceKey}")
 	private String serviceKey;
 	private String mobileOS = "ETC";
@@ -37,7 +37,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 				+"&numOfRows="+numOfRows
 				+"&pageNo=1"
 				+"&_type=json";
-		
+
 		ObjectNode data = getApiData(apiUrl);
 		return data;
 	}
@@ -53,7 +53,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 				+"&contentTypeId="+contentTypeId
 				+"&areaCode="+areaCode
 				+"&_type=json";
-		
+
 		ObjectNode data = getApiData(apiUrl);
 		return data;
 	}
@@ -69,7 +69,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 				+"&mapY="+mapY
 				+"&radius="+radius
 				+"&_type=json";
-		
+
 		ObjectNode data = getApiData(apiUrl);
 		return data;
 	}
@@ -114,7 +114,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 				+"&addrinfoYN=Y"
 				+"&overviewYN=Y"
 				+"&_type=json";
-		
+
 		data = getApiData(apiUrl);
 
 		return data;
@@ -134,7 +134,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 			{
 				BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 				JsonNode node = om.readTree(reader.readLine());
-				
+
 				int totalCount = node.get("response").get("body").get("totalCount").asInt();
 				if(totalCount == 0) {
 					return new ObjectNode(JsonNodeFactory.instance).putObject("error").put("code", 404).put("message", "데이터가 존재하지 않습니다.");

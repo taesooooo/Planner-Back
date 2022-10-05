@@ -3,13 +3,9 @@ package com.planner.planner.util;
 import java.security.Key;
 import java.util.Date;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -23,15 +19,15 @@ import io.jsonwebtoken.security.SignatureException;
 @PropertySource("classpath:config/config.properties")
 public class JwtUtil {
 	private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
-	
+
 	private Key key;
 	private int expiationTime = 60*60*24*1; // 만료기간 7일
 	private Claims claims;
-	
+
 	public JwtUtil(String secretKey) {
 		key = Keys.hmacShaKeyFor(secretKey.getBytes());
 	}
-	
+
 	public String createToken(int userId) {
 		Date date = new Date();
 		String token = Jwts.builder()
@@ -42,7 +38,7 @@ public class JwtUtil {
 				.compact();
 		return token;
 	}
-	
+
 	public Boolean verifyToken(String token) {
 		try {
 			claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
@@ -61,7 +57,7 @@ public class JwtUtil {
 			return false;
 		}
 	}
-	
+
 	public String getUserId() {
 		if(claims != null) {
 			return claims.get("userId").toString();

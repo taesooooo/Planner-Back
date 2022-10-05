@@ -25,49 +25,49 @@ import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.util.JwtUtil;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
 public class AuthControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(AuthControllerTest.class);
-	
+
 	@Autowired
 	private WebApplicationContext context;
 
 	private MockMvc mockMvc;
-	
+
 	private ObjectMapper mapper = new ObjectMapper();
 
 	@Before
 	public void setUp() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 	}
-	
+
 	@Test
 	public void 회원가입() throws Exception{
-		AccountDto testDto = new AccountDto.Builder().setAccountId(0).setEmail("test0@naver.com").setPassword("1234").setUserName("test0").setNickName("test0").build();
+		AccountDto testDto = new AccountDto.Builder().setAccountId(0).setEmail("test0@naver.com").setPassword("1234").setUserName("test0").setNickName("test0").setPhone("01012345678").build();
 		ObjectNode node = mapper.createObjectNode();
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
 		node.put("password", testDto.getPassword());
 		node.put("username",testDto.getUserName());
 		node.put("nickname", testDto.getNickName());
-		
+		node.put("phone", testDto.getPhone());
+
 		mockMvc.perform(post("/api/auth/register")
 				.content(node.toString())
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isCreated());
 	}
-	
+
 	@Test
 	public void 로그인() throws Exception {
 		ObjectNode node = mapper.createObjectNode();
 		node.put("email","test@naver.com");
 		node.put("password", "1234");
-		
+
 		mockMvc.perform(post("/api/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))

@@ -16,7 +16,7 @@ public class PlannerServiceImpl implements PlannerService {
 
 	@Autowired
 	private PlannerDao plannerDao;
-	
+
 	@Override
 	public boolean create(PlannerDto plannerDto) {
 		return plannerDao.create(plannerDto.toEntity());
@@ -41,7 +41,7 @@ public class PlannerServiceImpl implements PlannerService {
 	public boolean like(int plannerId, int accountId) {
 		boolean result = plannerDao.like(plannerId);
 		result = plannerDao.likePlanner(plannerId, accountId);
-		
+
 		return result;
 	}
 
@@ -49,7 +49,7 @@ public class PlannerServiceImpl implements PlannerService {
 	public boolean likeCancel(int plannerId, int accountId) {
 		boolean result = plannerDao.likeCancel(plannerId);
 		result = plannerDao.likeDelete(plannerId, accountId);
-		
+
 		return result;
 	}
 

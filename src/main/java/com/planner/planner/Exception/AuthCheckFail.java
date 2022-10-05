@@ -11,5 +11,5 @@ public class AuthCheckFail extends RuntimeException{
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 }

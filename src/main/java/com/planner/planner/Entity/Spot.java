@@ -8,7 +8,7 @@ public class Spot {
 	private String cityName;
 	private String detail;
 	private int likeCount;
-	
+
 	public static class Builder {
 		private int spotId;
 		private String spotName;
@@ -17,7 +17,7 @@ public class Spot {
 		private String cityName;
 		private String detail;
 		private int likeCount;
-		
+
 		public Builder setSpotId(int spotId) {
 			this.spotId = spotId;
 			return this;
@@ -50,11 +50,11 @@ public class Spot {
 			return new Spot(this);
 		}
 	}
-	
+
 	public Spot() {
-		
+
 	}
-	
+
 	public Spot(Builder builder) {
 		this.spotId = builder.spotId;
 		this.spotName = builder.spotName;

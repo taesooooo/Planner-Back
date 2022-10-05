@@ -10,10 +10,10 @@ import com.planner.planner.util.JwtUtil;
 @Configuration
 @PropertySource("classpath:config/config.properties")
 public class JwtContext {
-	
+
 	@Value("${jwt.secret}")
 	private String secretKey;
-	
+
 	@Bean
 	public JwtUtil jwtUtil() {
 		return new JwtUtil(secretKey);

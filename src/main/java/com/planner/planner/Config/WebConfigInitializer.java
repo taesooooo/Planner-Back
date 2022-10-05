@@ -17,21 +17,21 @@ public class WebConfigInitializer implements WebApplicationInitializer {
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		AnnotationConfigWebApplicationContext rootAppContext = new AnnotationConfigWebApplicationContext();
 		rootAppContext.register(RootAppContext.class);
-		
+
 		servletContext.addListener(new ContextLoaderListener(rootAppContext));
-		
+
 		AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
 		servletAppContext.register(ServletAppContext.class);
 		servletAppContext.register(SecurityContext.class);
 		servletAppContext.register(JwtContext.class);
-		
+
 		ServletRegistration.Dynamic dynamic = servletContext.addServlet("dispatcherServlet",new DispatcherServlet(servletAppContext));
 		dynamic.setLoadOnStartup(1);
 		dynamic.addMapping("/");
-		
+
 		FilterRegistration.Dynamic filter = servletContext.addFilter("encodingFilter", new CharacterEncodingFilter("UTF-8"));
 		filter.addMappingForUrlPatterns(null, false, "/*");
-		
+
 	}
 
 }

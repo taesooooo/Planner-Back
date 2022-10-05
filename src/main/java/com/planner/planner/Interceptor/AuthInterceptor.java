@@ -33,7 +33,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 			}
 		}
 		else {
-			throw new NotFoundToken("로그인이 필요합니다.");	
+			throw new NotFoundToken("로그인이 필요합니다.");
 		}
 		//return false;
 	}
