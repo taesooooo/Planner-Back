@@ -6,9 +6,6 @@ public class ContentIdListDto {
 	
 	private List<Integer> contentIds;
 
-	public ContentIdListDto() {
-	}
-
 	public ContentIdListDto(List<Integer> contentIds) {
 		this.contentIds = contentIds;
 	}

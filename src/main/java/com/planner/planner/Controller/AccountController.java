@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +26,7 @@ import com.planner.planner.Service.AccountService;
 import com.planner.planner.util.ResponseMessage;
 
 @RestController
-@RequestMapping(value="/api/users")
+@RequestMapping(value = "/api/users")
 public class AccountController {
 	private final static Logger logger = LoggerFactory.getLogger(AccountController.class);
 
@@ -35,7 +36,7 @@ public class AccountController {
 		this.accountService = accountService;
 	}
 
-	@GetMapping(value="/{accountId}")
+	@GetMapping(value = "/{accountId}")
 	public ResponseEntity<Object> account(HttpServletRequest req, @PathVariable int accountId) throws Exception {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
 		if (id != accountId) {
@@ -46,39 +47,38 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", user));
 	}
 
-	@PatchMapping(value="/{accountId}")
-	public ResponseEntity<Object> accountUpdate(@PathVariable int accountId, @RequestBody AccountDto accountDto) throws Exception {
-		if(accountService.accountUpdate(accountDto)) {
+	@PatchMapping(value = "/{accountId}")
+	public ResponseEntity<Object> accountUpdate(@PathVariable int accountId, @RequestBody AccountDto accountDto)
+			throws Exception {
+		if (accountService.accountUpdate(accountDto)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "계정 정보 변경을 성공헀습니다."));
 		}
 
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(true, "계정 정보 변경을 실패했습니다."));
 	}
 
-	@PatchMapping(value="/images/{accountId}")
-	public ResponseEntity<Object> accountImageUpdate(@PathVariable int accountId, @RequestPart(value="image") MultipartFile image) throws Exception {
-		if(accountService.accountImageUpdate(accountId, image)) {
+	@PatchMapping(value = "/images/{accountId}")
+	public ResponseEntity<Object> accountImageUpdate(@PathVariable int accountId, @RequestPart(value = "image") MultipartFile image) throws Exception {
+		if (accountService.accountImageUpdate(accountId, image)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "계정 이미지 변경을 성공헀습니다."));
-		}
-		else {
+		} else {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(false, "계정 이미지 변경을 실패헀습니다."));
 		}
 	}
 
-	@GetMapping(value="/likes/{accountId}")
+	@GetMapping(value = "/likes/{accountId}")
 	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId) {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
 		if (id != accountId) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
 		}
 
-		LikeDto likes =  accountService.allLikes(accountId);
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",likes));
+		LikeDto likes = accountService.allLikes(accountId);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", likes));
 	}
 
-	@GetMapping(value ="/likes/{accountId}/check")
-	public ResponseEntity<Object> spotLikeState(HttpServletRequest req, @PathVariable int accountId, @RequestBody ContentIdListDto contentIds) {
-
+	@GetMapping(value = "/likes/{accountId}/check")
+	public ResponseEntity<Object> spotLikeState(HttpServletRequest req, @PathVariable int accountId, ContentIdListDto contentIds) {
 		List<SpotLikeStateDto> stateList = accountService.spotLikeStateCheck(accountId, contentIds);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", stateList));
