@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.planner.planner.Common.Image;
+import com.planner.planner.Object.Image;
 
 @Component
 public class FileStore {

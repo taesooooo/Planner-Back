@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.planner.planner.Common.Image;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
@@ -20,6 +19,7 @@ import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
 import com.planner.planner.Entity.Account;
+import com.planner.planner.Object.Image;
 import com.planner.planner.util.FileStore;
 
 @Service

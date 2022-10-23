@@ -7,11 +7,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.planner.planner.Service.OpenAPIService;
 import com.planner.planner.Service.SpotService;
 import com.planner.planner.util.ResponseMessage;
 
@@ -21,6 +25,7 @@ public class SpotController {
 	private static final Logger logger = LoggerFactory.getLogger(SpotController.class);
 
 	private SpotService spotService;
+	private OpenAPIService openAPIService;
 
 	public SpotController(SpotService spotService) {
 		this.spotService = spotService;
@@ -40,5 +45,4 @@ public class SpotController {
 		boolean result = spotService.spotLikeCancel(id, contentId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,""));
 	}
-
 }
