@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
+import com.planner.planner.Common.Image;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ContentIdListDto;
@@ -36,7 +37,6 @@ import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
 import com.planner.planner.Entity.Account;
-import com.planner.planner.Object.Image;
 import com.planner.planner.util.FileStore;
 
 public class AccountServiceTest {

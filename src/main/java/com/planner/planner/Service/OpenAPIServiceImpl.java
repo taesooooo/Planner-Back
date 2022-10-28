@@ -1,22 +1,21 @@
 package com.planner.planner.Service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.planner.planner.Dao.SpotDao;
-import com.planner.planner.Dto.SpotDto;
-import com.planner.planner.Dto.SpotLikeCountDto;
-import com.planner.planner.util.OpenAPIUtil;
-
-import net.minidev.json.JSONObject;
 
 @Service
 public class OpenAPIServiceImpl implements OpenAPIService {
@@ -28,15 +27,9 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	private String mobileOS = "ETC";
 	private String mobileApp = "planner";
 	private int numOfRows = 10;
-	
-	private SpotDao spotDao;
-	
-	public OpenAPIServiceImpl(SpotDao spotDao) {
-		this.spotDao = spotDao;
-	}
 
 	@Override
-	public ObjectNode getAreaNum() throws Exception
+	public ObjectNode getAreaNum()
 	{
 		String apiUrl = baseUrl+"/areaCode?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
@@ -45,12 +38,12 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 				+"&pageNo=1"
 				+"&_type=json";
 
-		ObjectNode data = OpenAPIUtil.getApiData(apiUrl);
+		ObjectNode data = getApiData(apiUrl);
 		return data;
 	}
 
 	@Override
-	public List<SpotDto> getAreaList(int areaCode, int contentTypeId, int index) throws Exception
+	public ObjectNode getAreaList(int areaCode, int contentTypeId, int index)
 	{
 		String apiUrl = baseUrl+"/areaBasedList?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
@@ -61,36 +54,12 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 				+"&areaCode="+areaCode
 				+"&_type=json";
 
-		ObjectNode data = OpenAPIUtil.getApiData(apiUrl);
-		
-		List<String> contentIds = new ArrayList<String>();
-		for(JsonNode node : data.get("item")) {
-			contentIds.add(node.get("contentid").toString());
-		}
-		
-		List<SpotLikeCountDto> likeCounts = spotDao.spotLikeCount(contentIds.stream().collect(Collectors.joining(",")));
-		List<SpotDto> spotList = new ArrayList<SpotDto>();
-		
-		for(int i=0;i<data.size();i++) {
-			JsonNode node = data.get("item").get(i);
-			if(!likeCounts.isEmpty()) {				
-				for(int j=0;j<contentIds.size();j++) {
-					SpotLikeCountDto spotLikeCount = likeCounts.get(j);String.valueOf(likeCounts.get(j).getConetntId());
-					if(node.get("contentid").toString().equals(String.valueOf(spotLikeCount.getConetntId()))) {					
-						spotList.add(new SpotDto.Builder().setItem(node.toString()).setlikeCount(spotLikeCount.getLikeCount()).build());
-					}
-				}
-			}
-			else {
-				spotList.add(new SpotDto.Builder().setItem(node.toString()).setlikeCount(0).build());
-			}
-		}
-		
-		return spotList;
+		ObjectNode data = getApiData(apiUrl);
+		return data;
 	}
 
 	@Override
-	public ObjectNode getLocationBasedList(double mapX, double mapY, int radius, int index) throws Exception {
+	public ObjectNode getLocationBasedList(double mapX, double mapY, int radius, int index) {
 		String apiUrl = baseUrl+"/areaBasedList?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
@@ -101,12 +70,12 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 				+"&radius="+radius
 				+"&_type=json";
 
-		ObjectNode data = OpenAPIUtil.getApiData(apiUrl);
+		ObjectNode data = getApiData(apiUrl);
 		return data;
 	}
 
 	@Override
-	public ObjectNode getKeyword(int areaCode, int contentTypeId, String keyword, int index) throws Exception
+	public ObjectNode getKeyword(int areaCode, int contentTypeId, String keyword, int index)
 	{
 		ObjectNode data = null;
 		try
@@ -120,7 +89,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 					+"&areaCode="+areaCode
 					+"&keyword="+URLEncoder.encode(keyword, "UTF-8")
 					+"&_type=json";
-			data = OpenAPIUtil.getApiData(apiUrl);
+			data = getApiData(apiUrl);
 		}
 		catch (UnsupportedEncodingException e)
 		{
@@ -132,7 +101,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	}
 
 	@Override
-	public ObjectNode getDetail(int contentId) throws Exception
+	public ObjectNode getDetail(int contentId)
 	{
 		ObjectNode data = null;
 
@@ -146,7 +115,50 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 				+"&overviewYN=Y"
 				+"&_type=json";
 
-		data = OpenAPIUtil.getApiData(apiUrl);
+		data = getApiData(apiUrl);
+
+		return data;
+	}
+
+	@Override
+	public ObjectNode getApiData(String url)
+	{
+		ObjectMapper om = new ObjectMapper();
+		ObjectNode data = null;
+		try
+		{
+			URL uri = new URL(url);
+			HttpURLConnection conn = (HttpURLConnection) uri.openConnection();
+
+			if(conn.getResponseCode() == 200)
+			{
+				BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				JsonNode node = om.readTree(reader.readLine());
+
+				int totalCount = node.get("response").get("body").get("totalCount").asInt();
+				if(totalCount == 0) {
+					return new ObjectNode(JsonNodeFactory.instance).putObject("error").put("code", 404).put("message", "데이터가 존재하지 않습니다.");
+				}
+				// response > body > items
+				JsonNode dataNode = node.get("response").get("body").get("items");
+				data = ((ObjectNode) dataNode).put("totalCount", totalCount);
+			}
+			else {
+				return new ObjectNode(JsonNodeFactory.instance).putObject("error").put("code", conn.getResponseCode()).put("message", conn.getResponseMessage());
+			}
+		}
+		catch (MalformedURLException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 
 		return data;
 	}

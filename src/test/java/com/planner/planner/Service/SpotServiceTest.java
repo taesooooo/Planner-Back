@@ -1,13 +1,6 @@
 package com.planner.planner.Service;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Dao.SpotDaoImpl;
-import com.planner.planner.Dto.SpotLikeCountDto;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class})
@@ -50,23 +42,5 @@ public class SpotServiceTest {
 	@Test
 	public void SpotCancel() {
 		assertTrue(service.spotLikeCancel(1, 2));
-	}
-	
-	@Test
-	public void 여행지좋아요개수가져오기() {
-		List<Integer> contentIds = Arrays.asList(3,4,5);
-		String ids = contentIds.stream().map(String::valueOf).collect(Collectors.joining(","));
-		List<SpotLikeCountDto> list = new ArrayList<SpotLikeCountDto>();
-		SpotLikeCountDto spotLikeCountDto1 = new SpotLikeCountDto.Builder().setConetntId(3).setLikeCount(5).build();
-		list.add(spotLikeCountDto1);
-		List<SpotLikeCountDto> resultList = new ArrayList<SpotLikeCountDto>();
-		SpotLikeCountDto resultSpotLikeCountDto = new SpotLikeCountDto.Builder().setConetntId(3).setLikeCount(5).build();
-		resultList.add(resultSpotLikeCountDto);
-
-		
-		when(spotDao.spotLikeCount(ids)).thenReturn(resultList);
-		
-		assertEquals(resultList.get(0).getConetntId(), list.get(0).getConetntId());
-		assertEquals(resultList.get(0).getLikeCount(), list.get(0).getLikeCount());
 	}
 }
