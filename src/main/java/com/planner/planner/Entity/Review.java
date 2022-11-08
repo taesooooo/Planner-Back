@@ -2,6 +2,8 @@ package com.planner.planner.Entity;
 
 import java.time.LocalDateTime;
 
+import com.planner.planner.Dto.ReviewDto;
+
 public class Review {
 	private int reviewId;
 	private int plannerId;

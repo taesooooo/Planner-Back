@@ -15,11 +15,11 @@ public class ReviewDaoImpl implements ReviewDao {
 	
 	private JdbcTemplate jdbcTemplate;
 	
-	private final String insertReviewSQL = "INSERT INTO planner.review(planner_id, title, writer, content, create_date, update_date) VALUES(?, ?, ?, ?, now(), now());";
-	private final String findAllReviewSQL = "SELECT review_id, planner_id, title, writer, content, like_count, create_date, update_date FROM planner.review;";
-	private final String findReviewSQL = "SELECT review_id, planner_id, title, writer, content, like_count, create_date, update_date FROM planner.review WHERE review_id = ?;";
-	private final String updateReviewSQL = "UPDATE planner.review SET title = ?, content = ?, update_date = now() WHERE review_id = ?;";
-	private final String deleteReviewSQL = "DELETE FROM planner.review WHERE reveiw_id = ?;";
+	private final String insertReviewSQL = "INSERT INTO review(planner_id, title, writer, content, create_date, update_date) VALUES(?, ?, ?, ?, now(), now());";
+	private final String findAllReviewSQL = "SELECT review_id, planner_id, title, writer, content, like_count, create_date, update_date FROM review;";
+	private final String findReviewSQL = "SELECT review_id, planner_id, title, writer, content, like_count, create_date, update_date FROM review WHERE review_id = ?;";
+	private final String updateReviewSQL = "UPDATE review SET title = ?, content = ?, update_date = now() WHERE review_id = ?;";
+	private final String deleteReviewSQL = "DELETE FROM review WHERE review_id = ?;";
 	
 	public ReviewDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -40,7 +40,15 @@ public class ReviewDaoImpl implements ReviewDao {
 
 	@Override
 	public Review findReview(int reviewId) {
-		Review review = jdbcTemplate.queryForObject(findReviewSQL, Review.class, reviewId);
+		Review review = jdbcTemplate.queryForObject(findReviewSQL, (rs, rowNum) -> {
+			return new Review.Builder().setReviewId(rs.getInt(1)).setPlannerId(rs.getInt(2)).setTitle(rs.getString(3))
+					.setWriter(rs.getInt(4))
+					.setContent(rs.getString(5))
+					.setLikeCount(rs.getInt(6))
+					.setCreateTime(rs.getTimestamp(7).toLocalDateTime())
+					.setUpdateTime(rs.getTimestamp(8).toLocalDateTime())
+					.build();
+		}, reviewId);
 		return review;
 	}
 

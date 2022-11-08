@@ -1,5 +1,7 @@
 package com.planner.planner.Dto;
 
+import com.planner.planner.Entity.Review;
+
 public class ReviewDto {
 	private int reviewId;
 	private int plannerId;
@@ -45,6 +47,10 @@ public class ReviewDto {
 		}
 	}
 	
+	public ReviewDto() {
+		
+	}
+	
 	public ReviewDto(Builder builder) {
 		this.reviewId = builder.reviewId;
 		this.plannerId = builder.plannerId;
@@ -76,5 +82,28 @@ public class ReviewDto {
 
 	public int getLikeCount() {
 		return likeCount;
+	}
+	
+	public static ReviewDto from(Review review) {
+		return new ReviewDto.Builder()
+				.setReviewId(review.getReviewId())
+				.setPlannerId(review.getPlannerId())
+				.setTitle(review.getTitle())
+				.setContent(review.getContent())
+				.setWriter(review.getWriter())
+				.setLikeCount(review.getWriter())
+				.setLikeCount(review.getLikeCount())
+				.build();
+	}
+	
+	public Review toEntity() {
+		return new Review.Builder()
+				.setReviewId(reviewId)
+				.setPlannerId(plannerId)
+				.setTitle(title)
+				.setContent(content)
+				.setWriter(writer)
+				.setLikeCount(likeCount)
+				.build();
 	}
 }
