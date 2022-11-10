@@ -18,6 +18,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.test.context.jdbc.SqlConfig.TransactionMode;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -38,6 +40,7 @@ import com.planner.planner.util.JwtUtil;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
 @Transactional
+@Sql(scripts = {"classpath:/Planner_Test_DB.sql"})
 public class ReviewControllerTest {
 	
 	@Autowired
@@ -58,8 +61,6 @@ public class ReviewControllerTest {
 	public void setUp() throws Exception {
 		mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 		token = "Bearer "+ jwtUtil.createToken(1);	
-		ReviewDto reviewDto = new ReviewDto.Builder().setReviewId(1).setPlannerId(1).setTitle("테스트1").setContent("테스트1내용").setWriter(1).setLikeCount(0).build();
-		reviewDao.insertReview(reviewDto.toEntity());
 	}
 
 	@Test
@@ -88,7 +89,8 @@ public class ReviewControllerTest {
 				.content(mapper.writeValueAsString(index)))
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.state").value(is(true)));
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").isNotEmpty());
 	}
 	
 	@Test
