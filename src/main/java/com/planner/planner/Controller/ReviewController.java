@@ -60,6 +60,7 @@ public class ReviewController {
 		if(review == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false,"게시글이 존재하지 않습니다."));
 		}
+		
 		if(Integer.parseInt(req.getAttribute("userId").toString()) != review.getWriter()) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false,"접근 권한이 없습니다."));
 		}
@@ -82,5 +83,4 @@ public class ReviewController {
 
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseMessage(result, ""));
 	}
-
 }

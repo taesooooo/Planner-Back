@@ -15,9 +15,9 @@ public class ReviewDaoImpl implements ReviewDao {
 	
 	private JdbcTemplate jdbcTemplate;
 	
-	private final String insertReviewSQL = "INSERT INTO review(planner_id, title, writer, content, create_date, update_date) VALUES(?, ?, ?, ?, now(), now());";
-	private final String findAllReviewSQL = "SELECT review_id, planner_id, title, writer, content, like_count, create_date, update_date FROM review;";
-	private final String findReviewSQL = "SELECT review_id, planner_id, title, writer, content, like_count, create_date, update_date FROM review WHERE review_id = ?;";
+	private final String insertReviewSQL = "INSERT INTO review(planner_id, title, content, writer, create_date, update_date) VALUES(?, ?, ?, ?, now(), now());";
+	private final String findAllReviewSQL = "SELECT review_id, planner_id, title, content, writer, like_count, create_date, update_date FROM review;";
+	private final String findReviewSQL = "SELECT review_id, planner_id, title, content, writer, like_count, create_date, update_date FROM review WHERE review_id = ?;";
 	private final String updateReviewSQL = "UPDATE review SET title = ?, content = ?, update_date = now() WHERE review_id = ?;";
 	private final String deleteReviewSQL = "DELETE FROM review WHERE review_id = ?;";
 	
@@ -27,23 +27,36 @@ public class ReviewDaoImpl implements ReviewDao {
 
 	@Override
 	public boolean insertReview(Review review) {
-		int result = jdbcTemplate.update(insertReviewSQL, review.getPlannerId(), review.getTitle(),review.getWriter(),review.getContent());
+		int result = jdbcTemplate.update(insertReviewSQL, review.getPlannerId(), review.getTitle(),review.getContent(), review.getWriter());
 		return result > 0 ? true : false;
 	}
 
 	@Override
 	public List<Review> findAllReview(int index) {
-		List<Review> list = jdbcTemplate.queryForList(findAllReviewSQL,Review.class);
+		List<Review> list = jdbcTemplate.query(findAllReviewSQL, (rs, rowNum) -> {
+			return new Review.Builder()
+					.setReviewId(rs.getInt(1))
+					.setPlannerId(rs.getInt(2))
+					.setTitle(rs.getString(3))
+					.setContent(rs.getString(4))
+					.setWriter(rs.getInt(5))
+					.setLikeCount(rs.getInt(6))
+					.setCreateTime(rs.getTimestamp(7).toLocalDateTime())
+					.setUpdateTime(rs.getTimestamp(8).toLocalDateTime())
+					.build();
+		});
 		return list;
-		
 	}
 
 	@Override
 	public Review findReview(int reviewId) {
 		Review review = jdbcTemplate.queryForObject(findReviewSQL, (rs, rowNum) -> {
-			return new Review.Builder().setReviewId(rs.getInt(1)).setPlannerId(rs.getInt(2)).setTitle(rs.getString(3))
-					.setWriter(rs.getInt(4))
-					.setContent(rs.getString(5))
+			return new Review.Builder()
+					.setReviewId(rs.getInt(1))
+					.setPlannerId(rs.getInt(2))
+					.setTitle(rs.getString(3))
+					.setContent(rs.getString(4))
+					.setWriter(rs.getInt(5))
 					.setLikeCount(rs.getInt(6))
 					.setCreateTime(rs.getTimestamp(7).toLocalDateTime())
 					.setUpdateTime(rs.getTimestamp(8).toLocalDateTime())
