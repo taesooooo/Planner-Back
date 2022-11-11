@@ -1,6 +1,7 @@
 package com.planner.planner.Controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Dto.ReviewDto;
@@ -34,14 +36,14 @@ public class ReviewController {
 	}
 	
 	@PostMapping(value="/reviews")
-	public ResponseEntity<Object> writeReview(@RequestBody ReviewDto reviewDto) {
-		boolean result = reviewService.insertReview(reviewDto);
+	public ResponseEntity<Object> writeReview(HttpServletRequest req, @RequestBody ReviewDto reviewDto) {
+		boolean result = reviewService.insertReview(Integer.parseInt(req.getAttribute("userId").toString()), reviewDto);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(result, ""));
 	}
 	
 	@GetMapping(value="/reviews")
-	public ResponseEntity<Object> getReviews(@RequestBody int index) {
+	public ResponseEntity<Object> getReviews(@RequestBody Map<String,Integer> index) {
 		List<ReviewDto> reviews = reviewService.findAllReview(0);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",reviews));
@@ -61,12 +63,12 @@ public class ReviewController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false,"게시글이 존재하지 않습니다."));
 		}
 		
-		if(Integer.parseInt(req.getAttribute("userId").toString()) != review.getWriter()) {
+		if(Integer.parseInt(req.getAttribute("userId").toString()) != review.getWriterId()) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false,"접근 권한이 없습니다."));
 		}
 		boolean result = reviewService.updateReview(reviewDto);
 		
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseMessage(result, ""));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result, ""));
 	}
 	
 	@DeleteMapping(value="/reviews/{reviewId}")
@@ -76,11 +78,11 @@ public class ReviewController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false,"게시글이 존재하지 않습니다."));
 		}
 		
-		if(Integer.parseInt(req.getAttribute("userId").toString()) != review.getWriter()) {
+		if(Integer.parseInt(req.getAttribute("userId").toString()) != review.getWriterId()) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false,"접근 권한이 없습니다."));
 		}
 		boolean result = reviewService.deleteReview(reviewId);
 
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseMessage(result, ""));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result, ""));
 	}
 }

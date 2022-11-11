@@ -8,7 +8,8 @@ public class Review {
 	private int reviewId;
 	private int plannerId;
 	private String title;
-	private int writer;
+	private String writer;
+	private int writerId;
 	private String content;
 	private int likeCount;
 	private LocalDateTime createTime;
@@ -18,7 +19,8 @@ public class Review {
 		private int reviewId;
 		private int plannerId;
 		private String title;
-		private int writer;
+		private String writer;
+		private int writerId;
 		private String content;
 		private int likeCount;
 		private LocalDateTime createTime;
@@ -36,8 +38,12 @@ public class Review {
 			this.title = title;
 			return this;
 		}
-		public Builder setWriter(int writer) {
+		public Builder setWriter(String writer) {
 			this.writer = writer;
+			return this;
+		}
+		public Builder setWriterId(int writerId) {
+			this.writerId = writerId;
 			return this;
 		}
 		public Builder setContent(String content) {
@@ -66,6 +72,7 @@ public class Review {
 		this.plannerId = builder.plannerId;
 		this.title = builder.title;
 		this.writer = builder.writer;
+		this.writerId = builder.writerId;
 		this.content = builder.content;
 		this.likeCount = builder.likeCount;
 		this.createTime = builder.createTime;
@@ -84,8 +91,12 @@ public class Review {
 		return title;
 	}
 
-	public int getWriter() {
+	public String getWriter() {
 		return writer;
+	}
+	
+	public int getWriterId() {
+		return writerId;
 	}
 
 	public String getContent() {
