@@ -9,17 +9,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
-import org.springframework.test.context.jdbc.SqlConfig.TransactionMode;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -65,7 +64,7 @@ public class ReviewControllerTest {
 
 	@Test
 	public void 리뷰_작성_테스트() throws Exception {
-		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setWriter(1).build();
+		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setWriter("test").build();
 
 		mockMvc.perform(post("/api/reviews")
 				.characterEncoding("UTF-8")
@@ -80,7 +79,9 @@ public class ReviewControllerTest {
 	
 	@Test
 	public void 리뷰_목록가져오기_테스트() throws Exception {
-		int index = 1;
+		Map<String, Integer> index = new HashMap<String, Integer>();
+		index.put("index", 1);
+		
 		mockMvc.perform(get("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
@@ -107,7 +108,7 @@ public class ReviewControllerTest {
 	
 	@Test
 	public void 리뷰_수정_테스트() throws Exception {
-		ReviewDto testDto = new ReviewDto.Builder().setReviewId(1).setPlannerId(1).setTitle("update").setContent("수정테스트").setWriter(1).build();
+		ReviewDto testDto = new ReviewDto.Builder().setReviewId(1).setPlannerId(1).setTitle("update").setContent("수정테스트").setWriter("test").build();
 		
 		mockMvc.perform(patch("/api/reviews/1")
 				.characterEncoding("UTF-8")
@@ -116,7 +117,7 @@ public class ReviewControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(testDto)))
 		.andDo(print())
-		.andExpect(status().isNoContent())
+		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)));
 	}
 	
@@ -128,7 +129,7 @@ public class ReviewControllerTest {
 				.header("Authorization", token)
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(print())
-		.andExpect(status().isNoContent())
+		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)));
 	}
 

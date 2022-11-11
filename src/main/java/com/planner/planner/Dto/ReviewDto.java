@@ -6,16 +6,18 @@ public class ReviewDto {
 	private int reviewId;
 	private int plannerId;
 	private String title;
-	private int writer;
 	private String content;
+	private String writer;
+	private int writerId;
 	private int likeCount;
 	
 	public static class Builder {
 		private int reviewId;
 		private int plannerId;
 		private String title;
-		private int writer;
 		private String content;
+		private String writer;
+		private int writerId;
 		private int likeCount;
 		
 		public Builder setReviewId(int reviewId) {
@@ -30,12 +32,16 @@ public class ReviewDto {
 			this.title = title;
 			return this;
 		}
-		public Builder setWriter(int writer) {
+		public Builder setContent(String content) {
+			this.content = content;
+			return this;
+		}
+		public Builder setWriter(String writer) {
 			this.writer = writer;
 			return this;
 		}
-		public Builder setContent(String content) {
-			this.content = content;
+		public Builder setWriterId(int writerId) {
+			this.writerId = writerId;
 			return this;
 		}
 		public Builder setLikeCount(int likeCount) {
@@ -55,8 +61,9 @@ public class ReviewDto {
 		this.reviewId = builder.reviewId;
 		this.plannerId = builder.plannerId;
 		this.title = builder.title;
-		this.writer = builder.writer;
 		this.content = builder.content;
+		this.writer = builder.writer;
+		this.writerId = builder.writerId;
 		this.likeCount = builder.likeCount;
 	}
 
@@ -71,13 +78,17 @@ public class ReviewDto {
 	public String getTitle() {
 		return title;
 	}
+	
+	public String getContent() {
+		return content;
+	}
 
-	public int getWriter() {
+	public String getWriter() {
 		return writer;
 	}
 
-	public String getContent() {
-		return content;
+	public int getWriterId() {
+		return writerId;
 	}
 
 	public int getLikeCount() {
@@ -91,7 +102,7 @@ public class ReviewDto {
 				.setTitle(review.getTitle())
 				.setContent(review.getContent())
 				.setWriter(review.getWriter())
-				.setLikeCount(review.getWriter())
+				.setWriterId(review.getWriterId())
 				.setLikeCount(review.getLikeCount())
 				.build();
 	}

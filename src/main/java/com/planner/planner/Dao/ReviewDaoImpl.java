@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.planner.planner.Entity.Account;
 import com.planner.planner.Entity.Review;
 
 @Repository
@@ -15,9 +16,9 @@ public class ReviewDaoImpl implements ReviewDao {
 	
 	private JdbcTemplate jdbcTemplate;
 	
-	private final String insertReviewSQL = "INSERT INTO review(planner_id, title, content, writer, create_date, update_date) VALUES(?, ?, ?, ?, now(), now());";
-	private final String findAllReviewSQL = "SELECT review_id, planner_id, title, content, writer, like_count, create_date, update_date FROM review;";
-	private final String findReviewSQL = "SELECT review_id, planner_id, title, content, writer, like_count, create_date, update_date FROM review WHERE review_id = ?;";
+	private final String insertReviewSQL = "INSERT INTO review(planner_id, title, content, writer, writer_id, create_date, update_date) VALUES(?, ?, ?, ?, ?, now(), now());";
+	private final String findAllReviewSQL = "SELECT review_id, planner_id, title, content, writer, writer_id, like_count, create_date, update_date FROM review;";
+	private final String findReviewSQL = "SELECT review_id, planner_id, title, content, writer, writer_id, like_count, create_date, update_date FROM review WHERE review_id = ?;";
 	private final String updateReviewSQL = "UPDATE review SET title = ?, content = ?, update_date = now() WHERE review_id = ?;";
 	private final String deleteReviewSQL = "DELETE FROM review WHERE review_id = ?;";
 	
@@ -26,8 +27,8 @@ public class ReviewDaoImpl implements ReviewDao {
 	}
 
 	@Override
-	public boolean insertReview(Review review) {
-		int result = jdbcTemplate.update(insertReviewSQL, review.getPlannerId(), review.getTitle(),review.getContent(), review.getWriter());
+	public boolean insertReview(Review review, Account account) {
+		int result = jdbcTemplate.update(insertReviewSQL, review.getPlannerId(), review.getTitle(),review.getContent(), account.getNickName(), account.getAccountId());
 		return result > 0 ? true : false;
 	}
 
@@ -39,10 +40,11 @@ public class ReviewDaoImpl implements ReviewDao {
 					.setPlannerId(rs.getInt(2))
 					.setTitle(rs.getString(3))
 					.setContent(rs.getString(4))
-					.setWriter(rs.getInt(5))
-					.setLikeCount(rs.getInt(6))
-					.setCreateTime(rs.getTimestamp(7).toLocalDateTime())
-					.setUpdateTime(rs.getTimestamp(8).toLocalDateTime())
+					.setWriter(rs.getString(5))
+					.setWriterId(rs.getInt(6))
+					.setLikeCount(rs.getInt(7))
+					.setCreateTime(rs.getTimestamp(8).toLocalDateTime())
+					.setUpdateTime(rs.getTimestamp(9).toLocalDateTime())
 					.build();
 		});
 		return list;
@@ -56,10 +58,11 @@ public class ReviewDaoImpl implements ReviewDao {
 					.setPlannerId(rs.getInt(2))
 					.setTitle(rs.getString(3))
 					.setContent(rs.getString(4))
-					.setWriter(rs.getInt(5))
-					.setLikeCount(rs.getInt(6))
-					.setCreateTime(rs.getTimestamp(7).toLocalDateTime())
-					.setUpdateTime(rs.getTimestamp(8).toLocalDateTime())
+					.setWriter(rs.getString(5))
+					.setWriterId(rs.getInt(6))
+					.setLikeCount(rs.getInt(7))
+					.setCreateTime(rs.getTimestamp(8).toLocalDateTime())
+					.setUpdateTime(rs.getTimestamp(9).toLocalDateTime())
 					.build();
 		}, reviewId);
 		return review;

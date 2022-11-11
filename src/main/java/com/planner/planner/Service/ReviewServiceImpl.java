@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.planner.planner.Dao.ReviewDao;
+import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Entity.Review;
 
@@ -17,13 +18,18 @@ public class ReviewServiceImpl implements ReviewService {
 	
 	private ReviewDao reviewDao;
 	
-	public ReviewServiceImpl(ReviewDao reviewDao) {
+	private AccountService accountService;
+	
+	public ReviewServiceImpl(ReviewDao reviewDao, AccountService accountService) {
 		this.reviewDao = reviewDao;
+		this.accountService = accountService;
 	}
 
 	@Override
-	public boolean insertReview(ReviewDto reviewDto) {
-		return reviewDao.insertReview(reviewDto.toEntity());
+	public boolean insertReview(int accountId, ReviewDto reviewDto) {
+		AccountDto user = accountService.findById(accountId);
+		
+		return reviewDao.insertReview(reviewDto.toEntity(), user.toEntity());
 	}
 
 	@Override
