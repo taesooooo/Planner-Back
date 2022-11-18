@@ -107,4 +107,6 @@ INSERT INTO `planner` (`planner_id`, `account_id`, `title`, `plan_date_start`, `
 
 INSERT INTO `plannerlike` (`like_id`, `account_id`, `planner_id`, `like_date`) VALUES (1,1,1,'2022-11-09 21:11:49');
 
+INSERT INTO `spotlike` (`like_id`, `account_id`, `content_id`, `like_date`) VALUES ('1', '1', '2733967', now());
+
 INSERT INTO `review` (`review_id`, `planner_id`, `title`, `content`, `writer`, `writer_id`, `like_count`, `create_date`, `update_date`) VALUES (1,1,'여행후기','재미있었다링','test', 1, 0,'2022-11-09 21:14:58','2022-11-09 21:14:58');
