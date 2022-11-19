@@ -73,10 +73,10 @@ public class SpotController {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
 		boolean result = spotService.spotLike(id, contentId);
 		if(result == false) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(result,""));
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(result,"좋아요 실패"));
 		}
 		
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,""));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,"좋아요 성공"));
 	}
 
 	@DeleteMapping(value = "/likes/{contentId}")
@@ -84,10 +84,10 @@ public class SpotController {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
 		boolean result = spotService.spotLikeCancel(id, contentId);
 		if(result == false) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(result,""));
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(result,"좋아요 취소 실패"));
 		}
 		
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,""));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,"좋아요 취소 성공"));
 	}
 
 }
