@@ -1,17 +1,16 @@
 package com.planner.planner.Service;
 
-import java.util.List;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.planner.planner.Dto.OpenApi.AreaCodeDto;
-import com.planner.planner.Dto.OpenApi.BasedDto;
-import com.planner.planner.Dto.OpenApi.DetailCommonDto;
+import com.planner.planner.Dto.OpenApi.CommonBasedDto;
+import com.planner.planner.Dto.OpenApi.CommonDetailDto;
+import com.planner.planner.Dto.OpenApi.CommonListDto;
 
 public interface OpenAPIService {
-	public List<AreaCodeDto> getAreaNum() throws Exception;
-	public List<BasedDto> getAreaList(int areaCode,int contentTypeId, int index) throws Exception;
-	public List<BasedDto> getLocationBasedList(double mapX, double mapY, int radius, int index) throws Exception;
-	public List<BasedDto> getKeyword(int areaCode,int contentTypeId,String keyword, int index) throws Exception;
-	public DetailCommonDto getDetail(int contentId) throws Exception;
-	public ObjectNode getApiData(String url) throws Exception;
+	public CommonListDto<AreaCodeDto> getAreaNum() throws Exception;
+	public CommonListDto<CommonBasedDto> getAreaList(int areaCode,int contentTypeId, int index) throws Exception;
+	public CommonListDto<CommonBasedDto> getLocationBasedList(double mapX, double mapY, int radius, int index) throws Exception;
+	public CommonListDto<CommonBasedDto> getKeyword(int areaCode,int contentTypeId,String keyword, int index) throws Exception;
+	public CommonDetailDto getDetail(int contentId) throws Exception;
+	public JsonNode getApiData(String url) throws Exception;
 }

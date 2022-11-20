@@ -2,8 +2,6 @@ package com.planner.planner.Service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.isNotNull;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -12,23 +10,19 @@ import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Dao.SpotDaoImpl;
 import com.planner.planner.Dto.SpotDto;
-import com.planner.planner.Dto.SpotLikeCountDto;
+import com.planner.planner.Dto.SpotListDto;
 import com.planner.planner.Dto.OpenApi.AreaCodeDto;
-import com.planner.planner.Dto.OpenApi.BasedDto;
-import com.planner.planner.Dto.OpenApi.DetailCommonDto;
+import com.planner.planner.Dto.OpenApi.CommonBasedDto;
+import com.planner.planner.Dto.OpenApi.CommonDetailDto;
+import com.planner.planner.Dto.OpenApi.CommonListDto;
 import com.planner.planner.Entity.SpotLikeCount;
 import com.planner.planner.Exception.OpenAPIDataEmpty;
 
@@ -59,124 +53,127 @@ public class SpotServiceTest {
 	public void 여행지_지역코드_가져오기() throws Exception {
 		List<AreaCodeDto> item = new ArrayList<AreaCodeDto>();
 		item.add(new AreaCodeDto.Builder().setRnum("1").setCode("1").setName("").build());
-		when(apiSerivce.getAreaNum()).thenReturn(item);
 		
-		List<AreaCodeDto> data = spotService.getAreaNum();
+		CommonListDto<AreaCodeDto> testList = new CommonListDto<AreaCodeDto>(item, 1, 1, 1);
 		
-		assertEquals(item.get(0).getRnum(), data.get(0).getRnum());
+		when(apiSerivce.getAreaNum()).thenReturn(testList);
+		
+		SpotListDto<AreaCodeDto> data = spotService.getAreaNum();
+		
+		assertEquals(item.get(0).getRnum(), data.getItems().get(0).getRnum());
 	}
 	
 	@Test
 	public void 여행지_지역기반리스트_가져오기() throws Exception {
-		List<BasedDto> item = createBasedDtoList();
+		CommonListDto<CommonBasedDto> item = createBasedDtoList();
 		
 		List<SpotLikeCount> testLikeCounts = new ArrayList<SpotLikeCount>(); // 좋아요 없음
 		
-		List<SpotDto> testSpotList = createSpotDtoList(0);
+		SpotListDto<SpotDto> testSpotList = createSpotDtoList(0);
 		
-		String contentIds = item.stream().map((i) -> i.getContentid()).collect(Collectors.joining(","));
+		String contentIds = item.getItems().stream().map((i) -> i.getContentid()).collect(Collectors.joining(","));
 		
 		//
 		when(apiSerivce.getAreaList(areaCode, contentTypeId, index)).thenReturn(item);
 		when(spotDao.spotLikeCount(contentIds)).thenReturn(testLikeCounts);
 		
-		List<SpotDto> resultList = spotService.getAreaList(areaCode, contentTypeId, index);
+		SpotListDto<SpotDto> resultList = spotService.getAreaList(areaCode, contentTypeId, index);
 		
-		assertTrue(resultList.size() > 0);
-		assertEquals(testSpotList.get(0).getContentid(), resultList.get(0).getContentid());
+		assertTrue(resultList.getItems().size() > 0);
+		assertEquals(testSpotList.getItems().get(0).getContentid(), resultList.getItems().get(0).getContentid());
 	}
 	
 	@Test(expected = OpenAPIDataEmpty.class)
 	public void 여행지_지역기반리스트_가져오기_openApi_데이터가_없는경우() throws Exception {
 		when(apiSerivce.getAreaList(areaCode, contentTypeId, index)).thenThrow(new OpenAPIDataEmpty());
 
-		List<SpotDto> resultList = spotService.getAreaList(areaCode, contentTypeId, index);
+		SpotListDto<SpotDto> resultList = spotService.getAreaList(areaCode, contentTypeId, index);
 	}
 	
 	@Test
 	public void 여행지_지역기반리스트_가져오기_좋아요_있는경우() throws Exception {
-		List<BasedDto> item = createBasedDtoList();
+		CommonListDto<CommonBasedDto> item = createBasedDtoList();
 		
 		List<SpotLikeCount> testLikeCounts = new ArrayList<SpotLikeCount>();
-		SpotLikeCount testLikeCount = new SpotLikeCount(Integer.parseInt(item.get(0).getContentid()), 1);
-		SpotLikeCount testLikeCount2 = new SpotLikeCount(Integer.parseInt(item.get(1).getContentid()), 1);
+		SpotLikeCount testLikeCount = new SpotLikeCount(Integer.parseInt(item.getItems().get(0).getContentid()), 1);
+		SpotLikeCount testLikeCount2 = new SpotLikeCount(Integer.parseInt(item.getItems().get(1).getContentid()), 1);
 		testLikeCounts.add(testLikeCount);
 		testLikeCounts.add(testLikeCount2);
 		
-		List<SpotDto> testSpotList = createSpotDtoList(1);
+		SpotListDto<SpotDto> testSpotList = createSpotDtoList(1);
 		
-		String contentIds = item.stream().map((i) -> i.getContentid()).collect(Collectors.joining(","));
+		String contentIds = item.getItems().stream().map((i) -> i.getContentid()).collect(Collectors.joining(","));
 		
 		//
 		when(apiSerivce.getAreaList(areaCode, contentTypeId, index)).thenReturn(item);
 		when(spotDao.spotLikeCount(contentIds)).thenReturn(testLikeCounts);
 		
-		List<SpotDto> resultList = spotService.getAreaList(areaCode, contentTypeId, index);
+		SpotListDto<SpotDto> resultList = spotService.getAreaList(areaCode, contentTypeId, index);
 		
-		assertTrue(resultList.size() > 0);
-		assertEquals(testSpotList.get(0).getContentid(), resultList.get(0).getContentid());
-		assertEquals(testSpotList.get(0).getLikeCount(), resultList.get(0).getLikeCount());
+		assertTrue(resultList.getItems().size() > 0);
+		assertEquals(testSpotList.getItems().get(0).getContentid(), resultList.getItems().get(0).getContentid());
+		assertEquals(testSpotList.getItems().get(0).getLikeCount(), resultList.getItems().get(0).getLikeCount());
 	}
 	
 	@Test
 	public void 여행지_키워드별_가져오기() throws Exception {
-		List<BasedDto> item = createBasedDtoList();
+		CommonListDto<CommonBasedDto> item = createBasedDtoList();
 		
 		List<SpotLikeCount> testLikeCounts = new ArrayList<SpotLikeCount>(); // 좋아요 없음
 		
-		List<SpotDto> testSpotList = createSpotDtoList(0);
+		SpotListDto<SpotDto> testSpotList = createSpotDtoList(0);
 		
-		String contentIds = item.stream().map((i) -> i.getContentid()).collect(Collectors.joining(","));
+		String contentIds = item.getItems().stream().map((i) -> i.getContentid()).collect(Collectors.joining(","));
 		
 		//
 		when(apiSerivce.getKeyword(areaCode, contentTypeId, keyword, index)).thenReturn(item);
 		when(spotDao.spotLikeCount(contentIds)).thenReturn(testLikeCounts);
 		
-		List<SpotDto> resultList = spotService.getKeyword(areaCode, contentTypeId, keyword, index);
+		SpotListDto<SpotDto> resultList = spotService.getKeyword(areaCode, contentTypeId, keyword, index);
 		
-		assertTrue(resultList.size() > 0);
-		assertEquals(testSpotList.get(0).getContentid(), resultList.get(0).getContentid());
-		assertEquals(testSpotList.get(0).getLikeCount(), resultList.get(0).getLikeCount());
+		assertTrue(resultList.getItems().size() > 0);
+		assertEquals(testSpotList.getItems().get(0).getContentid(), resultList.getItems().get(0).getContentid());
+		assertEquals(testSpotList.getItems().get(0).getLikeCount(), resultList.getItems().get(0).getLikeCount());
 	}
 	
 	@Test
 	public void 여행지_키워드별_가져오기_좋아요_있는경우() throws Exception {
-		List<BasedDto> item = createBasedDtoList();
+		CommonListDto<CommonBasedDto> item = createBasedDtoList();
 		
 		List<SpotLikeCount> testLikeCounts = new ArrayList<SpotLikeCount>();
-		SpotLikeCount testLikeCount = new SpotLikeCount(Integer.parseInt(item.get(0).getContentid()), 1);
-		SpotLikeCount testLikeCount2 = new SpotLikeCount(Integer.parseInt(item.get(1).getContentid()), 1);
+		SpotLikeCount testLikeCount = new SpotLikeCount(Integer.parseInt(item.getItems().get(0).getContentid()), 1);
+		SpotLikeCount testLikeCount2 = new SpotLikeCount(Integer.parseInt(item.getItems().get(1).getContentid()), 1);
 		testLikeCounts.add(testLikeCount);
 		testLikeCounts.add(testLikeCount2);
 		
-		List<SpotDto> testSpotList = createSpotDtoList(1);
+		SpotListDto<SpotDto> testSpotList = createSpotDtoList(1);
 		
-		String contentIds = item.stream().map((i) -> i.getContentid()).collect(Collectors.joining(","));
+		String contentIds = item.getItems().stream().map((i) -> i.getContentid()).collect(Collectors.joining(","));
 		
 		//
 		when(apiSerivce.getKeyword(areaCode, contentTypeId, keyword, index)).thenReturn(item);
 		when(spotDao.spotLikeCount(contentIds)).thenReturn(testLikeCounts);
 		
-		List<SpotDto> resultList = spotService.getKeyword(areaCode, contentTypeId, keyword, index);
+		SpotListDto<SpotDto> resultList = spotService.getKeyword(areaCode, contentTypeId, keyword, index);
 		
-		assertTrue(resultList.size() > 0);
-		assertEquals(testSpotList.get(0).getContentid(), resultList.get(0).getContentid());
-		assertEquals(testSpotList.get(0).getLikeCount(), resultList.get(0).getLikeCount());
+		assertTrue(resultList.getItems().size() > 0);
+		assertEquals(testSpotList.getItems().get(0).getContentid(), resultList.getItems().get(0).getContentid());
+		assertEquals(testSpotList.getItems().get(0).getLikeCount(), resultList.getItems().get(0).getLikeCount());
 	}
 	
 	@Test(expected = OpenAPIDataEmpty.class)
 	public void 여행지_키워드별_가져오기_openApi_데이터가_없는경우() throws Exception {
 		when(apiSerivce.getKeyword(areaCode, contentTypeId, keyword, index)).thenThrow(new OpenAPIDataEmpty());
 
-		List<SpotDto> resultList = spotService.getKeyword(areaCode, contentTypeId, keyword, index);
+		SpotListDto<SpotDto> resultList = spotService.getKeyword(areaCode, contentTypeId, keyword, index);
 	}
 	
 	@Test
 	public void 여행지_세부사항_가져오기() throws Exception {
-		DetailCommonDto testDetailDto = createDetailDtoList();
+		CommonDetailDto testDetailDto = createDetailDtoList();
 		when(apiSerivce.getDetail(contentId)).thenReturn(testDetailDto);
 		
-		DetailCommonDto resultDto =spotService.getDetail(contentId);
+		CommonDetailDto resultDto =spotService.getDetail(contentId);
 		
 		assertEquals(testDetailDto.getZipcode(), resultDto.getZipcode());
 		assertEquals(testDetailDto.getOverview(), resultDto.getOverview());
@@ -199,8 +196,8 @@ public class SpotServiceTest {
 		assertTrue(spotService.spotLikeCancel(accountId, contentId));
 	}
 	
-	private List<BasedDto> createBasedDtoList() {
-		BasedDto dto = new BasedDto.Builder()
+	private CommonListDto<CommonBasedDto> createBasedDtoList() {
+		CommonBasedDto dto = new CommonBasedDto.Builder()
 				.setAddr1("서울특별시 종로구 북촌로 57")
 				.setAddr2("(가회동)")
 				.setAreaCode("1")
@@ -223,7 +220,7 @@ public class SpotServiceTest {
 				.setTitle("가회동성당")
 				.setZipcode("03052")
 				.build();
-		BasedDto dto2 = new BasedDto.Builder()
+		CommonBasedDto dto2 = new CommonBasedDto.Builder()
 				.setAddr1("서울특별시 동대문구 서울시립대로2길 59")
 				.setAddr2("(답십리동)")
 				.setAreaCode("1")
@@ -246,21 +243,23 @@ public class SpotServiceTest {
 				.setTitle("간데메공원")
 				.setZipcode("02595")
 				.build();
-		List<BasedDto> list =new ArrayList<BasedDto>();
-		list.add(dto);
-		list.add(dto2);
+		List<CommonBasedDto> basedList =new ArrayList<CommonBasedDto>();
+		basedList.add(dto);
+		basedList.add(dto2);
+		
+		CommonListDto<CommonBasedDto> list = new CommonListDto<CommonBasedDto>(basedList,10, 2, 2);
 		return list;
 	}
 	
-	private DetailCommonDto createDetailDtoList() {
-		DetailCommonDto dto = new DetailCommonDto.Builder()
+	private CommonDetailDto createDetailDtoList() {
+		CommonDetailDto dto = new CommonDetailDto.Builder()
 				.setZipcode("03052")
 				.setOverview("가회동성당이 위치한 북촌 일대는...")
 				.build();
 		return dto;
 	}
 	
-	private List<SpotDto> createSpotDtoList(int likeCount) {
+	private SpotListDto<SpotDto> createSpotDtoList(int likeCount) {
 		SpotDto dto = new SpotDto.Builder()
 				.setAddr1("서울특별시 종로구 북촌로 57")
 				.setAddr2("(가회동)")
@@ -309,9 +308,11 @@ public class SpotServiceTest {
 				.setZipcode("02595")
 				.setLikeCount(likeCount)
 				.build();
-		List<SpotDto> list =new ArrayList<SpotDto>();
-		list.add(dto);
-		list.add(dto2);
+		List<SpotDto> spotList =new ArrayList<SpotDto>();
+		spotList.add(dto);
+		spotList.add(dto2);
+		
+		SpotListDto<SpotDto> list = new SpotListDto<SpotDto>(spotList, 2);
 		return list;
 	}
 	

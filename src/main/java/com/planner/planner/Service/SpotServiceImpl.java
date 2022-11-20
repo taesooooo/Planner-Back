@@ -10,10 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.planner.planner.Dao.SpotDao;
 import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Dto.SpotLikeCountDto;
+import com.planner.planner.Dto.SpotListDto;
 import com.planner.planner.Dto.OpenApi.AreaCodeDto;
-import com.planner.planner.Dto.OpenApi.BasedDto;
-import com.planner.planner.Dto.OpenApi.DetailCommonDto;
-import com.planner.planner.Entity.SpotLikeCount;
+import com.planner.planner.Dto.OpenApi.CommonBasedDto;
+import com.planner.planner.Dto.OpenApi.CommonDetailDto;
+import com.planner.planner.Dto.OpenApi.CommonListDto;
 
 @Service
 @Transactional
@@ -28,20 +29,22 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public List<AreaCodeDto> getAreaNum() throws Exception {
-		return apiService.getAreaNum();
+	public SpotListDto<AreaCodeDto> getAreaNum() throws Exception {
+		CommonListDto<AreaCodeDto> apiData = apiService.getAreaNum();
+		SpotListDto<AreaCodeDto> list = new SpotListDto<AreaCodeDto>(apiData.getItems(),apiData.getTotalCount());
+		return list;
 	}
 
 	@Override
-	public List<SpotDto> getAreaList(int areaCode, int contentTypeId, int index) throws Exception {
-		List<BasedDto> spots = apiService.getAreaList(areaCode, contentTypeId, index);
-		String contentIds = spots.stream().map((spot) -> spot.getContentid()).collect(Collectors.joining(","));
+	public SpotListDto<SpotDto> getAreaList(int areaCode, int contentTypeId, int index) throws Exception {
+		CommonListDto<CommonBasedDto> apiData = apiService.getAreaList(areaCode, contentTypeId, index);
+		String contentIds = apiData.getItems().stream().map((spot) -> spot.getContentid()).collect(Collectors.joining(","));
 
 		List<SpotLikeCountDto> counts = spotDao.spotLikeCount(contentIds).stream().map((i) -> SpotLikeCountDto.form(i)).collect(Collectors.toList());
 
 		List<SpotDto> spotList = new ArrayList<SpotDto>();
 
-		for (BasedDto spot : spots) {
+		for (CommonBasedDto spot : apiData.getItems()) {
 			int likeCount = 0;
 			if(!counts.isEmpty()) {
 				for(SpotLikeCountDto count : counts) {
@@ -77,21 +80,23 @@ public class SpotServiceImpl implements SpotService {
 					.build();
 			spotList.add(item);
 		}
-
-		return spotList;
+		
+		SpotListDto<SpotDto> list = new SpotListDto<SpotDto>(spotList,apiData.getTotalCount());
+				
+		return list;
 	}
 
 	@Override
-	public List<SpotDto> getLocationBasedList(double mapX, double mapY, int radius, int index) throws Exception {
-		List<BasedDto> spots = apiService.getLocationBasedList(mapX, mapY, radius, index);
+	public SpotListDto<SpotDto> getLocationBasedList(double mapX, double mapY, int radius, int index) throws Exception {
+		CommonListDto<CommonBasedDto> apiData = apiService.getLocationBasedList(mapX, mapY, radius, index);
 
-		String contentIds = spots.stream().map((spot) -> spot.getContentid()).collect(Collectors.joining(","));
+		String contentIds = apiData.getItems().stream().map((spot) -> spot.getContentid()).collect(Collectors.joining(","));
 
 		List<SpotLikeCountDto> counts = spotLikeCount(contentIds);
 
 		List<SpotDto> spotList = new ArrayList<SpotDto>();
 
-		for (BasedDto spot : spots) {
+		for (CommonBasedDto spot : apiData.getItems()) {
 			int likeCount = 0;
 			if(!counts.isEmpty()) {
 				for(SpotLikeCountDto count : counts) {
@@ -127,20 +132,22 @@ public class SpotServiceImpl implements SpotService {
 					.build();
 			spotList.add(item);
 		}
+		
+		SpotListDto<SpotDto> list = new SpotListDto<SpotDto>(spotList, apiData.getTotalCount());
 
-		return spotList;
+		return list;
 	}
 
 	@Override
-	public List<SpotDto> getKeyword(int areaCode, int contentTypeId, String keyword, int index) throws Exception {
-		List<BasedDto> spots = apiService.getKeyword(areaCode, contentTypeId, keyword, index);
-		String contentIds = spots.stream().map((spot) -> spot.getContentid()).collect(Collectors.joining(","));
+	public SpotListDto<SpotDto> getKeyword(int areaCode, int contentTypeId, String keyword, int index) throws Exception {
+		CommonListDto<CommonBasedDto> apiData = apiService.getKeyword(areaCode, contentTypeId, keyword, index);
+		String contentIds = apiData.getItems().stream().map((spot) -> spot.getContentid()).collect(Collectors.joining(","));
 
 		List<SpotLikeCountDto> counts = spotLikeCount(contentIds);
 
 		List<SpotDto> spotList = new ArrayList<SpotDto>();
 
-		for (BasedDto spot : spots) {
+		for (CommonBasedDto spot : apiData.getItems()) {
 			int likeCount = 0;
 			if(!counts.isEmpty()) {
 				for(SpotLikeCountDto count : counts) {
@@ -176,13 +183,15 @@ public class SpotServiceImpl implements SpotService {
 					.build();
 			spotList.add(item);
 		}
+		
+		SpotListDto<SpotDto> list = new SpotListDto<SpotDto>(spotList, apiData.getTotalCount());
 
-		return spotList;
+		return list;
 	}
 
 	@Override
-	public DetailCommonDto getDetail(int contentId) throws Exception {
-		DetailCommonDto detail = apiService.getDetail(contentId);
+	public CommonDetailDto getDetail(int contentId) throws Exception {
+		CommonDetailDto detail = apiService.getDetail(contentId);
 		return detail;
 	}
 

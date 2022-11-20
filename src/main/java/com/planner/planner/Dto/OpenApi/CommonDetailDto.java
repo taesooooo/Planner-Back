@@ -1,6 +1,6 @@
 package com.planner.planner.Dto.OpenApi;
 
-public class DetailCommonDto {
+public class CommonDetailDto {
 	private String homepage; // 홈페이지주소
 	private String telname; // 전화번호명
 	private String zipcode; // 우편번호
@@ -32,12 +32,12 @@ public class DetailCommonDto {
 			return this;
 		}
 		
-		public DetailCommonDto build() {
-			return new DetailCommonDto(this);
+		public CommonDetailDto build() {
+			return new CommonDetailDto(this);
 		}
 	}
 
-	public DetailCommonDto(Builder builder) {
+	public CommonDetailDto(Builder builder) {
 		this.homepage = builder.homepage;
 		this.telname = builder.telname;
 		this.zipcode = builder.zipcode;

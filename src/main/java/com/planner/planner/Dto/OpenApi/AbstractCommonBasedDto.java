@@ -1,6 +1,6 @@
 package com.planner.planner.Dto.OpenApi;
 
-public abstract class AbstractBasedDto {
+public abstract class AbstractCommonBasedDto {
 	private String readCount; // 조회수
 	private String sigunguCode; // 시군구코드
 	private String tel; // 전화번호
@@ -134,10 +134,10 @@ public abstract class AbstractBasedDto {
 		
 		public abstract T self();
 		
-		public abstract AbstractBasedDto build();
+		public abstract AbstractCommonBasedDto build();
 	}
 	
-	public AbstractBasedDto(Builder<?> builder) {
+	public AbstractCommonBasedDto(Builder<?> builder) {
 		this.readCount = builder.readCount;
 		this.sigunguCode = builder.sigunguCode;
 		this.tel = builder.tel;
