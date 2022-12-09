@@ -20,7 +20,7 @@ public class SpotDaoImpl implements SpotDao {
 
 	private final String likeAddSQL = "INSERT INTO spotlike (account_id, content_id, like_date) VALUES (?, ?, now());";
 	private final String likeDeleteSQL = "DELETE FROM spotlike WHERE account_id = ? and content_id = ?;";
-	private final String likeCountSQL = "SELECT content_id, count(content_id) as like_count FROM spotlike WHERE content_id IN (%s) GROUP BY content_id";
+	private final String likeCountSQL = "SELECT content_id, count(content_id) as like_count FROM spotlike WHERE content_id = ?";
 
 	@Override
 	public boolean spotLikeAdd(int accountId, int contentId) {
@@ -35,11 +35,10 @@ public class SpotDaoImpl implements SpotDao {
 	}
 	
 	@Override
-	public List<SpotLikeCount> spotLikeCount(String contentIds) {
-		String sql = String.format(likeCountSQL, contentIds);
-		List<SpotLikeCount> list = jdbcTemplate.query(sql, (rs, rowNum) -> {
+	public SpotLikeCount spotLikeCount(int contentId) {
+		SpotLikeCount list = jdbcTemplate.queryForObject(likeCountSQL, (rs, rowNum) -> {
 			return new SpotLikeCount(rs.getInt(1),rs.getInt(2));
-		});
+		}, contentId);
 		
 		return list;
 	}

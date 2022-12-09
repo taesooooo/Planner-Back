@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,7 +40,7 @@ import com.planner.planner.util.JwtUtil;
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
-@Transactional
+@Sql(scripts = {"classpath:/Planner_Test_DB.sql"})
 public class AccountControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(AccountControllerTest.class);
 	@Autowired
@@ -107,10 +108,8 @@ public class AccountControllerTest {
 
 	@Test
 	public void 좋아요여행지확인() throws Exception {
-		ContentIdListDto list = new ContentIdListDto(Arrays.asList(3,4,5,6));
-
 		mockMvc.perform(get("/api/users/likes/1/check")
-				.param("contentIds", "3,4,5,6")
+				.param("contentIds", "2733967, 2733968")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token))

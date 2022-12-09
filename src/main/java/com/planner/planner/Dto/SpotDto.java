@@ -3,13 +3,9 @@ package com.planner.planner.Dto;
 import com.planner.planner.Dto.OpenApi.AbstractCommonBasedDto;
 
 public class SpotDto extends AbstractCommonBasedDto {
-	private int likeCount;
 	
 	public static class Builder extends AbstractCommonBasedDto.Builder<Builder> {
-		private int likeCount;
-		
 		public Builder setLikeCount(int likeCount) {
-			this.likeCount = likeCount;
 			return self();
 		}
 		
@@ -26,11 +22,6 @@ public class SpotDto extends AbstractCommonBasedDto {
 	
 	public SpotDto(Builder builder) {
 		super(builder);
-		this.likeCount = builder.likeCount;
-	}
-
-	public int getLikeCount() {
-		return likeCount;
 	}
 	
 }

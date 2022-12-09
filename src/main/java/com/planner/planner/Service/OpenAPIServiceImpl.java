@@ -35,7 +35,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		String apiUrl = baseUrl+"/areaCode?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
-				+"&numOfRows="+numOfRows
+				+"&numOfRows=17"
 				+"&pageNo=1"
 				+"&_type=json";
 
