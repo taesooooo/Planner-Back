@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Dto.SpotListDto;
 import com.planner.planner.Dto.OpenApi.AreaCodeDto;
@@ -64,7 +65,7 @@ public class SpotController {
 
 	@GetMapping(value= "/lists/{contentId}")
 	public ResponseEntity<Object> spotDetail(@PathVariable int contentId) throws Exception {
-		CommonDetailDto info = spotService.getDetail(contentId);
+		SpotDetailDto info = spotService.getDetail(contentId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", info));
 	}

@@ -43,7 +43,8 @@ public class ReviewController {
 	}
 	
 	@GetMapping(value="/reviews")
-	public ResponseEntity<Object> getReviews(@RequestBody Map<String,Integer> index) {
+	//@RequestBody Map<String,Integer> index
+	public ResponseEntity<Object> getReviews() {
 		List<ReviewDto> reviews = reviewService.findAllReview(0);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",reviews));

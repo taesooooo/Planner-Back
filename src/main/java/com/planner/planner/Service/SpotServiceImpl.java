@@ -2,12 +2,12 @@ package com.planner.planner.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.planner.planner.Dao.SpotDao;
+import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Dto.SpotLikeCountDto;
 import com.planner.planner.Dto.SpotListDto;
@@ -15,6 +15,7 @@ import com.planner.planner.Dto.OpenApi.AreaCodeDto;
 import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
+import com.planner.planner.Entity.SpotLikeCount;
 
 @Service
 @Transactional
@@ -38,22 +39,11 @@ public class SpotServiceImpl implements SpotService {
 	@Override
 	public SpotListDto<SpotDto> getAreaList(int areaCode, int contentTypeId, int index) throws Exception {
 		CommonListDto<CommonBasedDto> apiData = apiService.getAreaList(areaCode, contentTypeId, index);
-		String contentIds = apiData.getItems().stream().map((spot) -> spot.getContentid()).collect(Collectors.joining(","));
-
-		List<SpotLikeCountDto> counts = spotDao.spotLikeCount(contentIds).stream().map((i) -> SpotLikeCountDto.form(i)).collect(Collectors.toList());
 
 		List<SpotDto> spotList = new ArrayList<SpotDto>();
 
 		for (CommonBasedDto spot : apiData.getItems()) {
-			int likeCount = 0;
-			if(!counts.isEmpty()) {
-				for(SpotLikeCountDto count : counts) {
-					if(count.getCotentId() == Integer.parseInt(spot.getContentid())) {
-						likeCount = count.getLikeCount();
-						break;
-					}
-				}
-			}
+		
 
 			SpotDto item = new SpotDto.Builder()
 					.setAddr1(spot.getAddr1())
@@ -68,7 +58,7 @@ public class SpotServiceImpl implements SpotService {
 					.setCreatedtime(spot.getCreatedtime())
 					.setFirstimage(spot.getFirstimage())
 					.setFirstimage2(spot.getFirstimage2())
-					.setLikeCount(likeCount)
+					//.setLikeCount(likeCount)
 					.setMapx(spot.getMapx())
 					.setMapy(spot.getMapy())
 					.setMlevel(spot.getMlevel())
@@ -90,23 +80,9 @@ public class SpotServiceImpl implements SpotService {
 	public SpotListDto<SpotDto> getLocationBasedList(double mapX, double mapY, int radius, int index) throws Exception {
 		CommonListDto<CommonBasedDto> apiData = apiService.getLocationBasedList(mapX, mapY, radius, index);
 
-		String contentIds = apiData.getItems().stream().map((spot) -> spot.getContentid()).collect(Collectors.joining(","));
-
-		List<SpotLikeCountDto> counts = spotLikeCount(contentIds);
-
 		List<SpotDto> spotList = new ArrayList<SpotDto>();
 
 		for (CommonBasedDto spot : apiData.getItems()) {
-			int likeCount = 0;
-			if(!counts.isEmpty()) {
-				for(SpotLikeCountDto count : counts) {
-					if(count.getCotentId() == Integer.parseInt(spot.getContentid())) {
-						likeCount = count.getLikeCount();
-						break;
-					}
-				}
-			}
-
 			SpotDto item = new SpotDto.Builder()
 					.setAddr1(spot.getAddr1())
 					.setAddr2(spot.getAddr2())
@@ -120,7 +96,7 @@ public class SpotServiceImpl implements SpotService {
 					.setCreatedtime(spot.getCreatedtime())
 					.setFirstimage(spot.getFirstimage())
 					.setFirstimage2(spot.getFirstimage2())
-					.setLikeCount(likeCount)
+					//.setLikeCount(likeCount)
 					.setMapx(spot.getMapx())
 					.setMapy(spot.getMapy())
 					.setMlevel(spot.getMlevel())
@@ -141,23 +117,10 @@ public class SpotServiceImpl implements SpotService {
 	@Override
 	public SpotListDto<SpotDto> getKeyword(int areaCode, int contentTypeId, String keyword, int index) throws Exception {
 		CommonListDto<CommonBasedDto> apiData = apiService.getKeyword(areaCode, contentTypeId, keyword, index);
-		String contentIds = apiData.getItems().stream().map((spot) -> spot.getContentid()).collect(Collectors.joining(","));
-
-		List<SpotLikeCountDto> counts = spotLikeCount(contentIds);
-
+		
 		List<SpotDto> spotList = new ArrayList<SpotDto>();
 
 		for (CommonBasedDto spot : apiData.getItems()) {
-			int likeCount = 0;
-			if(!counts.isEmpty()) {
-				for(SpotLikeCountDto count : counts) {
-					if(count.getCotentId() == Integer.parseInt(spot.getContentid())) {
-						likeCount = count.getLikeCount();
-						break;
-					}
-				}
-			}
-
 			SpotDto item = new SpotDto.Builder()
 					.setAddr1(spot.getAddr1())
 					.setAddr2(spot.getAddr2())
@@ -171,7 +134,7 @@ public class SpotServiceImpl implements SpotService {
 					.setCreatedtime(spot.getCreatedtime())
 					.setFirstimage(spot.getFirstimage())
 					.setFirstimage2(spot.getFirstimage2())
-					.setLikeCount(likeCount)
+					//.setLikeCount(likeCount)
 					.setMapx(spot.getMapx())
 					.setMapy(spot.getMapy())
 					.setMlevel(spot.getMlevel())
@@ -190,9 +153,26 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public CommonDetailDto getDetail(int contentId) throws Exception {
+	public SpotDetailDto getDetail(int contentId) throws Exception {
 		CommonDetailDto detail = apiService.getDetail(contentId);
-		return detail;
+		//String contentIds = apiData.getItems().stream().map((spot) -> spot.getContentid()).collect(Collectors.joining(","));
+		int likeCount = 0;
+		
+		SpotLikeCount spotLikeCount = spotDao.spotLikeCount(contentId);
+		if(spotLikeCount != null) {
+			SpotLikeCountDto count = SpotLikeCountDto.form(spotLikeCount);
+			likeCount = count.getLikeCount();
+		}
+		
+		SpotDetailDto spotDetail = new SpotDetailDto.Builder()
+				.setHomepage(detail.getHomepage())
+				.setLikeCount(likeCount)
+				.setOverview(detail.getOverview())
+				.setTelname(detail.getTelname())
+				.setZipcode(detail.getZipcode())
+				.build();
+			
+		return spotDetail;
 	}
 
 	@Override
@@ -212,8 +192,8 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public List<SpotLikeCountDto> spotLikeCount(String contentIds) {
-		return spotDao.spotLikeCount(contentIds).stream().map((i) -> SpotLikeCountDto.form(i)).collect(Collectors.toList());
+	public SpotLikeCountDto spotLikeCount(int contentIds) {
+		return SpotLikeCountDto.form(spotDao.spotLikeCount(contentIds));
 	}
 
 }
