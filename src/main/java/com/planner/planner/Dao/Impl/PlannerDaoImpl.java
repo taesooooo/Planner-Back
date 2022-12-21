@@ -1,4 +1,4 @@
-package com.planner.planner.Dao;
+package com.planner.planner.Dao.Impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Entity.Planner;
 

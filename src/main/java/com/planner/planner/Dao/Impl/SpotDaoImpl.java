@@ -1,4 +1,4 @@
-package com.planner.planner.Dao;
+package com.planner.planner.Dao.Impl;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.planner.planner.Dao.SpotDao;
 import com.planner.planner.Entity.SpotLikeCount;
 
 @Repository

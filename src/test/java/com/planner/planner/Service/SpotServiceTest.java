@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.planner.planner.Dao.SpotDaoImpl;
+import com.planner.planner.Dao.Impl.SpotDaoImpl;
 import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Dto.SpotListDto;
