@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Common.Image;
 import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.AccountDaoImpl;
+import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.LikeDto;

@@ -1,4 +1,4 @@
-package com.planner.planner.Dao;
+package com.planner.planner.Dao.Impl;
 
 import java.util.List;
 
@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Entity.Review;
 
