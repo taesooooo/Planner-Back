@@ -5,11 +5,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.PlanMemberDao;
 import com.planner.planner.Entity.PlanMember;
 import com.planner.planner.RowMapper.PlanMemberRowMapper;
 
+@Repository
 public class PlanMemberDaoImpl implements PlanMemberDao {
 	private static final Logger logger = LoggerFactory.getLogger(PlanMemberDaoImpl.class);
 	

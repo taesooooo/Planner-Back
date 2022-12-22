@@ -9,12 +9,9 @@ public class Planner {
 	private int plannerId;
 	private int accountId;
 	private String title;
-	private LocalDate planDateStart;
-	private LocalDate planDateEnd;
-	private int memberCount;
-	private String member;
-	private String plan;
-	private int recommendCount;
+	private LocalDateTime planDateStart;
+	private LocalDateTime planDateEnd;
+	private int likeCount = 0;
 	private LocalDateTime createDate;
 	private LocalDateTime updateDate;
 
@@ -22,12 +19,9 @@ public class Planner {
 		private int plannerId = 0;
 		private int accountId = 0;
 		private String title;
-		private LocalDate planDateStart;
-		private LocalDate planDateEnd;
-		private int memberCount = 1;
-		private String member;
-		private String plan;
-		private int recommendCount = 0;
+		private LocalDateTime planDateStart;
+		private LocalDateTime planDateEnd;
+		private int likeCount = 0;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
 
@@ -46,33 +40,18 @@ public class Planner {
 			return this;
 		}
 
-		public Builder setPlanDateStart(LocalDate planDateStart) {
+		public Builder setPlanDateStart(LocalDateTime planDateStart) {
 			this.planDateStart = planDateStart;
 			return this;
 		}
 
-		public Builder setPlanDateEnd(LocalDate planDateEnd) {
+		public Builder setPlanDateEnd(LocalDateTime planDateEnd) {
 			this.planDateEnd = planDateEnd;
 			return this;
 		}
 
-		public Builder setMemberCount(int memberCount) {
-			this.memberCount = memberCount;
-			return this;
-		}
-
-		public Builder setMember(String member) {
-			this.member = member;
-			return this;
-		}
-
-		public Builder setPlan(String plan) {
-			this.plan = plan;
-			return this;
-		}
-
-		public Builder setRecommendCount(int recommendCount) {
-			this.recommendCount = recommendCount;
+		public Builder setLikeCount(int likeCount) {
+			this.likeCount = likeCount;
 			return this;
 		}
 
@@ -97,10 +76,7 @@ public class Planner {
 		this.title = builder.title;
 		this.planDateStart = builder.planDateStart;
 		this.planDateEnd = builder.planDateEnd;
-		this.memberCount = builder.memberCount;
-		this.member = builder.member;
-		this.plan = builder.plan;
-		this.recommendCount = builder.recommendCount;
+		this.likeCount = builder.likeCount;
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
 	}
@@ -117,28 +93,16 @@ public class Planner {
 		return title;
 	}
 
-	public LocalDate getPlanDateStart() {
+	public LocalDateTime getPlanDateStart() {
 		return planDateStart;
 	}
 
-	public LocalDate getPlanDateEnd() {
+	public LocalDateTime getPlanDateEnd() {
 		return planDateEnd;
 	}
 
-	public int getMemberCount() {
-		return memberCount;
-	}
-
-	public String getMember() {
-		return member;
-	}
-
-	public String getPlan() {
-		return plan;
-	}
-
-	public int getRecommendCount() {
-		return recommendCount;
+	public int getLikeCount() {
+		return likeCount;
 	}
 
 	public LocalDateTime getCreateDate() {
@@ -147,27 +111,5 @@ public class Planner {
 
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
-	}
-
-	public PlannerDto toDto() {
-		return new PlannerDto.Builder()
-				.setPlannerId(plannerId)
-				.setAccountId(accountId)
-				.setTitle(title)
-				.setPlanDateStart(planDateStart)
-				.setPlanDateEnd(planDateEnd)
-				.setMemberCount(memberCount)
-				.setMember(member)
-				.setPlan(plan)
-				.setLikeCount(recommendCount)
-				.build();
-	}
-
-	@Override
-	public String toString() {
-		return "Planner [plannerId=" + plannerId + ", accountId=" + accountId + ", title=" + title + ", planDateStart="
-				+ planDateStart + ", planDateEnd=" + planDateEnd + ", memberCount=" + memberCount + ", member=" + member
-				+ ", plan=" + plan + ", recommendCount=" + recommendCount + ", createDate=" + createDate
-				+ ", updateDate=" + updateDate + "]";
 	}
 }

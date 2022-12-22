@@ -26,6 +26,8 @@ import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
 import com.planner.planner.Entity.SpotLikeCount;
 import com.planner.planner.Exception.OpenAPIDataEmpty;
+import com.planner.planner.Service.Impl.OpenAPIServiceImpl;
+import com.planner.planner.Service.Impl.SpotServiceImpl;
 
 public class SpotServiceTest {
 	private static final Logger logger = LoggerFactory.getLogger(SpotServiceTest.class);

@@ -1,4 +1,4 @@
-package com.planner.planner.Service;
+package com.planner.planner.Service.Impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,8 @@ import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
 import com.planner.planner.Entity.SpotLikeCount;
+import com.planner.planner.Service.OpenAPIService;
+import com.planner.planner.Service.SpotService;
 
 @Service
 @Transactional
