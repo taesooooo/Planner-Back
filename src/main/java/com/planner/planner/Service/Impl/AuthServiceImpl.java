@@ -1,4 +1,4 @@
-package com.planner.planner.Service;
+package com.planner.planner.Service.Impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Entity.Account;
+import com.planner.planner.Service.AuthService;
 
 @Service
 public class AuthServiceImpl implements AuthService {

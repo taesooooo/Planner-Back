@@ -93,11 +93,6 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public List<PlannerDto> likePlanners(int accountId) {
-		return jdbcTemplate.query(likePlannersSQL, new LikePlannersRowMapper(), accountId).stream().map((p) -> p.toDto()).collect(Collectors.toList());
-	}
-
-	@Override
 	public List<SpotLikeDto> likeSpots(int accountId) {
 		List<SpotLike> likes = jdbcTemplate.query(likeSpotsSQL, new RowMapper<SpotLike>() {
 			@Override

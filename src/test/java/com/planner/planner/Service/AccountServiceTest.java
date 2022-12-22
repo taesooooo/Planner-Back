@@ -37,6 +37,7 @@ import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
 import com.planner.planner.Entity.Account;
+import com.planner.planner.Service.Impl.AccountServiceImpl;
 import com.planner.planner.util.FileStore;
 
 public class AccountServiceTest {

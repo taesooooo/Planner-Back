@@ -1,4 +1,4 @@
-package com.planner.planner.Service;
+package com.planner.planner.Service.Impl;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -18,6 +18,7 @@ import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
 import com.planner.planner.Exception.OpenAPIDataEmpty;
+import com.planner.planner.Service.OpenAPIService;
 
 @Service
 public class OpenAPIServiceImpl implements OpenAPIService {

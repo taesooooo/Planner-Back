@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
+import com.planner.planner.Service.Impl.OpenAPIServiceImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class })
