@@ -32,8 +32,8 @@ public class PlannerContorller {
 	private PlannerService plannerService;
 
 	@PostMapping
-	public ResponseEntity<Object> createPlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto) {
-		boolean result = plannerService.create(plannerDto);
+	public ResponseEntity<Object> newPlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto) {
+		boolean result = plannerService.add(plannerDto);
 		if(result) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 		}
@@ -41,9 +41,9 @@ public class PlannerContorller {
 	}
 
 	@GetMapping
-	public ResponseEntity<Object> readPlanner(HttpServletRequest req) {
+	public ResponseEntity<Object> getPlanner(HttpServletRequest req) {
 		try {
-			List<PlannerDto> planners = plannerService.getAllPlanners();
+			List<PlannerDto> planners = plannerService.findPlannerAll();
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, "", planners));
 		}
 		catch (EmptyResultDataAccessException e) {
@@ -52,69 +52,13 @@ public class PlannerContorller {
 	}
 
 	@GetMapping(value="/{plannerId}")
-	public ResponseEntity<Object> plannersById(HttpServletRequest req, @PathVariable int plannerId) {
+	public ResponseEntity<Object> getPlannersById(HttpServletRequest req, @PathVariable int plannerId) {
 		int id = Integer.parseInt(req.getAttribute("userId").toString());
 		if(id != plannerId) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
 		}
 
-		PlannerDto planner = plannerService.read(plannerId);
+		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",planner));
 	}
-
-	@PutMapping(value="/{plannerId}")
-	public ResponseEntity<Object> updatePlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto, @PathVariable int plannerId) {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		PlannerDto planner = plannerService.read(plannerId);
-
-		if(id != planner.getAccountId()) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
-
-		if(plannerService.update(plannerDto)) {
-			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",plannerDto));
-		}
-
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "변경하지 못헀습니다."));
-	}
-
-	@DeleteMapping(value="/{plannerId}")
-	public ResponseEntity<Object> deletePlanner(HttpServletRequest req, @PathVariable int plannerId) {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		PlannerDto planner = plannerService.read(plannerId);
-
-		if(id != planner.getAccountId()) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
-
-		if(plannerService.delete(plannerId)) {
-			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "플래너 삭제가 완료되었습니다."));
-		}
-
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "삭제를 실패했습니다."));
-	}
-
-
-	@PostMapping(value="/{plannerId}/likes")
-	public ResponseEntity<Object> likePlanner(HttpServletRequest req, @PathVariable int plannerId) {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-
-		if(plannerService.like(plannerId, id)) {
-			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
-		}
-
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "실패했습니다."));
-	}
-
-	@DeleteMapping(value= "/{plannerId}/likes")
-	public ResponseEntity<Object> likeCancelPlanner(HttpServletRequest req, @PathVariable int plannerId) {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-
-		if(plannerService.likeCancel(plannerId, id)) {
-			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
-		}
-
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "실패했습니다."));
-	}
-
 }

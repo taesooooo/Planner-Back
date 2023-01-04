@@ -3,60 +3,57 @@ package com.planner.planner.Service.Impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.planner.planner.Dao.PlanDao;
+import com.planner.planner.Dao.PlanLocationDao;
+import com.planner.planner.Dao.PlanMemberDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.PlannerDto;
+import com.planner.planner.Entity.Planner;
+import com.planner.planner.Exception.EmptyData;
 import com.planner.planner.Service.PlannerService;
 
 @Service
 @Transactional
 public class PlannerServiceImpl implements PlannerService {
-
-	@Autowired
 	private PlannerDao plannerDao;
-
-	@Override
-	public boolean create(PlannerDto plannerDto) {
-		return plannerDao.create(plannerDto.toEntity());
+	private PlanMemberDao planMemberDao;
+	private PlanDao planDao;
+	private PlanLocationDao planLocationDao;
+	
+	public PlannerServiceImpl(PlannerDao plannerDao) {
+		this.plannerDao = plannerDao;
 	}
 
 	@Override
-	public PlannerDto read(int plannerId) {
-		return plannerDao.read(plannerId);
+	public boolean add(PlannerDto plannerDto) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
-	public boolean update(PlannerDto plannerDto) {
-		return plannerDao.update(plannerDto.toEntity());
+	public PlannerDto findPlannerByPlannerId(int plannerId) {
+		Planner planner = plannerDao.findPlannerByPlannerId(plannerId);
+		return PlannerDto.from(planner);
 	}
 
 	@Override
-	public boolean delete(int plannerId) {
-		return plannerDao.delete(plannerId);
+	public List<PlannerDto> findPlannersByAccountId(int accountId) {
+		List<Planner> planner = plannerDao.findPlannersByAccountId(accountId);
+		if(planner.isEmpty()) {
+			throw new EmptyData();
+		}
+		return planner.stream().map(PlannerDto::from).collect(Collectors.toList());
 	}
 
 	@Override
-	public boolean like(int plannerId, int accountId) {
-		boolean result = plannerDao.like(plannerId);
-		result = plannerDao.likePlanner(plannerId, accountId);
-
-		return result;
+	public List<PlannerDto> findPlannerAll() {
+		List<Planner> planner = plannerDao.findPlannersAll();
+		if(planner.isEmpty()) {
+			throw new EmptyData();
+		}
+		return planner.stream().map(PlannerDto::from).collect(Collectors.toList());
 	}
-
-	@Override
-	public boolean likeCancel(int plannerId, int accountId) {
-		boolean result = plannerDao.likeCancel(plannerId);
-		result = plannerDao.likeDelete(plannerId, accountId);
-
-		return result;
-	}
-
-	@Override
-	public List<PlannerDto> getAllPlanners() {
-		return plannerDao.getAllPlanners().stream().map((p) -> p.toDto()).collect(Collectors.toList());
-	}
-
 }

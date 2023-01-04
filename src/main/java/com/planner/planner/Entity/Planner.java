@@ -1,9 +1,7 @@
 package com.planner.planner.Entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import com.planner.planner.Dto.PlannerDto;
+import java.util.List;
 
 public class Planner {
 	private int plannerId;
@@ -14,6 +12,8 @@ public class Planner {
 	private int likeCount = 0;
 	private LocalDateTime createDate;
 	private LocalDateTime updateDate;
+	
+	private List<Plan> plans;
 
 	public static class Builder {
 		private int plannerId = 0;
@@ -24,6 +24,8 @@ public class Planner {
 		private int likeCount = 0;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
+		
+		private List<Plan> plans;
 
 		public Builder setPlannerId(int plannerId) {
 			this.plannerId = plannerId;
@@ -65,6 +67,11 @@ public class Planner {
 			return this;
 		}
 
+		public Builder setPlans(List<Plan> plans) {
+			this.plans = plans;
+			return this;
+		}
+
 		public Planner build() {
 			return new Planner(this);
 		}
@@ -79,6 +86,7 @@ public class Planner {
 		this.likeCount = builder.likeCount;
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
+		this.plans = builder.plans;
 	}
 
 	public int getPlannerId() {
@@ -111,5 +119,9 @@ public class Planner {
 
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
+	}
+
+	public List<Plan> getPlans() {
+		return plans;
 	}
 }

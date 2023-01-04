@@ -12,12 +12,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Entity.SpotLike;
 import com.planner.planner.RowMapper.AccountRowMapper;
-import com.planner.planner.RowMapper.LikePlannersRowMapper;
 
 @Repository
 public class AccountDaoImpl implements AccountDao {

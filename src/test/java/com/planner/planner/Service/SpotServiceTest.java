@@ -25,7 +25,7 @@ import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
 import com.planner.planner.Entity.SpotLikeCount;
-import com.planner.planner.Exception.OpenAPIDataEmpty;
+import com.planner.planner.Exception.EmptyData;
 import com.planner.planner.Service.Impl.OpenAPIServiceImpl;
 import com.planner.planner.Service.Impl.SpotServiceImpl;
 
@@ -86,9 +86,9 @@ public class SpotServiceTest {
 		assertEquals(testSpotList.getItems().get(0).getContentid(), resultList.getItems().get(0).getContentid());
 	}
 	
-	@Test(expected = OpenAPIDataEmpty.class)
+	@Test(expected = EmptyData.class)
 	public void 여행지_지역기반리스트_가져오기_openApi_데이터가_없는경우() throws Exception {
-		when(apiSerivce.getAreaList(areaCode, contentTypeId, index)).thenThrow(new OpenAPIDataEmpty());
+		when(apiSerivce.getAreaList(areaCode, contentTypeId, index)).thenThrow(new EmptyData());
 
 		SpotListDto<SpotDto> resultList = spotService.getAreaList(areaCode, contentTypeId, index);
 	}
@@ -163,9 +163,9 @@ public class SpotServiceTest {
 //		assertEquals(testSpotList.getItems().get(0).getLikeCount(), resultList.getItems().get(0).getLikeCount());
 //	}
 	
-	@Test(expected = OpenAPIDataEmpty.class)
+	@Test(expected = EmptyData.class)
 	public void 여행지_키워드별_가져오기_openApi_데이터가_없는경우() throws Exception {
-		when(apiSerivce.getKeyword(areaCode, contentTypeId, keyword, index)).thenThrow(new OpenAPIDataEmpty());
+		when(apiSerivce.getKeyword(areaCode, contentTypeId, keyword, index)).thenThrow(new EmptyData());
 
 		SpotListDto<SpotDto> resultList = spotService.getKeyword(areaCode, contentTypeId, keyword, index);
 	}

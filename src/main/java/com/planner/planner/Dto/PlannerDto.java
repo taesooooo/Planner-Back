@@ -2,43 +2,41 @@ package com.planner.planner.Dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.planner.planner.Entity.Plan;
 import com.planner.planner.Entity.Planner;
 
-@JsonInclude(value = Include.NON_NULL)
 public class PlannerDto {
 	private int plannerId;
-	@JsonProperty(access = Access.WRITE_ONLY)
 	private int accountId;
 	private String title;
 	@JsonFormat(pattern = "yyyy-MM-dd")
-	private LocalDate planDateStart;
+	private LocalDateTime planDateStart;
 	@JsonFormat(pattern = "yyyy-MM-dd")
-	private LocalDate planDateEnd;
-	private int memberCount = 1;
-	private String member;
-	private String plan;
+	private LocalDateTime planDateEnd;
+	private PlanDto plan;
+	private PlanMemberDto planMember;
 	private int likeCount;
 	private LocalDateTime createDate;
 	private LocalDateTime updateDate;
+	
+	private List<Plan> plans;
 
 	public static class Builder {
 		private int plannerId;
 		private int accountId;
 		private String title;
-		private LocalDate planDateStart;
-		private LocalDate planDateEnd;
-		private int memberCount = 1;
-		private String member;
-		private String plan;
+		private LocalDateTime planDateStart;
+		private LocalDateTime planDateEnd;
+		private PlanDto plan;
+		private PlanMemberDto planMember;
 		private int likeCount;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
+		
+		private List<Plan> plans;
 
 		public Builder setPlannerId(int plannerId) {
 			this.plannerId = plannerId;
@@ -55,33 +53,28 @@ public class PlannerDto {
 			return this;
 		}
 
-		public Builder setPlanDateStart(LocalDate planDateStart) {
+		public Builder setPlanDateStart(LocalDateTime planDateStart) {
 			this.planDateStart = planDateStart;
 			return this;
 		}
 
-		public Builder setPlanDateEnd(LocalDate planDateEnd) {
+		public Builder setPlanDateEnd(LocalDateTime planDateEnd) {
 			this.planDateEnd = planDateEnd;
 			return this;
 		}
 
-		public Builder setMemberCount(int memberCount) {
-			this.memberCount = memberCount;
-			return this;
-		}
-
-		public Builder setMember(String member) {
-			this.member = member;
-			return this;
-		}
-
-		public Builder setPlan(String plan) {
+		public Builder setPlan(PlanDto plan) {
 			this.plan = plan;
 			return this;
 		}
 
-		public Builder setLikeCount(int recommendCount) {
-			this.likeCount = recommendCount;
+		public Builder setPlanMember(PlanMemberDto planMember) {
+			this.planMember = planMember;
+			return this;
+		}
+
+		public Builder setLikeCount(int likeCount) {
+			this.likeCount = likeCount;
 			return this;
 		}
 
@@ -92,6 +85,11 @@ public class PlannerDto {
 
 		public Builder setUpdateDate(LocalDateTime updateDate) {
 			this.updateDate = updateDate;
+			return this;
+		}
+
+		public Builder setPlans(List<Plan> plans) {
+			this.plans = plans;
 			return this;
 		}
 
@@ -110,102 +108,73 @@ public class PlannerDto {
 		this.title = builder.title;
 		this.planDateStart = builder.planDateStart;
 		this.planDateEnd = builder.planDateEnd;
-		this.memberCount = builder.memberCount;
-		this.member = builder.member;
+		this.plan = builder.plan;
+		this.planMember = builder.planMember;
 		this.plan = builder.plan;
 		this.likeCount = builder.likeCount;
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
+		this.plans = builder.plans;
 	}
 
 	public int getPlannerId() {
 		return plannerId;
 	}
 
-	public void setPlannerId(int plannerId) {
-		this.plannerId = plannerId;
-	}
-
 	public int getAccountId() {
 		return accountId;
-	}
-
-	public void setAccountId(int accountId) {
-		this.accountId = accountId;
 	}
 
 	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public LocalDate getPlanDateStart() {
+	public LocalDateTime getPlanDateStart() {
 		return planDateStart;
 	}
 
-	public void setPlanDateStart(LocalDate planDateStart) {
-		this.planDateStart = planDateStart;
-	}
-
-	public LocalDate getPlanDateEnd() {
+	public LocalDateTime getPlanDateEnd() {
 		return planDateEnd;
 	}
 
-	public void setPlanDateEnd(LocalDate planDateEnd) {
-		this.planDateEnd = planDateEnd;
-	}
-
-	public int getMemberCount() {
-		return memberCount;
-	}
-
-	public void setMemberCount(int memberCount) {
-		this.memberCount = memberCount;
-	}
-
-	public String getMember() {
-		return member;
-	}
-
-	public void setMember(String member) {
-		this.member = member;
-	}
-
-	public String getPlan() {
+	public PlanDto getPlan() {
 		return plan;
 	}
 
-	public void setPlan(String plan) {
-		this.plan = plan;
+	public PlanMemberDto getPlanMember() {
+		return planMember;
 	}
 
 	public int getLikeCount() {
 		return likeCount;
 	}
 
-	public void setLikeCount(int recommendCount) {
-		this.likeCount = recommendCount;
-	}
-
 	public LocalDateTime getCreateDate() {
 		return createDate;
-	}
-
-	public void setCreateDate(LocalDateTime createDate) {
-		this.createDate = createDate;
 	}
 
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
-
-	public void setUpdateDate(LocalDateTime updateDate) {
-		this.updateDate = updateDate;
+	
+	public List<Plan> getPlans() {
+		return plans;
 	}
 
+	public static PlannerDto from(Planner planner) {
+		return new PlannerDto.Builder()
+				.setPlannerId(planner.getPlannerId())
+				.setAccountId(planner.getAccountId())
+				.setTitle(planner.getTitle())
+				.setPlanDateStart(planner.getPlanDateStart())
+				.setPlanDateEnd(planner.getPlanDateEnd())
+				.setCreateDate(planner.getCreateDate())
+				.setUpdateDate(planner.getUpdateDate())
+				.setLikeCount(planner.getLikeCount())
+				.setPlans(planner.getPlans())
+				.build();
+	}
+	
 	public Planner toEntity() {
 		return new Planner.Builder()
 				.setPlannerId(plannerId)
@@ -213,20 +182,10 @@ public class PlannerDto {
 				.setTitle(title)
 				.setPlanDateStart(planDateStart)
 				.setPlanDateEnd(planDateEnd)
-				.setMemberCount(memberCount)
-				.setMember(member)
-				.setPlan(plan)
-				.setRecommendCount(likeCount)
 				.setCreateDate(createDate)
 				.setUpdateDate(updateDate)
+				.setLikeCount(likeCount)
+				.setPlans(plans)
 				.build();
-	}
-
-	@Override
-	public String toString() {
-		return "PlannerDto [plannerId=" + plannerId + ", accountId=" + accountId + ", title=" + title
-				+ ", planDateStart=" + planDateStart + ", planDateEnd=" + planDateEnd + ", memberCount=" + memberCount
-				+ ", member=" + member + ", plan=" + plan + ", recommendCount=" + likeCount + ", createDate="
-				+ createDate + ", updateDate=" + updateDate + "]";
 	}
 }
