@@ -17,7 +17,7 @@ import com.planner.planner.Dto.OpenApi.AreaCodeDto;
 import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
-import com.planner.planner.Exception.OpenAPIDataEmpty;
+import com.planner.planner.Exception.EmptyData;
 import com.planner.planner.Service.OpenAPIService;
 
 @Service
@@ -42,7 +42,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 		JsonNode data = getApiData(apiUrl);
 		if(data == null) {
-			throw new OpenAPIDataEmpty();
+			throw new EmptyData();
 		}
 		
 		int numOfRows = data.get("numOfRows").asInt();
@@ -74,7 +74,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 		JsonNode data = getApiData(apiUrl);
 		if(data == null) {
-			throw new OpenAPIDataEmpty();
+			throw new EmptyData();
 		}
 		
 		int numOfRows = data.get("numOfRows").asInt();
@@ -129,7 +129,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 		JsonNode data = getApiData(apiUrl);
 		if(data == null) {
-			throw new OpenAPIDataEmpty();
+			throw new EmptyData();
 		}
 		
 		int numOfRows = data.get("numOfRows").asInt();
@@ -185,7 +185,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		
 		JsonNode data = getApiData(apiUrl);
 		if(data == null) {
-			throw new OpenAPIDataEmpty();
+			throw new EmptyData();
 		}
 		
 		int numOfRows = data.get("numOfRows").asInt();
@@ -243,7 +243,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 		data = getApiData(apiUrl);
 		if(data == null) {
-			throw new OpenAPIDataEmpty();
+			throw new EmptyData();
 		}
 		
 		JsonNode node = data.get("items").get("item").get(0);

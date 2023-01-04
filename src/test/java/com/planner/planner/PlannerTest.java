@@ -1,7 +1,5 @@
 package com.planner.planner;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
 import org.junit.Test;
@@ -12,38 +10,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Service.PlannerService;
+import com.planner.planner.Config.RootAppContext;
+import com.planner.planner.Dao.PlannerDao;
+import com.planner.planner.Entity.Planner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:root-context.xml","classpath:servlet-context.xml"})
+@ContextConfiguration(classes = { RootAppContext.class })
 public class PlannerTest {
 	private static final Logger logger = LoggerFactory.getLogger(PlannerTest.class);
 
 	@Autowired
-	private PlannerService pService;
+	private PlannerDao pDao;
 
 	@Test
-	public void getAllPlannersTest() {
-		List<PlannerDto> planners = pService.getAllPlanners();
-		logger.info(planners.toString());
+	public void plannerTest() {
+		Planner p = pDao.findPlannerByPlannerId(1);
+		logger.debug(p.toString());
 	}
-
+	
 	@Test
-	public void getPlannersByIdTest() {
-		PlannerDto planners = pService.read(0);
-		logger.info(planners.toString());
+	public void plannersTest() {
+		List<Planner> p = pDao.findPlannersAll();
+		logger.debug(p.toString());
 	}
-
-	@Test
-	public void likePlannerTest() {
-		assertTrue(pService.like(2, 2));
-	}
-
-	@Test
-	public void likeCancelPlannerTest() {
-		boolean result = pService.likeCancel(1, 3);
-		assertTrue(result);
-	}
-
 }

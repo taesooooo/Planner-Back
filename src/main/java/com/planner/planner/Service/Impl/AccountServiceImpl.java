@@ -78,10 +78,9 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public LikeDto allLikes(int accountId) {
-		List<PlannerDto> likeP = accountDao.likePlanners(accountId);
 		List<SpotLikeDto> likeS = accountDao.likeSpots(accountId);
 
-		return new LikeDto.Builder().setLikePlanners(likeP).setLikeSpots(likeS).build();
+		return new LikeDto.Builder().setLikePlanners(null).setLikeSpots(likeS).build();
 	}
 
 	@Override
