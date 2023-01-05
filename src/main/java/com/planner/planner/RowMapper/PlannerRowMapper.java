@@ -5,13 +5,14 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Entity.Planner;
 
-public class PlannerRowMapper implements RowMapper<Planner> {
+public class PlannerRowMapper implements RowMapper<PlannerDto> {
 
 	@Override
-	public Planner mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new Planner.Builder()
+	public PlannerDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+		return new PlannerDto.Builder()
 				.setPlannerId(rs.getInt("planner_id"))
 				.setAccountId(rs.getInt("account_id"))
 				.setTitle(rs.getString("title"))

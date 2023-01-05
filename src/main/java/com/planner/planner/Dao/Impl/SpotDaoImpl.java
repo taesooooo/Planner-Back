@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.SpotDao;
+import com.planner.planner.Dto.SpotLikeCountDto;
 import com.planner.planner.Entity.SpotLikeCount;
 
 @Repository
@@ -36,9 +37,9 @@ public class SpotDaoImpl implements SpotDao {
 	}
 	
 	@Override
-	public SpotLikeCount spotLikeCount(int contentId) {
-		SpotLikeCount list = jdbcTemplate.queryForObject(likeCountSQL, (rs, rowNum) -> {
-			return new SpotLikeCount(rs.getInt(1),rs.getInt(2));
+	public SpotLikeCountDto spotLikeCount(int contentId) {
+		SpotLikeCountDto list = jdbcTemplate.queryForObject(likeCountSQL, (rs, rowNum) -> {
+			return new SpotLikeCountDto(rs.getInt(1),rs.getInt(2));
 		}, contentId);
 		
 		return list;

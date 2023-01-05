@@ -31,23 +31,22 @@ public class ReviewServiceImpl implements ReviewService {
 	public boolean insertReview(int accountId, ReviewDto reviewDto) {
 		AccountDto user = accountService.findById(accountId);
 		
-		return reviewDao.insertReview(reviewDto.toEntity(), user.toEntity());
+		return reviewDao.insertReview(reviewDto, user);
 	}
 
 	@Override
 	public List<ReviewDto> findAllReview(int index) {
-		return reviewDao.findAllReview(index).stream().map(ReviewDto::from).collect(Collectors.toList());
+		return reviewDao.findAllReview(index);
 	}
 
 	@Override
 	public ReviewDto findReview(int reviewId) {
-		Review reivew = reviewDao.findReview(reviewId); 
-		return ReviewDto.from(reivew);
+		return reviewDao.findReview(reviewId); 
 	}
 
 	@Override
 	public boolean updateReview(ReviewDto reviewDto) {
-		return reviewDao.updateReview(reviewDto.toEntity());
+		return reviewDao.updateReview(reviewDto);
 	}
 
 	@Override

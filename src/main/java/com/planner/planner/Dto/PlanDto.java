@@ -1,20 +1,22 @@
 package com.planner.planner.Dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import com.planner.planner.Entity.Plan;
 import com.planner.planner.Entity.PlanLocation;
 
 public class PlanDto {
 	private int planId;
 	private LocalDateTime planDate;
 	private int plannerId;
-	private PlanLocation planLocation;
+	private List<PlanLocationDto> planLocations;
 	
 	public static class Builder {
 		private int planId;
 		private LocalDateTime planDate;
 		private int plannerId;
-		private PlanLocation planLocation;
+		private List<PlanLocationDto> planLocations;
 		
 		public Builder setPlanId(int planId) {
 			this.planId = planId;
@@ -29,8 +31,8 @@ public class PlanDto {
 			return this;
 		}
 		
-		public Builder setPlanLocation(PlanLocation planLocation) {
-			this.planLocation = planLocation;
+		public Builder setPlanLocations(List<PlanLocationDto> planLocations) {
+			this.planLocations = planLocations;
 			return this;
 		}
 		public PlanDto build() {
@@ -42,7 +44,7 @@ public class PlanDto {
 		this.planId = builder.planId;
 		this.planDate = builder.planDate;
 		this.plannerId = builder.plannerId;
-		this.planLocation = builder.planLocation;
+		this.planLocations = builder.planLocations;
 	}
 
 	public int getPlanId() {
@@ -57,7 +59,16 @@ public class PlanDto {
 		return plannerId;
 	}
 
-	public PlanLocation getPlanLocation() {
-		return planLocation;
+	public List<PlanLocationDto> getPlanLocation() {
+		return planLocations;
 	}
+	
+//	public static PlanDto from(Plan plan) {
+//		return new PlanDto.Builder()
+//				.setPlanId(plan.getPlanId())
+//				.setPlanDate(plan.getPlanDate())
+//				.setPlanLocations(plan.getPlanLocations())
+//				.setPlannerId(plan.getPlannerId())
+//				.build();
+//	}
 }

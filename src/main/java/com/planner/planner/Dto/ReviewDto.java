@@ -1,24 +1,31 @@
 package com.planner.planner.Dto;
 
+import java.time.LocalDateTime;
+
 import com.planner.planner.Entity.Review;
+import com.planner.planner.Entity.Review.Builder;
 
 public class ReviewDto {
 	private int reviewId;
 	private int plannerId;
 	private String title;
-	private String content;
 	private String writer;
 	private int writerId;
+	private String content;
 	private int likeCount;
+	private LocalDateTime createTime;
+	private LocalDateTime updateTime;
 	
 	public static class Builder {
 		private int reviewId;
 		private int plannerId;
 		private String title;
-		private String content;
 		private String writer;
 		private int writerId;
+		private String content;
 		private int likeCount;
+		private LocalDateTime createTime;
+		private LocalDateTime updateTime;
 		
 		public Builder setReviewId(int reviewId) {
 			this.reviewId = reviewId;
@@ -32,10 +39,6 @@ public class ReviewDto {
 			this.title = title;
 			return this;
 		}
-		public Builder setContent(String content) {
-			this.content = content;
-			return this;
-		}
 		public Builder setWriter(String writer) {
 			this.writer = writer;
 			return this;
@@ -44,8 +47,20 @@ public class ReviewDto {
 			this.writerId = writerId;
 			return this;
 		}
+		public Builder setContent(String content) {
+			this.content = content;
+			return this;
+		}
 		public Builder setLikeCount(int likeCount) {
 			this.likeCount = likeCount;
+			return this;
+		}
+		public Builder setCreateTime(LocalDateTime createTime) {
+			this.createTime = createTime;
+			return this;
+		}
+		public Builder setUpdateTime(LocalDateTime updateTime) {
+			this.updateTime = updateTime;
 			return this;
 		}
 		public ReviewDto build() {
@@ -53,18 +68,16 @@ public class ReviewDto {
 		}
 	}
 	
-	public ReviewDto() {
-		
-	}
-	
 	public ReviewDto(Builder builder) {
 		this.reviewId = builder.reviewId;
 		this.plannerId = builder.plannerId;
 		this.title = builder.title;
-		this.content = builder.content;
 		this.writer = builder.writer;
 		this.writerId = builder.writerId;
+		this.content = builder.content;
 		this.likeCount = builder.likeCount;
+		this.createTime = builder.createTime;
+		this.updateTime = builder.updateTime;
 	}
 
 	public int getReviewId() {
@@ -78,43 +91,28 @@ public class ReviewDto {
 	public String getTitle() {
 		return title;
 	}
-	
-	public String getContent() {
-		return content;
-	}
 
 	public String getWriter() {
 		return writer;
 	}
-
+	
 	public int getWriterId() {
 		return writerId;
+	}
+
+	public String getContent() {
+		return content;
 	}
 
 	public int getLikeCount() {
 		return likeCount;
 	}
-	
-	public static ReviewDto from(Review review) {
-		return new ReviewDto.Builder()
-				.setReviewId(review.getReviewId())
-				.setPlannerId(review.getPlannerId())
-				.setTitle(review.getTitle())
-				.setContent(review.getContent())
-				.setWriter(review.getWriter())
-				.setWriterId(review.getWriterId())
-				.setLikeCount(review.getLikeCount())
-				.build();
+
+	public LocalDateTime getCreateTime() {
+		return createTime;
 	}
-	
-	public Review toEntity() {
-		return new Review.Builder()
-				.setReviewId(reviewId)
-				.setPlannerId(plannerId)
-				.setTitle(title)
-				.setContent(content)
-				.setWriter(writer)
-				.setLikeCount(likeCount)
-				.build();
+
+	public LocalDateTime getUpdateTime() {
+		return updateTime;
 	}
 }

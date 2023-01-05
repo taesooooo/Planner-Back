@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.PlanLocationDao;
+import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Entity.PlanLocation;
 import com.planner.planner.RowMapper.PlanLocationRowMapper;
 
@@ -32,24 +33,24 @@ public class PlanLocationDaoImpl implements PlanLocationDao {
 	}
 
 	@Override
-	public boolean insertPlanLocation(PlanLocation planLocation) {
-		int result = jdbcTemplate.update(INSERT_SQL, planLocation.getLocationContetntId(), planLocation.getLocationImage(), planLocation.getLocationTranspotation(), planLocation.getPlanId());
+	public boolean insertPlanLocation(PlanLocationDto planLocationDto) {
+		int result = jdbcTemplate.update(INSERT_SQL, planLocationDto.getLocationContetntId(), planLocationDto.getLocationImage(), planLocationDto.getLocationTranspotation(), planLocationDto.getPlanId());
 		return result > 0 ? true : false;
 	}
 
 	@Override
-	public PlanLocation findPlanLocationByPlanId(int locationId) {
+	public PlanLocationDto findPlanLocationByPlanId(int locationId) {
 		return jdbcTemplate.queryForObject(FIND_SQL, new PlanLocationRowMapper(), locationId);
 	}
 
 	@Override
-	public List<PlanLocation> findPlanLocationsByPlanId(int planId) {
+	public List<PlanLocationDto> findPlanLocationsByPlanId(int planId) {
 		return jdbcTemplate.query(FINDS_SQL, new PlanLocationRowMapper(), planId);
 	}
 
 	@Override
-	public boolean updatePlanLocation(PlanLocation planLocation) {
-		int result = jdbcTemplate.update(UPDATE_SQL, planLocation.getLocationTranspotation(), planLocation.getPlanId());
+	public boolean updatePlanLocation(PlanLocationDto planLocationDto) {
+		int result = jdbcTemplate.update(UPDATE_SQL, planLocationDto.getLocationTranspotation(), planLocationDto.getPlanId());
 		return result > 0 ? true : false;
 	}
 

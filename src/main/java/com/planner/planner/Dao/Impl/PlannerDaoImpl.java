@@ -13,9 +13,9 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.PlannerDao;
-import com.planner.planner.Entity.Plan;
-import com.planner.planner.Entity.PlanLocation;
-import com.planner.planner.Entity.Planner;
+import com.planner.planner.Dto.PlanDto;
+import com.planner.planner.Dto.PlanLocationDto;
+import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.RowMapper.PlannerRowMapper;
 
 @Repository
@@ -46,39 +46,32 @@ public class PlannerDaoImpl implements PlannerDao {
 			+ "left join plan as B on A.planner_id = B.planner_id "
 			+ "left join plan_location as C on B.plan_id = C.plan_id "
 			+ "where A.account_id = ?;";
-	private static final String FIND_PLANNER_ALL_SQL = "select A.planner_id, A.account_id, A.title, A.plan_date_start, A.plan_date_end, A.like_count, A.create_date, A.update_date, "
-			+ "B.plan_id, B.plan_date, "
-			+ "C.location_id, C.location_content_id, C.location_image, C.location_transportation, C.plan_id "
-			+ "from planner as A "
-			+ "left join plan as B on A.planner_id = B.planner_id "
-			+ "left join plan_location as C on B.plan_id = C.plan_id";
-	
 	
 	public PlannerDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
 	@Override
-	public boolean insertPlanner(Planner planner) {
-		int result = jdbcTemplate.update(INSERT_PLANNER_SQL, planner.getAccountId(), planner.getTitle(), planner.getPlanDateStart(), planner.getPlanDateEnd(), planner.getLikeCount()
-				, planner.getCreateDate(), planner.getUpdateDate());
+	public boolean insertPlanner(PlannerDto plannerDto) {
+		int result = jdbcTemplate.update(INSERT_PLANNER_SQL, plannerDto.getAccountId(), plannerDto.getTitle(), plannerDto.getPlanDateStart(), plannerDto.getPlanDateEnd(), plannerDto.getLikeCount()
+				, plannerDto.getCreateDate(), plannerDto.getUpdateDate());
 		return result > 0 ? true : false;
 	}
 
 	@Override
-	public Planner findPlannerByPlannerId(int plannerId) {
-		return jdbcTemplate.query(FIND_PLANNER_BY_PLANNER_ID_SQL, new ResultSetExtractor<Planner>() {
+	public PlannerDto findPlannerByPlannerId(int plannerId) {
+		return jdbcTemplate.query(FIND_PLANNER_BY_PLANNER_ID_SQL, new ResultSetExtractor<PlannerDto>() {
 			@Override
-			public Planner extractData(ResultSet rs) throws SQLException, DataAccessException {
-				List<Plan> plans = new ArrayList<Plan>();
-				List<PlanLocation> planLocations = null;
+			public PlannerDto extractData(ResultSet rs) throws SQLException, DataAccessException {
+				List<PlanDto> plans = new ArrayList<PlanDto>();
+				List<PlanLocationDto> planLocations = null;
 				int latestPlanId = 0;
 				
-				Planner planner = null;
+				PlannerDto plannerDto = null;
 				
 				while(rs.next()) {
-					if(planner == null) {
-						planner = new Planner.Builder()
+					if(plannerDto == null) {
+						plannerDto = new PlannerDto.Builder()
 								.setPlannerId(rs.getInt("planner_id"))
 								.setAccountId(rs.getInt("account_id"))
 								.setTitle(rs.getString("title"))
@@ -92,9 +85,9 @@ public class PlannerDaoImpl implements PlannerDao {
 					int planId = rs.getInt("plan_id");
 					if(latestPlanId != planId) {
 						latestPlanId = planId;
-						planLocations = new ArrayList<PlanLocation>();
+						planLocations = new ArrayList<PlanLocationDto>();
 						
-						Plan newPlan = new Plan.Builder()
+						PlanDto newPlan = new PlanDto.Builder()
 								.setPlanId(planId)
 								.setPlanDate(rs.getTimestamp("plan_date").toLocalDateTime())
 								.setPlannerId(rs.getInt("planner_id"))
@@ -103,7 +96,7 @@ public class PlannerDaoImpl implements PlannerDao {
 						plans.add(newPlan);
 					}
 					
-					PlanLocation pl = new PlanLocation.Builder()
+					PlanLocationDto pl = new PlanLocationDto.Builder()
 							.setLocationId(rs.getInt("location_id"))
 							.setLocationContetntId(rs.getInt("location_content_id"))
 							.setLocationImage(rs.getString("location_image"))
@@ -113,20 +106,20 @@ public class PlannerDaoImpl implements PlannerDao {
 					planLocations.add(pl);
 					
 				}
-				return planner;
+				return plannerDto;
 			}
 		}, plannerId);
 		//return jdbcTemplate.queryForObject(FIND_SQL, new PlannerRowMapper(), plannerId);
 	}
 
 	@Override
-	public List<Planner> findPlannersByAccountId(int accountId) {
-		return jdbcTemplate.query(FIND_PLANNER_BY_ACCOUNT_ID_SQL, new ResultSetExtractor<List<Planner>>() {
+	public List<PlannerDto> findPlannersByAccountId(int accountId) {
+		return jdbcTemplate.query(FIND_PLANNER_BY_ACCOUNT_ID_SQL, new ResultSetExtractor<List<PlannerDto>>() {
 			@Override
-			public List<Planner> extractData(ResultSet rs) throws SQLException, DataAccessException {
-				List<Planner> planners = new ArrayList<Planner>();
-				List<Plan> plans = null;
-				List<PlanLocation> planLocations = null;
+			public List<PlannerDto> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				List<PlannerDto> planners = new ArrayList<PlannerDto>();
+				List<PlanDto> plans = null;
+				List<PlanLocationDto> planLocations = null;
 				
 				int latestPlannerId = 0;
 				int latestPlanId = 0;
@@ -137,9 +130,9 @@ public class PlannerDaoImpl implements PlannerDao {
 					
 					if(latestPlannerId != plannerId) {
 						latestPlannerId = plannerId;
-						plans = new ArrayList<Plan>();
+						plans = new ArrayList<PlanDto>();
 						
-						Planner planner = new Planner.Builder()
+						PlannerDto plannerDto = new PlannerDto.Builder()
 								.setPlannerId(rs.getInt("planner_id"))
 								.setAccountId(rs.getInt("account_id"))
 								.setTitle(rs.getString("title"))
@@ -148,14 +141,14 @@ public class PlannerDaoImpl implements PlannerDao {
 								.setLikeCount(rs.getInt("like_count"))
 								.setPlans(plans)
 								.build();
-						planners.add(planner);
+						planners.add(plannerDto);
 					}
 					
 					if(latestPlanId != planId) {
 						latestPlanId = planId;
-						planLocations = new ArrayList<PlanLocation>();
+						planLocations = new ArrayList<PlanLocationDto>();
 						
-						Plan newPlan = new Plan.Builder()
+						PlanDto newPlan = new PlanDto.Builder()
 								.setPlanId(planId)
 								.setPlanDate(rs.getTimestamp("plan_date").toLocalDateTime())
 								.setPlannerId(rs.getInt("planner_id"))
@@ -164,7 +157,7 @@ public class PlannerDaoImpl implements PlannerDao {
 						plans.add(newPlan);
 					}
 					
-					PlanLocation newPlanLocation = new PlanLocation.Builder()
+					PlanLocationDto newPlanLocation = new PlanLocationDto.Builder()
 							.setLocationId(rs.getInt("location_id"))
 							.setLocationContetntId(rs.getInt("location_content_id"))
 							.setLocationImage(rs.getString("location_image"))
@@ -181,69 +174,13 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public List<Planner> findPlannersAll() {
-		return jdbcTemplate.query(FIND_PLANNER_ALL_SQL, new ResultSetExtractor<List<Planner>>() {
-			@Override
-			public List<Planner> extractData(ResultSet rs) throws SQLException, DataAccessException {
-				List<Planner> planners = new ArrayList<Planner>();
-				List<Plan> plans = null;
-				List<PlanLocation> planLocations = null;
-				
-				int latestPlannerId = 0;
-				int latestPlanId = 0;
-				
-				while(rs.next()) {
-					int plannerId = rs.getInt("planner_id");
-					int planId = rs.getInt("plan_id");
-					
-					if(latestPlannerId != plannerId) {
-						latestPlannerId = plannerId;
-						plans = new ArrayList<Plan>();
-						
-						Planner planner = new Planner.Builder()
-								.setPlannerId(rs.getInt("planner_id"))
-								.setAccountId(rs.getInt("account_id"))
-								.setTitle(rs.getString("title"))
-								.setPlanDateStart(rs.getTimestamp("plan_date_start").toLocalDateTime())
-								.setPlanDateEnd(rs.getTimestamp("plan_date_end").toLocalDateTime())
-								.setLikeCount(rs.getInt("like_count"))
-								.setPlans(plans)
-								.build();
-						planners.add(planner);
-					}
-					
-					if(latestPlanId != planId) {
-						latestPlanId = planId;
-						planLocations = new ArrayList<PlanLocation>();
-						
-						Plan newPlan = new Plan.Builder()
-								.setPlanId(planId)
-								.setPlanDate(rs.getTimestamp("plan_date").toLocalDateTime())
-								.setPlannerId(rs.getInt("planner_id"))
-								.setPlanLocations(planLocations)
-								.build();
-						plans.add(newPlan);
-					}
-					
-					PlanLocation newPlanLocation = new PlanLocation.Builder()
-							.setLocationId(rs.getInt("location_id"))
-							.setLocationContetntId(rs.getInt("location_content_id"))
-							.setLocationImage(rs.getString("location_image"))
-							.setLocationTranspotation(rs.getInt("location_transportation"))
-							.setPlanId(rs.getInt("plan_id"))
-							.build();
-					planLocations.add(newPlanLocation);	
-				}
-				
-				return planners;
-			}
-		});
-		//return jdbcTemplate.query(FIND_ALL_SQL, new PlannerRowMapper());
+	public List<PlannerDto> findPlannersAll() {
+		return jdbcTemplate.query(FIND_ALL_SQL, new PlannerRowMapper());
 	}
 
 	@Override
-	public boolean updatePlanner(int plannerId, Planner planner) {
-		int result = jdbcTemplate.update(UPDATE_PLANNER_SQL, planner.getTitle(), planner.getPlanDateStart(), planner.getPlanDateEnd(), plannerId);
+	public boolean updatePlanner(int plannerId, PlannerDto plannerDto) {
+		int result = jdbcTemplate.update(UPDATE_PLANNER_SQL, plannerDto.getTitle(), plannerDto.getPlanDateStart(), plannerDto.getPlanDateEnd(), plannerId);
 		return result > 0 ? true : false;
 	}
 
