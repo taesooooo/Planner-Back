@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.ReviewDao;
+import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Entity.Review;
 
@@ -28,15 +30,15 @@ public class ReviewDaoImpl implements ReviewDao {
 	}
 
 	@Override
-	public boolean insertReview(Review review, Account account) {
-		int result = jdbcTemplate.update(insertReviewSQL, review.getPlannerId(), review.getTitle(),review.getContent(), account.getNickName(), account.getAccountId());
+	public boolean insertReview(ReviewDto reviewDto, AccountDto accountDto) {
+		int result = jdbcTemplate.update(insertReviewSQL, reviewDto.getPlannerId(), reviewDto.getTitle(),reviewDto.getContent(), accountDto.getNickName(), accountDto.getAccountId());
 		return result > 0 ? true : false;
 	}
 
 	@Override
-	public List<Review> findAllReview(int index) {
-		List<Review> list = jdbcTemplate.query(findAllReviewSQL, (rs, rowNum) -> {
-			return new Review.Builder()
+	public List<ReviewDto> findAllReview(int index) {
+		List<ReviewDto> list = jdbcTemplate.query(findAllReviewSQL, (rs, rowNum) -> {
+			return new ReviewDto.Builder()
 					.setReviewId(rs.getInt(1))
 					.setPlannerId(rs.getInt(2))
 					.setTitle(rs.getString(3))
@@ -52,9 +54,9 @@ public class ReviewDaoImpl implements ReviewDao {
 	}
 
 	@Override
-	public Review findReview(int reviewId) {
-		Review review = jdbcTemplate.queryForObject(findReviewSQL, (rs, rowNum) -> {
-			return new Review.Builder()
+	public ReviewDto findReview(int reviewId) {
+		ReviewDto review = jdbcTemplate.queryForObject(findReviewSQL, (rs, rowNum) -> {
+			return new ReviewDto.Builder()
 					.setReviewId(rs.getInt(1))
 					.setPlannerId(rs.getInt(2))
 					.setTitle(rs.getString(3))
@@ -70,8 +72,8 @@ public class ReviewDaoImpl implements ReviewDao {
 	}
 
 	@Override
-	public boolean updateReview(Review review) {
-		int result = jdbcTemplate.update(updateReviewSQL,review.getTitle(), review.getContent(),review.getReviewId());
+	public boolean updateReview(ReviewDto reviewDto) {
+		int result = jdbcTemplate.update(updateReviewSQL,reviewDto.getTitle(), reviewDto.getContent(), reviewDto.getReviewId());
 		return result > 0 ? true : false;
 	}
 

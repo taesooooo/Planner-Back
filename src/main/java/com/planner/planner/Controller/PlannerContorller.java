@@ -33,7 +33,7 @@ public class PlannerContorller {
 
 	@PostMapping
 	public ResponseEntity<Object> newPlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto) {
-		boolean result = plannerService.add(plannerDto);
+		boolean result = plannerService.newPlanner(plannerDto);
 		if(result) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 		}

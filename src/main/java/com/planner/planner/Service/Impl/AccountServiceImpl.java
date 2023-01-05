@@ -45,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public boolean accountUpdate(AccountDto accountDto) throws Exception {
-		return accountDao.update(accountDto.toEntity());
+		return accountDao.update(accountDto);
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public boolean passwordUpdate(AccountDto accountDto) {
-		return accountDao.passwordUpdate(accountDto.toEntity());
+		return accountDao.passwordUpdate(accountDto);
 	}
 
 	@Override

@@ -18,12 +18,4 @@ public class SpotLikeCountDto {
 	public int getLikeCount() {
 		return likeCount;
 	}
-	
-	public SpotLikeCount toEntity() {
-		return new SpotLikeCount(contentId, likeCount);
-	}
-	
-	public static SpotLikeCountDto form(SpotLikeCount spotLikeCount) {
-		return new SpotLikeCountDto(spotLikeCount.getCotentId(),spotLikeCount.getLikeCount());
-	}
 }

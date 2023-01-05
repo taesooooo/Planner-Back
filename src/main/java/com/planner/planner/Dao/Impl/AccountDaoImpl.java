@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.AccountDao;
+import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Entity.Account;
 import com.planner.planner.Entity.SpotLike;
@@ -43,27 +44,27 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public boolean create(Account account) {
-		int result = jdbcTemplate.update(createSQL, account.getEmail(), account.getPassword(), account.getUserName(),
-				account.getNickName(), account.getPhone(), "");
+	public boolean create(AccountDto accountDto) {
+		int result = jdbcTemplate.update(createSQL, accountDto.getEmail(), accountDto.getPassword(), accountDto.getUserName(),
+				accountDto.getNickName(), accountDto.getPhone(), "");
 		return result > 0 ? true : false;
 	}
 
 	@Override
-	public Account read(Account account) {
-		return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), account.getEmail());
+	public Account read(AccountDto accountDto) {
+		return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), accountDto.getEmail());
 	}
 
 	@Override
-	public boolean update(Account account) {
-		int result = jdbcTemplate.update(updateSQL, account.getNickName(), account.getPhone(),
-				account.getAccountId());
+	public boolean update(AccountDto accountDto) {
+		int result = jdbcTemplate.update(updateSQL, accountDto.getNickName(), accountDto.getPhone(),
+				accountDto.getAccountId());
 		return result > 0 ? true : false;
 	}
 
 	@Override
-	public boolean delete(Account account) {
-		int result = jdbcTemplate.update(deleteSQL, account.getAccountId());
+	public boolean delete(AccountDto accountDto) {
+		int result = jdbcTemplate.update(deleteSQL, accountDto.getAccountId());
 		return result > 0 ? true : false;
 	}
 
@@ -74,14 +75,14 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public boolean passwordUpdate(Account account) {
-		int result = jdbcTemplate.update(passwordUpdateSQL, account.getPassword(), account.getAccountId());
+	public boolean passwordUpdate(AccountDto accountDto) {
+		int result = jdbcTemplate.update(passwordUpdateSQL, accountDto.getPassword(), accountDto.getAccountId());
 		return result > 0 ? true : false;
 	}
 
 	@Override
-	public boolean nickNameUpdate(Account account) {
-		int result = jdbcTemplate.update(nicknameUpdateSQL, account.getNickName(), account.getAccountId());
+	public boolean nickNameUpdate(AccountDto accountDto) {
+		int result = jdbcTemplate.update(nicknameUpdateSQL, accountDto.getNickName(), accountDto.getAccountId());
 		return result > 0 ? true : false;
 	}
 

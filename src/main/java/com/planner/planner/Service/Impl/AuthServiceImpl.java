@@ -21,12 +21,12 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public boolean register(AccountDto accountDto) {
-		return accountDao.create(accountDto.toEntity());
+		return accountDao.create(accountDto);
 	}
 
 	@Override
 	public AccountDto login(AccountDto accountDto) {
-		Account user = accountDao.read(accountDto.toEntity());
+		Account user = accountDao.read(accountDto);
 		return user.toDto();
 	}
 

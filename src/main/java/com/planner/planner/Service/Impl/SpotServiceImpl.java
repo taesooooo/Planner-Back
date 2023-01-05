@@ -160,10 +160,9 @@ public class SpotServiceImpl implements SpotService {
 		//String contentIds = apiData.getItems().stream().map((spot) -> spot.getContentid()).collect(Collectors.joining(","));
 		int likeCount = 0;
 		
-		SpotLikeCount spotLikeCount = spotDao.spotLikeCount(contentId);
+		SpotLikeCountDto spotLikeCount = spotDao.spotLikeCount(contentId);
 		if(spotLikeCount != null) {
-			SpotLikeCountDto count = SpotLikeCountDto.form(spotLikeCount);
-			likeCount = count.getLikeCount();
+			likeCount = spotLikeCount.getLikeCount();
 		}
 		
 		SpotDetailDto spotDetail = new SpotDetailDto.Builder()
@@ -195,7 +194,7 @@ public class SpotServiceImpl implements SpotService {
 
 	@Override
 	public SpotLikeCountDto spotLikeCount(int contentIds) {
-		return SpotLikeCountDto.form(spotDao.spotLikeCount(contentIds));
+		return spotDao.spotLikeCount(contentIds);
 	}
 
 }

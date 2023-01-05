@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.PlanMemberDao;
+import com.planner.planner.Dto.PlanMemberDto;
 import com.planner.planner.Entity.PlanMember;
 import com.planner.planner.RowMapper.PlanMemberRowMapper;
 
@@ -28,23 +29,23 @@ public class PlanMemberDaoImpl implements PlanMemberDao {
 	}
 
 	@Override
-	public boolean insertPlanMember(PlanMember planMember) {
-		int result = jdbcTemplate.update(INSERT_SQL, planMember.getPlannerId(), planMember.getAccountId());
+	public boolean insertPlanMember(PlanMemberDto planMemberDto) {
+		int result = jdbcTemplate.update(INSERT_SQL, planMemberDto.getPlannerId(), planMemberDto.getAccountId());
 		return result > 0 ? true : false;
 	}
 
 	@Override
-	public PlanMember findPlanMemberByPlannerId(int planMemberId) {
+	public PlanMemberDto findPlanMemberByPlannerId(int planMemberId) {
 		return jdbcTemplate.queryForObject(FIND_SQL, new PlanMemberRowMapper(), planMemberId);
 	}
 
 	@Override
-	public List<PlanMember> findPlanMembersByPlannerId(int plannerId) {
+	public List<PlanMemberDto> findPlanMembersByPlannerId(int plannerId) {
 		return jdbcTemplate.query(FINDS_SQL, new PlanMemberRowMapper(), plannerId);
 	}
 
 //	@Override
-//	public boolean updatePlanMember(PlanMember planMember) {
+//	public boolean updatePlanMember(PlanMemberDto planMemberDto) {
 //		return false;
 //	}
 

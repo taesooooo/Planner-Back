@@ -22,7 +22,7 @@ public class PlannerDto {
 	private LocalDateTime createDate;
 	private LocalDateTime updateDate;
 	
-	private List<Plan> plans;
+	private List<PlanDto> plans;
 
 	public static class Builder {
 		private int plannerId;
@@ -36,7 +36,7 @@ public class PlannerDto {
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
 		
-		private List<Plan> plans;
+		private List<PlanDto> plans;
 
 		public Builder setPlannerId(int plannerId) {
 			this.plannerId = plannerId;
@@ -88,7 +88,7 @@ public class PlannerDto {
 			return this;
 		}
 
-		public Builder setPlans(List<Plan> plans) {
+		public Builder setPlans(List<PlanDto> plans) {
 			this.plans = plans;
 			return this;
 		}
@@ -157,11 +157,11 @@ public class PlannerDto {
 		return updateDate;
 	}
 	
-	public List<Plan> getPlans() {
+	public List<PlanDto> getPlans() {
 		return plans;
 	}
 
-	public static PlannerDto from(Planner planner) {
+	public static PlannerDto from(PlannerDto planner) {
 		return new PlannerDto.Builder()
 				.setPlannerId(planner.getPlannerId())
 				.setAccountId(planner.getAccountId())
@@ -175,8 +175,8 @@ public class PlannerDto {
 				.build();
 	}
 	
-	public Planner toEntity() {
-		return new Planner.Builder()
+	public PlannerDto toEntity() {
+		return new PlannerDto.Builder()
 				.setPlannerId(plannerId)
 				.setAccountId(accountId)
 				.setTitle(title)

@@ -5,13 +5,14 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Entity.PlanLocation;
 
-public class PlanLocationRowMapper implements RowMapper<PlanLocation> {
+public class PlanLocationRowMapper implements RowMapper<PlanLocationDto> {
 
 	@Override
-	public PlanLocation mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new PlanLocation.Builder()
+	public PlanLocationDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+		return new PlanLocationDto.Builder()
 				.setLocationId(rs.getInt("location_id"))
 				.setLocationContetntId(rs.getInt("location_content_id"))
 				.setLocationImage(rs.getString("location_image"))
