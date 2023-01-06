@@ -3,7 +3,6 @@ package com.planner.planner.Dao;
 import java.util.List;
 
 import com.planner.planner.Dto.PlanMemberDto;
-import com.planner.planner.Entity.PlanMember;
 
 public interface PlanMemberDao {
 	public boolean insertPlanMember(PlanMemberDto planMemberDto);

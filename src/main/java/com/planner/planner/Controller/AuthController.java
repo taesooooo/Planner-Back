@@ -39,10 +39,11 @@ public class AuthController {
 
 	@PostMapping(value = "/register")
 	public ResponseEntity<Object> register(HttpServletRequest req, @RequestBody AccountDto accountDto) {
-		accountDto.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+		String pwEncode = passwordEncoder.encode(accountDto.getPassword());
+		AccountDto userDto = new AccountDto.Builder().setEmail(accountDto.getEmail()).setPassword(pwEncode).setUserName(accountDto.getUserName())
+				.setNickName(accountDto.getNickName()).setImage(accountDto.getImage()).setPhone(accountDto.getPhone()).build();
 		try {
-			logger.info(accountDto.toString());
-			boolean result = authService.register(accountDto);
+			boolean result = authService.register(userDto);
 
 			if (result) {
 				return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "회원 가입 성공"));

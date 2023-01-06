@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,12 +18,12 @@ import org.slf4j.LoggerFactory;
 import com.planner.planner.Dao.Impl.SpotDaoImpl;
 import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
+import com.planner.planner.Dto.SpotLikeCountDto;
 import com.planner.planner.Dto.SpotListDto;
 import com.planner.planner.Dto.OpenApi.AreaCodeDto;
 import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
-import com.planner.planner.Entity.SpotLikeCount;
 import com.planner.planner.Exception.EmptyData;
 import com.planner.planner.Service.Impl.OpenAPIServiceImpl;
 import com.planner.planner.Service.Impl.SpotServiceImpl;
@@ -185,7 +184,7 @@ public class SpotServiceTest {
 	@Test
 	public void 여행지_세부사항_가져오기_좋아요_있는경우() throws Exception {
 		CommonDetailDto testDetailDto = createDetailDtoList();
-		SpotLikeCount testLikeCount = new SpotLikeCount(contentId, 1);
+		SpotLikeCountDto testLikeCount = new SpotLikeCountDto(contentId, 1);
 		
 		when(apiSerivce.getDetail(contentId)).thenReturn(testDetailDto);
 		when(spotDao.spotLikeCount(contentId)).thenReturn(testLikeCount);

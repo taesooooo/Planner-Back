@@ -1,7 +1,5 @@
 package com.planner.planner.Dto;
 
-import com.planner.planner.Entity.PlanMember;
-
 public class PlanMemberDto {
 	private int planMemberId;
 	private int plannerId;
@@ -45,21 +43,5 @@ public class PlanMemberDto {
 
 	public int getAccountId() {
 		return accountId;
-	}
-	
-	public static PlanMemberDto from(PlanMember planMember) {
-		return new PlanMemberDto.Builder()
-				.setPlanMemberId(planMember.getPlanMemberId())
-				.setAccountId(planMember.getAccountId())
-				.setPlannerId(planMember.getPlannerId())
-				.build();
-	}
-	
-	public PlanMember toEntity() {
-		return new PlanMember.Builder()
-				.setPlanMemberId(planMemberId)
-				.setAccountId(accountId)
-				.setPlannerId(plannerId)
-				.build();
 	}
 }

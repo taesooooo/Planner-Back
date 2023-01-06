@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ReviewDto;
-import com.planner.planner.Entity.Review;
 import com.planner.planner.Service.Impl.ReviewServiceImpl;
 
 public class ReviewServiceTest {
@@ -51,9 +50,9 @@ public class ReviewServiceTest {
 	
 	@Test
 	public void 리뷰_모두가져오기_테스트() {
-		List<Review> list = new ArrayList<Review>();
+		List<ReviewDto> list = new ArrayList<ReviewDto>();
 		for(int i=0;i<3;i++) {
-			Review review = new Review.Builder().setReviewId(i).setPlannerId(i).setTitle("테스트").setContent("test").setWriter("test").setWriterId(i).setLikeCount(0).build();
+			ReviewDto review = new ReviewDto.Builder().setReviewId(i).setPlannerId(i).setTitle("테스트").setContent("test").setWriter("test").setWriterId(i).setLikeCount(0).build();
 			list.add(review);
 		}
 		
@@ -64,7 +63,7 @@ public class ReviewServiceTest {
 	
 	@Test
 	public void 리뷰_가져오기_테스트() {
-		Review review = new Review.Builder().setReviewId(1).setPlannerId(1).setTitle("테스트").setContent("test").setWriter("test").setWriterId(1).setLikeCount(0).build();
+		ReviewDto review = new ReviewDto.Builder().setReviewId(1).setPlannerId(1).setTitle("테스트").setContent("test").setWriter("test").setWriterId(1).setLikeCount(0).build();
 		
 		when(reviewDao.findReview(0)).thenReturn(review);
 		

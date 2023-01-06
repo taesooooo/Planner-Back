@@ -2,9 +2,6 @@ package com.planner.planner.Dto;
 
 import java.time.LocalDateTime;
 
-import com.planner.planner.Entity.Review;
-import com.planner.planner.Entity.Review.Builder;
-
 public class ReviewDto {
 	private int reviewId;
 	private int plannerId;
@@ -66,6 +63,10 @@ public class ReviewDto {
 		public ReviewDto build() {
 			return new ReviewDto(this);
 		}
+	}
+	
+	public ReviewDto() {
+		
 	}
 	
 	public ReviewDto(Builder builder) {

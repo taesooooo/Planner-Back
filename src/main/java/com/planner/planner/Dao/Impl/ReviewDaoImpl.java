@@ -10,8 +10,6 @@ import org.springframework.stereotype.Repository;
 import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ReviewDto;
-import com.planner.planner.Entity.Account;
-import com.planner.planner.Entity.Review;
 
 @Repository
 public class ReviewDaoImpl implements ReviewDao {

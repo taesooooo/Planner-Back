@@ -1,7 +1,5 @@
 package com.planner.planner.Dto;
 
-import com.planner.planner.Entity.SpotLikeCount;
-
 public class SpotLikeCountDto {
 	private int contentId;
 	private int likeCount;

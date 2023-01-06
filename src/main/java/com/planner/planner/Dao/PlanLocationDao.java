@@ -3,8 +3,6 @@ package com.planner.planner.Dao;
 import java.util.List;
 
 import com.planner.planner.Dto.PlanLocationDto;
-import com.planner.planner.Entity.Plan;
-import com.planner.planner.Entity.PlanLocation;
 
 public interface PlanLocationDao {
 	public boolean insertPlanLocation(PlanLocationDto planLocationDto);
