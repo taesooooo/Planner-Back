@@ -5,13 +5,13 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.planner.planner.Entity.Account;
+import com.planner.planner.Dto.AccountDto;
 
-public class AccountRowMapper implements RowMapper<Account> {
+public class AccountRowMapper implements RowMapper<AccountDto> {
 
 	@Override
-	public Account mapRow(ResultSet rs, int rowNum) throws SQLException {
-		Account account = new Account.Builder()
+	public AccountDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+		AccountDto account = new AccountDto.Builder()
 				.setAccountId(rs.getInt(1))
 				.setEmail(rs.getString(2))
 				.setPassword(rs.getString(3))

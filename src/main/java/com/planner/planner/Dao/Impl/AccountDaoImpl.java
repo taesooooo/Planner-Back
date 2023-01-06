@@ -14,8 +14,6 @@ import org.springframework.stereotype.Repository;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.SpotLikeDto;
-import com.planner.planner.Entity.Account;
-import com.planner.planner.Entity.SpotLike;
 import com.planner.planner.RowMapper.AccountRowMapper;
 
 @Repository
@@ -51,7 +49,7 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public Account read(AccountDto accountDto) {
+	public AccountDto read(AccountDto accountDto) {
 		return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), accountDto.getEmail());
 	}
 
@@ -87,29 +85,29 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public Account findById(int accountId) {
+	public AccountDto findById(int accountId) {
 		return jdbcTemplate.queryForObject(findByIdSQL, new AccountRowMapper(), accountId);
 	}
 
 	@Override
 	public List<SpotLikeDto> likeSpots(int accountId) {
-		List<SpotLike> likes = jdbcTemplate.query(likeSpotsSQL, new RowMapper<SpotLike>() {
+		List<SpotLikeDto> likes = jdbcTemplate.query(likeSpotsSQL, new RowMapper<SpotLikeDto>() {
 			@Override
-			public SpotLike mapRow(ResultSet rs, int rowNum) throws SQLException {
-				SpotLike spotLike = new SpotLike.Builder().setLikeId(rs.getInt(1)).setAccountId(rs.getInt(2))
+			public SpotLikeDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+				SpotLikeDto spotLike = new SpotLikeDto.Builder().setLikeId(rs.getInt(1)).setAccountId(rs.getInt(2))
 						.setContentId(rs.getInt(3)).setLikeDate(rs.getDate(4).toLocalDate()).build();
 				return spotLike;
 			}
 		}, accountId);
-		return likes.stream().map(like -> like.toDto()).collect(Collectors.toList());
+		return likes;
 	}
 
 	@Override
 	public List<SpotLikeDto> spotLikesByAccountId(int accountId) {
-		List<SpotLike> likes =  jdbcTemplate.query(spotLikesByAccountId, new RowMapper<SpotLike>() {
+		List<SpotLikeDto> likes =  jdbcTemplate.query(spotLikesByAccountId, new RowMapper<SpotLikeDto>() {
 			@Override
-			public SpotLike mapRow(ResultSet rs, int rowNum) throws SQLException {
-				SpotLike spotLike = new SpotLike.Builder()
+			public SpotLikeDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+				SpotLikeDto spotLike = new SpotLikeDto.Builder()
 						.setLikeId(rs.getInt(1))
 						.setAccountId(rs.getInt(2))
 						.setContentId(rs.getInt(3))
@@ -118,15 +116,15 @@ public class AccountDaoImpl implements AccountDao {
 				return spotLike;
 			}
 		}, accountId);
-		return likes.stream().map(like -> like.toDto()).collect(Collectors.toList());
+		return likes;
 	}
 
 	@Override
 	public List<SpotLikeDto> spotLikesByContentIds(int accountId, List<Integer> contentId) {
 		String contentList = contentId.stream().map(String::valueOf).collect(Collectors.joining(","));
 		String sql = String.format(spotLikeStateSQL, contentList);
-		List<SpotLike> states = jdbcTemplate.query(sql, (rs, rowNum) -> {
-			SpotLike spotLike = new SpotLike.Builder()
+		List<SpotLikeDto> states = jdbcTemplate.query(sql, (rs, rowNum) -> {
+			SpotLikeDto spotLike = new SpotLikeDto.Builder()
 					.setLikeId(rs.getInt(1))
 					.setAccountId(rs.getInt(2))
 					.setContentId(rs.getInt(3))
@@ -135,7 +133,7 @@ public class AccountDaoImpl implements AccountDao {
 			return spotLike;
 		}, accountId);
 
-		return states.stream().map(like -> like.toDto()).collect(Collectors.toList());
+		return states;
 	}
 
 }

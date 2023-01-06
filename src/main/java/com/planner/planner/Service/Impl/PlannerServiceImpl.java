@@ -1,7 +1,6 @@
 package com.planner.planner.Service.Impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +13,6 @@ import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemberDto;
 import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Entity.Plan;
-import com.planner.planner.Entity.PlanLocation;
-import com.planner.planner.Entity.PlanMember;
-import com.planner.planner.Entity.Planner;
 import com.planner.planner.Exception.EmptyData;
 import com.planner.planner.Service.PlannerService;
 
@@ -78,14 +73,12 @@ public class PlannerServiceImpl implements PlannerService {
 
 	@Override
 	public List<PlanMemberDto> findPlanMembersByPlannerId(int plannerId) {
-		// TODO Auto-generated method stub
-		return null;
+		return planMemberDao.findPlanMembersByPlannerId(plannerId);
 	}
 
 	@Override
 	public boolean deletePlanMember(int planMemberId) {
-		// TODO Auto-generated method stub
-		return false;
+		return planMemberDao.deletePlanMember(planMemberId);
 	}
 
 	@Override
@@ -95,56 +88,37 @@ public class PlannerServiceImpl implements PlannerService {
 
 	@Override
 	public PlanDto findPlanByPlannerId(int planId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<PlanDto> findPlansByPlannerId(int plannerId) {
-		// TODO Auto-generated method stub
-		return null;
+		return planDao.findPlanByPlannerId(planId);
 	}
 
 	@Override
 	public boolean modifyPlan(PlanDto planDto) {
-		// TODO Auto-generated method stub
-		return false;
+		return planDao.updatePlan(planDto);
 	}
 
 	@Override
 	public boolean deletePlan(int planId) {
-		// TODO Auto-generated method stub
-		return false;
+		return planDao.deletePlan(planId);
 	}
 
 	@Override
 	public boolean newPlanLocation(PlanLocationDto planLocationDto) {
-		// TODO Auto-generated method stub
-		return false;
+		return planLocationDao.insertPlanLocation(planLocationDto);
 	}
 
 	@Override
 	public PlanLocationDto findPlanLocationByPlanId(int locationId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<PlanLocationDto> findPlanLocationsByPlanId(int planId) {
-		// TODO Auto-generated method stub
-		return null;
+		return planLocationDao.findPlanLocationByPlanId(locationId);
 	}
 
 	@Override
 	public boolean modifyPlanLocation(PlanLocationDto planLocationDto) {
-		// TODO Auto-generated method stub
-		return false;
+		return planLocationDao.updatePlanLocation(planLocationDto);
 	}
 
 	@Override
 	public boolean deletePlanLocation(int locationId) {
-		// TODO Auto-generated method stub
-		return false;
+		return planLocationDao.deletePlanLocation(locationId);
 	}
 	
 }

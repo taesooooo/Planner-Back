@@ -1,7 +1,6 @@
 package com.planner.planner.Service.Impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ReviewDto;
-import com.planner.planner.Entity.Review;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.ReviewService;
 

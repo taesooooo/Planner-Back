@@ -84,7 +84,7 @@ public class AccountServiceTest {
 
 	@Test
 	public void 계정패스트워드변경() {
-		Account ac = testDto.toEntity();
+		AccountDto ac = testDto;
 		when(accountDao.passwordUpdate(ac)).thenReturn(true);
 
 		boolean result = accountService.passwordUpdate(testDto);

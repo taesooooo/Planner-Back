@@ -16,10 +16,8 @@ import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.LikeDto;
-import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
-import com.planner.planner.Entity.Account;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.util.FileStore;
 
@@ -39,8 +37,8 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public AccountDto findById(int accountId) {
-		Account user = accountDao.findById(accountId);
-		return user.toDto();
+		AccountDto user = accountDao.findById(accountId);
+		return user;
 	}
 
 	@Override

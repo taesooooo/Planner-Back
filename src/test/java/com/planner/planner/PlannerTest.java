@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Dao.PlannerDao;
-import com.planner.planner.Entity.Planner;
+import com.planner.planner.Dto.PlannerDto;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class })
@@ -24,13 +24,13 @@ public class PlannerTest {
 
 	@Test
 	public void plannerTest() {
-		Planner p = pDao.findPlannerByPlannerId(1);
+		PlannerDto p = pDao.findPlannerByPlannerId(1);
 		logger.debug(p.toString());
 	}
 	
 	@Test
 	public void plannersTest() {
-		List<Planner> p = pDao.findPlannersAll();
+		List<PlannerDto> p = pDao.findPlannersAll();
 		logger.debug(p.toString());
 	}
 }

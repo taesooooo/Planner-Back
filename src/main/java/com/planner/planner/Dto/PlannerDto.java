@@ -1,12 +1,9 @@
 package com.planner.planner.Dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.planner.planner.Entity.Plan;
-import com.planner.planner.Entity.Planner;
 
 public class PlannerDto {
 	private int plannerId;

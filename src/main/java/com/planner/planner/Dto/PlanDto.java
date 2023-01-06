@@ -3,9 +3,6 @@ package com.planner.planner.Dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.planner.planner.Entity.Plan;
-import com.planner.planner.Entity.PlanLocation;
-
 public class PlanDto {
 	private int planId;
 	private LocalDateTime planDate;

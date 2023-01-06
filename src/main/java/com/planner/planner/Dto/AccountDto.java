@@ -1,10 +1,11 @@
 package com.planner.planner.Dto;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-import com.planner.planner.Entity.Account;
 
 @JsonInclude(value = Include.NON_NULL)
 public class AccountDto {
@@ -18,8 +19,9 @@ public class AccountDto {
 	@JsonProperty("nickname")
 	private String nickName;
 	private String phone;
-
 	private String image;
+	private LocalDateTime createDate;
+	private LocalDateTime updateDate;
 
 	public static class Builder {
 		private int accountId;
@@ -29,6 +31,8 @@ public class AccountDto {
 		private String nickName;
 		private String phone;
 		private String image;
+		private LocalDateTime createDate;
+		private LocalDateTime updateDate;
 
 		public Builder setAccountId(int accountId) {
 			this.accountId = accountId;
@@ -65,6 +69,16 @@ public class AccountDto {
 			return this;
 		}
 
+		public Builder setCreateDate(LocalDateTime createDate) {
+			this.createDate = createDate;
+			return this;
+		}
+
+		public Builder setUpdateDate(LocalDateTime updateDate) {
+			this.updateDate = updateDate;
+			return this;
+		}
+
 		public AccountDto build() {
 			return new AccountDto(this);
 		}
@@ -82,66 +96,44 @@ public class AccountDto {
 		this.nickName = builder.nickName;
 		this.phone = builder.phone;
 		this.image = builder.image;
+		this.createDate = builder.createDate;
+		this.updateDate = builder.updateDate;
 	}
 
 	public int getAccountId() {
 		return accountId;
 	}
 
-	public void setAccountId(int accountId) {
-		this.accountId = accountId;
-	}
-
 	public String getEmail() {
 		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public String getUserName() {
 		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
 	}
 
 	public String getNickName() {
 		return nickName;
 	}
 
-	public void setNickName(String nickName) {
-		this.nickName = nickName;
+	public String getPhone() {
+		return phone;
 	}
 
 	public String getImage() {
 		return image;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public LocalDateTime getCreateDate() {
+		return createDate;
 	}
 
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public Account toEntity() {
-		return new Account.Builder().setAccountId(accountId).setEmail(email).setPassword(password).setUserName(userName).setNickName(nickName).setPhone(phone).setImage(image).build();
+	public LocalDateTime getUpdateDate() {
+		return updateDate;
 	}
 
 	@Override

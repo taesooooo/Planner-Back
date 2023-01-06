@@ -1,7 +1,5 @@
 package com.planner.planner.Dao.Impl;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.SpotDao;
 import com.planner.planner.Dto.SpotLikeCountDto;
-import com.planner.planner.Entity.SpotLikeCount;
 
 @Repository
 public class SpotDaoImpl implements SpotDao {

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.PlanLocationDao;
 import com.planner.planner.Dto.PlanLocationDto;
-import com.planner.planner.Entity.PlanLocation;
 import com.planner.planner.RowMapper.PlanLocationRowMapper;
 
 @Repository

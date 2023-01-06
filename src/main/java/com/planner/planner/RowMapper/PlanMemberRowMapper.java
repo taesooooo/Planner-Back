@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.planner.planner.Dto.PlanMemberDto;
-import com.planner.planner.Entity.PlanMember;
 
 public class PlanMemberRowMapper implements RowMapper<PlanMemberDto> {
 

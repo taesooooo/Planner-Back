@@ -4,8 +4,6 @@ import java.util.List;
 
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ReviewDto;
-import com.planner.planner.Entity.Account;
-import com.planner.planner.Entity.Review;
 
 public interface ReviewDao {
 	public boolean insertReview(ReviewDto reviewDto, AccountDto accountDto);

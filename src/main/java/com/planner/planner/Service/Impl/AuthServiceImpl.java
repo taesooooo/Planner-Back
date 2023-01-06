@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Entity.Account;
 import com.planner.planner.Service.AuthService;
 
 @Service
@@ -26,8 +25,8 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public AccountDto login(AccountDto accountDto) {
-		Account user = accountDao.read(accountDto);
-		return user.toDto();
+		AccountDto user = accountDao.read(accountDto);
+		return user;
 	}
 
 }
