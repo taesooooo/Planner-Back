@@ -49,6 +49,11 @@ public class PlanMemberDaoImpl implements PlanMemberDao {
 //	}
 
 	@Override
+	public List<String> findPlanMembers(int plannerId) {
+		return jdbcTemplate.queryForList("select email from account as A left join plan_member AS B ON A.account_id = B.account_id where B.planner_id = ?;", String.class, plannerId);
+	}
+
+	@Override
 	public boolean deletePlanMember(int planMemberId) {
 		int result = jdbcTemplate.update(DELETE_SQL, planMemberId);
 		return result > 0 ? true : false;

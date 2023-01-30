@@ -3,8 +3,11 @@ package com.planner.planner.Dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class PlanDto {
 	private int planId;
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDateTime planDate;
 	private int plannerId;
 	private List<PlanLocationDto> planLocations;

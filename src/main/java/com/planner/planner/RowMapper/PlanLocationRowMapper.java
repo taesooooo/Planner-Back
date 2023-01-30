@@ -15,7 +15,7 @@ public class PlanLocationRowMapper implements RowMapper<PlanLocationDto> {
 				.setLocationId(rs.getInt("location_id"))
 				.setLocationContetntId(rs.getInt("location_content_id"))
 				.setLocationImage(rs.getString("location_image"))
-				.setLocationTranspotation(rs.getInt("location_trasnportation"))
+				.setLocationTranspotation(rs.getInt("location_transportation"))
 				.setPlanId(rs.getInt("plan_id"))
 				.build();
 	}

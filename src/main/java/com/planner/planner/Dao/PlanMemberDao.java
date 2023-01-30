@@ -8,6 +8,7 @@ public interface PlanMemberDao {
 	public boolean insertPlanMember(PlanMemberDto planMemberDto);
 	public PlanMemberDto findPlanMemberByPlannerId(int planMemberId);
 	public List<PlanMemberDto> findPlanMembersByPlannerId(int plannerId);
+	public List<String> findPlanMembers(int plannerId);
 	//public boolean updatePlanMember(PlanMemberDto planMemberDto);
 	public boolean deletePlanMember(int planMemberId);
 }

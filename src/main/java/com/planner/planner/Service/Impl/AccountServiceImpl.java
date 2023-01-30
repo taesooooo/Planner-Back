@@ -12,12 +12,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Common.Image;
 import com.planner.planner.Dao.AccountDao;
+import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
+import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.util.FileStore;
 
@@ -27,11 +29,13 @@ public class AccountServiceImpl implements AccountService {
 	private static final Logger logger = LoggerFactory.getLogger(AccountDaoImpl.class);
 
 	private AccountDao accountDao;
+	private PlannerDao plannerDao;
 
 	private FileStore fileStore;
 
-	public AccountServiceImpl(AccountDao accountDao,FileStore fileStore) {
+	public AccountServiceImpl(AccountDao accountDao, PlannerDao plannerDao, FileStore fileStore) {
 		this.accountDao = accountDao;
+		this.plannerDao = plannerDao;
 		this.fileStore = fileStore;
 	}
 
@@ -75,6 +79,11 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
+	public void acceptInvite(int plannerId, int accountId) {
+		plannerDao.acceptInvitation(plannerId, accountId);
+	}
+
+	@Override
 	public LikeDto allLikes(int accountId) {
 		List<SpotLikeDto> likeS = accountDao.likeSpots(accountId);
 
@@ -102,5 +111,14 @@ public class AccountServiceImpl implements AccountService {
 		}).collect(Collectors.toList());
 
 		return likeStates;
+	}
+
+	@Override
+	public String searchEmail(String searchEmail) throws Exception {
+		String email = accountDao.searchEmail(searchEmail);
+		if(email == null) {
+			throw new NotFoundUserException(searchEmail + "는 존재하지 않습니다. 다시 확인 후 시도하세요.");
+		}
+		return email;
 	}
 }

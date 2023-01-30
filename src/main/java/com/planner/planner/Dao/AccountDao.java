@@ -11,11 +11,12 @@ public interface AccountDao {
 	public boolean update(AccountDto accountDto);
 	public boolean delete(AccountDto accountDto);
 	public AccountDto findById(int accountId);
+	public AccountDto findAccountIdByEmail(String email);
 	public boolean accountImageUpdate(int accountId, String imagePath);
 	public boolean passwordUpdate(AccountDto accountDto);
 	public boolean nickNameUpdate(AccountDto accountDto);
 	public List<SpotLikeDto> likeSpots(int accountId);
 	public List<SpotLikeDto> spotLikesByAccountId(int accountId);
 	public List<SpotLikeDto> spotLikesByContentIds(int accountId, List<Integer> contentId);
+	public String searchEmail(String searchEmail);
 }
-

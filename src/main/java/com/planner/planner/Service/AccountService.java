@@ -15,7 +15,9 @@ public interface AccountService {
 	public boolean accountUpdate(AccountDto accountDto) throws Exception;
 	public boolean accountImageUpdate(int accountId, MultipartFile image) throws Exception;
 	public boolean passwordUpdate(AccountDto accountDto);
+	public void acceptInvite(int plannerId, int accountId);
 	public LikeDto allLikes(int accountId);
 	public List<SpotLikeDto> spotLikesByAccountId(int accountId);
 	public List<SpotLikeStateDto> spotLikeStateCheck(int accountId, ContentIdListDto contentIds);
+	public String searchEmail(String searchEmail) throws Exception;
 }

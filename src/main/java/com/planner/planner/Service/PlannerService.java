@@ -8,26 +8,19 @@ import com.planner.planner.Dto.PlanMemberDto;
 import com.planner.planner.Dto.PlannerDto;
 
 public interface PlannerService {
-	public boolean newPlanner(PlannerDto plannerDto);
-	public PlannerDto findPlannerByPlannerId(int plannerId);
-	public List<PlannerDto> findPlannersByAccountId(int accountId);
-	public List<PlannerDto> findPlannerAll();
-	public boolean modifyPlanner(PlannerDto plannerDto);
-	public boolean deletePlanner(int plannerId);
+	public void newPlanner(PlannerDto plannerDto) throws Exception;
+	public PlannerDto findPlannerByPlannerId(int plannerId) throws Exception;
+	public List<PlannerDto> findPlannersByAccountId(int accountId) throws Exception;
+	public List<PlannerDto> findPlannerAll() throws Exception;
+	public void modifyPlanner(PlannerDto plannerDto) throws Exception;
+	public void deletePlanner(int plannerId) throws Exception;
 	
-	public boolean newPlanMember(PlanMemberDto planMemberDto);
-	public List<PlanMemberDto> findPlanMembersByPlannerId(int plannerId);
-	//public boolean modifyPlanMember(PlanMemberDto planMemberDto);
-	public boolean deletePlanMember(int planMemberId);
+	public List<PlanMemberDto> findMembersByPlannerId(int plannerId) throws Exception;
+	public void inviteMembers(int plannerId, List<String> members) throws Exception;
+	public void deleteMember(int plannerId, String memberEmail) throws Exception;
 	
-	public boolean newPlan(PlanDto planDto);
-	public PlanDto findPlanByPlannerId(int planId);
-	public boolean modifyPlan(PlanDto planDto);
-	public boolean deletePlan(int planId);
-	
-	public boolean newPlanLocation(PlanLocationDto planLocationDto);
-	public PlanLocationDto findPlanLocationByPlanId(int locationId);
-	public boolean modifyPlanLocation(PlanLocationDto planLocationDto);
-	public boolean deletePlanLocation(int locationId);
-	
+	public int newPlan(PlanDto planDto) throws Exception;
+	public void deletePlan(int plannerId, int planId) throws Exception;
+	public int newPlanLocation(PlanLocationDto planLocationDto) throws Exception;
+	public void deletePlanLocation(int planId, int planLocationId) throws Exception;
 }

@@ -18,11 +18,11 @@ public class PlanLocationDaoImpl implements PlanLocationDao {
 	private JdbcTemplate jdbcTemplate;
 	
 	private static final String INSERT_SQL = "INSERT INTO plan_location(location_content_id, location_image, location_transportation, plan_id) VALUES(?, ?, ?, ?);";
-	private static final String FIND_SQL = "SELECT plan_location.location_id, plan_location.location_content_id, plan_location.location_image, plan_location.location_transportation, plan_location.plan_id"
-			+ "FROM plan_location"
+	private static final String FIND_SQL = "SELECT plan_location.location_id, plan_location.location_content_id, plan_location.location_image, plan_location.location_transportation, plan_location.plan_id "
+			+ "FROM plan_location "
 			+ "WHERE plan_location.location_id = ?;";
-	private static final String FINDS_SQL = "SELECT plan_location.location_id, plan_location.location_content_id, plan_location.location_image, plan_location.location_transportation, plan_location.plan_id"
-			+ "FROM plan_location"
+	private static final String FINDS_SQL = "SELECT plan_location.location_id, plan_location.location_content_id, plan_location.location_image, plan_location.location_transportation, plan_location.plan_id "
+			+ "FROM plan_location "
 			+ "WHERE plan_location.plan_id = ?;";
 	private static final String UPDATE_SQL = "UPDATE plan_location SET plan_location.location_transportation = ? WHERE plan_location.location_id = ?;";
 	private static final String DELETE_SQL = "DELETE FROM plan_location WHERE plan_location.location_id = ?;";

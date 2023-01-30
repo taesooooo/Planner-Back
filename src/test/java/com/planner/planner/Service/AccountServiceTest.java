@@ -36,7 +36,7 @@ import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
-import com.planner.planner.Entity.Account;
+import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.Impl.AccountServiceImpl;
 import com.planner.planner.util.FileStore;
 
@@ -102,13 +102,10 @@ public class AccountServiceTest {
 			PlannerDto planner = new PlannerDto.Builder()
 					.setPlannerId(i)
 					.setAccountId(i)
-					.setMemberCount(1)
-					.setMember("test")
 					.setTitle("test"+i)
 					.setLikeCount(i)
-					.setPlan("")
-					.setPlanDateStart(LocalDate.now())
-					.setPlanDateEnd(LocalDate.now())
+					.setPlanDateStart(LocalDateTime.now())
+					.setPlanDateEnd(LocalDateTime.now())
 					.setUpdateDate(LocalDateTime.now()).build();
 			SpotLikeDto like = new SpotLikeDto.Builder().setLikeId(i).setAccountId(i).setContentId(i).setLikeDate(null).build();
 			likesP.add(planner);
@@ -163,5 +160,25 @@ public class AccountServiceTest {
 			assertEquals(likes.get(i).getContentId(), resultList.get(i).getContentId());
 			assertEquals(likes.get(i).getState(), resultList.get(i).getState());
 		}
+	}
+	
+	@Test
+	public void 이메일_검색() throws Exception {
+		String testEmail = "test@naver.com";
+		
+		when(accountDao.searchEmail(testEmail)).thenReturn(testEmail);
+		
+		String search = accountService.searchEmail(testEmail);
+		
+		assertEquals(testEmail, search);
+	}
+	
+	@Test(expected = NotFoundUserException.class)
+	public void 이메일_검색_실패_없는_이메일인경우() throws Exception {
+		String testEmail = "";
+		
+		when(accountDao.searchEmail(testEmail)).thenReturn(null);
+		
+		String search = accountService.searchEmail(testEmail);
 	}
 }

@@ -26,6 +26,7 @@ public class AccountDaoImpl implements AccountDao {
 	private final String createSQL = "INSERT INTO ACCOUNT(email, password, name, nickname, phone, image,create_date,update_date) VALUES(?,?,?,?,?,?, now(), now());";
 	private final String readSQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE email = ?";
 	private final String findByIdSQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE account_id = ?";
+	private final String FIND_ACCOUNTID_BY_EMAIL = "SELECT account_id FORM account WHERE email = ?";
 	private final String updateSQL = "UPDATE ACCOUNT SET nickname = ?, phone = ?, update_date = now() WHERE account_id = ?;";
 	private final String deleteSQL = "DELETE FROM ACCOUNT WHERE email = ?;";
 	private final String imageUpdateSQL = "UPDATE account SET image = ?, update_date = now() WHERE account_id = ?";
@@ -36,6 +37,7 @@ public class AccountDaoImpl implements AccountDao {
 	private final String likeSpotsSQL = "SELECT like_id, account_id, content_id, like_date FROM spotlike WHERE account_id = ?;";
 	private final String spotLikesByAccountId = "SELECT like_id, account_id, content_id, like_date FROM spotlike WHERE account_id = ?;";
 	private final String spotLikeStateSQL = "SELECT like_id, account_id, content_id, like_date FROM spotlike WHERE content_id IN (%s) and account_id = ?;";
+	private final String SEARCH_EMAIL_SQL = "SELECT A.email FROM account AS A WHERE A.email like ?;";
 
 	public AccountDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -90,6 +92,11 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
+	public AccountDto findAccountIdByEmail(String email) {
+		return jdbcTemplate.queryForObject(FIND_ACCOUNTID_BY_EMAIL, new AccountRowMapper(), email);
+	}
+
+	@Override
 	public List<SpotLikeDto> likeSpots(int accountId) {
 		List<SpotLikeDto> likes = jdbcTemplate.query(likeSpotsSQL, new RowMapper<SpotLikeDto>() {
 			@Override
@@ -136,4 +143,8 @@ public class AccountDaoImpl implements AccountDao {
 		return states;
 	}
 
+	@Override
+	public String searchEmail(String searchEmail) {
+		return jdbcTemplate.queryForObject(searchEmail, String.class, searchEmail);
+	}
 }

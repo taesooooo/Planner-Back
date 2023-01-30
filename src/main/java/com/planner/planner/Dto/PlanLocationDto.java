@@ -1,10 +1,13 @@
 package com.planner.planner.Dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class PlanLocationDto {
 	private int locationId;
 	private int locationContetntId;
 	private String locationImage;
 	private int locationTranspotation;
+	@JsonIgnore
 	private int planId;
 	
 	public static class Builder {
