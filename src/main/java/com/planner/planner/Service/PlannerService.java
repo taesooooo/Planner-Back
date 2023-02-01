@@ -8,7 +8,7 @@ import com.planner.planner.Dto.PlanMemberDto;
 import com.planner.planner.Dto.PlannerDto;
 
 public interface PlannerService {
-	public void newPlanner(PlannerDto plannerDto) throws Exception;
+	public int newPlanner(PlannerDto plannerDto) throws Exception;
 	public PlannerDto findPlannerByPlannerId(int plannerId) throws Exception;
 	public List<PlannerDto> findPlannersByAccountId(int accountId) throws Exception;
 	public List<PlannerDto> findPlannerAll() throws Exception;

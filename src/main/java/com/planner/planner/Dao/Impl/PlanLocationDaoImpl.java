@@ -33,7 +33,7 @@ public class PlanLocationDaoImpl implements PlanLocationDao {
 
 	@Override
 	public boolean insertPlanLocation(PlanLocationDto planLocationDto) {
-		int result = jdbcTemplate.update(INSERT_SQL, planLocationDto.getLocationContetntId(), planLocationDto.getLocationImage(), planLocationDto.getLocationTranspotation(), planLocationDto.getPlanId());
+		int result = jdbcTemplate.update(INSERT_SQL, planLocationDto.getLocationContetntId(), planLocationDto.getLocationImage(), planLocationDto.getLocationTransportation(), planLocationDto.getPlanId());
 		return result > 0 ? true : false;
 	}
 
@@ -49,7 +49,7 @@ public class PlanLocationDaoImpl implements PlanLocationDao {
 
 	@Override
 	public boolean updatePlanLocation(PlanLocationDto planLocationDto) {
-		int result = jdbcTemplate.update(UPDATE_SQL, planLocationDto.getLocationTranspotation(), planLocationDto.getPlanId());
+		int result = jdbcTemplate.update(UPDATE_SQL, planLocationDto.getLocationTransportation(), planLocationDto.getPlanId());
 		return result > 0 ? true : false;
 	}
 

@@ -62,7 +62,7 @@ public class PlannerTest {
 	
 	@Test
 	public void planLocationTest() {
-		PlanLocationDto p = new PlanLocationDto.Builder().setLocationContetntId(1).setLocationImage("").setLocationTranspotation(1).setPlanId(2).build();
+		PlanLocationDto p = new PlanLocationDto.Builder().setLocationContetntId(1).setLocationImage("").setLocationTransportation(1).setPlanId(2).build();
 		int a = pDao.insertPlanLocation(p);
 		logger.info("id:"+a);
 	}

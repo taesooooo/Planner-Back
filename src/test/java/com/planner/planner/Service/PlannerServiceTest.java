@@ -321,9 +321,9 @@ public class PlannerServiceTest {
 		List<String> memberEmails = new ArrayList<String>();
 		memberEmails.add("test2@naver.com");
 		List<PlanLocationDto> planLocations = new ArrayList<PlanLocationDto>();
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContetntId(1000).setLocationImage("").setLocationTranspotation(1).setPlanId(1).build());
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(2).setLocationContetntId(2000).setLocationImage("").setLocationTranspotation(1).setPlanId(1).build());
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(3).setLocationContetntId(3000).setLocationImage("").setLocationTranspotation(1).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContetntId(1000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(2).setLocationContetntId(2000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(3).setLocationContetntId(3000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
 		
 		List<PlanDto> plans = new ArrayList<PlanDto>();
 		plans.add(new PlanDto.Builder().setPlanId(1).setPlanDate(LocalDateTime.of(2023, 1,29,00,00)).setPlanLocations(planLocations).setPlannerId(plannerId).build());

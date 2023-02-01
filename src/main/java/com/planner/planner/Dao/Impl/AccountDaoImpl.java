@@ -26,7 +26,7 @@ public class AccountDaoImpl implements AccountDao {
 	private final String createSQL = "INSERT INTO ACCOUNT(email, password, name, nickname, phone, image,create_date,update_date) VALUES(?,?,?,?,?,?, now(), now());";
 	private final String readSQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE email = ?";
 	private final String findByIdSQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE account_id = ?";
-	private final String FIND_ACCOUNTID_BY_EMAIL = "SELECT account_id FORM account WHERE email = ?";
+	private final String FIND_ACCOUNTID_BY_EMAIL = "SELECT account_id FROM account WHERE email = ?";
 	private final String updateSQL = "UPDATE ACCOUNT SET nickname = ?, phone = ?, update_date = now() WHERE account_id = ?;";
 	private final String deleteSQL = "DELETE FROM ACCOUNT WHERE email = ?;";
 	private final String imageUpdateSQL = "UPDATE account SET image = ?, update_date = now() WHERE account_id = ?";
@@ -93,7 +93,7 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public AccountDto findAccountIdByEmail(String email) {
-		return jdbcTemplate.queryForObject(FIND_ACCOUNTID_BY_EMAIL, new AccountRowMapper(), email);
+		return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), email);
 	}
 
 	@Override

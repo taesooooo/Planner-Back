@@ -33,11 +33,11 @@ public class PlannerDaoImpl implements PlannerDao {
 	private JdbcTemplate jdbcTemplate;
 	private KeyHolder keyHolder;
 	
-	private final String INSERT_PLANNER_SQL = "INSERT INTO planner(account_id, title, plan_date_start, plan_date_end, like_count, create_date, update_date)"
-			+ "VALUES(?, ?, ?, ?, ?, now(), now());";
+	private final String INSERT_PLANNER_SQL = "INSERT INTO planner(account_id, title, plan_date_start, plan_date_end, create_date, update_date)"
+			+ "VALUES(?, ?, ?, ?, now(), now());";
 	private final String FIND_SQL = "SELECT p.planner_id, p.account_id, p.title, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date FROM planner AS p WHERE p.planner_id = ?;";
 	private final String FINDS_SQL = "SELECT p.planner_id, p.account_id, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date FROM planner AS p WHERE p.account_id = ?;";
-	private final String FIND_ALL_SQL = "SELECT p.planner_id, p.account_id, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date FROM planner AS p;";
+	private final String FIND_ALL_SQL = "SELECT p.planner_id, p.account_id, p.title, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date FROM planner AS p;";
 	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS p SET p.title = ?, p.plan_date_start = ?, p.plan_date_end = ?, p.update_date = NOW() WHERE p.planner_id = ?;";
 	private final String DELETE_PLANNER_SQL = "DELETE FROM planner WHERE planner.planner_id = ?;";
 	
@@ -82,9 +82,15 @@ public class PlannerDaoImpl implements PlannerDao {
 
 	@Override
 	public int insertPlanner(PlannerDto plannerDto) {
-		int result = jdbcTemplate.update(INSERT_PLANNER_SQL, plannerDto.getAccountId(), plannerDto.getTitle(), plannerDto.getPlanDateStart(), plannerDto.getPlanDateEnd(), plannerDto.getLikeCount()
-				, plannerDto.getCreateDate(), plannerDto.getUpdateDate());
-		return result;
+		int result = jdbcTemplate.update(conn -> {
+			PreparedStatement ps = conn.prepareStatement(INSERT_PLANNER_SQL, new String[] {"planner_id"});
+			ps.setInt(1, plannerDto.getAccountId());
+			ps.setString(2, plannerDto.getTitle());
+			ps.setTimestamp(3, Timestamp.valueOf(plannerDto.getPlanDateStart()));
+			ps.setTimestamp(4, Timestamp.valueOf(plannerDto.getPlanDateEnd()));
+			return ps;
+		}, keyHolder);
+		return keyHolder.getKey().intValue();
 	}
 
 	@Override
@@ -138,7 +144,7 @@ public class PlannerDaoImpl implements PlannerDao {
 							.setLocationId(rs.getInt("location_id"))
 							.setLocationContetntId(rs.getInt("location_content_id"))
 							.setLocationImage(rs.getString("location_image"))
-							.setLocationTranspotation(rs.getInt("location_transportation"))
+							.setLocationTransportation(rs.getInt("location_transportation"))
 							.setPlanId(rs.getInt("plan_id"))
 							.build();
 					planLocations.add(pl);
@@ -297,7 +303,7 @@ public class PlannerDaoImpl implements PlannerDao {
 			PreparedStatement ps = conn.prepareStatement(INSERT_PLANLOCATION_SQL, new String[] {"plan_location_id"});
 			ps.setInt(1, planLocationDto.getLocationContetntId());
 			ps.setString(2, planLocationDto.getLocationImage());
-			ps.setInt(3, planLocationDto.getLocationTranspotation());
+			ps.setInt(3, planLocationDto.getLocationTransportation());
 			ps.setInt(4, planLocationDto.getPlanId());
 			return ps;
 		}, keyHolder);
@@ -311,7 +317,7 @@ public class PlannerDaoImpl implements PlannerDao {
 
 	@Override
 	public int updatePlanLocation(PlanLocationDto planLocationDto) {
-		int result = jdbcTemplate.update(UPDATE_PLANLOCATION_SQL, planLocationDto.getLocationTranspotation(), planLocationDto.getPlanId());
+		int result = jdbcTemplate.update(UPDATE_PLANLOCATION_SQL, planLocationDto.getLocationTransportation(), planLocationDto.getPlanId());
 		return result;
 	}
 

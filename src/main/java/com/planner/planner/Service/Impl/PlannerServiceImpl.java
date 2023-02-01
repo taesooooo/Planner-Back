@@ -30,7 +30,7 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public void newPlanner(PlannerDto plannerDto) throws Exception {
+	public int newPlanner(PlannerDto plannerDto) throws Exception {
 		// 플래너 생성
 		int plannerId = plannerDao.insertPlanner(plannerDto);
 		
@@ -52,6 +52,7 @@ public class PlannerServiceImpl implements PlannerService {
 		}
 		
 		plannerDao.acceptInvitation(plannerId, creator.getAccountId());
+		return plannerId;
 	}
 
 	@Override

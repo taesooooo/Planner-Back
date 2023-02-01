@@ -37,8 +37,8 @@ public class PlannerContorller {
 
 	@PostMapping
 	public ResponseEntity<Object> newPlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto) throws Exception {
-		plannerService.newPlanner(plannerDto);
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+		int newPlannerId = plannerService.newPlanner(plannerDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", newPlannerId));
 	}
 
 	@GetMapping

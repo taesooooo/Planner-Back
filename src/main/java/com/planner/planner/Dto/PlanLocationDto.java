@@ -6,15 +6,14 @@ public class PlanLocationDto {
 	private int locationId;
 	private int locationContetntId;
 	private String locationImage;
-	private int locationTranspotation;
-	@JsonIgnore
+	private int locationTransportation;
 	private int planId;
 	
 	public static class Builder {
 		private int locationId;
 		private int locationContetntId;
 		private String locationImage;
-		private int locationTranspotation;
+		private int locationTransportation;
 		private int planId;
 		
 		public Builder setLocationId(int locationId) {
@@ -29,8 +28,8 @@ public class PlanLocationDto {
 			this.locationImage = locationImage;
 			return this;
 		}
-		public Builder setLocationTranspotation(int locationTranspotation) {
-			this.locationTranspotation = locationTranspotation;
+		public Builder setLocationTransportation(int locationTransportation) {
+			this.locationTransportation = locationTransportation;
 			return this;
 		}
 		public Builder setPlanId(int planId) {
@@ -41,12 +40,16 @@ public class PlanLocationDto {
 			return new PlanLocationDto(this);
 		}
 	}
+	
+	public PlanLocationDto() {
+		
+	}
 
 	public PlanLocationDto(Builder builder) {
 		this.locationId = builder.locationId;
 		this.locationContetntId = builder.locationContetntId;
 		this.locationImage = builder.locationImage;
-		this.locationTranspotation = builder.locationTranspotation;
+		this.locationTransportation = builder.locationTransportation;
 		this.planId = builder.planId;
 	}
 
@@ -62,8 +65,8 @@ public class PlanLocationDto {
 		return locationImage;
 	}
 
-	public int getLocationTranspotation() {
-		return locationTranspotation;
+	public int getLocationTransportation() {
+		return locationTransportation;
 	}
 
 	public int getPlanId() {
