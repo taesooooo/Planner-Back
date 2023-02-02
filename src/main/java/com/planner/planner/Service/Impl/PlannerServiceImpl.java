@@ -38,6 +38,9 @@ public class PlannerServiceImpl implements PlannerService {
 		List<AccountDto> users = new ArrayList<AccountDto>();
 		
 		AccountDto creator = accountDao.findAccountIdByEmail(plannerDto.getCreatorEmail());
+		if(creator == null) {
+			throw new NotFoundUserException(plannerDto.getCreatorEmail() + "에 해당하는 사용자를 찾지 못했습니다.");
+		}
 		users.add(creator);
 		
 		for(String email : plannerDto.getPlanMemberEmails()) {

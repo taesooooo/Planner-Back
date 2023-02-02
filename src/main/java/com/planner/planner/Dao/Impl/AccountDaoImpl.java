@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -52,7 +53,12 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public AccountDto read(AccountDto accountDto) {
-		return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), accountDto.getEmail());
+		try {
+			return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), accountDto.getEmail());
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -88,12 +94,22 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public AccountDto findById(int accountId) {
-		return jdbcTemplate.queryForObject(findByIdSQL, new AccountRowMapper(), accountId);
+		try {
+			return jdbcTemplate.queryForObject(findByIdSQL, new AccountRowMapper(), accountId);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 	@Override
 	public AccountDto findAccountIdByEmail(String email) {
-		return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), email);
+		try {
+			return jdbcTemplate.queryForObject(readSQL, new AccountRowMapper(), email);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -145,6 +161,11 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public String searchEmail(String searchEmail) {
-		return jdbcTemplate.queryForObject(searchEmail, String.class, searchEmail);
+		try {
+			return jdbcTemplate.queryForObject(searchEmail, String.class, searchEmail);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 }

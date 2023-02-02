@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(EmptyResultDataAccessException.class)
 	public ResponseEntity<Object> EmptyResult(Exception e) {
+		e.printStackTrace();
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "데이터를 찾지 못헀습니다"));
 	}
 	

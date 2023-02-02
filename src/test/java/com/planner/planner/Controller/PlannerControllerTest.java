@@ -84,7 +84,8 @@ public class PlannerControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token))
 		.andDo(print())
-		.andExpect(status().isOk());
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty());
 	}
 	
 	@Test
@@ -97,7 +98,8 @@ public class PlannerControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token))
 		.andDo(print())
-		.andExpect(status().isOk());
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty());
 	}
 	
 	@Test
@@ -139,7 +141,8 @@ public class PlannerControllerTest {
 				.header("Authorization", token)
 				.content(mapper.writeValueAsString(plan)))
 		.andDo(print())
-		.andExpect(status().isCreated());
+		.andExpect(status().isCreated())
+		.andExpect(jsonPath("$.data").value(plan.getPlanId()));
 	}
 	
 	@Test
@@ -170,7 +173,8 @@ public class PlannerControllerTest {
 				.header("Authorization", token)
 				.content(mapper.writeValueAsString(planLocation)))
 		.andDo(print())
-		.andExpect(status().isCreated());
+		.andExpect(status().isCreated())
+		.andExpect(jsonPath("$.data").value(planLocation.getLocationId()));
 	}
 	
 	@Test
