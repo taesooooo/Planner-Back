@@ -85,7 +85,7 @@ public class AccountController {
 	}
 	
 	@GetMapping(value="/search-member")
-	public ResponseEntity<Object> searchMembers(HttpServletRequest req, @RequestParam String searchString) throws Exception {
+	public ResponseEntity<Object> searchMembers(HttpServletRequest req, @RequestParam(value="searchString") String searchString) throws Exception {
 		boolean emailCheck = accountService.searchEmail(searchString);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", emailCheck));
