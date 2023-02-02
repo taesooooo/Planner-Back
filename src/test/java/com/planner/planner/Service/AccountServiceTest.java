@@ -191,12 +191,12 @@ public class AccountServiceTest {
 	@Test
 	public void 이메일_검색() throws Exception {
 		String testEmail = "test@naver.com";
+		AccountDto user = createAccount(1, "test@naver.com", "홍길동", "test");
+		when(accountDao.searchEmail(testEmail)).thenReturn(user);
 		
-		when(accountDao.searchEmail(testEmail)).thenReturn(testEmail);
+		boolean search = accountService.searchEmail(testEmail);
 		
-		String search = accountService.searchEmail(testEmail);
-		
-		assertEquals(testEmail, search);
+		assertEquals(search, true);
 	}
 	
 	@Test(expected = NotFoundUserException.class)
@@ -205,7 +205,7 @@ public class AccountServiceTest {
 		
 		when(accountDao.searchEmail(testEmail)).thenReturn(null);
 		
-		String search = accountService.searchEmail(testEmail);
+		boolean search = accountService.searchEmail(testEmail);
 	}
 	
 	private AccountDto createAccount(int accountId, String email, String name, String nickName) {

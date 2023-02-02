@@ -114,11 +114,11 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public String searchEmail(String searchEmail) throws Exception {
-		String email = accountDao.searchEmail(searchEmail);
-		if(email == null) {
+	public boolean searchEmail(String searchEmail) throws Exception {
+		AccountDto user = accountDao.searchEmail(searchEmail);
+		if(user == null) {
 			throw new NotFoundUserException(searchEmail + "는 존재하지 않습니다. 다시 확인 후 시도하세요.");
 		}
-		return email;
+		return true;
 	}
 }

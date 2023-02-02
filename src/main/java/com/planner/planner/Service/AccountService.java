@@ -19,5 +19,5 @@ public interface AccountService {
 	public LikeDto allLikes(int accountId);
 	public List<SpotLikeDto> spotLikesByAccountId(int accountId);
 	public List<SpotLikeStateDto> spotLikeStateCheck(int accountId, ContentIdListDto contentIds);
-	public String searchEmail(String searchEmail) throws Exception;
+	public boolean searchEmail(String searchEmail) throws Exception;
 }

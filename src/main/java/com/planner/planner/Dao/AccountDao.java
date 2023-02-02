@@ -18,5 +18,5 @@ public interface AccountDao {
 	public List<SpotLikeDto> likeSpots(int accountId);
 	public List<SpotLikeDto> spotLikesByAccountId(int accountId);
 	public List<SpotLikeDto> spotLikesByContentIds(int accountId, List<Integer> contentId);
-	public String searchEmail(String searchEmail);
+	public AccountDto searchEmail(String searchEmail);
 }
