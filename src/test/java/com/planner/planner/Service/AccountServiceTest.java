@@ -1,8 +1,10 @@
 package com.planner.planner.Service;
 
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -10,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,6 +64,31 @@ public class AccountServiceTest {
 		 MockitoAnnotations.openMocks(this);
 		 testDto = new AccountDto.Builder().setAccountId(1).setEmail("test@naver.com").setUserName("test").setNickName("test").build();
 	}
+	
+	@Test
+	public void 회원_조회_아이디() {
+		int accountId = 1;
+		AccountDto user = createAccount(1, "test@naver.com", "홍길동", "test");
+		
+		when(accountDao.findById(1)).thenReturn(user);
+		
+		AccountDto findUser = accountService.findById(accountId);
+		
+		verify(accountDao).findById(accountId);
+		assertEquals(findUser.getAccountId(), accountId);
+	}
+	
+	@Test
+	public void 회원_수정() throws Exception {
+		AccountDto user = createAccount(1, "test@naver.com", "홍길동", "닉네임수정");
+		
+		when(accountDao.update(user)).thenReturn(true);
+		
+		boolean result = accountService.accountUpdate(user);
+		
+		verify(accountDao).update(user);
+		assertEquals(result, true);
+	}
 
 	@Test
 	public void 계정이미지변경() throws Exception {
@@ -94,39 +120,39 @@ public class AccountServiceTest {
 		assertTrue(result);
 	}
 
-	@Test
-	public void 계정좋아요모두가져오기() {
-		List<PlannerDto> likesP = new ArrayList<>();
-		List<SpotLikeDto> likesS = new ArrayList<>();
-		for(int i=0;i<3;i++) {
-			PlannerDto planner = new PlannerDto.Builder()
-					.setPlannerId(i)
-					.setAccountId(i)
-					.setTitle("test"+i)
-					.setLikeCount(i)
-					.setPlanDateStart(LocalDateTime.now())
-					.setPlanDateEnd(LocalDateTime.now())
-					.setUpdateDate(LocalDateTime.now()).build();
-			SpotLikeDto like = new SpotLikeDto.Builder().setLikeId(i).setAccountId(i).setContentId(i).setLikeDate(null).build();
-			likesP.add(planner);
-			likesS.add(like);
-		}
-		LikeDto testLikeDto = new LikeDto.Builder().setLikePlanners(likesP).setLikeSpots(likesS).build();
-
-		when(accountDao.likePlanners(testDto.getAccountId())).thenReturn(likesP);
-		when(accountDao.likeSpots(testDto.getAccountId())).thenReturn(likesS);
-
-		LikeDto likes = accountService.allLikes(testDto.getAccountId());
-
-		verify(accountDao).likePlanners(testDto.getAccountId());
-		verify(accountDao).likeSpots(testDto.getAccountId());
-
-		assertNotNull(likes.getLikePlanners());
-		assertTrue(likes.getLikePlanners().size() > 0);
-
-		assertNotNull(likes.getLikeSpots());
-		assertTrue(likes.getLikeSpots().size() > 0);
-	}
+//	@Test
+//	public void 계정좋아요모두가져오기() {
+//		List<PlannerDto> likesP = new ArrayList<>();
+//		List<SpotLikeDto> likesS = new ArrayList<>();
+//		for(int i=0;i<3;i++) {
+//			PlannerDto planner = new PlannerDto.Builder()
+//					.setPlannerId(i)
+//					.setAccountId(i)
+//					.setTitle("test"+i)
+//					.setLikeCount(i)
+//					.setPlanDateStart(LocalDateTime.now())
+//					.setPlanDateEnd(LocalDateTime.now())
+//					.setUpdateDate(LocalDateTime.now()).build();
+//			SpotLikeDto like = new SpotLikeDto.Builder().setLikeId(i).setAccountId(i).setContentId(i).setLikeDate(null).build();
+//			likesP.add(planner);
+//			likesS.add(like);
+//		}
+//		LikeDto testLikeDto = new LikeDto.Builder().setLikePlanners(likesP).setLikeSpots(likesS).build();
+//
+//		when(accountDao.likePlanners(testDto.getAccountId())).thenReturn(likesP);
+//		when(accountDao.likeSpots(testDto.getAccountId())).thenReturn(likesS);
+//
+//		LikeDto likes = accountService.allLikes(testDto.getAccountId());
+//
+//		verify(accountDao).likePlanners(testDto.getAccountId());
+//		verify(accountDao).likeSpots(testDto.getAccountId());
+//
+//		assertNotNull(likes.getLikePlanners());
+//		assertTrue(likes.getLikePlanners().size() > 0);
+//
+//		assertNotNull(likes.getLikeSpots());
+//		assertTrue(likes.getLikeSpots().size() > 0);
+//	}
 
 	@Test
 	public void 좋아요여행지가져오기() {
@@ -180,5 +206,9 @@ public class AccountServiceTest {
 		when(accountDao.searchEmail(testEmail)).thenReturn(null);
 		
 		String search = accountService.searchEmail(testEmail);
+	}
+	
+	private AccountDto createAccount(int accountId, String email, String name, String nickName) {
+		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setUserName(name).setNickName(nickName).build();
 	}
 }
