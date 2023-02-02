@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -84,9 +85,9 @@ public class AccountController {
 	}
 	
 	@GetMapping(value="/search-member")
-	public ResponseEntity<Object> searchMembers(HttpServletRequest req, @RequestBody String searchString) throws Exception {
-		String email = accountService.searchEmail(searchString);
+	public ResponseEntity<Object> searchMembers(HttpServletRequest req, @RequestParam String searchString) throws Exception {
+		boolean emailCheck = accountService.searchEmail(searchString);
 		
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", email));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", emailCheck));
 	}
 }

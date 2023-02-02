@@ -118,5 +118,32 @@ public class AccountControllerTest {
 		.andExpect(jsonPath("$.data[0].contentId").isNumber())
 		.andExpect(jsonPath("$.data[0].state").isBoolean());
 	}
+	
+	@Test
+	public void 계정_확인_이메일() throws Exception {
+		String searchEmail = "test@naver.com";
+		this.mockMvc.perform(get("/api/users/search-member")
+				.param("searchString", searchEmail)
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.header("Authorization", token))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").value(true));
+	}
+	
+	@Test
+	public void 계정_확인_없는이메일() throws Exception {
+		String searchEmail = "aa@naver.com";
+		this.mockMvc.perform(get("/api/users/search-member")
+				.param("searchString", searchEmail)
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.header("Authorization", token))
+		.andDo(print())
+		.andExpect(status().isNotFound());
+	}
 
 }

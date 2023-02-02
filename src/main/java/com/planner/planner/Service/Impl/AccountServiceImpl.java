@@ -117,7 +117,7 @@ public class AccountServiceImpl implements AccountService {
 	public boolean searchEmail(String searchEmail) throws Exception {
 		AccountDto user = accountDao.searchEmail(searchEmail);
 		if(user == null) {
-			throw new NotFoundUserException(searchEmail + "는 존재하지 않습니다. 다시 확인 후 시도하세요.");
+			throw new NotFoundUserException(searchEmail + "는 존재하지 않습니다. 확인 후 다시 시도하세요.");
 		}
 		return true;
 	}
