@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class PlanLocationDto {
 	private int locationId;
-	private int locationContetntId;
+	private int locationContentId;
 	private String locationImage;
 	private int locationTransportation;
 	private int planId;
 	
 	public static class Builder {
 		private int locationId;
-		private int locationContetntId;
+		private int locationContentId;
 		private String locationImage;
 		private int locationTransportation;
 		private int planId;
@@ -20,8 +20,8 @@ public class PlanLocationDto {
 			this.locationId = locationId;
 			return this;
 		}
-		public Builder setLocationContetntId(int locationContetntId) {
-			this.locationContetntId = locationContetntId;
+		public Builder setLocationContentId(int locationContetntId) {
+			this.locationContentId = locationContetntId;
 			return this;
 		}
 		public Builder setLocationImage(String locationImage) {
@@ -47,7 +47,7 @@ public class PlanLocationDto {
 
 	public PlanLocationDto(Builder builder) {
 		this.locationId = builder.locationId;
-		this.locationContetntId = builder.locationContetntId;
+		this.locationContentId = builder.locationContentId;
 		this.locationImage = builder.locationImage;
 		this.locationTransportation = builder.locationTransportation;
 		this.planId = builder.planId;
@@ -57,8 +57,8 @@ public class PlanLocationDto {
 		return locationId;
 	}
 
-	public int getLocationContetntId() {
-		return locationContetntId;
+	public int getLocationContentId() {
+		return locationContentId;
 	}
 
 	public String getLocationImage() {

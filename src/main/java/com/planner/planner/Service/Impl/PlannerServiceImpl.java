@@ -12,6 +12,7 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemberDto;
+import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.NotFoundMemberException;
 import com.planner.planner.Exception.NotFoundPlanner;
@@ -86,7 +87,7 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public void modifyPlanner(PlannerDto plannerDto) throws Exception {
+	public void updatePlanner(PlannerDto plannerDto) throws Exception {
 		// 플래너 기본 정보 업데이트(컨트롤러에서 접근권한 체크 후 해야함)
 		plannerDao.updatePlanner(plannerDto.getPlannerId(), plannerDto);
 	}
@@ -95,6 +96,21 @@ public class PlannerServiceImpl implements PlannerService {
 	public void deletePlanner(int plannerId) throws Exception {
 		// 컨트롤러에서 접근권한 체크 후 해야함
 		plannerDao.deletePlanner(plannerId);
+	}
+	
+	@Override
+	public int newMemo(int plannerId, PlanMemoDto planMemoDto) {
+		return plannerDao.insertPlanMemo(plannerId, planMemoDto);
+	}
+
+	@Override
+	public void updateMemo(int memoId, PlanMemoDto planMemoDto) {
+		plannerDao.updatePlanMemo(memoId, planMemoDto);
+	}
+
+	@Override
+	public void deleteMemo(int memoId) {
+		plannerDao.deletePlanMemo(memoId);
 	}
 
 	@Override
@@ -137,8 +153,13 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public void deletePlan(int plannerId, int planId) throws Exception {
-		plannerDao.deletePlan(plannerId, planId);
+	public void updatePlan(int planId, PlanDto planDto) throws Exception {
+		plannerDao.updatePlan(planId, planDto);
+	}
+
+	@Override
+	public void deletePlan(int planId) throws Exception {
+		plannerDao.deletePlan(planId);
 	}
 
 	@Override
@@ -147,9 +168,24 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public void deletePlanLocation(int planId, int planLocationId) throws Exception {
-		plannerDao.deletePlanLocation(planId, planLocationId);
+	public void updatePlanLocation(int planLocationId, PlanLocationDto planLocationDto) throws Exception {
+		plannerDao.updatePlanLocation(planLocationId, planLocationDto);
 	}
-	
+
+	@Override
+	public void deletePlanLocation(int planLocationId) throws Exception {
+		plannerDao.deletePlanLocation(planLocationId);
+	}
+
+	@Override
+	public void plannerLikeOrUnLike(int accountId, int plannerId) {
+		boolean isLike = plannerDao.isLike(accountId, plannerId);
+		if(isLike) {
+			plannerDao.plannerUnLike(accountId, plannerId);
+		}
+		else {
+			plannerDao.plannerLike(accountId, plannerId);
+		}
+	}
 	
 }

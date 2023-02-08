@@ -14,7 +14,7 @@ import com.planner.planner.util.JwtUtil;
 
 public class AuthInterceptor implements HandlerInterceptor {
 
-	private static final Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthInterceptor.class);
 
 	@Autowired
 	private JwtUtil jwtUtil;
@@ -35,7 +35,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 		else {
 			throw new NotFoundToken("로그인이 필요합니다.");
 		}
-		//return false;
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.planner.planner.Controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,9 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemberDto;
+import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
+import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.PlannerService;
 import com.planner.planner.util.ResponseMessage;
+import com.planner.planner.util.UserIdUtil;
 
 @RestController
 @RequestMapping(value="/api/planners")
@@ -49,14 +53,6 @@ public class PlannerContorller {
 
 	@GetMapping(value="/{plannerId}")
 	public ResponseEntity<Object> findPlannersById(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		List<PlanMemberDto> planMembers = plannerService.findMembersByPlannerId(plannerId);
-	
-		boolean match = planMembers.stream().anyMatch((planMember) -> planMember.getAccountId() == id);
-		if(!match) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
-
 		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",planner));
@@ -64,83 +60,122 @@ public class PlannerContorller {
 	
 	@PatchMapping(value="/{plannerId}")
 	public ResponseEntity<Object> modifyPlanner(HttpServletRequest req, @PathVariable int plannerId, @RequestBody PlannerDto plannerDto) throws Exception {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
+		plannerAuthorizationCheck(req, plannerId);
 		
-		if(planner.getAccountId() != id) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
-		
-		plannerService.modifyPlanner(plannerDto);
+		plannerService.updatePlanner(plannerDto);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
 	
 	@DeleteMapping(value="/{plannerId}")
 	public ResponseEntity<Object> deletePlanner(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
-		
-		if(planner.getAccountId() != id) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
+		plannerAuthorizationCheck(req, plannerId);
 		
 		plannerService.deletePlanner(plannerId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
 	
+	@PostMapping(value="/{plannerId}/like")
+	public ResponseEntity<Object> likePlanner(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
+		int id = UserIdUtil.getUserId(req);
+		
+		plannerService.plannerLikeOrUnLike(id, plannerId);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+	}
+	
+	@PostMapping(value="/{plannerId}/memos")
+	public ResponseEntity<Object> newMemo(HttpServletRequest req, @PathVariable int plannerId, @RequestBody PlanMemoDto planMemoDto) throws Exception {
+		plannerAuthorizationCheck(req, plannerId);
+		
+		int planMemoId = plannerService.newMemo(plannerId, planMemoDto);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", planMemoId));
+	}
+	
+	@PatchMapping(value="/{plannerId}/memos/{memoId}")
+	public ResponseEntity<Object> updateMemo(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int memoId, @RequestBody PlanMemoDto planMemoDto) throws Exception {
+		plannerAuthorizationCheck(req, plannerId);
+		
+		plannerService.updateMemo(memoId, planMemoDto);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+	}
+	
+	@DeleteMapping(value="/{plannerId}/memos/{memoId}")
+	public ResponseEntity<Object> deleteMemo(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int memoId) throws Exception {
+		plannerAuthorizationCheck(req, plannerId);
+		
+		plannerService.deleteMemo(memoId);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+	}
+	
+	@PostMapping(value="/{plannerId}/invite-member")
+	public ResponseEntity<Object> inviteMember(HttpServletRequest req, @PathVariable int plannerId, @RequestBody HashMap<String, List<String>> emails) throws Exception {
+		plannerAuthorizationCheck(req, plannerId);
+		
+		plannerService.inviteMembers(plannerId, emails.get("emails"));
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+	}
+	
 	@PostMapping(value="/{plannerId}/plans")
 	public ResponseEntity<Object> newPlan(HttpServletRequest req, @PathVariable int plannerId, @RequestBody PlanDto planDto) throws Exception {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
-		
-		if(planner.getAccountId() != id) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
+		plannerAuthorizationCheck(req, plannerId);
 		
 		int planId = plannerService.newPlan(planDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", planId));
 	}
 	
+	@PatchMapping(value="/{plannerId}/plans/{planId}")
+	public ResponseEntity<Object> updatePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody PlanDto planDto) throws Exception {
+		plannerAuthorizationCheck(req, plannerId);
+		
+		plannerService.updatePlan(planId, planDto);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+	}
+	
 	@DeleteMapping(value="/{plannerId}/plans/{planId}")
 	public ResponseEntity<Object> deletePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId) throws Exception {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
+		plannerAuthorizationCheck(req, plannerId);
 		
-		if(planner.getAccountId() != id) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
-		
-		plannerService.deletePlan(plannerId, planId);
+		plannerService.deletePlan(planId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
 	
 	@PostMapping(value="/{plannerId}/plans/{planId}/plan-locations")
-	public ResponseEntity<Object> newPlanLocation(HttpServletRequest req, @PathVariable int plannerId, @RequestBody PlanLocationDto planLocationDto) throws Exception {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
-		
-		if(planner.getAccountId() != id) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
+	public ResponseEntity<Object> newPlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody PlanLocationDto planLocationDto) throws Exception {
+		plannerAuthorizationCheck(req, plannerId);
 		
 		int planLocationId = plannerService.newPlanLocation(planLocationDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", planLocationId));
 	}
 	
+	@PatchMapping(value="/{plannerId}/plans/{planId}/plan-locations/{planLocationId}")
+	public ResponseEntity<Object> updatePlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @PathVariable int planLocationId, @RequestBody PlanLocationDto planLocationDto) throws Exception {
+		plannerAuthorizationCheck(req, plannerId);
+		
+		plannerService.updatePlanLocation(planLocationId, planLocationDto);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+	}
+	
 	@DeleteMapping(value="/{plannerId}/plans/{planId}/plan-locations/{planLocationId}")
 	public ResponseEntity<Object> deletePlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @PathVariable int planLocationId) throws Exception {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
+		plannerAuthorizationCheck(req, plannerId);
 		
-		if(planner.getAccountId() != id) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
-		
-		plannerService.deletePlanLocation(planId, planLocationId);
+		plannerService.deletePlanLocation(planLocationId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
 	
+	private void plannerAuthorizationCheck(HttpServletRequest req, int plannerId) throws Exception {
+		int id = UserIdUtil.getUserId(req);
+		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
+		
+		if(planner.getAccountId() != id) {
+			throw new ForbiddenException("접근 권한이 없습니다.");
+		}
+	}
  }

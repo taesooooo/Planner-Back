@@ -26,6 +26,7 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemberDto;
+import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.NotFoundMemberException;
 import com.planner.planner.Exception.NotFoundPlanner;
@@ -155,7 +156,7 @@ public class PlannerServiceTest {
 		PlannerDto planner = createBasePlanner();
 		when(plannerDao.updatePlanner(anyInt(), any())).thenReturn(0);
 		
-		plannerService.modifyPlanner(planner);
+		plannerService.updatePlanner(planner);
 		
 		verify(plannerDao).updatePlanner(anyInt(), any());
 	}
@@ -167,6 +168,64 @@ public class PlannerServiceTest {
 		plannerService.deletePlanner(anyInt());
 		
 		verify(plannerDao).deletePlanner(anyInt());
+	}
+	
+	@Test
+	public void 플래너_좋아요() {
+		int accountId = 1;
+		int plannerId = 1;
+		when(plannerDao.isLike(accountId, plannerId)).thenReturn(false);
+		
+		plannerService.plannerLikeOrUnLike(accountId, plannerId);
+		
+		verify(plannerDao).plannerLike(accountId, plannerId);
+	}
+	
+	@Test
+	public void 플래너_좋아요_취소() {
+		int accountId = 1;
+		int plannerId = 1;
+		when(plannerDao.isLike(accountId, plannerId)).thenReturn(true);
+		
+		plannerService.plannerLikeOrUnLike(accountId, plannerId);
+		
+		verify(plannerDao).plannerUnLike(accountId, plannerId);
+	}
+	
+	@Test
+	public void 플래너_새메모() {
+		int expectId = 1;
+		int plannerId = 1;
+		PlanMemoDto memo = createPlanMemo(expectId, "a", "aa", plannerId, LocalDateTime.of(2023, 2,1, 00,00), LocalDateTime.of(2023, 2,1, 00,00));
+		when(plannerDao.insertPlanMemo(plannerId, memo)).thenReturn(1);
+		
+		int memoId = plannerService.newMemo(plannerId, memo);
+		
+		assertEquals(expectId, memoId);
+	}
+	
+	@Test
+	public void 플래너_메모_수정() {
+		int memoId = 1;
+		int plannerId = 1;
+		PlanMemoDto memo = createPlanMemo(memoId, "a", "aa", plannerId, LocalDateTime.of(2023, 2,1, 00,00), LocalDateTime.of(2023, 2,1, 00,00));
+		when(plannerDao.updatePlanMemo(memoId, memo)).thenReturn(0);
+		
+		plannerService.updateMemo(memoId, memo);
+		
+		verify(plannerDao).updatePlanMemo(memoId, memo);
+		
+	}
+	
+	@Test
+	public void 플래너_메모_삭제() {
+		int memoId = 1;
+		when(plannerDao.deletePlanMemo(memoId)).thenReturn(0);
+		
+		plannerService.deleteMemo(memoId);
+		
+		verify(plannerDao).deletePlanMemo(memoId);
+		
 	}
 	
 	@Test
@@ -264,22 +323,39 @@ public class PlannerServiceTest {
 	
 	@Test
 	public void 새일정() throws Exception {
-		when(plannerDao.insertPlan(any())).thenReturn(1);
+		int plannerId = 1;
+		int planId = 1;
+		PlanDto plan = createPlan(planId, LocalDateTime.of(2023, 02,07,00,00), null, plannerId);
+		when(plannerDao.insertPlan(plan)).thenReturn(1);
 		
-		int planId = plannerService.newPlan(any());
+		int newPlanId = plannerService.newPlan(plan);
 		
-		verify(plannerDao).insertPlan(any());
+		verify(plannerDao).insertPlan(plan);
 		
-		assertEquals(1, planId);
+		assertEquals(planId, newPlanId);
+	}
+	
+	@Test
+	public void 일정_수정() throws Exception {
+		int plannerId = 1;
+		int planId = 1;
+		PlanDto plan = createPlan(planId, LocalDateTime.of(2023, 02,07,00,00), null, plannerId);
+		when(plannerDao.updatePlan(planId, plan)).thenReturn(0);
+		
+		plannerService.updatePlan(planId, plan);
+		
+		verify(plannerDao).updatePlan(planId, plan);
 	}
 	
 	@Test
 	public void 일정_삭제() throws Exception {
-		when(plannerDao.deletePlan(anyInt(), anyInt())).thenReturn(0);
+		int plannerId = 1;
+		int planId = 1;
+		when(plannerDao.deletePlan(planId)).thenReturn(0);
 		
-		plannerService.deletePlan(anyInt(), anyInt());
+		plannerService.deletePlan(planId);
 		
-		verify(plannerDao).deletePlan(anyInt(), anyInt());
+		verify(plannerDao).deletePlan(planId);
 	}
 	
 	@Test
@@ -294,14 +370,57 @@ public class PlannerServiceTest {
 	}
 	
 	@Test
-	public void 일정_여행지_삭제() throws Exception {
-		when(plannerDao.deletePlanLocation(anyInt(), anyInt())).thenReturn(0);
+	public void 일정_여행지_수정() throws Exception {
+		int plannerId = 1;
+		int planId = 1;
+		int planLocationId = 1;
+		PlanLocationDto planLocation = createPlanLocation(planLocationId, 1000, null, 1, planId);
 		
-		plannerService.deletePlanLocation(anyInt(), anyInt());
+		when(plannerDao.updatePlanLocation(planLocationId,planLocation)).thenReturn(0);
 		
-		verify(plannerDao).deletePlanLocation(anyInt(), anyInt());
+		plannerService.updatePlanLocation(planLocationId, planLocation);
+		
+		verify(plannerDao).updatePlanLocation(planLocationId, planLocation);
 	}
 	
+	@Test
+	public void 일정_여행지_삭제() throws Exception {
+		int planLocationId = 1;
+		when(plannerDao.deletePlanLocation(planLocationId)).thenReturn(0);
+		
+		plannerService.deletePlanLocation(planLocationId);
+		
+		verify(plannerDao).deletePlanLocation(planLocationId);
+	}
+	
+	private PlanMemoDto createPlanMemo(int memoId, String title, String content, int plannerId, LocalDateTime create, LocalDateTime update) {
+		return new PlanMemoDto.Builder()
+				.setMemoId(memoId)
+				.setTitle(title)
+				.setContent(content)
+				.setCreateDate(create)
+				.setUpdateDate(update)
+				.build();
+	}
+	
+	private PlanLocationDto createPlanLocation(int locationId, int locationContentId, String image, int transportation, int planId) {
+		return new PlanLocationDto.Builder()
+				.setLocationId(locationId)
+				.setLocationContentId(locationContentId)
+				.setLocationImage(image)
+				.setLocationTransportation(transportation)
+				.setPlanId(planId)
+				.build();
+	}
+	
+	private PlanDto createPlan(int planId, LocalDateTime planDate, List<PlanLocationDto> locations, int plannerId) {
+		return new PlanDto.Builder()
+				.setPlanId(planId)
+				.setPlanDate(planDate)
+				.setPlanLocations(locations)
+				.setPlannerId(plannerId)
+				.build();
+	}
 	
 	private PlannerDto createBasePlanner() {
 		List<String> memberEmails = new ArrayList<String>();
@@ -317,13 +436,14 @@ public class PlannerServiceTest {
 		return planner;
 	}
 	
+	
 	private PlannerDto createPlanner(int plannerId) {
 		List<String> memberEmails = new ArrayList<String>();
 		memberEmails.add("test2@naver.com");
 		List<PlanLocationDto> planLocations = new ArrayList<PlanLocationDto>();
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContetntId(1000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(2).setLocationContetntId(2000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(3).setLocationContetntId(3000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContentId(1000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(2).setLocationContentId(2000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(3).setLocationContentId(3000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
 		
 		List<PlanDto> plans = new ArrayList<PlanDto>();
 		plans.add(new PlanDto.Builder().setPlanId(1).setPlanDate(LocalDateTime.of(2023, 1,29,00,00)).setPlanLocations(planLocations).setPlannerId(plannerId).build());

@@ -13,7 +13,7 @@ public class PlanLocationRowMapper implements RowMapper<PlanLocationDto> {
 	public PlanLocationDto mapRow(ResultSet rs, int rowNum) throws SQLException {
 		return new PlanLocationDto.Builder()
 				.setLocationId(rs.getInt("location_id"))
-				.setLocationContetntId(rs.getInt("location_content_id"))
+				.setLocationContentId(rs.getInt("location_content_id"))
 				.setLocationImage(rs.getString("location_image"))
 				.setLocationTransportation(rs.getInt("location_transportation"))
 				.setPlanId(rs.getInt("plan_id"))

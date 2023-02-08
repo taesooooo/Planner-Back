@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.planner.planner.Exception.AuthCheckFail;
+import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundToken;
 import com.planner.planner.Exception.NotFoundUserException;
@@ -30,6 +31,10 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "데이터를 찾지 못헀습니다"));
 	}
 	
+	@ExceptionHandler(ForbiddenException.class)
+	public ResponseEntity<Object> ForbiddenUser(Exception e) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, e.getMessage()));
+	}
 	@ExceptionHandler(NotFoundUserException.class)
 	public ResponseEntity<Object> notFoundUser(Exception e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, e.getMessage()));

@@ -10,6 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -20,9 +21,11 @@ import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemberDto;
+import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.RowMapper.PlanLocationRowMapper;
 import com.planner.planner.RowMapper.PlanMemberRowMapper;
+import com.planner.planner.RowMapper.PlanMemoRowMapper;
 import com.planner.planner.RowMapper.PlanRowMapper;
 import com.planner.planner.RowMapper.PlannerRowMapper;
 
@@ -62,18 +65,30 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String DELETE_PLANMEMBER_SQL = "DELETE FROM plan_member WHERE planner_id = ? AND account_id = ?;";
 	private final String UPDATE_PLANMEMBER_ACCEPT_INVITE = "UPDATE plan_member SET invite_state = 1 WHERE planner_id = ? AND account_id = ?;";
 	
+	private final String INSERT_PLANMEMO_SQL = "INSERT INTO plan_memo(title, content, create_date, update_date, planner_id) VALUES(?, ?, NOW(), NOW(), ?);";
+	private final String FINDS_PLANMEMO_SQL = "SELECT M.memo_id, M.title, M.content, M.create_date, M.update_date FROM plan_memo AS M WHERE M.planner_id = ?;";
+	private final String UPDATE_PLANMEMO_SQL = "UPDATE plan_memo AS M SET M.title = ?, M.content = ?, M.update_date = NOW() WHERE M.memo_id = ?;";
+	private final String DELETE_PLANMEMO_SQL = "DELETE FROM plan_memo WHERE memo_id = ?;";
+	
 	private final String INSERT_PlAN_SQL = "INSERT INTO plan (plan_date, planner_id) VALUES(?, ?);";
 	private final String FINDS_PLAN_SQL = "SELECT plan.plan_id, plan.plan_date, plan.planner_id FROM plan WHERE plan.planner_id = ?;";
 	private final String UPDATE_PLAN_SQL = "UPDATE plan SET plan.plan_date = ? WHERE plan.plan_id = ?;";
-	private final String DELETE_PLAN_SQL = "DELETE FROM plan WHERE plan.planner_id = ? AND plan.plan_id = ?;";
+	private final String DELETE_PLAN_SQL = "DELETE FROM plan WHERE plan.plan_id = ?;";
 	
 	private final String INSERT_PLANLOCATION_SQL = "INSERT INTO plan_location(location_content_id, location_image, location_transportation, plan_id) VALUES(?, ?, ?, ?);";
-	private final String FINDS_PLANLOCATION_SQL = "\"SELECT plan_location.location_id, plan_location.location_content_id, plan_location.location_image, plan_location.location_transportation, plan_location.plan_id \"\r\n"
+	private final String FINDS_PLANLOCATION_SQL = "SELECT plan_location.location_id, plan_location.location_content_id, plan_location.location_image, plan_location.location_transportation, plan_location.plan_id "
 			+ "FROM plan_location "
 			+ "WHERE plan_location.plan_id = ?;";
-	private final String UPDATE_PLANLOCATION_SQL = "UPDATE plan_location SET plan_location.location_transportation = ? WHERE plan_location.location_id = ?;";
-	private final String DELETE_PLANLOCATION_SQL = "DELETE FROM plan_location WHERE plan_location.plan_id = ? AND plan_location.location_id = ?;";
+	private final String UPDATE_PLANLOCATION_SQL = "UPDATE plan_location AS PL SET PL.location_content_id = ?, PL.location_image = ? , PL.location_transportation = ? WHERE PL.location_id = ?;";
+	private final String DELETE_PLANLOCATION_SQL = "DELETE FROM plan_location WHERE plan_location.location_id = ?;";
 	
+	private final String INSERT_PLANNERLIKE_SQL = "INSERT INTO planner_like(account_id, planner_id, like_date) VALUES(?, ?, NOW());";
+	private final String DELETE_PLANNERLIKE_SQL = "DELETE FROM planner_like WHERE account_id = ? AND planner_id = ?;";
+	private final String FIND_PLANNERLIKE_SQL = "SELECT count(*) as count FROM planner_like AS PL WHERE PL.account_id = ? AND PL.planner_id = ?;";
+	private final String FINDS_PLANNER_JOIN_PLANNERLIKE_SQL = "SELECT p.planner_id, p.account_id, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date "
+			+ "FROM planner AS p "
+			+ "LEFT JOIN planner_like AS PL ON p.planner_id = PL.planner_id "
+			+ "WHERE p.planner_id = 1;";
 	
 	public PlannerDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -142,7 +157,7 @@ public class PlannerDaoImpl implements PlannerDao {
 					
 					PlanLocationDto pl = new PlanLocationDto.Builder()
 							.setLocationId(rs.getInt("location_id"))
-							.setLocationContetntId(rs.getInt("location_content_id"))
+							.setLocationContentId(rs.getInt("location_content_id"))
 							.setLocationImage(rs.getString("location_image"))
 							.setLocationTransportation(rs.getInt("location_transportation"))
 							.setPlanId(rs.getInt("plan_id"))
@@ -245,6 +260,42 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 	
 	@Override
+	public int insertPlanMemo(int plannerId, PlanMemoDto planMemoDto) {
+		int result = jdbcTemplate.update(conn -> {
+			PreparedStatement ps = conn.prepareStatement(INSERT_PLANMEMO_SQL, new String[] {"memo_id"});
+			ps.setString(1, planMemoDto.getTitle());
+			ps.setString(2, planMemoDto.getContent());
+			ps.setInt(3, plannerId);
+			return ps;
+		}, keyHolder);
+		
+		return keyHolder.getKey().intValue();
+	}
+
+	@Override
+	public List<PlanMemoDto> findPlanMemoByPlannerId(int plannerId) {
+		try {
+			List<PlanMemoDto> list = jdbcTemplate.query(FINDS_PLANMEMO_SQL, new PlanMemoRowMapper(), plannerId);
+			return list.isEmpty() ? null : list;
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public int updatePlanMemo(int planMemoId, PlanMemoDto planMemoDto) {
+		int result = jdbcTemplate.update(UPDATE_PLANMEMO_SQL, planMemoDto.getTitle(), planMemoDto.getContent(), planMemoId);
+		return result;
+	}
+
+	@Override
+	public int deletePlanMemo(int planMemoId) {
+		int result = jdbcTemplate.update(DELETE_PLANMEMO_SQL, planMemoId);
+		return result;
+	}
+
+	@Override
 	public int insertPlanMember(int plannerId, int accountId) {
 		int result = jdbcTemplate.update(INSERT_PLANMEMBER_SQL, plannerId, accountId);
 		return result;
@@ -285,14 +336,14 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public int updatePlan(PlanDto planDto) {
-		int result = jdbcTemplate.update(UPDATE_PLAN_SQL, planDto.getPlanDate());
+	public int updatePlan(int planId, PlanDto planDto) {
+		int result = jdbcTemplate.update(UPDATE_PLAN_SQL, planDto.getPlanDate(), planId);
 		return result;
 	}
 
 	@Override
-	public int deletePlan(int plannerId, int planId) {
-		int result = jdbcTemplate.update(DELETE_PLAN_SQL, plannerId, planId);
+	public int deletePlan(int planId) {
+		int result = jdbcTemplate.update(DELETE_PLAN_SQL, planId);
 		return result;
 	}
 
@@ -301,7 +352,7 @@ public class PlannerDaoImpl implements PlannerDao {
 		//int result = jdbcTemplate.update(INSERT_PLANLOCATION_SQL, planLocationDto.getLocationContetntId(), planLocationDto.getLocationImage(), planLocationDto.getLocationTranspotation(), planLocationDto.getPlanId());
 		int result = jdbcTemplate.update(conn -> {
 			PreparedStatement ps = conn.prepareStatement(INSERT_PLANLOCATION_SQL, new String[] {"plan_location_id"});
-			ps.setInt(1, planLocationDto.getLocationContetntId());
+			ps.setInt(1, planLocationDto.getLocationContentId());
 			ps.setString(2, planLocationDto.getLocationImage());
 			ps.setInt(3, planLocationDto.getLocationTransportation());
 			ps.setInt(4, planLocationDto.getPlanId());
@@ -316,14 +367,49 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public int updatePlanLocation(PlanLocationDto planLocationDto) {
-		int result = jdbcTemplate.update(UPDATE_PLANLOCATION_SQL, planLocationDto.getLocationTransportation(), planLocationDto.getPlanId());
+	public int updatePlanLocation(int planLocationId, PlanLocationDto planLocationDto) {
+		int result = jdbcTemplate.update(UPDATE_PLANLOCATION_SQL, planLocationDto.getLocationContentId(), planLocationDto.getLocationImage(), planLocationDto.getLocationTransportation(), planLocationDto.getLocationId());
 		return result;
 	}
 
 	@Override
-	public int deletePlanLocation(int planId, int locationId) {
-		int result = jdbcTemplate.update(DELETE_PLANLOCATION_SQL, planId, locationId);
+	public int deletePlanLocation(int planLocationId) {
+		int result = jdbcTemplate.update(DELETE_PLANLOCATION_SQL, planLocationId);
 		return result;
 	}
+
+	@Override
+	public int plannerLike(int accountId, int plannerId) {
+		int result = jdbcTemplate.update(INSERT_PLANNERLIKE_SQL, accountId, plannerId);
+		return result;
+	}
+
+	@Override
+	public int plannerUnLike(int accountId, int plannerId) {
+		int result = jdbcTemplate.update(DELETE_PLANNERLIKE_SQL, accountId, plannerId);
+		return result;
+	}
+
+	@Override
+	public boolean isLike(int accountId, int plannerId) {
+		try {
+			Integer result = jdbcTemplate.queryForObject(FIND_PLANNERLIKE_SQL, Integer.class, accountId, plannerId);
+			return result == null ? false : true;
+		}
+		catch (EmptyResultDataAccessException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public List<PlannerDto> likePlanners(int plannerId) {
+		try {
+			List<PlannerDto> list = jdbcTemplate.query(FINDS_PLANNER_JOIN_PLANNERLIKE_SQL, new PlannerRowMapper(), plannerId);
+			return list.isEmpty() ? null : list;
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+	
 }
