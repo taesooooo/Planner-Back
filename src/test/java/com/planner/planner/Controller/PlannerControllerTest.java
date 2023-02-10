@@ -56,7 +56,6 @@ public class PlannerControllerTest {
 	private JwtUtil jwtUtil;
 	private ObjectMapper mapper = new ObjectMapper();
 	private String token;
-	
 	@Before
 	public void setUp() throws Exception {
 		this.mapper.registerModule(new JavaTimeModule());

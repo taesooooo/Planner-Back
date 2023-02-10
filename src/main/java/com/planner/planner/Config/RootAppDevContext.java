@@ -14,20 +14,20 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.planner.planner.util.FileStore;
 
 @Configuration
-@Profile("!dev")
+@Profile("dev")
 @ComponentScan(basePackages = {"com.planner.planner.Service", "com.planner.planner.Dao"})
 @PropertySource("classpath:config/config.properties")
 @EnableTransactionManagement
-public class RootAppContext {
-	@Value("${jdbc.driver}")
+public class RootAppDevContext {
+	@Value("${dev.jdbc.driver}")
 	private String driver;
-	@Value("${jdbc.url}")
+	@Value("${dev.jdbc.url}")
 	private String url;
-	@Value("${jdbc.username}")
+	@Value("${dev.jdbc.username}")
 	private String username;
-	@Value("${jdbc.password}")
+	@Value("${dev.jdbc.password}")
 	private String password;
-	@Value("${upload.path}")
+	@Value("${dev.upload.path}")
 	private String baseLocation;
 	
 	@Bean
