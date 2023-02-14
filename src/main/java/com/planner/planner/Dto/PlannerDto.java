@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class PlannerDto {
 	private int plannerId;
 	private int accountId;
+	private String creator;
 	private String title;
 	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
 	private LocalDateTime planDateStart;
@@ -26,6 +27,7 @@ public class PlannerDto {
 	public static class Builder {
 		private int plannerId;
 		private int accountId;
+		private String creator;
 		private String title;
 		private LocalDateTime planDateStart;
 		private LocalDateTime planDateEnd;
@@ -44,6 +46,11 @@ public class PlannerDto {
 
 		public Builder setAccountId(int accountId) {
 			this.accountId = accountId;
+			return this;
+		}
+
+		public Builder setCreator(String creator) {
+			this.creator = creator;
 			return this;
 		}
 
@@ -104,6 +111,7 @@ public class PlannerDto {
 	public PlannerDto(Builder builder) {
 		this.plannerId = builder.plannerId;
 		this.accountId = builder.accountId;
+		this.creator = builder.creator;
 		this.title = builder.title;
 		this.planDateStart = builder.planDateStart;
 		this.planDateEnd = builder.planDateEnd;
@@ -121,6 +129,10 @@ public class PlannerDto {
 
 	public int getAccountId() {
 		return accountId;
+	}
+
+	public String getCreator() {
+		return creator;
 	}
 
 	public String getTitle() {

@@ -12,7 +12,6 @@ public interface PlannerDao {
 	// 플래너 생성, 조회, 수정, 삭제
 	public int insertPlanner(PlannerDto plannerDto);
 	public PlannerDto findPlannerByPlannerId(int plannerId);
-	public PlannerDto findPlannerByPlannerIda(int plannerId);
 	public List<PlannerDto> findPlannersByAccountId(int accountId);
 	public List<PlannerDto> findPlannerAll();
 	public int updatePlanner(int plannerId, PlannerDto plannerDto);

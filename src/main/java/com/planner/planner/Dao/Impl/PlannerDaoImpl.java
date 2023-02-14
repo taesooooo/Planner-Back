@@ -27,6 +27,7 @@ import com.planner.planner.RowMapper.PlanLocationRowMapper;
 import com.planner.planner.RowMapper.PlanMemberRowMapper;
 import com.planner.planner.RowMapper.PlanMemoRowMapper;
 import com.planner.planner.RowMapper.PlanRowMapper;
+import com.planner.planner.RowMapper.PlannerResultSetExtrator;
 import com.planner.planner.RowMapper.PlannerRowMapper;
 
 @Repository
@@ -36,38 +37,44 @@ public class PlannerDaoImpl implements PlannerDao {
 	private JdbcTemplate jdbcTemplate;
 	private KeyHolder keyHolder;
 	
-	private final String INSERT_PLANNER_SQL = "INSERT INTO planner(account_id, title, plan_date_start, plan_date_end, create_date, update_date)"
-			+ "VALUES(?, ?, ?, ?, now(), now());";
+	private final String INSERT_PLANNER_SQL = "INSERT INTO planner(account_id, creator, title, plan_date_start, plan_date_end, create_date, update_date)"
+			+ "VALUES(?, ?, ?, ?, ?, now(), now());";
 	private final String FIND_SQL = "SELECT p.planner_id, p.account_id, p.title, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date FROM planner AS p WHERE p.planner_id = ?;";
 	private final String FINDS_SQL = "SELECT p.planner_id, p.account_id, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date FROM planner AS p WHERE p.account_id = ?;";
 	private final String FIND_ALL_SQL = "SELECT p.planner_id, p.account_id, p.title, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date FROM planner AS p;";
 	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS p SET p.title = ?, p.plan_date_start = ?, p.plan_date_end = ?, p.update_date = NOW() WHERE p.planner_id = ?;";
 	private final String DELETE_PLANNER_SQL = "DELETE FROM planner WHERE planner.planner_id = ?;";
 	
-	private final String FIND_PLANNER_BY_PLANNER_ID_SQL = "select A.planner_id, A.account_id, A.title, A.plan_date_start, A.plan_date_end, A.like_count, A.create_date, A.update_date, " 
-			+"C.email, D.plan_id, D.plan_date, E.location_id, E.location_content_id, E.location_image, E.location_transportation, E.plan_id " 
-			+"from planner as A " 
-			+"left join plan_member AS B ON B.planner_id = A.planner_id " 
-			+"left join account AS C ON C.account_id = B.account_id " 
-			+"left join plan as D on A.planner_id = D.planner_id " 
-			+"left join plan_location as E on D.plan_id = E.plan_id " 
-			+"where A.planner_id = ?";
-	private final String FIND_PLANNER_BY_ACCOUNT_ID_SQL = "select A.planner_id, A.account_id, A.title, A.plan_date_start, A.plan_date_end, A.like_count, A.create_date, A.update_date, "
-			+ "B.plan_id, B.plan_date, "
-			+ "C.location_id, C.location_content_id, C.location_image, C.location_transportation, C.plan_id "
-			+ "from planner as A "
-			+ "left join plan as B on A.planner_id = B.planner_id "
-			+ "left join plan_location as C on B.plan_id = C.plan_id "
-			+ "where A.account_id = ?;";
+	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, A.title, A.plan_date_start, A.plan_date_end, A.like_count, A.create_date, A.update_date, "
+			+ "C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_id, D.plan_date, "
+			+ "E.location_id, E.location_content_id, E.location_image, E.location_transportation, E.plan_id "
+			+ "FROM planner AS A "
+			+ "LEFT JOIN plan_member AS B ON A.planner_id = B.planner_id "
+			+ "LEFT JOIN account AS C ON C.account_id = B.account_id "
+			+ "LEFT JOIN plan_memo AS M ON A.planner_id = M.planner_id "
+			+ "LEFT JOIN plan AS D ON A.planner_id = D.planner_id "
+			+ "LEFT JOIN plan_location AS E ON D.plan_id = E.plan_id "
+			+ "WHERE A.planner_id = ?;";
+	
+//	private final String FIND_PLANNER_BY_ACCOUNT_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, A.title, A.plan_date_start, A.plan_date_end, A.like_count, A.create_date, A.update_date, "
+//			+ "C.nickname, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_id, D.plan_date, "
+//			+ "E.location_id, E.location_content_id, E.location_image, E.location_transportation, E.plan_id "
+//			+ "FROM planner AS A "
+//			+ "LEFT JOIN plan_member AS B ON A.planner_id = B.planner_id "
+//			+ "LEFT JOIN account AS C ON C.account_id = B.account_id "
+//			+ "LEFT JOIN plan_memo AS M ON A.planner_id = M.planner_id "
+//			+ "LEFT JOIN plan AS D ON A.planner_id = D.planner_id "
+//			+ "LEFT JOIN plan_location AS E ON D.plan_id = E.plan_id "
+//			+ "WHERE A.account_id = ?;";
 	
 	private final String INSERT_PLANMEMBER_SQL = "INSERT INTO plan_member(planner_id, account_id, invite_state, invite_date) VALUES(?, ?, 2, NOW());";
 	private final String FINDS_PLANMEMBER_SQL = "SELECT plan_member.plan_member_id, plan_member.planner_id, plan_member.account_id FROM plan_member WHERE planner_id = ?;";
 	private final String DELETE_PLANMEMBER_SQL = "DELETE FROM plan_member WHERE planner_id = ? AND account_id = ?;";
-	private final String UPDATE_PLANMEMBER_ACCEPT_INVITE = "UPDATE plan_member SET invite_state = 1 WHERE planner_id = ? AND account_id = ?;";
+	private final String UPDATE_PLANMEMBER_ACCEPT_INVITE_SQL = "UPDATE plan_member SET invite_state = 1 WHERE planner_id = ? AND account_id = ?;";
 	
-	private final String INSERT_PLANMEMO_SQL = "INSERT INTO plan_memo(title, content, create_date, update_date, planner_id) VALUES(?, ?, NOW(), NOW(), ?);";
-	private final String FINDS_PLANMEMO_SQL = "SELECT M.memo_id, M.title, M.content, M.create_date, M.update_date FROM plan_memo AS M WHERE M.planner_id = ?;";
-	private final String UPDATE_PLANMEMO_SQL = "UPDATE plan_memo AS M SET M.title = ?, M.content = ?, M.update_date = NOW() WHERE M.memo_id = ?;";
+	private final String INSERT_PLANMEMO_SQL = "INSERT INTO plan_memo(memo_title, memo_content, memo_create_date, memo_update_date, planner_id) VALUES(?, ?, NOW(), NOW(), ?);";
+	private final String FINDS_PLANMEMO_SQL = "SELECT M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date FROM plan_memo AS M WHERE M.planner_id = ?;";
+	private final String UPDATE_PLANMEMO_SQL = "UPDATE plan_memo AS M SET M.memo_title = ?, M.memo_content = ?, M.memo_update_date = NOW() WHERE M.memo_id = ?;";
 	private final String DELETE_PLANMEMO_SQL = "DELETE FROM plan_memo WHERE memo_id = ?;";
 	
 	private final String INSERT_PlAN_SQL = "INSERT INTO plan (plan_date, planner_id) VALUES(?, ?);";
@@ -84,8 +91,8 @@ public class PlannerDaoImpl implements PlannerDao {
 	
 	private final String INSERT_PLANNERLIKE_SQL = "INSERT INTO planner_like(account_id, planner_id, like_date) VALUES(?, ?, NOW());";
 	private final String DELETE_PLANNERLIKE_SQL = "DELETE FROM planner_like WHERE account_id = ? AND planner_id = ?;";
-	private final String FIND_PLANNERLIKE_SQL = "SELECT count(*) as count FROM planner_like AS PL WHERE PL.account_id = ? AND PL.planner_id = ?;";
-	private final String FINDS_PLANNER_JOIN_PLANNERLIKE_SQL = "SELECT p.planner_id, p.account_id, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date "
+	private final String PLANNERLIKE_COUNT_SQL = "SELECT count(*) as count FROM planner_like AS PL WHERE PL.account_id = ? AND PL.planner_id = ?;";
+	private final String FINDS_PLANNERLIKE_JOIN_SQL = "SELECT p.planner_id, p.account_id, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date "
 			+ "FROM planner AS p "
 			+ "LEFT JOIN planner_like AS PL ON p.planner_id = PL.planner_id "
 			+ "WHERE p.planner_id = 1;";
@@ -100,142 +107,19 @@ public class PlannerDaoImpl implements PlannerDao {
 		int result = jdbcTemplate.update(conn -> {
 			PreparedStatement ps = conn.prepareStatement(INSERT_PLANNER_SQL, new String[] {"planner_id"});
 			ps.setInt(1, plannerDto.getAccountId());
-			ps.setString(2, plannerDto.getTitle());
-			ps.setTimestamp(3, Timestamp.valueOf(plannerDto.getPlanDateStart()));
-			ps.setTimestamp(4, Timestamp.valueOf(plannerDto.getPlanDateEnd()));
+			ps.setString(2, plannerDto.getCreator());
+			ps.setString(3, plannerDto.getTitle());
+			ps.setTimestamp(4, Timestamp.valueOf(plannerDto.getPlanDateStart()));
+			ps.setTimestamp(5, Timestamp.valueOf(plannerDto.getPlanDateEnd()));
 			return ps;
 		}, keyHolder);
 		return keyHolder.getKey().intValue();
 	}
 
 	@Override
-	public PlannerDto findPlannerByPlannerIda(int plannerId) {
-		return jdbcTemplate.query(FIND_PLANNER_BY_PLANNER_ID_SQL, new ResultSetExtractor<PlannerDto>() {
-			@Override
-			public PlannerDto extractData(ResultSet rs) throws SQLException, DataAccessException {
-				List<String> members = new ArrayList<String>();
-				List<PlanDto> plans = new ArrayList<PlanDto>();
-				List<PlanLocationDto> planLocations = null;
-				int latestPlanId = 0;
-				
-				PlannerDto plannerDto = null;
-				
-				while(rs.next()) {
-					if(plannerDto == null) {
-						plannerDto = new PlannerDto.Builder()
-								.setPlannerId(rs.getInt("planner_id"))
-								.setAccountId(rs.getInt("account_id"))
-								.setTitle(rs.getString("title"))
-								.setPlanDateStart(rs.getTimestamp("plan_date_start").toLocalDateTime())
-								.setPlanDateEnd(rs.getTimestamp("plan_date_end").toLocalDateTime())
-								.setLikeCount(rs.getInt("like_count"))
-								.setPlans(plans)
-								.setPlanMemberEmails(members)
-								.build();
-					}
-					
-					String member = rs.getString("email");
-					boolean memberCheck = members.stream().anyMatch((m) -> m.equals(member));
-					if(!memberCheck) {
-						members.add(member);
-					}
-					
-					int planId = rs.getInt("plan_id");
-					if(latestPlanId != planId) {
-						
-						latestPlanId = planId;
-						planLocations = new ArrayList<PlanLocationDto>();
-						
-						PlanDto newPlan = new PlanDto.Builder()
-								.setPlanId(planId)
-								.setPlanDate(rs.getTimestamp("plan_date").toLocalDateTime())
-								.setPlannerId(rs.getInt("planner_id"))
-								.setPlanLocations(planLocations)
-								.build();
-						plans.add(newPlan);
-					}
-					
-					PlanLocationDto pl = new PlanLocationDto.Builder()
-							.setLocationId(rs.getInt("location_id"))
-							.setLocationContentId(rs.getInt("location_content_id"))
-							.setLocationImage(rs.getString("location_image"))
-							.setLocationTransportation(rs.getInt("location_transportation"))
-							.setPlanId(rs.getInt("plan_id"))
-							.build();
-					planLocations.add(pl);
-					
-				}
-				return plannerDto;
-			}
-		}, plannerId);
-		//return jdbcTemplate.queryForObject(FIND_SQL, new PlannerRowMapper(), plannerId);
-	}
-
-	@Override
 	public PlannerDto findPlannerByPlannerId(int plannerId) {
-		return jdbcTemplate.queryForObject(FIND_SQL, new PlannerRowMapper(), plannerId);
+		return jdbcTemplate.query(FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL, new PlannerResultSetExtrator(), plannerId);
 	}
-
-//	@Override
-//	public List<PlannerDto> findPlannersByAccountId(int accountId) {
-//		return jdbcTemplate.query(FIND_PLANNER_BY_ACCOUNT_ID_SQL, new ResultSetExtractor<List<PlannerDto>>() {
-//			@Override
-//			public List<PlannerDto> extractData(ResultSet rs) throws SQLException, DataAccessException {
-//				List<PlannerDto> planners = new ArrayList<PlannerDto>();
-//				List<PlanDto> plans = null;
-//				List<PlanLocationDto> planLocations = null;
-//				
-//				int latestPlannerId = 0;
-//				int latestPlanId = 0;
-//				
-//				while(rs.next()) {
-//					int plannerId = rs.getInt("planner_id");
-//					int planId = rs.getInt("plan_id");
-//					
-//					if(latestPlannerId != plannerId) {
-//						latestPlannerId = plannerId;
-//						plans = new ArrayList<PlanDto>();
-//						
-//						PlannerDto plannerDto = new PlannerDto.Builder()
-//								.setPlannerId(rs.getInt("planner_id"))
-//								.setAccountId(rs.getInt("account_id"))
-//								.setTitle(rs.getString("title"))
-//								.setPlanDateStart(rs.getTimestamp("plan_date_start").toLocalDateTime())
-//								.setPlanDateEnd(rs.getTimestamp("plan_date_end").toLocalDateTime())
-//								.setLikeCount(rs.getInt("like_count"))
-//								.setPlans(plans)
-//								.build();
-//						planners.add(plannerDto);
-//					}
-//					
-//					if(latestPlanId != planId) {
-//						latestPlanId = planId;
-//						planLocations = new ArrayList<PlanLocationDto>();
-//						
-//						PlanDto newPlan = new PlanDto.Builder()
-//								.setPlanId(planId)
-//								.setPlanDate(rs.getTimestamp("plan_date").toLocalDateTime())
-//								.setPlannerId(rs.getInt("planner_id"))
-//								.setPlanLocations(planLocations)
-//								.build();
-//						plans.add(newPlan);
-//					}
-//					
-//					PlanLocationDto newPlanLocation = new PlanLocationDto.Builder()
-//							.setLocationId(rs.getInt("location_id"))
-//							.setLocationContetntId(rs.getInt("location_content_id"))
-//							.setLocationImage(rs.getString("location_image"))
-//							.setLocationTranspotation(rs.getInt("location_transportation"))
-//							.setPlanId(rs.getInt("plan_id"))
-//							.build();
-//					planLocations.add(newPlanLocation);	
-//				}
-//				
-//				return planners;
-//			}
-//		}, accountId);
-//		//return jdbcTemplate.query(FINDS_SQL, new PlannerRowMapper(), accountId);
-//	}
 	
 	@Override
 	public List<PlannerDto> findPlannersByAccountId(int accountId) {
@@ -315,7 +199,7 @@ public class PlannerDaoImpl implements PlannerDao {
 
 	@Override
 	public int acceptInvitation(int plannerId, int accountId) {
-		int result = jdbcTemplate.update(UPDATE_PLANMEMBER_ACCEPT_INVITE, plannerId, accountId);
+		int result = jdbcTemplate.update(UPDATE_PLANMEMBER_ACCEPT_INVITE_SQL, plannerId, accountId);
 		return result;
 	}
 
@@ -393,7 +277,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	@Override
 	public boolean isLike(int accountId, int plannerId) {
 		try {
-			Integer result = jdbcTemplate.queryForObject(FIND_PLANNERLIKE_SQL, Integer.class, accountId, plannerId);
+			Integer result = jdbcTemplate.queryForObject(PLANNERLIKE_COUNT_SQL, Integer.class, accountId, plannerId);
 			return result == null ? false : true;
 		}
 		catch (EmptyResultDataAccessException e) {
@@ -404,7 +288,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	@Override
 	public List<PlannerDto> likePlanners(int plannerId) {
 		try {
-			List<PlannerDto> list = jdbcTemplate.query(FINDS_PLANNER_JOIN_PLANNERLIKE_SQL, new PlannerRowMapper(), plannerId);
+			List<PlannerDto> list = jdbcTemplate.query(FINDS_PLANNERLIKE_JOIN_SQL, new PlannerRowMapper(), plannerId);
 			return list.isEmpty() ? null : list;
 		}
 		catch (EmptyResultDataAccessException e) {

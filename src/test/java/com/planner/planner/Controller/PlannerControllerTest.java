@@ -118,6 +118,7 @@ public class PlannerControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
+	
 	@Test
 	public void 플래너_수정_다른사용자_요청_접근거부() throws Exception {
 		int plannerId = 1;
@@ -505,6 +506,7 @@ public class PlannerControllerTest {
 		PlannerDto planner = new PlannerDto.Builder()
 				.setPlannerId(plannerId)
 				.setAccountId(1)
+				.setCreator("test")
 				.setTitle("테스트여행")
 				.setPlanDateStart(LocalDateTime.of(2023, 1, 29, 0, 0))
 				.setPlanDateEnd(LocalDateTime.of(2023, 1, 31, 0, 0))
