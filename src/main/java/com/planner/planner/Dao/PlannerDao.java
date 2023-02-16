@@ -45,7 +45,7 @@ public interface PlannerDao {
 	public int plannerLike(int accountId, int plannerId);
 	public int plannerUnLike(int accountId, int plannerId);
 	public boolean isLike(int accountId, int plannerId);
-	public List<PlannerDto> likePlanners(int plannerId);
+	public List<PlannerDto> likePlannerList(int accountId);
 }
 
 

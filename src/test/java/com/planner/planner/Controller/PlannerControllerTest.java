@@ -91,6 +91,18 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
+	public void 좋아요_플래너_조회() throws Exception {
+		this.mockMvc.perform(get("/api/planners/likes")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty());
+	}
+	
+	@Test
 	public void 플래너_조회_플래너아이디() throws Exception {
 		int plannerId = 1;
 		String url = String.format("/api/planners/%d", plannerId);

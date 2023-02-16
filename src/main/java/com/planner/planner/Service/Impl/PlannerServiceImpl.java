@@ -183,5 +183,15 @@ public class PlannerServiceImpl implements PlannerService {
 			plannerDao.plannerLike(accountId, plannerId);
 		}
 	}
+
+	@Override
+	public List<PlannerDto> getLikePlannerList(int accountId) throws Exception {
+		List<PlannerDto> list = plannerDao.likePlannerList(accountId);
+		if(list.isEmpty()) {
+			throw new NotFoundPlanner("좋아요한 플래너가 없습니다.");
+		}
+		
+		return list;
+	}
 	
 }

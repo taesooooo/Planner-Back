@@ -1,18 +1,13 @@
 package com.planner.planner.Dao.Impl;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -39,11 +34,11 @@ public class PlannerDaoImpl implements PlannerDao {
 	
 	private final String INSERT_PLANNER_SQL = "INSERT INTO planner(account_id, creator, title, plan_date_start, plan_date_end, create_date, update_date)"
 			+ "VALUES(?, ?, ?, ?, ?, now(), now());";
-	private final String FIND_SQL = "SELECT p.planner_id, p.account_id, p.title, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date FROM planner AS p WHERE p.planner_id = ?;";
-	private final String FINDS_SQL = "SELECT p.planner_id, p.account_id, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date FROM planner AS p WHERE p.account_id = ?;";
-	private final String FIND_ALL_SQL = "SELECT p.planner_id, p.account_id, p.title, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date FROM planner AS p;";
-	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS p SET p.title = ?, p.plan_date_start = ?, p.plan_date_end = ?, p.update_date = NOW() WHERE p.planner_id = ?;";
-	private final String DELETE_PLANNER_SQL = "DELETE FROM planner WHERE planner.planner_id = ?;";
+	private final String FIND_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.like_count, P.create_date, P.update_date FROM planner AS p WHERE p.planner_id = ?;";
+	private final String FINDS_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.like_count, P.create_date, P.update_date FROM planner AS p WHERE p.account_id = ?;";
+	private final String FIND_ALL_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.like_count, P.create_date, P.update_date FROM planner AS p;";
+	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS P SET P.title = ?, P.plan_date_start = ?, P.plan_date_end = ?, P.update_date = NOW() WHERE P.planner_id = ?;";
+	private final String DELETE_PLANNER_SQL = "DELETE FROM planner WHERE planner_id = ?;";
 	
 	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, A.title, A.plan_date_start, A.plan_date_end, A.like_count, A.create_date, A.update_date, "
 			+ "C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_id, D.plan_date, "
@@ -92,10 +87,10 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String INSERT_PLANNERLIKE_SQL = "INSERT INTO planner_like(account_id, planner_id, like_date) VALUES(?, ?, NOW());";
 	private final String DELETE_PLANNERLIKE_SQL = "DELETE FROM planner_like WHERE account_id = ? AND planner_id = ?;";
 	private final String PLANNERLIKE_COUNT_SQL = "SELECT count(*) as count FROM planner_like AS PL WHERE PL.account_id = ? AND PL.planner_id = ?;";
-	private final String FINDS_PLANNERLIKE_JOIN_SQL = "SELECT p.planner_id, p.account_id, p.plan_date_start, p.plan_date_end, p.like_count, p.create_date, p.update_date "
-			+ "FROM planner AS p "
-			+ "LEFT JOIN planner_like AS PL ON p.planner_id = PL.planner_id "
-			+ "WHERE p.planner_id = 1;";
+	private final String FINDS_PLANNERLIKE_JOIN_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.like_count, P.create_date, P.update_date "
+			+ "FROM planner AS P "
+			+ "LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id "
+			+ "WHERE P.planner_id = ?;";
 	
 	public PlannerDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -286,10 +281,10 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public List<PlannerDto> likePlanners(int plannerId) {
+	public List<PlannerDto> likePlannerList(int accountId) {
 		try {
-			List<PlannerDto> list = jdbcTemplate.query(FINDS_PLANNERLIKE_JOIN_SQL, new PlannerRowMapper(), plannerId);
-			return list.isEmpty() ? null : list;
+			List<PlannerDto> list = jdbcTemplate.query(FINDS_PLANNERLIKE_JOIN_SQL, new PlannerRowMapper(), accountId);
+			return list;
 		}
 		catch (EmptyResultDataAccessException e) {
 			return null;

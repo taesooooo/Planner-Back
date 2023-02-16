@@ -28,7 +28,6 @@ public interface PlannerService {
 	public void inviteMembers(int plannerId, List<String> nickNames) throws Exception;
 	public void deleteMember(int plannerId, String nickName) throws Exception;
 	
-	
 	// 일정 추가, 수정, 삭제
 	public int newPlan(PlanDto planDto) throws Exception;
 	public void updatePlan(int planId, PlanDto planDto) throws Exception;
@@ -39,6 +38,7 @@ public interface PlannerService {
 	public void updatePlanLocation(int planLocationId, PlanLocationDto planLocationDto) throws Exception;
 	public void deletePlanLocation(int planLocationId) throws Exception;
 	
-	// 플래너 좋아요, 좋아요 취소
+	// 플래너 좋아요, 좋아요 취소, 좋아요 목록 가져오기
 	public void plannerLikeOrUnLike(int accountId, int plannerId);
+	public List<PlannerDto> getLikePlannerList(int accountId) throws Exception;
 }

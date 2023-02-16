@@ -4,12 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -44,6 +46,9 @@ public class PlannerServiceTest {
 	
 	@Mock
 	private AccountDao accountDao;
+	
+	@Mock
+	private PlannerDto plannerDto;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -389,6 +394,25 @@ public class PlannerServiceTest {
 		plannerService.deletePlanLocation(planLocationId);
 		
 		verify(plannerDao).deletePlanLocation(planLocationId);
+	}
+	
+	@Test
+	public void 좋아요_플래너_모두_조회() throws Exception {
+		List<PlannerDto> likeList = Arrays.asList(plannerDto);
+		when(plannerDao.likePlannerList(anyInt())).thenReturn(likeList);
+		
+		plannerService.getLikePlannerList(anyInt());
+		
+		verify(plannerDao).likePlannerList(anyInt());
+	}
+	
+	@Test(expected = NotFoundPlanner.class)
+	public void 좋아요_플래너_모두_조회_없는경우() throws Exception {
+		when(plannerDao.likePlannerList(anyInt())).thenReturn(new ArrayList<PlannerDto>());
+		
+		plannerService.getLikePlannerList(anyInt());
+		
+		verify(plannerDao).likePlannerList(anyInt());
 	}
 	
 	private PlanMemoDto createPlanMemo(int memoId, String title, String content, int plannerId, LocalDateTime create, LocalDateTime update) {

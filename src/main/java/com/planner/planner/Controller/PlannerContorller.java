@@ -51,6 +51,13 @@ public class PlannerContorller {
 		List<PlannerDto> planners = plannerService.findPlannerAll();
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", planners));
 	}
+	
+	@GetMapping(value="/likes")
+	public ResponseEntity<Object> LikePlannerList(HttpServletRequest req) throws Exception {
+		int userId = UserIdUtil.getUserId(req);
+		List<PlannerDto> planners = plannerService.getLikePlannerList(userId);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", planners));
+	}
 
 	@GetMapping(value="/{plannerId}")
 	public ResponseEntity<Object> findPlannersById(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
