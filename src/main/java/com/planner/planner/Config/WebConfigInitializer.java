@@ -32,7 +32,8 @@ public class WebConfigInitializer implements WebApplicationInitializer {
 
 		FilterRegistration.Dynamic filter = servletContext.addFilter("encodingFilter", new CharacterEncodingFilter("UTF-8"));
 		filter.addMappingForUrlPatterns(null, false, "/*");
-
+		
+		System.out.println(System.getProperty("spring.profiles.active"));
 	}
 
 }

@@ -14,8 +14,7 @@ public class PlannerDto {
 	private LocalDateTime planDateStart;
 	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
 	private LocalDateTime planDateEnd;
-	private String creatorEmail;
-	private List<String> planMemberEmails;
+	private List<String> planMembers;
 	private int likeCount;
 	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
 	private LocalDateTime createDate;
@@ -31,8 +30,7 @@ public class PlannerDto {
 		private String title;
 		private LocalDateTime planDateStart;
 		private LocalDateTime planDateEnd;
-		private String creatorEmail;
-		private List<String> planMemberEmails;
+		private List<String> planMembers;
 		private int likeCount;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
@@ -69,13 +67,8 @@ public class PlannerDto {
 			return this;
 		}
 
-		public Builder setCreatorEmail(String creatorEmail) {
-			this.creatorEmail = creatorEmail;
-			return this;
-		}
-
-		public Builder setPlanMemberEmails(List<String> planMemberEmails) {
-			this.planMemberEmails = planMemberEmails;
+		public Builder setPlanMembers(List<String> planMembers) {
+			this.planMembers = planMembers;
 			return this;
 		}
 
@@ -115,8 +108,7 @@ public class PlannerDto {
 		this.title = builder.title;
 		this.planDateStart = builder.planDateStart;
 		this.planDateEnd = builder.planDateEnd;
-		this.creatorEmail = builder.creatorEmail;
-		this.planMemberEmails = builder.planMemberEmails;
+		this.planMembers = builder.planMembers;
 		this.likeCount = builder.likeCount;
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
@@ -147,12 +139,8 @@ public class PlannerDto {
 		return planDateEnd;
 	}
 
-	public String getCreatorEmail() {
-		return creatorEmail;
-	}
-
-	public List<String> getPlanMemberEmails() {
-		return planMemberEmails;
+	public List<String> getPlanMembers() {
+		return planMembers;
 	}
 
 	public int getLikeCount() {

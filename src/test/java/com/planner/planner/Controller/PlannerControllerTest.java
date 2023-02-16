@@ -268,16 +268,16 @@ public class PlannerControllerTest {
 	@Test
 	public void 멤버_초대() throws Exception {
 		int plannerId = 1;
-		List<String> emails = Arrays.asList("test2@naver.com","test3@naver.com");
-		HashMap<String, List<String>> inviteEmails = new HashMap<String, List<String>>();
-		inviteEmails.put("emails", emails);
+		List<String> members = Arrays.asList("test2","test3");
+		HashMap<String, List<String>> invitenMembers = new HashMap<String, List<String>>();
+		invitenMembers.put("members", members);
 		String url = String.format("/api/planners/%d/invite-member", plannerId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
-				.content(mapper.writeValueAsString(inviteEmails)))
+				.content(mapper.writeValueAsString(invitenMembers)))
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
@@ -285,16 +285,46 @@ public class PlannerControllerTest {
 	public void 멤버_초대_다른사용자_요청_접근거부() throws Exception {
 		int plannerId = 1;
 		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		List<String> emails = Arrays.asList("test2@naver.com","test3@naver.com");
-		HashMap<String, List<String>> inviteEmails = new HashMap<String, List<String>>();
-		inviteEmails.put("emails", emails);
+		List<String> members = Arrays.asList("test2","test3");
+		HashMap<String, List<String>> invitenMembers = new HashMap<String, List<String>>();
+		invitenMembers.put("members", members);
 		String url = String.format("/api/planners/%d/invite-member", plannerId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", notCreatetorIdToken)
-				.content(mapper.writeValueAsString(inviteEmails)))
+				.content(mapper.writeValueAsString(invitenMembers)))
+		.andDo(print())
+		.andExpect(status().isForbidden());
+	}
+	
+	@Test
+	public void 멤버_삭제() throws Exception {
+		int plannerId = 1;
+		String deleteMember = "test2";
+		String url = String.format("/api/planners/%d/delete-member", plannerId);
+		this.mockMvc.perform(delete(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.param("nick_name", deleteMember))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	@Test
+	public void 멤버_삭제_다른사용자_요청_접근거부() throws Exception {
+		int plannerId = 1;
+		String deleteMember = "test2";
+		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
+		String url = String.format("/api/planners/%d/delete-member", plannerId);
+		this.mockMvc.perform(delete(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", notCreatetorIdToken)
+				.param("nick_name", deleteMember))
 		.andDo(print())
 		.andExpect(status().isForbidden());
 	}
@@ -493,8 +523,8 @@ public class PlannerControllerTest {
 	}
 	
 	private PlannerDto createPlanner(int plannerId) {
-		List<String> memberEmails = new ArrayList<String>();
-		memberEmails.add("test2@naver.com");
+		List<String> members = new ArrayList<String>();
+		members.add("test2");
 		List<PlanLocationDto> planLocations = new ArrayList<PlanLocationDto>();
 		planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContentId(1000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
 		planLocations.add(new PlanLocationDto.Builder().setLocationId(2).setLocationContentId(2000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
@@ -510,8 +540,7 @@ public class PlannerControllerTest {
 				.setTitle("테스트여행")
 				.setPlanDateStart(LocalDateTime.of(2023, 1, 29, 0, 0))
 				.setPlanDateEnd(LocalDateTime.of(2023, 1, 31, 0, 0))
-				.setCreatorEmail("test@naver.com")
-				.setPlanMemberEmails(memberEmails)
+				.setPlanMembers(members)
 				.setPlans(plans)
 				.setLikeCount(0)
 				.setCreateDate(LocalDateTime.of(2023, 1, 29, 0, 0))

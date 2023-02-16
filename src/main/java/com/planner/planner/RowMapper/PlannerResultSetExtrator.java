@@ -37,7 +37,7 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<PlannerDto> 
 						.setPlanDateEnd(rs.getTimestamp("plan_date_end").toLocalDateTime())
 						.setLikeCount(rs.getInt("like_count"))
 						.setPlans(plans)
-						.setPlanMemberEmails(members)
+						.setPlanMembers(members)
 						.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
 						.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
 						.build();
@@ -50,7 +50,7 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<PlannerDto> 
 			}
 			
 			int memoId = rs.getInt("memo_id");
-			if(latestMemoId != memoId) {
+			if(memoId != 0 && latestMemoId != memoId) {
 				latestMemoId = memoId;
 				PlanMemoDto memo = new PlanMemoDto.Builder()
 						.setMemoId(memoId)
@@ -63,29 +63,30 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<PlannerDto> 
 			}
 			
 			int planId = rs.getInt("plan_id");
-			if(latestPlanId != planId) {
+			if(planId != 0) {
+				if(latestPlanId != planId) {
+					
+					latestPlanId = planId;
+					planLocations = new ArrayList<PlanLocationDto>();
+					
+					PlanDto newPlan = new PlanDto.Builder()
+							.setPlanId(planId)
+							.setPlanDate(rs.getTimestamp("plan_date").toLocalDateTime())
+							.setPlannerId(rs.getInt("planner_id"))
+							.setPlanLocations(planLocations)
+							.build();
+					plans.add(newPlan);
+				}
 				
-				latestPlanId = planId;
-				planLocations = new ArrayList<PlanLocationDto>();
-				
-				PlanDto newPlan = new PlanDto.Builder()
-						.setPlanId(planId)
-						.setPlanDate(rs.getTimestamp("plan_date").toLocalDateTime())
-						.setPlannerId(rs.getInt("planner_id"))
-						.setPlanLocations(planLocations)
+				PlanLocationDto pl = new PlanLocationDto.Builder()
+						.setLocationId(rs.getInt("location_id"))
+						.setLocationContentId(rs.getInt("location_content_id"))
+						.setLocationImage(rs.getString("location_image"))
+						.setLocationTransportation(rs.getInt("location_transportation"))
+						.setPlanId(rs.getInt("plan_id"))
 						.build();
-				plans.add(newPlan);
+				planLocations.add(pl);
 			}
-			
-			PlanLocationDto pl = new PlanLocationDto.Builder()
-					.setLocationId(rs.getInt("location_id"))
-					.setLocationContentId(rs.getInt("location_content_id"))
-					.setLocationImage(rs.getString("location_image"))
-					.setLocationTransportation(rs.getInt("location_transportation"))
-					.setPlanId(rs.getInt("plan_id"))
-					.build();
-			planLocations.add(pl);
-			
 		}
 		return plannerDto;
 	}

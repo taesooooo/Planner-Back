@@ -52,19 +52,19 @@ public class PlannerServiceTest {
 
 	@Test
 	public void 새플래너_생성() throws Exception {
-		String testCreatorEmail = "test@naver.com";
+		String testCreator = "test";
 		PlannerDto planner = createBasePlanner();
 		AccountDto creator = new AccountDto.Builder().setAccountId(1).build();
 		List<AccountDto> users = new ArrayList<AccountDto>();
 		users.add(new AccountDto.Builder().setAccountId(2).build());
 		
-		when(accountDao.findAccountIdByEmail(anyString())).thenReturn(creator, users.get(0));
+		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(creator, users.get(0));
 		when(plannerDao.insertPlanMember(anyInt(), anyInt())).thenReturn(0);
 		when(plannerDao.acceptInvitation(anyInt(), anyInt())).thenReturn(0);
 		
 		plannerService.newPlanner(planner);
 		
-		verify(accountDao, times(2)).findAccountIdByEmail(anyString());
+		verify(accountDao, times(2)).findAccountIdByNickName(anyString());
 		verify(plannerDao, times(2)).insertPlanMember(anyInt(), anyInt());
 		verify(plannerDao, times(1)).acceptInvitation(anyInt(), anyInt());
 	}
@@ -75,11 +75,11 @@ public class PlannerServiceTest {
 		PlannerDto planner = createBasePlanner();
 		AccountDto creator = new AccountDto.Builder().setAccountId(1).build();
 		
-		when(accountDao.findAccountIdByEmail(anyString())).thenReturn(creator).thenReturn(null);
+		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(creator).thenReturn(null);
 		
 		plannerService.newPlanner(planner);
 		
-		verify(accountDao, times(2)).findAccountIdByEmail(anyString());
+		verify(accountDao).findAccountIdByNickName(anyString());
 	}
 	
 	@Test
@@ -244,11 +244,11 @@ public class PlannerServiceTest {
 		inviteMemberEmails.add("test3@naver.com");
 		AccountDto inviteMember = new AccountDto.Builder().setAccountId(3).build();
 		
-		when(accountDao.findAccountIdByEmail(inviteMemberEmails.get(0))).thenReturn(inviteMember);
+		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(inviteMember);
 		
 		plannerService.inviteMembers(plannerId, inviteMemberEmails);
 		
-		verify(accountDao, times(1)).findAccountIdByEmail(anyString());
+		verify(accountDao, times(1)).findAccountIdByNickName(anyString());
 		verify(plannerDao, times(1)).insertPlanMember(anyInt(), anyInt());
 	}
 	
@@ -258,67 +258,65 @@ public class PlannerServiceTest {
 		List<String>  inviteMemberEmails = new ArrayList<String>();
 		inviteMemberEmails.add("test3@naver.com");
 		
-		AccountDto inviteMember = new AccountDto.Builder().setAccountId(3).build();
-		
-		when(accountDao.findAccountIdByEmail(inviteMemberEmails.get(0))).thenReturn(null);
+		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(null);
 		
 		plannerService.inviteMembers(plannerId, inviteMemberEmails);
 		
-		verify(accountDao, times(1)).findAccountIdByEmail(anyString());
+		verify(accountDao, times(1)).findAccountIdByNickName(anyString());
 	}
 	
 	@Test
 	public void 플래너_멤버_삭제() throws Exception {
 		int plannerId = 1;
-		String testEmail = "test2@naver.com";
+		String testNickName = "test2";
 		List<PlanMemberDto> members = new ArrayList<PlanMemberDto>();
 		members.add(new PlanMemberDto.Builder().setPlanMemberId(1).setAccountId(1).setPlannerId(1).build());
 		members.add(new PlanMemberDto.Builder().setPlanMemberId(2).setAccountId(2).setPlannerId(1).build());
 		AccountDto user = new AccountDto.Builder().setAccountId(2).build();
 		
 		when(plannerDao.findMembersByPlannerId(plannerId)).thenReturn(members);
-		when(accountDao.findAccountIdByEmail(testEmail)).thenReturn(user);
+		when(accountDao.findAccountIdByNickName(testNickName)).thenReturn(user);
 		
-		plannerService.deleteMember(plannerId, testEmail);
+		plannerService.deleteMember(plannerId, testNickName);
 
 		verify(plannerDao).findMembersByPlannerId(anyInt());
-		verify(accountDao).findAccountIdByEmail(anyString());
+		verify(accountDao).findAccountIdByNickName(anyString());
 		verify(plannerDao).deletePlanMember(anyInt(), anyInt());
 	}
 	
 	@Test(expected = NotFoundUserException.class)
 	public void 플래너_멤버_삭제_사용자가없을때() throws Exception {
 		int plannerId = 1;
-		String testEmail = "test2@naver.com";
+		String testNickName = "test2";
 		List<PlanMemberDto> members = new ArrayList<PlanMemberDto>();
 		members.add(new PlanMemberDto.Builder().setPlanMemberId(1).setAccountId(1).setPlannerId(1).build());
 		members.add(new PlanMemberDto.Builder().setPlanMemberId(2).setAccountId(2).setPlannerId(1).build());
 
 		when(plannerDao.findMembersByPlannerId(plannerId)).thenReturn(members);
-		when(accountDao.findAccountIdByEmail(testEmail)).thenReturn(null);
+		when(accountDao.findAccountIdByNickName(testNickName)).thenReturn(null);
 		
-		plannerService.deleteMember(plannerId, testEmail);
+		plannerService.deleteMember(plannerId, testNickName);
 
 		verify(plannerDao).findMembersByPlannerId(anyInt());
-		verify(accountDao).findAccountIdByEmail(anyString());
+		verify(accountDao).findAccountIdByNickName(anyString());
 	}
 	
 	@Test(expected = NotFoundMemberException.class)
 	public void 플래너_멤버_삭제_멤버가없을때() throws Exception {
 		int plannerId = 1;
-		String testEmail = "test3@naver.com";
+		String testNickName = "test3";
 		List<PlanMemberDto> members = new ArrayList<PlanMemberDto>();
 		members.add(new PlanMemberDto.Builder().setPlanMemberId(1).setAccountId(1).setPlannerId(1).build());
 		members.add(new PlanMemberDto.Builder().setPlanMemberId(2).setAccountId(2).setPlannerId(1).build());
 		AccountDto user = new AccountDto.Builder().setAccountId(3).build();
 		
 		when(plannerDao.findMembersByPlannerId(plannerId)).thenReturn(members);
-		when(accountDao.findAccountIdByEmail(testEmail)).thenReturn(user);
+		when(accountDao.findAccountIdByNickName(testNickName)).thenReturn(user);
 		
-		plannerService.deleteMember(plannerId, testEmail);
+		plannerService.deleteMember(plannerId, testNickName);
 
 		verify(plannerDao).findMembersByPlannerId(anyInt());
-		verify(accountDao).findAccountIdByEmail(anyString());
+		verify(accountDao).findAccountIdByNickName(anyString());
 	}
 	
 	@Test
@@ -427,11 +425,11 @@ public class PlannerServiceTest {
 		memberEmails.add("test2@naver.com");
 		PlannerDto planner = new PlannerDto.Builder()
 				.setAccountId(1)
+				.setCreator("test")
 				.setTitle("테스트여행")
 				.setPlanDateStart(LocalDateTime.of(2023, 1, 29, 00, 00))
 				.setPlanDateEnd(LocalDateTime.of(2023, 1, 31, 00, 00))
-				.setCreatorEmail("test@naver.com")
-				.setPlanMemberEmails(memberEmails)
+				.setPlanMembers(memberEmails)
 				.build();
 		return planner;
 	}
@@ -450,11 +448,12 @@ public class PlannerServiceTest {
 		
 		PlannerDto planner = new PlannerDto.Builder()
 				.setPlannerId(plannerId)
+				.setAccountId(1)
+				.setCreator("test")
 				.setTitle("테스트여행")
 				.setPlanDateStart(LocalDateTime.of(2023, 1, 29, 00, 00))
 				.setPlanDateEnd(LocalDateTime.of(2023, 1, 31, 00, 00))
-				.setCreatorEmail("test@naver.com")
-				.setPlanMemberEmails(memberEmails)
+				.setPlanMembers(memberEmails)
 				.setPlans(plans)
 				.setLikeCount(0)
 				.setCreateDate(LocalDateTime.of(2023, 1, 29, 00, 00))

@@ -25,8 +25,8 @@ public interface PlannerService {
 	
 	// 플래너 멤버 추가, 가져오기, 삭제
 	public List<PlanMemberDto> findMembersByPlannerId(int plannerId) throws Exception;
-	public void inviteMembers(int plannerId, List<String> emails) throws Exception;
-	public void deleteMember(int plannerId, String memberEmail) throws Exception;
+	public void inviteMembers(int plannerId, List<String> nickNames) throws Exception;
+	public void deleteMember(int plannerId, String nickName) throws Exception;
 	
 	
 	// 일정 추가, 수정, 삭제

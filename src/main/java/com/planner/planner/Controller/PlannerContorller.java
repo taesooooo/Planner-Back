@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Dto.PlanDto;
@@ -116,6 +117,15 @@ public class PlannerContorller {
 		plannerAuthorizationCheck(req, plannerId);
 		
 		plannerService.inviteMembers(plannerId, emails.get("emails"));
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+	}
+	
+	@DeleteMapping(value="/{plannerId}/delete-member")
+	public ResponseEntity<Object> deleteMember(HttpServletRequest req, @PathVariable int plannerId, @RequestParam(value="nick_name") String nickName) throws Exception {
+		plannerAuthorizationCheck(req, plannerId);
+		
+		plannerService.deleteMember(plannerId, nickName);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}

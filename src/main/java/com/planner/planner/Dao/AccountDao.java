@@ -11,7 +11,7 @@ public interface AccountDao {
 	public boolean update(AccountDto accountDto);
 	public boolean delete(AccountDto accountDto);
 	public AccountDto findById(int accountId);
-	public AccountDto findAccountIdByEmail(String email);
+	public AccountDto findAccountIdByNickName(String nickName);
 	public boolean accountImageUpdate(int accountId, String imagePath);
 	public boolean passwordUpdate(AccountDto accountDto);
 	public boolean nickNameUpdate(AccountDto accountDto);

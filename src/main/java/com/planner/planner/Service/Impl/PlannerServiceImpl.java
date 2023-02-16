@@ -37,25 +37,21 @@ public class PlannerServiceImpl implements PlannerService {
 		
 		// 멤버 초대(멤버 추가시 기본상태 수락 대기, 단 생성자는 바로 수락 상태로 변경해야함)
 		List<AccountDto> users = new ArrayList<AccountDto>();
-		
-		AccountDto creator = accountDao.findAccountIdByEmail(plannerDto.getCreatorEmail());
-		if(creator == null) {
-			throw new NotFoundUserException(plannerDto.getCreatorEmail() + "에 해당하는 사용자를 찾지 못했습니다.");
-		}
-		users.add(creator);
-		
-		for(String email : plannerDto.getPlanMemberEmails()) {
-			AccountDto user = accountDao.findAccountIdByEmail(email);
+		List<String> memberNickNames = plannerDto.getPlanMembers();
+		memberNickNames.add(plannerDto.getCreator());
+		for(String nickName : memberNickNames) {
+			AccountDto user = accountDao.findAccountIdByNickName(nickName);
 			if(user == null) {
-				throw new NotFoundUserException(email + "에 해당하는 사용자를 찾지 못했습니다.");
+				throw new NotFoundUserException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
 			}
 			users.add(user);
 		}
+		
 		for(AccountDto user: users) {
 			plannerDao.insertPlanMember(plannerId, user.getAccountId());
 		}
 		
-		plannerDao.acceptInvitation(plannerId, creator.getAccountId());
+		plannerDao.acceptInvitation(plannerId, plannerDto.getAccountId());
 		return plannerId;
 	}
 
@@ -119,12 +115,12 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public void inviteMembers(int plannerId, List<String> emails) throws Exception {
+	public void inviteMembers(int plannerId, List<String> nickNames) throws Exception {
 		List<AccountDto> users = new ArrayList<AccountDto>();
-		for(String email : emails) {
-			AccountDto user = accountDao.findAccountIdByEmail(email);
+		for(String nickName : nickNames) {
+			AccountDto user = accountDao.findAccountIdByNickName(nickName);
 			if(user == null) {
-				throw new NotFoundUserException(email + "에 해당하는 사용자를 찾지 못했습니다.");
+				throw new NotFoundUserException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
 			}
 			users.add(user);
 		}
@@ -134,9 +130,9 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public void deleteMember(int plannerId, String memberEmail) throws Exception {
+	public void deleteMember(int plannerId, String nickName) throws Exception {
 		List<PlanMemberDto> members = plannerDao.findMembersByPlannerId(plannerId);
-		AccountDto user = accountDao.findAccountIdByEmail(memberEmail);
+		AccountDto user = accountDao.findAccountIdByNickName(nickName);
 		if(user == null) {
 			throw new NotFoundUserException("사용자를 찾을 수 없습니다.");
 		}
