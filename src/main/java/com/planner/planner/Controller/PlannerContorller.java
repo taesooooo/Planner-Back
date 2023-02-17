@@ -120,10 +120,10 @@ public class PlannerContorller {
 	}
 	
 	@PostMapping(value="/{plannerId}/invite-member")
-	public ResponseEntity<Object> inviteMember(HttpServletRequest req, @PathVariable int plannerId, @RequestBody HashMap<String, List<String>> emails) throws Exception {
+	public ResponseEntity<Object> inviteMember(HttpServletRequest req, @PathVariable int plannerId, @RequestBody HashMap<String, List<String>> members) throws Exception {
 		plannerAuthorizationCheck(req, plannerId);
 		
-		plannerService.inviteMembers(plannerId, emails.get("emails"));
+		plannerService.inviteMembers(plannerId, members.get("members"));
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
