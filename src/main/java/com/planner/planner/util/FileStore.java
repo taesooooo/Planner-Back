@@ -1,6 +1,7 @@
 package com.planner.planner.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,22 +9,33 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Common.Image;
+import com.planner.planner.Dto.FileInfoDto;
 
 @Component
 public class FileStore {
-
 	private String baseLocation;
+	public static String accountDir = "Account";
+	public static String boardDir = "Board";
+	
+	private String tempDirName = "temp";
+
+	public FileStore() {
+	}
 
 	public FileStore(String baseLocation) {
 		this.baseLocation = baseLocation;
 	}
 
 	public String getBaseLocation() {
-		return baseLocation;
+		return baseLocation + File.separator;
 	}
 
 	public void setBaseLocation(String baseLocation) {
 		this.baseLocation = baseLocation;
+	}
+	
+	public String getTempDirName() {
+		return tempDirName;
 	}
 
 	public File getFile(String path) {
@@ -40,37 +52,38 @@ public class FileStore {
 		String name = System.nanoTime() + "_" + file.getOriginalFilename();
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(subLocation).append("\\");
+		builder.append(subLocation).append(File.separator);
 		builder.append(name);
 
 		//builder.append(baseLocation).append("\\");
 		//builder.append(file.getOriginalFilename());
 
-		Image image = createImage(builder.toString(), baseLocation + builder.toString(), name);
+		Image image = createImage(builder.toString(), getBaseLocation() + builder.toString(), name, file);
 
 		return image;
 	}
 
-	public List<Image> createFilePaths(List<MultipartFile> files, String subLocation) {
-		List<Image> images = new ArrayList<>();
+	public List<FileInfoDto> createFilePaths(List<MultipartFile> files, String subLocation) {
+		List<FileInfoDto> infoList = new ArrayList<FileInfoDto>();
 		for(MultipartFile file : files) {
 			String name = System.nanoTime() + "_" + file.getOriginalFilename();
 			StringBuilder builder = new StringBuilder();
-			builder.append(subLocation).append("\\");
+			builder.append(subLocation).append(File.separator);
 			builder.append(name);
 
-			Image image = createImage(builder.toString(), baseLocation + builder.toString(), name);
-			images.add(image);
+			FileInfoDto fileInfo = new FileInfoDto(0, 0, 0, name, getBaseLocation() + builder.toString(), file.getContentType(), null);
+			infoList.add(fileInfo);
 		}
 
-		return images;
+		return infoList;
 	}
 
-	private Image createImage(String path, String absolutePath, String name) {
+	private Image createImage(String path, String absolutePath, String name, MultipartFile imageFile) {
 		Image image = new Image();
 		image.setPath(path);
 		image.setAbsolutePath(absolutePath);
 		image.setName(name);
+		image.setImage(imageFile);
 		return image;
 	}
 }

@@ -1,6 +1,9 @@
 package com.planner.planner.Dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public class ReviewDto {
 	private int reviewId;
@@ -10,8 +13,10 @@ public class ReviewDto {
 	private int writerId;
 	private String content;
 	private int likeCount;
-	private LocalDateTime createTime;
-	private LocalDateTime updateTime;
+	private LocalDateTime createDate;
+	private LocalDateTime updateDate;
+	
+	private List<String> fileNames;
 	
 	public static class Builder {
 		private int reviewId;
@@ -21,8 +26,9 @@ public class ReviewDto {
 		private int writerId;
 		private String content;
 		private int likeCount;
-		private LocalDateTime createTime;
-		private LocalDateTime updateTime;
+		private LocalDateTime createDate;
+		private LocalDateTime updateDate;
+		private List<String> fileNames;
 		
 		public Builder setReviewId(int reviewId) {
 			this.reviewId = reviewId;
@@ -52,12 +58,16 @@ public class ReviewDto {
 			this.likeCount = likeCount;
 			return this;
 		}
-		public Builder setCreateTime(LocalDateTime createTime) {
-			this.createTime = createTime;
+		public Builder setCreateDate(LocalDateTime createDate) {
+			this.createDate = createDate;
 			return this;
 		}
-		public Builder setUpdateTime(LocalDateTime updateTime) {
-			this.updateTime = updateTime;
+		public Builder setUpdateDate(LocalDateTime updateDate) {
+			this.updateDate = updateDate;
+			return this;
+		}
+		public Builder setFileNames(List<String> fileNames) {
+			this.fileNames = fileNames;
 			return this;
 		}
 		public ReviewDto build() {
@@ -77,8 +87,9 @@ public class ReviewDto {
 		this.writerId = builder.writerId;
 		this.content = builder.content;
 		this.likeCount = builder.likeCount;
-		this.createTime = builder.createTime;
-		this.updateTime = builder.updateTime;
+		this.createDate = builder.createDate;
+		this.updateDate = builder.updateDate;
+		this.fileNames = builder.fileNames;
 	}
 
 	public int getReviewId() {
@@ -109,11 +120,17 @@ public class ReviewDto {
 		return likeCount;
 	}
 
-	public LocalDateTime getCreateTime() {
-		return createTime;
+	public LocalDateTime getCreateDate() {
+		return createDate;
 	}
 
-	public LocalDateTime getUpdateTime() {
-		return updateTime;
+	public LocalDateTime getUpdateDate() {
+		return updateDate;
 	}
+
+	public List<String> getFileNames() {
+		return fileNames;
+	}
+
+
 }

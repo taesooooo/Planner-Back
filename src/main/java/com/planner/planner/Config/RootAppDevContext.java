@@ -27,7 +27,7 @@ public class RootAppDevContext {
 	private String username;
 	@Value("${dev.jdbc.password}")
 	private String password;
-	@Value("${dev.upload.path}")
+	@Value("${upload.path}")
 	private String baseLocation;
 	
 	@Bean

@@ -6,9 +6,10 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ReviewDto;
 
 public interface ReviewDao {
-	public boolean insertReview(ReviewDto reviewDto, AccountDto accountDto);
-	public List<ReviewDto> findAllReview(int index);
+	public int insertReview(ReviewDto reviewDto, AccountDto accountDto);
+	public List<ReviewDto> findAllReview();
 	public ReviewDto findReview(int reviewId);
-	public boolean updateReview(ReviewDto reviewDto);
-	public boolean deleteReview(int reviewId);
+	public void updateReview(ReviewDto reviewDto);
+	public void deleteReview(int reviewId);
+
 }

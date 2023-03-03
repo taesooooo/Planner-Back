@@ -94,7 +94,7 @@ public class AccountServiceTest {
 	public void 계정이미지변경() throws Exception {
 		MockMultipartFile imageFile = new MockMultipartFile("image", "test.jpg", MediaType.IMAGE_JPEG_VALUE,"<<jpeg data>>".getBytes());
 		File dir = folder.newFolder("image\\test");
-		Image image = new Image("Account\\test.jpg",dir.getAbsolutePath() + "\\test.jpg","test");
+		Image image = new Image("Account\\test.jpg",dir.getAbsolutePath() + File.separator +"test.jpg","test", imageFile);
 
 		when(fileStore.createFilePath(imageFile, "Account")).thenReturn(image);
 		when(accountDao.accountImageUpdate(anyInt(), anyString())).thenReturn(true);
@@ -104,7 +104,7 @@ public class AccountServiceTest {
 		verify(fileStore).createFilePath(imageFile, "Account");
 		verify(accountDao).accountImageUpdate(anyInt(), anyString());
 
-		assertTrue(new File(dir.getAbsolutePath()+ "\\test.jpg").exists());
+		assertTrue(new File(dir.getAbsolutePath() + File.separator + "test.jpg").exists());
 		assertTrue(result);
 	}
 

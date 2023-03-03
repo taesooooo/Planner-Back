@@ -1,21 +1,27 @@
 package com.planner.planner.Dao.Impl;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ReviewDto;
+import com.planner.planner.RowMapper.ReviewRowMapper;
 
 @Repository
 public class ReviewDaoImpl implements ReviewDao {
 	private static final Logger logger = LoggerFactory.getLogger(ReviewDaoImpl.class);
 	
 	private JdbcTemplate jdbcTemplate;
+	private KeyHolder keyHolder;
 	
 	private final String insertReviewSQL = "INSERT INTO review(planner_id, title, content, writer, writer_id, create_date, update_date) VALUES(?, ?, ?, ?, ?, now(), now());";
 	private final String findAllReviewSQL = "SELECT review_id, planner_id, title, content, writer, writer_id, like_count, create_date, update_date FROM review;";
@@ -25,60 +31,44 @@ public class ReviewDaoImpl implements ReviewDao {
 	
 	public ReviewDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
+		this.keyHolder = new GeneratedKeyHolder();
 	}
 
 	@Override
-	public boolean insertReview(ReviewDto reviewDto, AccountDto accountDto) {
-		int result = jdbcTemplate.update(insertReviewSQL, reviewDto.getPlannerId(), reviewDto.getTitle(),reviewDto.getContent(), accountDto.getNickName(), accountDto.getAccountId());
-		return result > 0 ? true : false;
+	public int insertReview(ReviewDto reviewDto, AccountDto accountDto) {
+		int result = jdbcTemplate.update(conn -> {
+			PreparedStatement ps = conn.prepareStatement(insertReviewSQL, new String[] {"review_id"});
+			ps.setInt(1, reviewDto.getPlannerId());
+			ps.setString(2, reviewDto.getTitle());
+			ps.setString(3, reviewDto.getContent());
+			ps.setString(4, reviewDto.getWriter());
+			ps.setInt(5, accountDto.getAccountId());
+			return ps;
+		}, keyHolder);
+		return keyHolder.getKey().intValue();
 	}
 
 	@Override
-	public List<ReviewDto> findAllReview(int index) {
-		List<ReviewDto> list = jdbcTemplate.query(findAllReviewSQL, (rs, rowNum) -> {
-			return new ReviewDto.Builder()
-					.setReviewId(rs.getInt(1))
-					.setPlannerId(rs.getInt(2))
-					.setTitle(rs.getString(3))
-					.setContent(rs.getString(4))
-					.setWriter(rs.getString(5))
-					.setWriterId(rs.getInt(6))
-					.setLikeCount(rs.getInt(7))
-					.setCreateTime(rs.getTimestamp(8).toLocalDateTime())
-					.setUpdateTime(rs.getTimestamp(9).toLocalDateTime())
-					.build();
-		});
-		return list;
+	public List<ReviewDto> findAllReview() {
+		List<ReviewDto> list = jdbcTemplate.query(findAllReviewSQL, new ReviewRowMapper());			
+		return list.isEmpty() ? null : list;
 	}
 
 	@Override
 	public ReviewDto findReview(int reviewId) {
-		ReviewDto review = jdbcTemplate.queryForObject(findReviewSQL, (rs, rowNum) -> {
-			return new ReviewDto.Builder()
-					.setReviewId(rs.getInt(1))
-					.setPlannerId(rs.getInt(2))
-					.setTitle(rs.getString(3))
-					.setContent(rs.getString(4))
-					.setWriter(rs.getString(5))
-					.setWriterId(rs.getInt(6))
-					.setLikeCount(rs.getInt(7))
-					.setCreateTime(rs.getTimestamp(8).toLocalDateTime())
-					.setUpdateTime(rs.getTimestamp(9).toLocalDateTime())
-					.build();
-		}, reviewId);
+		List<ReviewDto> list = jdbcTemplate.query(findReviewSQL, new ReviewRowMapper(), reviewId);
+		ReviewDto review = DataAccessUtils.singleResult(list);
 		return review;
 	}
 
 	@Override
-	public boolean updateReview(ReviewDto reviewDto) {
+	public void updateReview(ReviewDto reviewDto) {
 		int result = jdbcTemplate.update(updateReviewSQL,reviewDto.getTitle(), reviewDto.getContent(), reviewDto.getReviewId());
-		return result > 0 ? true : false;
 	}
 
 	@Override
-	public boolean deleteReview(int reviewId) {
+	public void deleteReview(int reviewId) {
 		int result = jdbcTemplate.update(deleteReviewSQL, reviewId);
-		return result > 0 ? true : false;
 	}
 
 }

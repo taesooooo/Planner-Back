@@ -2,12 +2,14 @@ package com.planner.planner.Service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.planner.planner.Dto.ReviewDto;
 
 public interface ReviewService {
-	public boolean insertReview(int accountId, ReviewDto review);
-	public List<ReviewDto> findAllReview(int index);
+	public int insertReview(int accountId, ReviewDto review) throws Exception;
+	public List<ReviewDto> findAllReview();
 	public ReviewDto findReview(int reviewId);
-	public boolean updateReview(ReviewDto review);
-	public boolean deleteReview(int reviewId);
+	public void updateReview(ReviewDto review);
+	public void deleteReview(int reviewId);
 }
