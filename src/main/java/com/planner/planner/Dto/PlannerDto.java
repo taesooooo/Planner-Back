@@ -1,5 +1,6 @@
 package com.planner.planner.Dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -10,33 +11,40 @@ public class PlannerDto {
 	private int accountId;
 	private String creator;
 	private String title;
-	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-	private LocalDateTime planDateStart;
-	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-	private LocalDateTime planDateEnd;
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private LocalDate planDateStart;
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private LocalDate planDateEnd;
 	private List<String> planMembers;
+	private int expense;
+	private int memberCount;
+	private int memberTypeId;
 	private int likeCount;
+	private List<PlanMemoDto> planMemos;
+	private List<PlanDto> plans;
 	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
 	private LocalDateTime createDate;
 	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
 	private LocalDateTime updateDate;
 	
-	private List<PlanDto> plans;
 
 	public static class Builder {
 		private int plannerId;
 		private int accountId;
 		private String creator;
 		private String title;
-		private LocalDateTime planDateStart;
-		private LocalDateTime planDateEnd;
+		private LocalDate planDateStart;
+		private LocalDate planDateEnd;
 		private List<String> planMembers;
+		private int expense;
+		private int memberCount;
+		private int memberTypeId;
 		private int likeCount;
+		private List<PlanMemoDto> planMemos;
+		private List<PlanDto> plans;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
 		
-		private List<PlanDto> plans;
-
 		public Builder setPlannerId(int plannerId) {
 			this.plannerId = plannerId;
 			return this;
@@ -57,13 +65,28 @@ public class PlannerDto {
 			return this;
 		}
 
-		public Builder setPlanDateStart(LocalDateTime planDateStart) {
+		public Builder setPlanDateStart(LocalDate planDateStart) {
 			this.planDateStart = planDateStart;
 			return this;
 		}
 
-		public Builder setPlanDateEnd(LocalDateTime planDateEnd) {
+		public Builder setPlanDateEnd(LocalDate planDateEnd) {
 			this.planDateEnd = planDateEnd;
+			return this;
+		}
+
+		public Builder setExpense(int expense) {
+			this.expense = expense;
+			return this;
+		}
+
+		public Builder setMemberCount(int memberCount) {
+			this.memberCount = memberCount;
+			return this;
+		}
+
+		public Builder setMemberTypeId(int memberTypeId) {
+			this.memberTypeId = memberTypeId;
 			return this;
 		}
 
@@ -76,7 +99,17 @@ public class PlannerDto {
 			this.likeCount = likeCount;
 			return this;
 		}
+		
+		public Builder setPlanMemos(List<PlanMemoDto> planMemos) {
+			this.planMemos = planMemos;
+			return this;
+		}
 
+		public Builder setPlans(List<PlanDto> plans) {
+			this.plans = plans;
+			return this;
+		}
+		
 		public Builder setCreateDate(LocalDateTime createDate) {
 			this.createDate = createDate;
 			return this;
@@ -87,10 +120,6 @@ public class PlannerDto {
 			return this;
 		}
 
-		public Builder setPlans(List<PlanDto> plans) {
-			this.plans = plans;
-			return this;
-		}
 
 		public PlannerDto build() {
 			return new PlannerDto(this);
@@ -109,10 +138,14 @@ public class PlannerDto {
 		this.planDateStart = builder.planDateStart;
 		this.planDateEnd = builder.planDateEnd;
 		this.planMembers = builder.planMembers;
+		this.expense = builder.expense;
+		this.memberCount = builder.memberCount;
+		this.memberTypeId = builder.memberTypeId;
 		this.likeCount = builder.likeCount;
+		this.planMemos = builder.planMemos;
+		this.plans = builder.plans;
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
-		this.plans = builder.plans;
 	}
 
 	public int getPlannerId() {
@@ -131,11 +164,11 @@ public class PlannerDto {
 		return title;
 	}
 
-	public LocalDateTime getPlanDateStart() {
+	public LocalDate getPlanDateStart() {
 		return planDateStart;
 	}
 
-	public LocalDateTime getPlanDateEnd() {
+	public LocalDate getPlanDateEnd() {
 		return planDateEnd;
 	}
 
@@ -143,10 +176,30 @@ public class PlannerDto {
 		return planMembers;
 	}
 
+	public int getExpense() {
+		return expense;
+	}
+
+	public int getMemberCount() {
+		return memberCount;
+	}
+
+	public int getMemberTypeId() {
+		return memberTypeId;
+	}
+
 	public int getLikeCount() {
 		return likeCount;
 	}
+	
+	public List<PlanMemoDto> getPlanMemos() {
+		return planMemos;
+	}
 
+	public List<PlanDto> getPlans() {
+		return plans;
+	}
+	
 	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
@@ -155,35 +208,4 @@ public class PlannerDto {
 		return updateDate;
 	}
 	
-	public List<PlanDto> getPlans() {
-		return plans;
-	}
-
-	public static PlannerDto from(PlannerDto planner) {
-		return new PlannerDto.Builder()
-				.setPlannerId(planner.getPlannerId())
-				.setAccountId(planner.getAccountId())
-				.setTitle(planner.getTitle())
-				.setPlanDateStart(planner.getPlanDateStart())
-				.setPlanDateEnd(planner.getPlanDateEnd())
-				.setCreateDate(planner.getCreateDate())
-				.setUpdateDate(planner.getUpdateDate())
-				.setLikeCount(planner.getLikeCount())
-				.setPlans(planner.getPlans())
-				.build();
-	}
-	
-	public PlannerDto toEntity() {
-		return new PlannerDto.Builder()
-				.setPlannerId(plannerId)
-				.setAccountId(accountId)
-				.setTitle(title)
-				.setPlanDateStart(planDateStart)
-				.setPlanDateEnd(planDateEnd)
-				.setCreateDate(createDate)
-				.setUpdateDate(updateDate)
-				.setLikeCount(likeCount)
-				.setPlans(plans)
-				.build();
-	}
 }

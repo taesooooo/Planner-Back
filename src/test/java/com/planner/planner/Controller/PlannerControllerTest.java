@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -550,8 +551,11 @@ public class PlannerControllerTest {
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("테스트여행")
-				.setPlanDateStart(LocalDateTime.of(2023, 1, 29, 0, 0))
-				.setPlanDateEnd(LocalDateTime.of(2023, 1, 31, 0, 0))
+				.setPlanDateStart(LocalDate.of(2023, 1, 29))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
 				.setPlanMembers(members)
 				.setPlans(plans)
 				.setLikeCount(0)

@@ -9,6 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -451,8 +452,11 @@ public class PlannerServiceTest {
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("테스트여행")
-				.setPlanDateStart(LocalDateTime.of(2023, 1, 29, 00, 00))
-				.setPlanDateEnd(LocalDateTime.of(2023, 1, 31, 00, 00))
+				.setPlanDateStart(LocalDate.of(2023, 1, 29))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
 				.setPlanMembers(memberEmails)
 				.build();
 		return planner;
@@ -475,8 +479,11 @@ public class PlannerServiceTest {
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("테스트여행")
-				.setPlanDateStart(LocalDateTime.of(2023, 1, 29, 00, 00))
-				.setPlanDateEnd(LocalDateTime.of(2023, 1, 31, 00, 00))
+				.setPlanDateStart(LocalDate.of(2023, 1, 29))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
 				.setPlanMembers(memberEmails)
 				.setPlans(plans)
 				.setLikeCount(0)

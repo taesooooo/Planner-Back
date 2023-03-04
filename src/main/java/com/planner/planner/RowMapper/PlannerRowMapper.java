@@ -15,14 +15,15 @@ public class PlannerRowMapper implements RowMapper<PlannerDto> {
 				.setPlannerId(rs.getInt("planner_id"))
 				.setAccountId(rs.getInt("account_id"))
 				.setTitle(rs.getString("title"))
-				.setPlanDateStart(rs.getTimestamp("plan_date_start").toLocalDateTime())
-				.setPlanDateEnd(rs.getTimestamp("plan_date_end").toLocalDateTime())
+				.setPlanDateStart(rs.getDate("plan_date_start").toLocalDate())
+				.setPlanDateEnd(rs.getDate("plan_date_end").toLocalDate())
+				.setExpense(rs.getInt("expense"))
+				.setMemberCount(rs.getInt("member_count"))
+				.setMemberTypeId(rs.getInt("member_type_id"))
 				.setLikeCount(rs.getInt("like_count"))
 				.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
 				.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
 				.build();
 	}
-
-
 }
 

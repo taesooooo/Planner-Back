@@ -1,7 +1,9 @@
 package com.planner.planner.Dao.Impl;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -32,15 +34,16 @@ public class PlannerDaoImpl implements PlannerDao {
 	private JdbcTemplate jdbcTemplate;
 	private KeyHolder keyHolder;
 	
-	private final String INSERT_PLANNER_SQL = "INSERT INTO planner(account_id, creator, title, plan_date_start, plan_date_end, create_date, update_date)"
-			+ "VALUES(?, ?, ?, ?, ?, now(), now());";
-	private final String FIND_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.like_count, P.create_date, P.update_date FROM planner AS p WHERE p.planner_id = ?;";
-	private final String FINDS_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.like_count, P.create_date, P.update_date FROM planner AS p WHERE p.account_id = ?;";
-	private final String FIND_ALL_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.like_count, P.create_date, P.update_date FROM planner AS p;";
-	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS P SET P.title = ?, P.plan_date_start = ?, P.plan_date_end = ?, P.update_date = NOW() WHERE P.planner_id = ?;";
+	private final String INSERT_PLANNER_SQL = "INSERT INTO planner(account_id, creator, title, plan_date_start, plan_date_end, expense, member_count, member_type_id, create_date, update_date)"
+			+ "VALUES(?, ?, ?, ?, ?, ? ,? ,? , now(), now());";
+	private final String FIND_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date FROM planner AS p WHERE p.planner_id = ?;";
+	private final String FINDS_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date FROM planner AS p WHERE p.account_id = ?;";
+	private final String FIND_ALL_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date FROM planner AS p;";
+	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS P SET P.title = ?, P.plan_date_start = ?, P.plan_date_end = ?, P.expense = ?, P.member_count = ?, P.member_type_id = ?, P.update_date = NOW() WHERE P.planner_id = ?;";
 	private final String DELETE_PLANNER_SQL = "DELETE FROM planner WHERE planner_id = ?;";
 	
-	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, A.title, A.plan_date_start, A.plan_date_end, A.like_count, A.create_date, A.update_date, "
+	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, A.title, A.plan_date_start, A.plan_date_end, A.expense, A.member_count, A.member_type_id, "
+			+ "A.like_count, A.create_date, A.update_date, "
 			+ "C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_id, D.plan_date, "
 			+ "E.location_id, E.location_content_id, E.location_image, E.location_transportation, E.plan_id "
 			+ "FROM planner AS A "
@@ -87,7 +90,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String INSERT_PLANNERLIKE_SQL = "INSERT INTO planner_like(account_id, planner_id, like_date) VALUES(?, ?, NOW());";
 	private final String DELETE_PLANNERLIKE_SQL = "DELETE FROM planner_like WHERE account_id = ? AND planner_id = ?;";
 	private final String PLANNERLIKE_COUNT_SQL = "SELECT count(*) as count FROM planner_like AS PL WHERE PL.account_id = ? AND PL.planner_id = ?;";
-	private final String FINDS_PLANNERLIKE_JOIN_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.like_count, P.create_date, P.update_date "
+	private final String FINDS_PLANNERLIKE_JOIN_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date "
 			+ "FROM planner AS P "
 			+ "LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id "
 			+ "WHERE P.planner_id = ?;";
@@ -104,8 +107,11 @@ public class PlannerDaoImpl implements PlannerDao {
 			ps.setInt(1, plannerDto.getAccountId());
 			ps.setString(2, plannerDto.getCreator());
 			ps.setString(3, plannerDto.getTitle());
-			ps.setTimestamp(4, Timestamp.valueOf(plannerDto.getPlanDateStart()));
-			ps.setTimestamp(5, Timestamp.valueOf(plannerDto.getPlanDateEnd()));
+			ps.setDate(4, Date.valueOf(plannerDto.getPlanDateStart()));
+			ps.setDate(5, Date.valueOf(plannerDto.getPlanDateEnd()));
+			ps.setInt(6, plannerDto.getExpense());
+			ps.setInt(7, plannerDto.getMemberCount());
+			ps.setInt(8, plannerDto.getMemberTypeId());
 			return ps;
 		}, keyHolder);
 		return keyHolder.getKey().intValue();
@@ -128,7 +134,8 @@ public class PlannerDaoImpl implements PlannerDao {
 
 	@Override
 	public int updatePlanner(int plannerId, PlannerDto plannerDto) {
-		int result = jdbcTemplate.update(UPDATE_PLANNER_SQL, plannerDto.getTitle(), plannerDto.getPlanDateStart(), plannerDto.getPlanDateEnd(), plannerId);
+		int result = jdbcTemplate.update(UPDATE_PLANNER_SQL, plannerDto.getTitle(), plannerDto.getPlanDateStart(), plannerDto.getPlanDateEnd(), 
+				plannerDto.getExpense(), plannerDto.getMemberCount(), plannerDto.getMemberTypeId(), plannerId);
 		return result;
 	}
 
