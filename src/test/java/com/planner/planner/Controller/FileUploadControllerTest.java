@@ -60,9 +60,9 @@ public class FileUploadControllerTest {
 	
 	@Test
 	public void 파일_업로드() throws Exception {
-		this.mockMvc.perform(multipart("/api/upload/image-upload")
-				.file(new MockMultipartFile("images", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes()))
-				.file(new MockMultipartFile("images", "b.png", MediaType.IMAGE_PNG_VALUE, "/png image/".getBytes()))
+		this.mockMvc.perform(multipart("/api/upload/file-upload")
+				.file(new MockMultipartFile("files", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes()))
+				.file(new MockMultipartFile("files", "b.png", MediaType.IMAGE_PNG_VALUE, "/png image/".getBytes()))
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.MULTIPART_FORM_DATA)

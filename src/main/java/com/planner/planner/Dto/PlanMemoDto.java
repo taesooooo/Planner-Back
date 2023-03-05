@@ -2,11 +2,15 @@ package com.planner.planner.Dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class PlanMemoDto {
 	private int memoId;
 	private String title;
 	private String content;
+	@JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
 	private LocalDateTime createDate;
+	@JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
 	private LocalDateTime updateDate;
 	
 	public static class Builder {

@@ -14,6 +14,7 @@ public class PlannerRowMapper implements RowMapper<PlannerDto> {
 		return new PlannerDto.Builder()
 				.setPlannerId(rs.getInt("planner_id"))
 				.setAccountId(rs.getInt("account_id"))
+				.setCreator(rs.getString("creator"))
 				.setTitle(rs.getString("title"))
 				.setPlanDateStart(rs.getDate("plan_date_start").toLocalDate())
 				.setPlanDateEnd(rs.getDate("plan_date_end").toLocalDate())

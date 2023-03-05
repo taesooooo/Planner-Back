@@ -33,16 +33,16 @@ public class FileUploadController {
 		this.fileService = fileService;
 	}
 	
-	@PostMapping(value="/image-upload")
-	public ResponseEntity<Object> uploadFile(HttpServletRequest req, @RequestPart List<MultipartFile> images) throws Exception {
+	@PostMapping(value="/file-upload")
+	public ResponseEntity<Object> uploadFile(HttpServletRequest req, @RequestPart List<MultipartFile> files) throws Exception {
 		int userId = UserIdUtil.getUserId(req);
-		List<String> fileList = fileService.fileUpload(userId, images);
+		List<String> fileList = fileService.fileUpload(userId, files);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", fileList));
 	}
 	
-	@GetMapping(value="/files/{imageName}")
-	public ResponseEntity<byte[]> loadFile(HttpServletRequest req, @PathVariable String imageName) throws Exception {
-		UploadFileDto data  = fileService.loadImage(imageName);
+	@GetMapping(value="/files/{fileName}")
+	public ResponseEntity<byte[]> loadFile(HttpServletRequest req, @PathVariable String fileName) throws Exception {
+		UploadFileDto data  = fileService.loadImage(fileName);
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.parseMediaType(data.getType())).body(data.getData());
 	}
 	
