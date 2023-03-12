@@ -3,7 +3,7 @@ package com.planner.planner.Dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class ReviewDto {
 	private int reviewId;
@@ -13,7 +13,9 @@ public class ReviewDto {
 	private int writerId;
 	private String content;
 	private int likeCount;
+	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
 	private LocalDateTime createDate;
+	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
 	private LocalDateTime updateDate;
 	
 	private List<String> fileNames;
