@@ -43,7 +43,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(authInterceptor()).excludePathPatterns("/api/auth/**").excludePathPatterns("/images/**");
+		registry.addInterceptor(authInterceptor()).excludePathPatterns("/api/auth/**").excludePathPatterns("/api/upload/files/**");
 	}
 
 }
