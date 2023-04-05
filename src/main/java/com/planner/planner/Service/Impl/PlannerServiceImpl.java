@@ -148,10 +148,10 @@ public class PlannerServiceImpl implements PlannerService {
 		return plannerDao.insertPlan(planDto);
 	}
 
-	@Override
-	public void updatePlan(int planId, PlanDto planDto) throws Exception {
-		plannerDao.updatePlan(planId, planDto);
-	}
+//	@Override
+//	public void updatePlan(int planId, PlanDto planDto) throws Exception {
+//		plannerDao.updatePlan(planId, planDto);
+//	}
 
 	@Override
 	public void deletePlan(int planId) throws Exception {

@@ -328,7 +328,7 @@ public class PlannerServiceTest {
 	public void 새일정() throws Exception {
 		int plannerId = 1;
 		int planId = 1;
-		PlanDto plan = createPlan(planId, LocalDateTime.of(2023, 02,07,00,00), null, plannerId);
+		PlanDto plan = createPlan(planId, null, plannerId);
 		when(plannerDao.insertPlan(plan)).thenReturn(1);
 		
 		int newPlanId = plannerService.newPlan(plan);
@@ -338,17 +338,17 @@ public class PlannerServiceTest {
 		assertEquals(planId, newPlanId);
 	}
 	
-	@Test
-	public void 일정_수정() throws Exception {
-		int plannerId = 1;
-		int planId = 1;
-		PlanDto plan = createPlan(planId, LocalDateTime.of(2023, 02,07,00,00), null, plannerId);
-		when(plannerDao.updatePlan(planId, plan)).thenReturn(0);
-		
-		plannerService.updatePlan(planId, plan);
-		
-		verify(plannerDao).updatePlan(planId, plan);
-	}
+//	@Test
+//	public void 일정_수정() throws Exception {
+//		int plannerId = 1;
+//		int planId = 1;
+//		PlanDto plan = createPlan(planId, null, plannerId);
+//		when(plannerDao.updatePlan(planId, plan)).thenReturn(0);
+//		
+//		plannerService.updatePlan(planId, plan);
+//		
+//		verify(plannerDao).updatePlan(planId, plan);
+//	}
 	
 	@Test
 	public void 일정_삭제() throws Exception {
@@ -429,16 +429,16 @@ public class PlannerServiceTest {
 		return new PlanLocationDto.Builder()
 				.setLocationId(locationId)
 				.setLocationContentId(locationContentId)
+				.setLocationName("바다")
 				.setLocationImage(image)
 				.setLocationTransportation(transportation)
 				.setPlanId(planId)
 				.build();
 	}
 	
-	private PlanDto createPlan(int planId, LocalDateTime planDate, List<PlanLocationDto> locations, int plannerId) {
+	private PlanDto createPlan(int planId, List<PlanLocationDto> locations, int plannerId) {
 		return new PlanDto.Builder()
 				.setPlanId(planId)
-				.setPlanDate(planDate)
 				.setPlanLocations(locations)
 				.setPlannerId(plannerId)
 				.build();
@@ -466,12 +466,12 @@ public class PlannerServiceTest {
 		List<String> memberEmails = new ArrayList<String>();
 		memberEmails.add("test2@naver.com");
 		List<PlanLocationDto> planLocations = new ArrayList<PlanLocationDto>();
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContentId(1000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(2).setLocationContentId(2000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(3).setLocationContentId(3000).setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContentId(1000).setLocationName("바다").setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(2).setLocationContentId(2000).setLocationName("땅").setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(3).setLocationContentId(3000).setLocationName("하늘").setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
 		
 		List<PlanDto> plans = new ArrayList<PlanDto>();
-		plans.add(new PlanDto.Builder().setPlanId(1).setPlanDate(LocalDateTime.of(2023, 1,29,00,00)).setPlanLocations(planLocations).setPlannerId(plannerId).build());
+		plans.add(new PlanDto.Builder().setPlanId(1).setPlanLocations(planLocations).setPlannerId(plannerId).build());
 		
 		PlannerDto planner = new PlannerDto.Builder()
 				.setPlannerId(plannerId)

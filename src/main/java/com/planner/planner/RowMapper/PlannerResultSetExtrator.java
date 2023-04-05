@@ -75,7 +75,6 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<PlannerDto> 
 					
 					PlanDto newPlan = new PlanDto.Builder()
 							.setPlanId(planId)
-							.setPlanDate(rs.getTimestamp("plan_date").toLocalDateTime())
 							.setPlannerId(rs.getInt("planner_id"))
 							.setPlanLocations(planLocations)
 							.build();
@@ -85,6 +84,7 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<PlannerDto> 
 				PlanLocationDto pl = new PlanLocationDto.Builder()
 						.setLocationId(rs.getInt("location_id"))
 						.setLocationContentId(rs.getInt("location_content_id"))
+						.setLocationName(rs.getString("location_name"))
 						.setLocationImage(rs.getString("location_image"))
 						.setLocationTransportation(rs.getInt("location_transportation"))
 						.setPlanId(rs.getInt("plan_id"))

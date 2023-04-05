@@ -15,7 +15,6 @@ public class PlanRowMapper implements RowMapper<PlanDto>{
 	public PlanDto mapRow(ResultSet rs, int rowNum) throws SQLException {
 		return new PlanDto.Builder()
 				.setPlanId(rs.getInt("plan_id"))
-				.setPlanDate(rs.getTimestamp("plan_date").toLocalDateTime())
 				.setPlannerId(rs.getInt("planner_id"))
 				.setPlanLocations(new ArrayList<PlanLocationDto>())
 				.build();

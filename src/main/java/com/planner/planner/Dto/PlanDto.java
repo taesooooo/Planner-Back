@@ -7,23 +7,16 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class PlanDto {
 	private int planId;
-	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-	private LocalDateTime planDate;
 	private int plannerId;
 	private List<PlanLocationDto> planLocations;
 	
 	public static class Builder {
 		private int planId;
-		private LocalDateTime planDate;
 		private int plannerId;
 		private List<PlanLocationDto> planLocations;
 		
 		public Builder setPlanId(int planId) {
 			this.planId = planId;
-			return this;
-		}
-		public Builder setPlanDate(LocalDateTime planDate) {
-			this.planDate = planDate;
 			return this;
 		}
 		public Builder setPlannerId(int plannerId) {
@@ -46,17 +39,12 @@ public class PlanDto {
 
 	public PlanDto(Builder builder) {
 		this.planId = builder.planId;
-		this.planDate = builder.planDate;
 		this.plannerId = builder.plannerId;
 		this.planLocations = builder.planLocations;
 	}
 
 	public int getPlanId() {
 		return planId;
-	}
-
-	public LocalDateTime getPlanDate() {
-		return planDate;
 	}
 
 	public int getPlannerId() {

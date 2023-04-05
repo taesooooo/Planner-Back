@@ -32,7 +32,7 @@ public interface PlannerDao {
 	// 일정 생성, 조회, 수정, 삭제
 	public int insertPlan(PlanDto planDto);
 	public List<PlanDto> findPlansByPlannerId(int plannerId);
-	public int updatePlan(int planId, PlanDto planDto);
+//	public int updatePlan(int planId, PlanDto planDto);
 	public int deletePlan(int planId);
 	
 	// 여행지 생성, 조회, 수정, 삭제
