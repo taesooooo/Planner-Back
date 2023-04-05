@@ -52,12 +52,12 @@ public class PlannerContorller {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", planners));
 	}
 	
-	@GetMapping(value="/likes")
-	public ResponseEntity<Object> LikePlannerList(HttpServletRequest req) throws Exception {
-		int userId = UserIdUtil.getUserId(req);
-		List<PlannerDto> planners = plannerService.getLikePlannerList(userId);
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", planners));
-	}
+//	@GetMapping(value="/likes")
+//	public ResponseEntity<Object> likePlannerList(HttpServletRequest req) throws Exception {
+//		int userId = UserIdUtil.getUserId(req);
+//		List<PlannerDto> planners = plannerService.getLikePlannerList(userId);
+//		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", planners));
+//	}
 
 	@GetMapping(value="/{plannerId}")
 	public ResponseEntity<Object> findPlannersById(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
@@ -68,7 +68,7 @@ public class PlannerContorller {
 	
 	@PatchMapping(value="/{plannerId}")
 	public ResponseEntity<Object> modifyPlanner(HttpServletRequest req, @PathVariable int plannerId, @RequestBody PlannerDto plannerDto) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		plannerService.updatePlanner(plannerDto);
 
@@ -77,7 +77,7 @@ public class PlannerContorller {
 	
 	@DeleteMapping(value="/{plannerId}")
 	public ResponseEntity<Object> deletePlanner(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		plannerService.deletePlanner(plannerId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
@@ -94,7 +94,7 @@ public class PlannerContorller {
 	
 	@PostMapping(value="/{plannerId}/memos")
 	public ResponseEntity<Object> newMemo(HttpServletRequest req, @PathVariable int plannerId, @RequestBody PlanMemoDto planMemoDto) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		int planMemoId = plannerService.newMemo(plannerId, planMemoDto);
 		
@@ -103,7 +103,7 @@ public class PlannerContorller {
 	
 	@PatchMapping(value="/{plannerId}/memos/{memoId}")
 	public ResponseEntity<Object> updateMemo(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int memoId, @RequestBody PlanMemoDto planMemoDto) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		plannerService.updateMemo(memoId, planMemoDto);
 		
@@ -112,7 +112,7 @@ public class PlannerContorller {
 	
 	@DeleteMapping(value="/{plannerId}/memos/{memoId}")
 	public ResponseEntity<Object> deleteMemo(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int memoId) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		plannerService.deleteMemo(memoId);
 		
@@ -121,7 +121,7 @@ public class PlannerContorller {
 	
 	@PostMapping(value="/{plannerId}/invite-member")
 	public ResponseEntity<Object> inviteMember(HttpServletRequest req, @PathVariable int plannerId, @RequestBody HashMap<String, List<String>> members) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		plannerService.inviteMembers(plannerId, members.get("members"));
 		
@@ -130,7 +130,7 @@ public class PlannerContorller {
 	
 	@DeleteMapping(value="/{plannerId}/delete-member")
 	public ResponseEntity<Object> deleteMember(HttpServletRequest req, @PathVariable int plannerId, @RequestParam(value="nick_name") String nickName) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		plannerService.deleteMember(plannerId, nickName);
 		
@@ -139,7 +139,7 @@ public class PlannerContorller {
 	
 	@PostMapping(value="/{plannerId}/plans")
 	public ResponseEntity<Object> newPlan(HttpServletRequest req, @PathVariable int plannerId, @RequestBody PlanDto planDto) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		int planId = plannerService.newPlan(planDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", planId));
@@ -147,7 +147,7 @@ public class PlannerContorller {
 	
 	@PatchMapping(value="/{plannerId}/plans/{planId}")
 	public ResponseEntity<Object> updatePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody PlanDto planDto) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		plannerService.updatePlan(planId, planDto);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
@@ -155,7 +155,7 @@ public class PlannerContorller {
 	
 	@DeleteMapping(value="/{plannerId}/plans/{planId}")
 	public ResponseEntity<Object> deletePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		plannerService.deletePlan(planId);
 		
@@ -164,7 +164,7 @@ public class PlannerContorller {
 	
 	@PostMapping(value="/{plannerId}/plans/{planId}/plan-locations")
 	public ResponseEntity<Object> newPlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody PlanLocationDto planLocationDto) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		int planLocationId = plannerService.newPlanLocation(planLocationDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", planLocationId));
@@ -172,7 +172,7 @@ public class PlannerContorller {
 	
 	@PatchMapping(value="/{plannerId}/plans/{planId}/plan-locations/{planLocationId}")
 	public ResponseEntity<Object> updatePlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @PathVariable int planLocationId, @RequestBody PlanLocationDto planLocationDto) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		plannerService.updatePlanLocation(planLocationId, planLocationDto);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
@@ -180,14 +180,14 @@ public class PlannerContorller {
 	
 	@DeleteMapping(value="/{plannerId}/plans/{planId}/plan-locations/{planLocationId}")
 	public ResponseEntity<Object> deletePlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @PathVariable int planLocationId) throws Exception {
-		plannerAuthorizationCheck(req, plannerId);
+		checkAuth(req, plannerId);
 		
 		plannerService.deletePlanLocation(planLocationId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
 	
-	private void plannerAuthorizationCheck(HttpServletRequest req, int plannerId) throws Exception {
+	private void checkAuth(HttpServletRequest req, int plannerId) throws Exception {
 		int id = UserIdUtil.getUserId(req);
 		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
 		

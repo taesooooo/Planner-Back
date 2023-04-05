@@ -17,24 +17,29 @@ import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.LikeDto;
+import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
+import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.AccountService;
+import com.planner.planner.Service.PlannerService;
 import com.planner.planner.util.FileStore;
 
 @Service
 @Transactional
 public class AccountServiceImpl implements AccountService {
-	private static final Logger logger = LoggerFactory.getLogger(AccountDaoImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountDaoImpl.class);
 
 	private AccountDao accountDao;
+	private PlannerService plannerService;
 	private PlannerDao plannerDao;
 
 	private FileStore fileStore;
 
-	public AccountServiceImpl(AccountDao accountDao, PlannerDao plannerDao, FileStore fileStore) {
+	public AccountServiceImpl(AccountDao accountDao, PlannerService plannerService, PlannerDao plannerDao, FileStore fileStore) {
 		this.accountDao = accountDao;
+		this.plannerService = plannerService;
 		this.plannerDao = plannerDao;
 		this.fileStore = fileStore;
 	}
@@ -84,10 +89,20 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public LikeDto allLikes(int accountId) {
+	public LikeDto allLikesList(int accountId) {
 		List<SpotLikeDto> likeS = accountDao.likeSpots(accountId);
 
 		return new LikeDto.Builder().setLikePlanners(null).setLikeSpots(likeS).build();
+	}
+
+	@Override
+	public List<PlannerDto> getMyPlanner(int accountId) throws Exception {
+		return plannerService.findPlannersByAccountId(accountId);
+	}
+
+	@Override
+	public List<PlannerDto> getLikePlanner(int accountId) throws Exception {
+		return plannerService.getLikePlannerList(accountId);
 	}
 
 	@Override

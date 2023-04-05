@@ -21,14 +21,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.LikeDto;
+import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
+import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.util.ResponseMessage;
+import com.planner.planner.util.UserIdUtil;
 
 @RestController
 @RequestMapping(value = "/api/users")
 public class AccountController {
-	private final static Logger logger = LoggerFactory.getLogger(AccountController.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
 	private AccountService accountService;
 
@@ -65,17 +68,27 @@ public class AccountController {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(false, "계정 이미지 변경을 실패헀습니다."));
 		}
 	}
-
-	@GetMapping(value = "/likes/{accountId}")
-	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId) {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		if (id != accountId) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
-
-		LikeDto likes = accountService.allLikes(accountId);
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", likes));
+	
+	@GetMapping(value = "/{accountId}/planners")
+	public ResponseEntity<Object> likePlanners(HttpServletRequest req, @PathVariable int accountId) throws Exception {
+		checkAuth(req, accountId);
+		
+		List<PlannerDto> list = accountService.getMyPlanner(accountId);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));
 	}
+
+	@GetMapping(value = "/{accountId}/likes")
+	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId, @RequestParam("type") String type) throws Exception {
+		checkAuth(req, accountId);
+		List<?> list = null;
+		if(type.equals("planner")) {
+			list = accountService.getLikePlanner(accountId);
+		}
+		//LikeDto likes = accountService.allLikesList(accountId);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));
+	}
+	
 
 	@GetMapping(value = "/likes/{accountId}/check")
 	public ResponseEntity<Object> spotLikeState(HttpServletRequest req, @PathVariable int accountId, ContentIdListDto contentIds) {
@@ -89,5 +102,13 @@ public class AccountController {
 		boolean emailCheck = accountService.searchEmail(searchString);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", emailCheck));
+	}
+	
+	private void checkAuth(HttpServletRequest req, int accountId) throws Exception {
+		int id = UserIdUtil.getUserId(req);
+		AccountDto user = accountService.findById(accountId);
+		if (id != user.getAccountId()) {
+			throw new ForbiddenException("접근 권한이 없습니다.");
+		}
 	}
 }

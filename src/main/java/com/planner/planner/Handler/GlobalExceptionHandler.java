@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Object> ForbiddenUser(Exception e) {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, e.getMessage()));
 	}
-	@ExceptionHandler(NotFoundUserException.class)
+	@ExceptionHandler(value = {NotFoundUserException.class,NotFoundPlanner.class})
 	public ResponseEntity<Object> notFoundUser(Exception e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, e.getMessage()));
 	}
@@ -50,8 +50,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, e.getMessage()));
 	}
 	
-	@ExceptionHandler(NotFoundPlanner.class)
-	public ResponseEntity<Object> notFoundPlanner(Exception e) {
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, e.getMessage()));
-	}
+//	@ExceptionHandler(NotFoundPlanner.class)
+//	public ResponseEntity<Object> notFoundPlanner(Exception e) {
+//		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, e.getMessage()));
+//	}
 }

@@ -4,12 +4,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +21,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +29,6 @@ import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.util.JwtUtil;
 
 @WebAppConfiguration
@@ -96,15 +90,35 @@ public class AccountControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
-
+	
 	@Test
-	public void 좋아요모두가져오기() throws Exception {
-		mockMvc.perform(get("/api/users/likes/1")
+	public void 나의_플래너_가져오기() throws Exception {
+		mockMvc.perform(get("/api/users/1/planners")
 				.header("Authorization", token)
 				.accept(MediaType.APPLICATION_JSON))
 		.andDo(print())
-		.andExpect(status().isOk());
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty());
 	}
+	
+	@Test
+	public void 좋아요_플래너_가져오기() throws Exception {
+		mockMvc.perform(get("/api/users/1/likes?type=planner")
+				.header("Authorization", token)
+				.accept(MediaType.APPLICATION_JSON))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty());
+	}
+
+//	@Test
+//	public void 좋아요모두가져오기() throws Exception {
+//		mockMvc.perform(get("/api/users/likes/1")
+//				.header("Authorization", token)
+//				.accept(MediaType.APPLICATION_JSON))
+//		.andDo(print())
+//		.andExpect(status().isOk());
+//	}
 
 	@Test
 	public void 좋아요여행지확인() throws Exception {

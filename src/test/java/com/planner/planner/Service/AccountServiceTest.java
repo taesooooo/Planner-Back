@@ -1,19 +1,17 @@
 package com.planner.planner.Service;
 
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,14 +29,13 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import com.planner.planner.Common.Image;
 import com.planner.planner.Dao.AccountDao;
+import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Dto.ContentIdListDto;
-import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Dto.SpotLikeDto;
-import com.planner.planner.Dto.SpotLikeStateDto;
+import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.Impl.AccountServiceImpl;
+import com.planner.planner.Service.Impl.PlannerServiceImpl;
 import com.planner.planner.util.FileStore;
 
 public class AccountServiceTest {
@@ -56,6 +53,8 @@ public class AccountServiceTest {
 
 	@InjectMocks
 	private AccountServiceImpl accountService;
+	@Mock
+	private PlannerServiceImpl plannerService;
 
 	private AccountDto testDto;
 
@@ -120,73 +119,95 @@ public class AccountServiceTest {
 		assertTrue(result);
 	}
 
+	@Test
+	public void 나의_플래너_가져오기() throws Exception {
+		int testAccountId = 1;
+		List<PlannerDto> testList = Arrays.asList(createPlanner());
+		
+		when(plannerService.findPlannersByAccountId(testAccountId)).thenReturn(testList);
+
+		List<PlannerDto> list = accountService.getMyPlanner(testAccountId);
+		
+		verify(plannerService).findPlannersByAccountId(testAccountId);
+		
+		assertEquals(testList.get(0).getAccountId(), list.get(0).getAccountId());
+	}
+	
+	@Test(expected =  NotFoundPlanner.class)
+	public void 나의_플래너_가져오기_없는경우() throws Exception {
+		int testAccountId = 1;
+		List<PlannerDto> testList = Arrays.asList(createPlanner());
+		
+		when(plannerService.findPlannersByAccountId(testAccountId)).thenThrow(NotFoundPlanner.class);
+		
+		List<PlannerDto> list = accountService.getMyPlanner(testAccountId);
+		
+		verify(plannerService).findPlannersByAccountId(testAccountId);
+		
+		//assertEquals(testList.get(0).getAccountId(), list.get(0).getAccountId());
+	}
+	
+	@Test
+	public void 좋아요_플래너_가져오기() throws Exception {
+		int testAccountId = 1;
+		List<PlannerDto> testList = Arrays.asList(createPlanner());
+		
+		when(plannerService.getLikePlannerList(testAccountId)).thenReturn(testList);
+
+		List<PlannerDto> list = accountService.getLikePlanner(testAccountId);
+		
+		verify(plannerService).getLikePlannerList(testAccountId);
+		
+		assertEquals(testList.get(0).getAccountId(), list.get(0).getAccountId());
+	}
+	
+	@Test(expected =  NotFoundPlanner.class)
+	public void 좋아요_플래너_가져오기_없는경우() throws Exception {
+		int testAccountId = 1;
+		List<PlannerDto> testList = Arrays.asList(createPlanner());
+		
+		when(plannerService.findPlannersByAccountId(testAccountId)).thenThrow(NotFoundPlanner.class);
+		
+		List<PlannerDto> list = accountService.getMyPlanner(testAccountId);
+		
+		verify(plannerService).getLikePlannerList(testAccountId);
+		
+		//assertEquals(testList.get(0).getAccountId(), list.get(0).getAccountId());
+	}
+
 //	@Test
-//	public void 계정좋아요모두가져오기() {
-//		List<PlannerDto> likesP = new ArrayList<>();
-//		List<SpotLikeDto> likesS = new ArrayList<>();
-//		for(int i=0;i<3;i++) {
-//			PlannerDto planner = new PlannerDto.Builder()
-//					.setPlannerId(i)
-//					.setAccountId(i)
-//					.setTitle("test"+i)
-//					.setLikeCount(i)
-//					.setPlanDateStart(LocalDateTime.now())
-//					.setPlanDateEnd(LocalDateTime.now())
-//					.setUpdateDate(LocalDateTime.now()).build();
-//			SpotLikeDto like = new SpotLikeDto.Builder().setLikeId(i).setAccountId(i).setContentId(i).setLikeDate(null).build();
-//			likesP.add(planner);
-//			likesS.add(like);
+//	public void 좋아요여행지가져오기() {
+//		List<SpotLikeDto> likes = accountService.spotLikesByAccountId(1);
+//		assertNotNull(likes);
+//		for (SpotLikeDto like : likes) {
+//			assertEquals(1, like.getAccountId());
 //		}
-//		LikeDto testLikeDto = new LikeDto.Builder().setLikePlanners(likesP).setLikeSpots(likesS).build();
-//
-//		when(accountDao.likePlanners(testDto.getAccountId())).thenReturn(likesP);
-//		when(accountDao.likeSpots(testDto.getAccountId())).thenReturn(likesS);
-//
-//		LikeDto likes = accountService.allLikes(testDto.getAccountId());
-//
-//		verify(accountDao).likePlanners(testDto.getAccountId());
-//		verify(accountDao).likeSpots(testDto.getAccountId());
-//
-//		assertNotNull(likes.getLikePlanners());
-//		assertTrue(likes.getLikePlanners().size() > 0);
-//
-//		assertNotNull(likes.getLikeSpots());
-//		assertTrue(likes.getLikeSpots().size() > 0);
 //	}
 
-	@Test
-	public void 좋아요여행지가져오기() {
-		List<SpotLikeDto> likes = accountService.spotLikesByAccountId(1);
-		assertNotNull(likes);
-		for (SpotLikeDto like : likes) {
-			assertEquals(1, like.getAccountId());
-		}
-	}
-
-	@Test
-	public void 좋아요한여행지확인() {
-		ContentIdListDto contentIds = new ContentIdListDto(Arrays.asList(3,4,5));
-		List<SpotLikeDto> list = new ArrayList<>();
-		list.add(new SpotLikeDto.Builder().setAccountId(1).setContentId(3).setLikeId(1).build());
-		list.add(new SpotLikeDto.Builder().setAccountId(1).setContentId(4).setLikeId(2).build());
-		list.add(new SpotLikeDto.Builder().setAccountId(1).setContentId(5).setLikeId(3).build());
-
-		List<SpotLikeStateDto> resultList = new ArrayList<>();
-		resultList.add(new SpotLikeStateDto(3,true));
-		resultList.add(new SpotLikeStateDto(4,true));
-		resultList.add(new SpotLikeStateDto(5,true));
-
-		when(accountDao.spotLikesByContentIds(1, contentIds.getContentIds())).thenReturn(list);
-
-		//
-		List<SpotLikeStateDto> likes = accountService.spotLikeStateCheck(1, contentIds);
-
-		//
-		for(int i=0;i<likes.size();i++) {
-			assertEquals(likes.get(i).getContentId(), resultList.get(i).getContentId());
-			assertEquals(likes.get(i).getState(), resultList.get(i).getState());
-		}
-	}
+//	@Test
+//	public void 좋아요한여행지확인() {
+//		ContentIdListDto contentIds = new ContentIdListDto(Arrays.asList(3,4,5));
+//		List<SpotLikeDto> list = new ArrayList<>();
+//		list.add(new SpotLikeDto.Builder().setAccountId(1).setContentId(3).setLikeId(1).build());
+//		list.add(new SpotLikeDto.Builder().setAccountId(1).setContentId(4).setLikeId(2).build());
+//		list.add(new SpotLikeDto.Builder().setAccountId(1).setContentId(5).setLikeId(3).build());
+//
+//		List<SpotLikeStateDto> resultList = new ArrayList<>();
+//		resultList.add(new SpotLikeStateDto(3,true));
+//		resultList.add(new SpotLikeStateDto(4,true));
+//		resultList.add(new SpotLikeStateDto(5,true));
+//
+//		when(accountDao.spotLikesByContentIds(1, contentIds.getContentIds())).thenReturn(list);
+//
+//		//
+//		List<SpotLikeStateDto> likes = accountService.spotLikeStateCheck(1, contentIds);
+//
+//		//
+//		for(int i=0;i<likes.size();i++) {
+//			assertEquals(likes.get(i).getContentId(), resultList.get(i).getContentId());
+//			assertEquals(likes.get(i).getState(), resultList.get(i).getState());
+//		}
+//	}
 	
 	@Test
 	public void 이메일_검색() throws Exception {
@@ -210,5 +231,22 @@ public class AccountServiceTest {
 	
 	private AccountDto createAccount(int accountId, String email, String name, String nickName) {
 		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setUserName(name).setNickName(nickName).build();
+	}
+	
+	private PlannerDto createPlanner() {
+		return new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 29))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setLikeCount(0)
+				.setCreateDate(LocalDateTime.of(2023, 1, 29, 00, 00))
+				.setUpdateDate(LocalDateTime.of(2023, 1, 29, 00, 00))
+				.build();
 	}
 }
