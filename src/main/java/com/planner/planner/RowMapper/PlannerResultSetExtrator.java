@@ -23,6 +23,7 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<PlannerDto> 
 		List<PlanLocationDto> planLocations = null;
 		int latestMemoId = 0;
 		int latestPlanId = 0;
+		int latestLocationId = 0;
 		
 		PlannerDto plannerDto = null;
 		
@@ -67,11 +68,12 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<PlannerDto> 
 			}
 			
 			int planId = rs.getInt("plan_id");
+			int locationId = rs.getInt("location_id");
 			if(planId != 0) {
 				if(latestPlanId != planId) {
+					planLocations = new ArrayList<PlanLocationDto>();
 					
 					latestPlanId = planId;
-					planLocations = new ArrayList<PlanLocationDto>();
 					
 					PlanDto newPlan = new PlanDto.Builder()
 							.setPlanId(planId)
@@ -81,15 +83,19 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<PlannerDto> 
 					plans.add(newPlan);
 				}
 				
-				PlanLocationDto pl = new PlanLocationDto.Builder()
-						.setLocationId(rs.getInt("location_id"))
-						.setLocationContentId(rs.getInt("location_content_id"))
-						.setLocationName(rs.getString("location_name"))
-						.setLocationImage(rs.getString("location_image"))
-						.setLocationTransportation(rs.getInt("location_transportation"))
-						.setPlanId(rs.getInt("plan_id"))
-						.build();
-				planLocations.add(pl);
+				if(latestPlanId == planId && locationId != 0 && latestLocationId != locationId) {
+					latestLocationId = locationId;
+					
+					PlanLocationDto pl = new PlanLocationDto.Builder()
+							.setLocationId(rs.getInt("location_id"))
+							.setLocationContentId(rs.getInt("location_content_id"))
+							.setLocationName(rs.getString("location_name"))
+							.setLocationImage(rs.getString("location_image"))
+							.setLocationTransportation(rs.getInt("location_transportation"))
+							.setPlanId(rs.getInt("plan_id"))
+							.build();
+					planLocations.add(pl);
+				}
 			}
 		}
 		return plannerDto;
