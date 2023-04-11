@@ -333,7 +333,7 @@ public class PlannerControllerTest {
 	@Test
 	public void 새일정() throws Exception {
 		int plannerId = 1;
-		PlanDto plan = createPlan(2, plannerId, LocalDateTime.of(2023, 1,29,00,00));
+		PlanDto plan = createPlan(2, plannerId, LocalDate.of(2023, 1,29));
 		String url = String.format("/api/planners/%d/plans", plannerId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -349,7 +349,7 @@ public class PlannerControllerTest {
 	public void 새일정_다른사용자_요청_접근거부() throws Exception {
 		int plannerId = 1;
 		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		PlanDto plan = createPlan(2, plannerId, LocalDateTime.of(2023, 1,29,00,00));
+		PlanDto plan = createPlan(2, plannerId, LocalDate.of(2023, 1,29));
 		String url = String.format("/api/planners/%d/plans", plannerId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -361,39 +361,39 @@ public class PlannerControllerTest {
 		.andExpect(status().isForbidden());
 	}
 	
-//	@Test
-//	public void 일정_수정() throws Exception {
-//		int plannerId = 1;
-//		int planId = 1;
-//		PlanDto plan = createPlan(1, plannerId, LocalDateTime.of(2023, 02, 07, 00, 00));
-//		String url = String.format("/api/planners/%d/plans/%d", plannerId, planId);
-//		
-//		this.mockMvc.perform(patch(url)
-//				.accept(MediaType.APPLICATION_JSON)
-//				.characterEncoding("UTF-8")
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.header("Authorization", token)
-//				.content(mapper.writeValueAsString(plan)))
-//		.andDo(print())
-//		.andExpect(status().isOk());
-//	}
-//	@Test
-//	public void 일정_수정_다른사용자_요청_접근거부() throws Exception {
-//		int plannerId = 1;
-//		int planId = 1;
-//		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-//		PlanDto plan = createPlan(1, plannerId, LocalDateTime.of(2023, 02, 07, 00, 00));
-//		String url = String.format("/api/planners/%d/plans/%d", plannerId, planId);
-//		
-//		this.mockMvc.perform(patch(url)
-//				.accept(MediaType.APPLICATION_JSON)
-//				.characterEncoding("UTF-8")
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.header("Authorization", notCreatetorIdToken)
-//				.content(mapper.writeValueAsString(plan)))
-//		.andDo(print())
-//		.andExpect(status().isForbidden());
-//	}
+	@Test
+	public void 일정_수정() throws Exception {
+		int plannerId = 1;
+		int planId = 1;
+		PlanDto plan = createPlan(1, plannerId, LocalDate.of(2023, 02, 07));
+		String url = String.format("/api/planners/%d/plans/%d", plannerId, planId);
+		
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(plan)))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	@Test
+	public void 일정_수정_다른사용자_요청_접근거부() throws Exception {
+		int plannerId = 1;
+		int planId = 1;
+		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
+		PlanDto plan = createPlan(1, plannerId, LocalDate.of(2023, 02, 07));
+		String url = String.format("/api/planners/%d/plans/%d", plannerId, planId);
+		
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", notCreatetorIdToken)
+				.content(mapper.writeValueAsString(plan)))
+		.andDo(print())
+		.andExpect(status().isForbidden());
+	}
 	
 	@Test
 	public void 일정_삭제() throws JsonProcessingException, Exception {
@@ -564,9 +564,10 @@ public class PlannerControllerTest {
 				.build();
 	}
 	
-	private PlanDto createPlan(int planId, int plannerId, LocalDateTime planDate) {
+	private PlanDto createPlan(int planId, int plannerId, LocalDate planDate) {
 		return new PlanDto.Builder()
 				.setPlanId(planId)
+				.setPlanDate(planDate)
 				.setPlanLocations(null)
 				.setPlannerId(plannerId)
 				.build();

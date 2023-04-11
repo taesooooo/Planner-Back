@@ -145,13 +145,13 @@ public class PlannerContorller {
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", planId));
 	}
 	
-//	@PatchMapping(value="/{plannerId}/plans/{planId}")
-//	public ResponseEntity<Object> updatePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody PlanDto planDto) throws Exception {
-//		checkAuth(req, plannerId);
-//		
-//		plannerService.updatePlan(planId, planDto);
-//		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
-//	}
+	@PatchMapping(value="/{plannerId}/plans/{planId}")
+	public ResponseEntity<Object> updatePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody PlanDto planDto) throws Exception {
+		checkAuth(req, plannerId);
+		
+		plannerService.updatePlan(planId, planDto);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+	}
 	
 	@DeleteMapping(value="/{plannerId}/plans/{planId}")
 	public ResponseEntity<Object> deletePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId) throws Exception {

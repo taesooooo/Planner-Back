@@ -30,7 +30,7 @@ public interface PlannerService {
 	
 	// 일정 추가, 수정, 삭제
 	public int newPlan(PlanDto planDto) throws Exception;
-//	public void updatePlan(int planId, PlanDto planDto) throws Exception;
+	public void updatePlan(int planId, PlanDto planDto) throws Exception;
 	public void deletePlan(int planId) throws Exception;
 	
 	// 일정 여행지 추가, 수정, 삭제

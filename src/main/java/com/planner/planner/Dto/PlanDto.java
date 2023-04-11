@@ -1,22 +1,29 @@
 package com.planner.planner.Dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class PlanDto {
 	private int planId;
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private LocalDate planDate;
 	private int plannerId;
 	private List<PlanLocationDto> planLocations;
 	
 	public static class Builder {
 		private int planId;
+		private LocalDate planDate;
 		private int plannerId;
 		private List<PlanLocationDto> planLocations;
 		
 		public Builder setPlanId(int planId) {
 			this.planId = planId;
+			return this;
+		}
+		public Builder setPlanDate(LocalDate planDate) {
+			this.planDate = planDate;
 			return this;
 		}
 		public Builder setPlannerId(int plannerId) {
@@ -39,12 +46,17 @@ public class PlanDto {
 
 	public PlanDto(Builder builder) {
 		this.planId = builder.planId;
+		this.planDate = builder.planDate;
 		this.plannerId = builder.plannerId;
 		this.planLocations = builder.planLocations;
 	}
 
 	public int getPlanId() {
 		return planId;
+	}
+
+	public LocalDate getPlanDate() {
+		return planDate;
 	}
 
 	public int getPlannerId() {
@@ -54,13 +66,4 @@ public class PlanDto {
 	public List<PlanLocationDto> getPlanLocations() {
 		return planLocations;
 	}
-	
-//	public static PlanDto from(Plan plan) {
-//		return new PlanDto.Builder()
-//				.setPlanId(plan.getPlanId())
-//				.setPlanDate(plan.getPlanDate())
-//				.setPlanLocations(plan.getPlanLocations())
-//				.setPlannerId(plan.getPlannerId())
-//				.build();
-//	}
 }

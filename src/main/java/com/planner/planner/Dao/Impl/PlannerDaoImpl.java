@@ -44,7 +44,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	
 	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, A.title, A.plan_date_start, A.plan_date_end, A.expense, A.member_count, A.member_type_id, "
 			+ "A.like_count, A.create_date, A.update_date, "
-			+ "C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_id, "
+			+ "C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_date, D.plan_id, "
 			+ "E.location_id, E.location_name, E.location_content_id, E.location_image, E.location_transportation, E.plan_id "
 			+ "FROM planner AS A "
 			+ "LEFT JOIN plan_member AS B ON A.planner_id = B.planner_id "
@@ -75,9 +75,9 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String UPDATE_PLANMEMO_SQL = "UPDATE plan_memo AS M SET M.memo_title = ?, M.memo_content = ?, M.memo_update_date = NOW() WHERE M.memo_id = ?;";
 	private final String DELETE_PLANMEMO_SQL = "DELETE FROM plan_memo WHERE memo_id = ?;";
 	
-	private final String INSERT_PlAN_SQL = "INSERT INTO plan (planner_id) VALUES(?);";
-	private final String FINDS_PLAN_SQL = "SELECT plan.plan_id, plan.planner_id FROM plan WHERE plan.planner_id = ?;";
-	//private final String UPDATE_PLAN_SQL = "UPDATE plan SET WHERE plan.plan_id = ?;";
+	private final String INSERT_PlAN_SQL = "INSERT INTO plan (plan_date, planner_id) VALUES(?, ?);";
+	private final String FINDS_PLAN_SQL = "SELECT plan.plan_id, plan_plan_date, plan.planner_id FROM plan WHERE plan.planner_id = ?;";
+	private final String UPDATE_PLAN_SQL = "UPDATE plan SET plan.plan_date = ? WHERE plan.plan_id = ?;";
 	private final String DELETE_PLAN_SQL = "DELETE FROM plan WHERE plan.plan_id = ?;";
 	
 	private final String INSERT_PLANLOCATION_SQL = "INSERT INTO plan_location(location_name, location_content_id, location_image, location_transportation, plan_id) VALUES(?, ?, ?, ?, ?);";
@@ -209,7 +209,8 @@ public class PlannerDaoImpl implements PlannerDao {
 	public int insertPlan(PlanDto planDto) {
 		int result = jdbcTemplate.update(conn -> {
 			PreparedStatement ps = conn.prepareStatement(INSERT_PlAN_SQL, new String[] {"plan_id"});
-			ps.setInt(1, planDto.getPlannerId());
+			ps.setDate(1, Date.valueOf(planDto.getPlanDate()));
+			ps.setInt(2, planDto.getPlannerId());
 			return ps;
 		}, keyHolder);
 		return keyHolder.getKey().intValue();
@@ -220,11 +221,11 @@ public class PlannerDaoImpl implements PlannerDao {
 		return jdbcTemplate.query(FINDS_PLAN_SQL, new PlanRowMapper(), plannerId);
 	}
 
-//	@Override
-//	public int updatePlan(int planId, PlanDto planDto) {
-//		int result = jdbcTemplate.update(UPDATE_PLAN_SQL, planId);
-//		return result;
-//	}
+	@Override
+	public int updatePlan(int planId, PlanDto planDto) {
+		int result = jdbcTemplate.update(UPDATE_PLAN_SQL, planDto.getPlanDate(), planId);
+		return result;
+	}
 
 	@Override
 	public int deletePlan(int planId) {

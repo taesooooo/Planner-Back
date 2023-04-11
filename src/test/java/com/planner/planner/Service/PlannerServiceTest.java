@@ -328,7 +328,7 @@ public class PlannerServiceTest {
 	public void 새일정() throws Exception {
 		int plannerId = 1;
 		int planId = 1;
-		PlanDto plan = createPlan(planId, null, plannerId);
+		PlanDto plan = createPlan(planId, LocalDate.of(2023, 02,07), null, plannerId);
 		when(plannerDao.insertPlan(plan)).thenReturn(1);
 		
 		int newPlanId = plannerService.newPlan(plan);
@@ -338,17 +338,17 @@ public class PlannerServiceTest {
 		assertEquals(planId, newPlanId);
 	}
 	
-//	@Test
-//	public void 일정_수정() throws Exception {
-//		int plannerId = 1;
-//		int planId = 1;
-//		PlanDto plan = createPlan(planId, null, plannerId);
-//		when(plannerDao.updatePlan(planId, plan)).thenReturn(0);
-//		
-//		plannerService.updatePlan(planId, plan);
-//		
-//		verify(plannerDao).updatePlan(planId, plan);
-//	}
+	@Test
+	public void 일정_수정() throws Exception {
+		int plannerId = 1;
+		int planId = 1;
+		PlanDto plan = createPlan(planId, LocalDate.of(2023, 02,07), null, plannerId);
+		when(plannerDao.updatePlan(planId, plan)).thenReturn(0);
+		
+		plannerService.updatePlan(planId, plan);
+		
+		verify(plannerDao).updatePlan(planId, plan);
+	}
 	
 	@Test
 	public void 일정_삭제() throws Exception {
@@ -436,9 +436,10 @@ public class PlannerServiceTest {
 				.build();
 	}
 	
-	private PlanDto createPlan(int planId, List<PlanLocationDto> locations, int plannerId) {
+	private PlanDto createPlan(int planId, LocalDate planDate ,List<PlanLocationDto> locations, int plannerId ) {
 		return new PlanDto.Builder()
 				.setPlanId(planId)
+				.setPlanDate(planDate)
 				.setPlanLocations(locations)
 				.setPlannerId(plannerId)
 				.build();
