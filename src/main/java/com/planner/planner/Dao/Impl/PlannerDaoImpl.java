@@ -284,8 +284,8 @@ public class PlannerDaoImpl implements PlannerDao {
 	@Override
 	public boolean isLike(int accountId, int plannerId) {
 		try {
-			Integer result = jdbcTemplate.queryForObject(PLANNERLIKE_COUNT_SQL, Integer.class, accountId, plannerId);
-			return result == null ? false : true;
+			int result = jdbcTemplate.queryForObject(PLANNERLIKE_COUNT_SQL, Integer.class, accountId, plannerId);
+			return result == 0 ? false : true;
 		} catch (EmptyResultDataAccessException e) {
 			return false;
 		}

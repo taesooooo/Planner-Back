@@ -174,7 +174,7 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
-	public void 플래너_좋아요() throws Exception {
+	public void 플래너_좋아요_또는_취소() throws Exception {
 		int plannerId = 1;
 		String url = String.format("/api/planners/%d/like", plannerId);
 		this.mockMvc.perform(post(url)
