@@ -45,8 +45,11 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public AccountDto findById(int accountId) {
+	public AccountDto findById(int accountId) throws Exception {
 		AccountDto user = accountDao.findById(accountId);
+		if(user == null) {
+			throw new NotFoundUserException();
+		}
 		return user;
 	}
 

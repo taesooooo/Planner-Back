@@ -13,7 +13,7 @@ import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
 
 public interface AccountService {
-	public AccountDto findById(int accountId);
+	public AccountDto findById(int accountId) throws Exception;
 	public boolean accountUpdate(AccountDto accountDto) throws Exception;
 	public boolean accountImageUpdate(int accountId, MultipartFile image) throws Exception;
 	public boolean passwordUpdate(AccountDto accountDto);

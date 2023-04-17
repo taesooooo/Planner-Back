@@ -24,10 +24,10 @@ public class AccountDaoImpl implements AccountDao {
 
 	private JdbcTemplate jdbcTemplate;
 
-	private final String createSQL = "INSERT INTO ACCOUNT(email, password, name, nickname, phone, image,create_date,update_date) VALUES(?,?,?,?,?,?, now(), now());";
+	private final String INSERT_ACCOUNT_SQL = "INSERT INTO ACCOUNT(email, password, name, nickname, phone, image,create_date,update_date) VALUES(?,?,?,?,?,?, now(), now());";
 	private final String FIND_BY_EMAIL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE email = ?";
 	private final String FIND_BY_NICKNAME = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE nickname = ?";
-	private final String findByIdSQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE account_id = ?";
+	private final String FIND_BY_ID_SQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE account_id = ?";
 	private final String FIND_ACCOUNTID_BY_EMAIL = "SELECT account_id FROM account WHERE email = ?";
 	private final String updateSQL = "UPDATE ACCOUNT SET nickname = ?, phone = ?, update_date = now() WHERE account_id = ?;";
 	private final String deleteSQL = "DELETE FROM ACCOUNT WHERE email = ?;";
@@ -47,7 +47,7 @@ public class AccountDaoImpl implements AccountDao {
 
 	@Override
 	public boolean create(AccountDto accountDto) {
-		int result = jdbcTemplate.update(createSQL, accountDto.getEmail(), accountDto.getPassword(), accountDto.getUserName(),
+		int result = jdbcTemplate.update(INSERT_ACCOUNT_SQL, accountDto.getEmail(), accountDto.getPassword(), accountDto.getUserName(),
 				accountDto.getNickName(), accountDto.getPhone(), "");
 		return result > 0 ? true : false;
 	}
@@ -96,7 +96,7 @@ public class AccountDaoImpl implements AccountDao {
 	@Override
 	public AccountDto findById(int accountId) {
 		try {
-			return jdbcTemplate.queryForObject(findByIdSQL, new AccountRowMapper(), accountId);
+			return jdbcTemplate.queryForObject(FIND_BY_ID_SQL, new AccountRowMapper(), accountId);
 		}
 		catch (EmptyResultDataAccessException e) {
 			return null;

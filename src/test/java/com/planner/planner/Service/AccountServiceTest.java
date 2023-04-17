@@ -64,16 +64,28 @@ public class AccountServiceTest {
 	}
 	
 	@Test
-	public void 회원_조회_아이디() {
+	public void 회원_조회_아이디() throws Exception {
 		int accountId = 1;
 		AccountDto user = createAccount(1, "test@naver.com", "홍길동", "test");
 		
-		when(accountDao.findById(1)).thenReturn(user);
+		when(accountDao.findById(anyInt())).thenReturn(user);
 		
 		AccountDto findUser = accountService.findById(accountId);
 		
 		verify(accountDao).findById(accountId);
 		assertEquals(findUser.getAccountId(), accountId);
+	}
+	
+	@Test(expected = NotFoundUserException.class)
+	public void 회원_조회_아이디_없는경우() throws Exception {
+		int accountId = 1;
+		AccountDto user = createAccount(1, "test@naver.com", "홍길동", "test");
+		
+		when(accountDao.findById(anyInt())).thenReturn(null);
+		
+		AccountDto findUser = accountService.findById(accountId);
+		
+		verify(accountDao).findById(accountId);
 	}
 	
 	@Test
