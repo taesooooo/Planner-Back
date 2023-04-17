@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.planner.planner.Common.Page;
+import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
@@ -24,7 +26,7 @@ import com.planner.planner.Service.PlannerService;
 public class PlannerServiceImpl implements PlannerService {
 	private PlannerDao plannerDao;
 	private AccountDao accountDao;
-	
+
 	public PlannerServiceImpl(PlannerDao plannerDao, AccountDao accountDao) {
 		this.plannerDao = plannerDao;
 		this.accountDao = accountDao;
@@ -34,23 +36,23 @@ public class PlannerServiceImpl implements PlannerService {
 	public int newPlanner(PlannerDto plannerDto) throws Exception {
 		// 플래너 생성
 		int plannerId = plannerDao.insertPlanner(plannerDto);
-		
+
 		// 멤버 초대(멤버 추가시 기본상태 수락 대기, 단 생성자는 바로 수락 상태로 변경해야함)
 		List<AccountDto> users = new ArrayList<AccountDto>();
 		List<String> memberNickNames = plannerDto.getPlanMembers();
 		memberNickNames.add(plannerDto.getCreator());
-		for(String nickName : memberNickNames) {
+		for (String nickName : memberNickNames) {
 			AccountDto user = accountDao.findAccountIdByNickName(nickName);
-			if(user == null) {
+			if (user == null) {
 				throw new NotFoundUserException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
 			}
 			users.add(user);
 		}
-		
-		for(AccountDto user: users) {
+
+		for (AccountDto user : users) {
 			plannerDao.insertPlanMember(plannerId, user.getAccountId());
 		}
-		
+
 		plannerDao.acceptInvitation(plannerId, plannerDto.getAccountId());
 		return plannerId;
 	}
@@ -58,28 +60,46 @@ public class PlannerServiceImpl implements PlannerService {
 	@Override
 	public PlannerDto findPlannerByPlannerId(int plannerId) throws Exception {
 		PlannerDto planner = plannerDao.findPlannerByPlannerId(plannerId);
-		if(planner == null) {
+		if (planner == null) {
 			throw new NotFoundPlanner("존재하지 않는 플래너 입니다.");
 		}
 		return planner;
 	}
 
 	@Override
-	public List<PlannerDto> findPlannersByAccountId(int accountId) throws Exception {
-		List<PlannerDto> planner = plannerDao.findPlannersByAccountId(accountId);
-		if(planner.isEmpty()) {
-			throw new NotFoundPlanner("존재하지 않는 플래너 입니다.");
+	public Page<PlannerDto> findPlannersByAccountId(int page, int accountId) throws Exception {
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
+		List<PlannerDto> plannerList = plannerDao.findPlannersByAccountId(accountId, pInfo);
+		if (plannerList.isEmpty()) {
+			throw new NotFoundPlanner();
 		}
-		return planner;
+
+		int totalCount = plannerDao.getTotalCount(accountId);
+
+		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
+				.setList(plannerList)
+				.setPageInfo(pInfo)
+				.setTotalCount(totalCount).build();
+
+		return plannerListPage;
 	}
 
 	@Override
-	public List<PlannerDto> findPlannerAll() throws Exception {
-		List<PlannerDto> planner = plannerDao.findPlannerAll();
-		if(planner.isEmpty()) {
-			throw new NotFoundPlanner("생성된 플래너가 없습니다.");
+	public Page<PlannerDto> findPlannerAll(int page) throws Exception {
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
+		List<PlannerDto> plannerList = plannerDao.findPlannerAll(pInfo);
+		if (plannerList.isEmpty()) {
+			throw new NotFoundPlanner();
 		}
-		return planner;
+
+		int totalCount = plannerDao.getTotalCount();
+
+		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
+				.setList(plannerList)
+				.setPageInfo(pInfo)
+				.setTotalCount(totalCount).build();
+
+		return plannerListPage;
 	}
 
 	@Override
@@ -93,7 +113,7 @@ public class PlannerServiceImpl implements PlannerService {
 		// 컨트롤러에서 접근권한 체크 후 해야함
 		plannerDao.deletePlanner(plannerId);
 	}
-	
+
 	@Override
 	public int newMemo(int plannerId, PlanMemoDto planMemoDto) {
 		return plannerDao.insertPlanMemo(plannerId, planMemoDto);
@@ -117,14 +137,14 @@ public class PlannerServiceImpl implements PlannerService {
 	@Override
 	public void inviteMembers(int plannerId, List<String> nickNames) throws Exception {
 		List<AccountDto> users = new ArrayList<AccountDto>();
-		for(String nickName : nickNames) {
+		for (String nickName : nickNames) {
 			AccountDto user = accountDao.findAccountIdByNickName(nickName);
-			if(user == null) {
+			if (user == null) {
 				throw new NotFoundUserException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
 			}
 			users.add(user);
 		}
-		for(AccountDto user: users) {
+		for (AccountDto user : users) {
 			plannerDao.insertPlanMember(plannerId, user.getAccountId());
 		}
 	}
@@ -133,11 +153,11 @@ public class PlannerServiceImpl implements PlannerService {
 	public void deleteMember(int plannerId, String nickName) throws Exception {
 		List<PlanMemberDto> members = plannerDao.findMembersByPlannerId(plannerId);
 		AccountDto user = accountDao.findAccountIdByNickName(nickName);
-		if(user == null) {
+		if (user == null) {
 			throw new NotFoundUserException("사용자를 찾을 수 없습니다.");
 		}
 		boolean isMatch = members.stream().anyMatch(m -> m.getAccountId() == user.getAccountId());
-		if(!isMatch) {
+		if (!isMatch) {
 			throw new NotFoundMemberException("멤버를 찾을 수 없습니다.");
 		}
 		plannerDao.deletePlanMember(plannerId, user.getAccountId());
@@ -176,22 +196,29 @@ public class PlannerServiceImpl implements PlannerService {
 	@Override
 	public void plannerLikeOrUnLike(int accountId, int plannerId) {
 		boolean isLike = plannerDao.isLike(accountId, plannerId);
-		if(isLike) {
+		if (isLike) {
 			plannerDao.plannerUnLike(accountId, plannerId);
-		}
-		else {
+		} else {
 			plannerDao.plannerLike(accountId, plannerId);
 		}
 	}
 
 	@Override
-	public List<PlannerDto> getLikePlannerList(int accountId) throws Exception {
-		List<PlannerDto> list = plannerDao.likePlannerList(accountId);
-		if(list.isEmpty()) {
-			throw new NotFoundPlanner("좋아요한 플래너가 없습니다.");
+	public Page<PlannerDto> getLikePlannerList(int page, int accountId) throws Exception {
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
+		List<PlannerDto> plannerList = plannerDao.likePlannerList(accountId, pInfo);
+		if (plannerList.isEmpty()) {
+			throw new NotFoundPlanner();
 		}
-		
-		return list;
+
+		int totalCount = plannerDao.getTotalCountByLike(accountId);
+
+		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
+				.setList(plannerList)
+				.setPageInfo(pInfo)
+				.setTotalCount(totalCount).build();
+
+		return plannerListPage;
 	}
-	
+
 }

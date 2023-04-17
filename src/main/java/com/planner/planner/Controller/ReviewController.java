@@ -1,13 +1,10 @@
 package com.planner.planner.Controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
+import com.planner.planner.Common.Page;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Service.ReviewService;
 import com.planner.planner.util.ResponseMessage;
@@ -42,14 +40,14 @@ public class ReviewController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<Object> getReviews() {
-		List<ReviewDto> reviews = reviewService.findAllReview();
+	public ResponseEntity<Object> reviews(@RequestParam(value="page") int page) throws Exception {
+		Page<ReviewDto> reviews = reviewService.findAllReview(page);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",reviews));
 	}
 	
 	@GetMapping(value="/{reviewId}")
-	public ResponseEntity<Object> getReview(@PathVariable int reviewId) {
+	public ResponseEntity<Object> review(@PathVariable int reviewId) {
 		ReviewDto review = reviewService.findReview(reviewId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",review));

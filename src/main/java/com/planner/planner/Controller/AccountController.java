@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.planner.planner.Common.Page;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ContentIdListDto;
-import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
 import com.planner.planner.Exception.ForbiddenException;
@@ -70,20 +70,20 @@ public class AccountController {
 	}
 	
 	@GetMapping(value = "/{accountId}/planners")
-	public ResponseEntity<Object> likePlanners(HttpServletRequest req, @PathVariable int accountId) throws Exception {
+	public ResponseEntity<Object> likePlanners(HttpServletRequest req, @RequestParam(value="page") int page, @PathVariable int accountId) throws Exception {
 		checkAuth(req, accountId);
 		
-		List<PlannerDto> list = accountService.getMyPlanner(accountId);
+		Page<PlannerDto> list = accountService.getMyPlanner(page, accountId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));
 	}
 
 	@GetMapping(value = "/{accountId}/likes")
-	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId, @RequestParam("type") String type) throws Exception {
+	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId,  @RequestParam(value="page") int page, @RequestParam("type") String type) throws Exception {
 		checkAuth(req, accountId);
-		List<?> list = null;
+		Object list = null;
 		if(type.equals("planner")) {
-			list = accountService.getLikePlanner(accountId);
+			list = accountService.getLikePlanner(page, accountId);
 		}
 		//LikeDto likes = accountService.allLikesList(accountId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));

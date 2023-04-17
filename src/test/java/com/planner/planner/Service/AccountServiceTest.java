@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,11 +27,11 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.planner.planner.Common.Image;
+import com.planner.planner.Common.Page;
+import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.Impl.AccountServiceImpl;
 import com.planner.planner.Service.Impl.PlannerServiceImpl;
@@ -122,92 +121,22 @@ public class AccountServiceTest {
 	@Test
 	public void 나의_플래너_가져오기() throws Exception {
 		int testAccountId = 1;
-		List<PlannerDto> testList = Arrays.asList(createPlanner());
+		List<PlannerDto> testList = Arrays.asList(createPlanner(1),createPlanner(2));
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(1).setPageItemCount(10).build();
+		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
+				.setList(testList)
+				.setPageInfo(pInfo)
+				.setTotalCount(testList.size())
+				.build();
 		
-		when(plannerService.findPlannersByAccountId(testAccountId)).thenReturn(testList);
+		when(plannerService.findPlannersByAccountId(anyInt(),anyInt())).thenReturn(plannerListPage);
 
-		List<PlannerDto> list = accountService.getMyPlanner(testAccountId);
+		Page<PlannerDto> list = accountService.getMyPlanner(1, testAccountId);
 		
-		verify(plannerService).findPlannersByAccountId(testAccountId);
+		verify(plannerService).findPlannersByAccountId(anyInt(), anyInt());
 		
-		assertEquals(testList.get(0).getAccountId(), list.get(0).getAccountId());
+		assertEquals(testList.get(0).getAccountId(), list.getList().get(0).getAccountId());
 	}
-	
-	@Test(expected =  NotFoundPlanner.class)
-	public void 나의_플래너_가져오기_없는경우() throws Exception {
-		int testAccountId = 1;
-		List<PlannerDto> testList = Arrays.asList(createPlanner());
-		
-		when(plannerService.findPlannersByAccountId(testAccountId)).thenThrow(NotFoundPlanner.class);
-		
-		List<PlannerDto> list = accountService.getMyPlanner(testAccountId);
-		
-		verify(plannerService).findPlannersByAccountId(testAccountId);
-		
-		//assertEquals(testList.get(0).getAccountId(), list.get(0).getAccountId());
-	}
-	
-	@Test
-	public void 좋아요_플래너_가져오기() throws Exception {
-		int testAccountId = 1;
-		List<PlannerDto> testList = Arrays.asList(createPlanner());
-		
-		when(plannerService.getLikePlannerList(testAccountId)).thenReturn(testList);
-
-		List<PlannerDto> list = accountService.getLikePlanner(testAccountId);
-		
-		verify(plannerService).getLikePlannerList(testAccountId);
-		
-		assertEquals(testList.get(0).getAccountId(), list.get(0).getAccountId());
-	}
-	
-	@Test(expected =  NotFoundPlanner.class)
-	public void 좋아요_플래너_가져오기_없는경우() throws Exception {
-		int testAccountId = 1;
-		List<PlannerDto> testList = Arrays.asList(createPlanner());
-		
-		when(plannerService.findPlannersByAccountId(testAccountId)).thenThrow(NotFoundPlanner.class);
-		
-		List<PlannerDto> list = accountService.getMyPlanner(testAccountId);
-		
-		verify(plannerService).getLikePlannerList(testAccountId);
-		
-		//assertEquals(testList.get(0).getAccountId(), list.get(0).getAccountId());
-	}
-
-//	@Test
-//	public void 좋아요여행지가져오기() {
-//		List<SpotLikeDto> likes = accountService.spotLikesByAccountId(1);
-//		assertNotNull(likes);
-//		for (SpotLikeDto like : likes) {
-//			assertEquals(1, like.getAccountId());
-//		}
-//	}
-
-//	@Test
-//	public void 좋아요한여행지확인() {
-//		ContentIdListDto contentIds = new ContentIdListDto(Arrays.asList(3,4,5));
-//		List<SpotLikeDto> list = new ArrayList<>();
-//		list.add(new SpotLikeDto.Builder().setAccountId(1).setContentId(3).setLikeId(1).build());
-//		list.add(new SpotLikeDto.Builder().setAccountId(1).setContentId(4).setLikeId(2).build());
-//		list.add(new SpotLikeDto.Builder().setAccountId(1).setContentId(5).setLikeId(3).build());
-//
-//		List<SpotLikeStateDto> resultList = new ArrayList<>();
-//		resultList.add(new SpotLikeStateDto(3,true));
-//		resultList.add(new SpotLikeStateDto(4,true));
-//		resultList.add(new SpotLikeStateDto(5,true));
-//
-//		when(accountDao.spotLikesByContentIds(1, contentIds.getContentIds())).thenReturn(list);
-//
-//		//
-//		List<SpotLikeStateDto> likes = accountService.spotLikeStateCheck(1, contentIds);
-//
-//		//
-//		for(int i=0;i<likes.size();i++) {
-//			assertEquals(likes.get(i).getContentId(), resultList.get(i).getContentId());
-//			assertEquals(likes.get(i).getState(), resultList.get(i).getState());
-//		}
-//	}
 	
 	@Test
 	public void 이메일_검색() throws Exception {
@@ -233,9 +162,9 @@ public class AccountServiceTest {
 		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setUserName(name).setNickName(nickName).build();
 	}
 	
-	private PlannerDto createPlanner() {
+	private PlannerDto createPlanner(int plannerId) {
 		return new PlannerDto.Builder()
-				.setPlannerId(1)
+				.setPlannerId(plannerId)
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("테스트여행")

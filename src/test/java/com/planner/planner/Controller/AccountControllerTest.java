@@ -95,20 +95,32 @@ public class AccountControllerTest {
 	public void 나의_플래너_가져오기() throws Exception {
 		mockMvc.perform(get("/api/users/1/planners")
 				.header("Authorization", token)
-				.accept(MediaType.APPLICATION_JSON))
+				.accept(MediaType.APPLICATION_JSON)
+				.param("page", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.data").isNotEmpty());
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
 	
 	@Test
 	public void 좋아요_플래너_가져오기() throws Exception {
 		mockMvc.perform(get("/api/users/1/likes?type=planner")
 				.header("Authorization", token)
-				.accept(MediaType.APPLICATION_JSON))
+				.accept(MediaType.APPLICATION_JSON)
+				.param("page", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.data").isNotEmpty());
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
 
 //	@Test

@@ -2,6 +2,7 @@ package com.planner.planner.Service;
 
 import java.util.List;
 
+import com.planner.planner.Common.Page;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemberDto;
@@ -12,8 +13,8 @@ public interface PlannerService {
 	// 플래너 생성, 가져오기, 수정, 삭제
 	public int newPlanner(PlannerDto plannerDto) throws Exception;
 	public PlannerDto findPlannerByPlannerId(int plannerId) throws Exception;
-	public List<PlannerDto> findPlannersByAccountId(int accountId) throws Exception;
-	public List<PlannerDto> findPlannerAll() throws Exception;
+	public Page<PlannerDto> findPlannersByAccountId(int page, int accountId) throws Exception;
+	public Page<PlannerDto> findPlannerAll(int page) throws Exception;
 	public void updatePlanner(PlannerDto plannerDto) throws Exception;
 	public void deletePlanner(int plannerId) throws Exception;
 	
@@ -40,5 +41,5 @@ public interface PlannerService {
 	
 	// 플래너 좋아요, 좋아요 취소, 좋아요 목록 가져오기
 	public void plannerLikeOrUnLike(int accountId, int plannerId);
-	public List<PlannerDto> getLikePlannerList(int accountId) throws Exception;
+	public Page<PlannerDto> getLikePlannerList(int page, int accountId) throws Exception;
 }

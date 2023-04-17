@@ -1,6 +1,8 @@
 package com.planner.planner.Controller;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -19,6 +21,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -41,6 +45,7 @@ import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
+import com.planner.planner.Service.Impl.PlannerServiceImpl;
 import com.planner.planner.util.JwtUtil;
 
 @WebAppConfiguration
@@ -57,6 +62,7 @@ public class PlannerControllerTest {
 	private JwtUtil jwtUtil;
 	private ObjectMapper mapper = new ObjectMapper();
 	private String token;
+	
 	@Before
 	public void setUp() throws Exception {
 		this.mapper.registerModule(new JavaTimeModule());
@@ -66,8 +72,7 @@ public class PlannerControllerTest {
 
 	@Test
 	public void 새플래너() throws Exception {
-		int newPlannerId = 2;
-		PlannerDto planner = createPlanner(newPlannerId);
+		PlannerDto planner = createPlanner(0);
 		this.mockMvc.perform(post("/api/planners")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
@@ -76,19 +81,26 @@ public class PlannerControllerTest {
 				.content(mapper.writeValueAsString(planner)))
 		.andDo(print())
 		.andExpect(status().isCreated())
-		.andExpect(jsonPath("$.data", is(newPlannerId)));
+		.andExpect(jsonPath("$.data").isNumber());
 	}
 	
 	@Test
-	public void 플래너_목록() throws Exception {
+	public void 플래너_리스트_조회() throws Exception {
 		this.mockMvc.perform(get("/api/planners")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", token))
+				.header("Authorization", token)
+				.param("page", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.data").isNotEmpty());
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
 	
 	@Test
@@ -507,6 +519,7 @@ public class PlannerControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
+	
 	@Test
 	public void 일정_여행지_삭제_다른사용자_요청_접근거부() throws Exception {
 		int plannerId = 1;

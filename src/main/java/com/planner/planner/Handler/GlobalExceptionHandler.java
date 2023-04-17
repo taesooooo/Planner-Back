@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.planner.planner.Exception.AuthCheckFail;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Exception.NotFoundPlanner;
+import com.planner.planner.Exception.NotFoundReviewException;
 import com.planner.planner.Exception.NotFoundToken;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.util.ResponseMessage;
@@ -35,7 +36,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Object> ForbiddenUser(Exception e) {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, e.getMessage()));
 	}
-	@ExceptionHandler(value = {NotFoundUserException.class,NotFoundPlanner.class})
+	@ExceptionHandler(value = {NotFoundUserException.class, NotFoundPlanner.class, NotFoundReviewException.class})
 	public ResponseEntity<Object> notFoundUser(Exception e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, e.getMessage()));
 	}
@@ -49,9 +50,4 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Object> notFoundTokenEx(Exception e) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, e.getMessage()));
 	}
-	
-//	@ExceptionHandler(NotFoundPlanner.class)
-//	public ResponseEntity<Object> notFoundPlanner(Exception e) {
-//		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, e.getMessage()));
-//	}
 }

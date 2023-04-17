@@ -72,6 +72,7 @@ public class ReviewDto {
 			this.fileNames = fileNames;
 			return this;
 		}
+		
 		public ReviewDto build() {
 			return new ReviewDto(this);
 		}
@@ -133,6 +134,4 @@ public class ReviewDto {
 	public List<String> getFileNames() {
 		return fileNames;
 	}
-
-
 }

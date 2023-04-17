@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.planner.planner.Common.Page;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.LikeDto;
@@ -18,8 +19,8 @@ public interface AccountService {
 	public boolean passwordUpdate(AccountDto accountDto);
 	public void acceptInvite(int plannerId, int accountId);
 	public LikeDto allLikesList(int accountId);
-	public List<PlannerDto> getMyPlanner(int accountId) throws Exception;
-	public List<PlannerDto> getLikePlanner(int accountId) throws Exception;
+	public Page<PlannerDto> getMyPlanner(int page, int accountId) throws Exception;
+	public Page<PlannerDto> getLikePlanner(int page, int accountId) throws Exception;
 	public List<SpotLikeDto> spotLikesByAccountId(int accountId);
 	public List<SpotLikeStateDto> spotLikeStateCheck(int accountId, ContentIdListDto contentIds);
 	public boolean searchEmail(String searchEmail) throws Exception;

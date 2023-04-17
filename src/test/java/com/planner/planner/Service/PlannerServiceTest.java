@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -22,6 +21,8 @@ import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.planner.planner.Common.Page;
+import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
@@ -116,12 +117,15 @@ public class PlannerServiceTest {
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
 		planners.add(createPlanner(1));
 		planners.add(createPlanner(2));
+		int testTotalCount = 2;
 		
-		when(plannerDao.findPlannersByAccountId(plannerId)).thenReturn(planners);
+		when(plannerDao.findPlannersByAccountId(anyInt(), any(PageInfo.class))).thenReturn(planners);
+		when(plannerDao.getTotalCount()).thenReturn(testTotalCount);
 		
-		List<PlannerDto> findPlanners = plannerService.findPlannersByAccountId(plannerId);
+		Page<PlannerDto> plannerList = plannerService.findPlannersByAccountId(1, plannerId);
 		
-		assertEquals(findPlanners.size(), 2);
+		assertEquals(plannerList.getList().size(), 2);
+		assertEquals(planners.get(0).getPlannerId(), plannerList.getList().get(0).getPlannerId());
 	}
 	
 	@Test(expected = NotFoundPlanner.class)
@@ -129,9 +133,11 @@ public class PlannerServiceTest {
 		int plannerId = 1;
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
 		
-		when(plannerDao.findPlannersByAccountId(plannerId)).thenReturn(planners);
+		when(plannerDao.findPlannersByAccountId(anyInt(), any(PageInfo.class))).thenReturn(planners);
+		//when(plannerDao.getTotalCount()).thenReturn(testTotalCount);
 		
-		List<PlannerDto> findPlanners = plannerService.findPlannersByAccountId(plannerId);
+		Page<PlannerDto> plannerList = plannerService.findPlannersByAccountId(1, plannerId);
+
 	}
 	
 	@Test
@@ -139,21 +145,27 @@ public class PlannerServiceTest {
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
 		planners.add(createPlanner(1));
 		planners.add(createPlanner(2));
+		int testTotalCount = 2;
 		
-		when(plannerDao.findPlannerAll()).thenReturn(planners);
+		when(plannerDao.findPlannerAll(any(PageInfo.class))).thenReturn(planners);
+		when(plannerDao.getTotalCount()).thenReturn(testTotalCount);
 		
-		List<PlannerDto> findPlanners = plannerService.findPlannerAll();
+		Page<PlannerDto> plannerList = plannerService.findPlannerAll(1);
 		
-		assertEquals(findPlanners.size(), 2);
+		verify(plannerDao).findPlannerAll(any(PageInfo.class));
+		verify(plannerDao).getTotalCount();
+		
+		assertEquals(2, plannerList.getList().size());
+		assertEquals(planners.get(0).getPlannerId(), plannerList.getList().get(0).getPlannerId());
 	}
 	
 	@Test(expected = NotFoundPlanner.class)
 	public void 모든플래너조회_만약플래너가_없을때() throws Exception {
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
 		
-		when(plannerDao.findPlannerAll()).thenReturn(planners);
+		when(plannerDao.findPlannerAll(any(PageInfo.class))).thenReturn(planners);
 		
-		List<PlannerDto> findPlanners = plannerService.findPlannerAll();
+		Page<PlannerDto> plannerList = plannerService.findPlannerAll(1);
 	}
 	
 	@Test
@@ -398,21 +410,34 @@ public class PlannerServiceTest {
 	
 	@Test
 	public void 좋아요_플래너_모두_조회() throws Exception {
-		List<PlannerDto> likeList = Arrays.asList(plannerDto);
-		when(plannerDao.likePlannerList(anyInt())).thenReturn(likeList);
+		int plannerId = 1;
+		List<PlannerDto> planners = new ArrayList<PlannerDto>();
+		planners.add(createPlanner(1));
+		planners.add(createPlanner(2));
+		int testTotalCount = 2;
 		
-		plannerService.getLikePlannerList(anyInt());
+		when(plannerDao.likePlannerList(anyInt(), any(PageInfo.class))).thenReturn(planners);
+		when(plannerDao.getTotalCountByLike(anyInt())).thenReturn(testTotalCount);
 		
-		verify(plannerDao).likePlannerList(anyInt());
+		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, plannerId);
+		
+		assertEquals(plannerList.getList().size(), 2);
+		assertEquals(planners.get(0).getPlannerId(), plannerList.getList().get(0).getPlannerId());
 	}
 	
 	@Test(expected = NotFoundPlanner.class)
 	public void 좋아요_플래너_모두_조회_없는경우() throws Exception {
-		when(plannerDao.likePlannerList(anyInt())).thenReturn(new ArrayList<PlannerDto>());
+		int plannerId = 1;
+		List<PlannerDto> planners = new ArrayList<PlannerDto>();
+		int testTotalCount = 2;
 		
-		plannerService.getLikePlannerList(anyInt());
+		when(plannerDao.likePlannerList(anyInt(), any(PageInfo.class))).thenReturn(planners);
+		//when(plannerDao.getTotalCountByLike(anyInt())).thenReturn(testTotalCount);
 		
-		verify(plannerDao).likePlannerList(anyInt());
+		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, plannerId);
+		
+//		assertEquals(plannerList.getPlannerList().size(), 2);
+//		assertEquals(planners.get(0).getPlannerId(), plannerList.getPlannerList().get(0).getPlannerId());
 	}
 	
 	private PlanMemoDto createPlanMemo(int memoId, String title, String content, int plannerId, LocalDateTime create, LocalDateTime update) {

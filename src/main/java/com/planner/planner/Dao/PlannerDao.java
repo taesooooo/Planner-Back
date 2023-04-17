@@ -2,6 +2,7 @@ package com.planner.planner.Dao;
 
 import java.util.List;
 
+import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemberDto;
@@ -12,10 +13,13 @@ public interface PlannerDao {
 	// 플래너 생성, 조회, 수정, 삭제
 	public int insertPlanner(PlannerDto plannerDto);
 	public PlannerDto findPlannerByPlannerId(int plannerId);
-	public List<PlannerDto> findPlannersByAccountId(int accountId);
-	public List<PlannerDto> findPlannerAll();
+	public List<PlannerDto> findPlannersByAccountId(int accountId, PageInfo pageInfo);
+	public List<PlannerDto> findPlannerAll(PageInfo pageInfo);
 	public int updatePlanner(int plannerId, PlannerDto plannerDto);
 	public int deletePlanner(int plannerId);
+	public int getTotalCount();
+	public int getTotalCount(int accountId);
+	public int getTotalCountByLike(int accountId);
 	
 	// 플래너 멤버 생성, 조회, 수정, 삭제
 	public int insertPlanMember(int plannerId, int accountId);
@@ -45,7 +49,7 @@ public interface PlannerDao {
 	public int plannerLike(int accountId, int plannerId);
 	public int plannerUnLike(int accountId, int plannerId);
 	public boolean isLike(int accountId, int plannerId);
-	public List<PlannerDto> likePlannerList(int accountId);
+	public List<PlannerDto> likePlannerList(int accountId, PageInfo pageInfo);
 }
 
 

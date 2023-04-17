@@ -2,8 +2,9 @@ package com.planner.planner.Service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -21,9 +22,13 @@ import org.mockito.Spy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.planner.planner.Common.Page;
+import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ReviewDto;
+import com.planner.planner.Dto.ReviewListDto;
+import com.planner.planner.Exception.NotFoundReviewException;
 import com.planner.planner.Service.Impl.ReviewServiceImpl;
 import com.planner.planner.util.FileStore;
 
@@ -65,16 +70,36 @@ public class ReviewServiceTest {
 	}
 	
 	@Test
-	public void 리뷰_모두가져오기() {
-		List<ReviewDto> list = new ArrayList<ReviewDto>();
-		for(int i=0;i<3;i++) {
-			ReviewDto review = new ReviewDto.Builder().setReviewId(i).setPlannerId(i).setTitle("테스트").setContent("test").setWriter("test").setWriterId(i).setLikeCount(0).build();
-			list.add(review);
-		}
+	public void 리뷰_리스트_가져오기() throws Exception {
+		List<ReviewDto> testList = createReview();
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(1).setPageItemCount(10).build();
+		int testTotalCount = testList.size();
 		
-		when(reviewDao.findAllReview()).thenReturn(list);
+		when(reviewDao.findAllReview(any())).thenReturn(testList);
+		when(reviewDao.findTotalCount()).thenReturn(testTotalCount);
 		
-		List<ReviewDto> reviewList = reviewService.findAllReview();
+		Page<ReviewDto> reviewList = reviewService.findAllReview(anyInt());
+		
+		verify(reviewDao).findAllReview(any());
+		verify(reviewDao).findTotalCount();
+		
+		assertEquals(testList.get(0).getReviewId(), reviewList.getList().get(0).getReviewId());
+	}
+	
+	@Test(expected = NotFoundReviewException.class)
+	public void 리뷰_리스트_가져오기_리스트_없을경우() throws Exception {
+		//List<ReviewDto> testList = createReview();
+		//int testTotalCount = testList.size();
+		
+		when(reviewDao.findAllReview(any())).thenReturn(new ArrayList<ReviewDto>());
+		when(reviewDao.findTotalCount()).thenReturn(0);
+		
+		Page<ReviewDto> reviewList = reviewService.findAllReview(anyInt());
+		
+		verify(reviewDao).findAllReview(any());
+		//verify(reviewDao).findTotalCount();
+		
+		//assertEquals(testList.get(0).getReviewId(), reviewList.getList().get(0).getReviewId());
 	}
 	
 	@Test
@@ -99,4 +124,47 @@ public class ReviewServiceTest {
 	public void 리뷰_삭제() {
 		reviewService.deleteReview(1);
 	}
+	
+	private List<ReviewDto> createReview() {
+		List<ReviewDto> reviewList = new ArrayList<ReviewDto>();
+		for(int i=0;i<3;i++) {
+			ReviewDto review = new ReviewDto.Builder()
+					.setReviewId(i)
+					.setPlannerId(i)
+					.setTitle("테스트"+i)
+					.setContent("test"+i)
+					.setWriter("test"+i)
+					.setWriterId(i)
+					.setLikeCount(0)
+					.build();
+			reviewList.add(review);
+		}
+		return reviewList;
+	}
+	
+//	private ReviewListDto createReviewList() {
+//		List<ReviewDto> reviewList = new ArrayList<ReviewDto>();
+//		for(int i=0;i<3;i++) {
+//			ReviewDto review = new ReviewDto.Builder()
+//					.setReviewId(i)
+//					.setPlannerId(i)
+//					.setTitle("테스트"+i)
+//					.setContent("test"+i)
+//					.setWriter("test"+i)
+//					.setWriterId(i)
+//					.setLikeCount(0)
+//					.build();
+//			reviewList.add(review);
+//		}
+//		PagingInfo info = new PagingInfo.Builder()
+//				.setTotalCount(3)
+//				.build();
+//		
+//		ReviewListDto list = new ReviewListDto.Builder()
+//				.setReviewList(reviewList)
+//				.setPagingInfo(info)
+//				.build();
+//		
+//		return list;
+//	}
 }

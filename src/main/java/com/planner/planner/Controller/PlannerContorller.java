@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.planner.planner.Common.Page;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
-import com.planner.planner.Dto.PlanMemberDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.ForbiddenException;
@@ -47,8 +47,8 @@ public class PlannerContorller {
 	}
 
 	@GetMapping
-	public ResponseEntity<Object> plannerList(HttpServletRequest req) throws Exception {
-		List<PlannerDto> planners = plannerService.findPlannerAll();
+	public ResponseEntity<Object> plannerList(HttpServletRequest req, @RequestParam(value = "page")int page) throws Exception {
+		Page<PlannerDto> planners = plannerService.findPlannerAll(page);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", planners));
 	}
 	
@@ -60,7 +60,7 @@ public class PlannerContorller {
 //	}
 
 	@GetMapping(value="/{plannerId}")
-	public ResponseEntity<Object> findPlannersById(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
+	public ResponseEntity<Object> findPlannerById(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
 		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",planner));

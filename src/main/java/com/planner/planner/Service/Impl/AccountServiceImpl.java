@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Common.Image;
+import com.planner.planner.Common.Page;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dao.Impl.AccountDaoImpl;
@@ -20,7 +21,6 @@ import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotLikeStateDto;
-import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.PlannerService;
@@ -96,13 +96,13 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public List<PlannerDto> getMyPlanner(int accountId) throws Exception {
-		return plannerService.findPlannersByAccountId(accountId);
+	public Page<PlannerDto> getMyPlanner(int page, int accountId) throws Exception {
+		return plannerService.findPlannersByAccountId(page, accountId); 
 	}
 
 	@Override
-	public List<PlannerDto> getLikePlanner(int accountId) throws Exception {
-		return plannerService.getLikePlannerList(accountId);
+	public Page<PlannerDto> getLikePlanner(int page, int accountId) throws Exception {
+		return plannerService.getLikePlannerList(page, accountId);
 	}
 
 	@Override

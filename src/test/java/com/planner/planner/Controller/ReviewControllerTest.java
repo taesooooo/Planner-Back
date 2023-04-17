@@ -1,5 +1,6 @@
 package com.planner.planner.Controller;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.internal.matchers.GreaterThan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -83,19 +85,20 @@ public class ReviewControllerTest {
 	
 	@Test
 	public void 리뷰_목록가져오기_테스트() throws Exception {
-		Map<String, Integer> index = new HashMap<String, Integer>();
-		index.put("index", 1);
-		
 		mockMvc.perform(get("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(index)))
+				.param("page", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)))
-		.andExpect(jsonPath("$.data").isNotEmpty());
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
 	
 	@Test

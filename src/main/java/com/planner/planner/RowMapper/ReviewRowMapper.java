@@ -21,6 +21,7 @@ public class ReviewRowMapper implements RowMapper<ReviewDto> {
 				.setLikeCount(rs.getInt("like_count"))
 				.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
 				.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
+//				.setTotalPage(rowNum)
 				.build();
 	}
 
