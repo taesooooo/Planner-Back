@@ -456,9 +456,9 @@ public class PlannerServiceTest {
 				.setLocationContentId(1000)
 				.setLocationName("바다")
 				.setLocationImage("바다사진")
-				.setAddr("바다주소")
-				.setMapx(111.111f)
-				.setMapy(111.111f)
+				.setLocationAddr("바다주소")
+				.setLocationMapx(111.111f)
+				.setLocationMapy(111.111f)
 				.setLocationTransportation(1)
 				.setPlanId(1)
 				.build();

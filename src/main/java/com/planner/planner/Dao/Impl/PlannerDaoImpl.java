@@ -242,9 +242,9 @@ public class PlannerDaoImpl implements PlannerDao {
 			ps.setString(1, planLocationDto.getLocationName());
 			ps.setInt(2, planLocationDto.getLocationContentId());
 			ps.setString(3, planLocationDto.getLocationImage());
-			ps.setString(4, planLocationDto.getAddr());
-			ps.setFloat(5, planLocationDto.getMapx());
-			ps.setFloat(6, planLocationDto.getMapy());
+			ps.setString(4, planLocationDto.getLocationAddr());
+			ps.setFloat(5, planLocationDto.getLocationMapx());
+			ps.setFloat(6, planLocationDto.getLocationMapx());
 			ps.setInt(7, planLocationDto.getLocationTransportation());
 			ps.setInt(8, planLocationDto.getPlanId());
 			return ps;

@@ -5,9 +5,9 @@ public class PlanLocationDto {
 	private int locationContentId;
 	private String locationName;
 	private String locationImage;
-	private String addr;
-	private float mapx;
-	private float mapy;
+	private String locationAddr;
+	private float locationMapx;
+	private float locationMapy;
 	private int locationTransportation;
 	private int planId;
 	
@@ -16,9 +16,9 @@ public class PlanLocationDto {
 		private int locationContentId;
 		private String locationName;
 		private String locationImage;
-		private String addr;
-		private float mapx;
-		private float mapy;
+		private String locationAddr;
+		private float locationMapx;
+		private float locationMapy;
 		private int locationTransportation;
 		private int planId;
 		
@@ -40,16 +40,16 @@ public class PlanLocationDto {
 			this.locationImage = locationImage;
 			return this;
 		}
-		public Builder setAddr(String addr) {
-			this.addr = addr;
+		public Builder setLocationAddr(String addr) {
+			this.locationAddr = addr;
 			return this;
 		}
-		public Builder setMapx(float mapx) {
-			this.mapx = mapx;
+		public Builder setLocationMapx(float mapx) {
+			this.locationMapx = mapx;
 			return this;
 		}
-		public Builder setMapy(float mapy) {
-			this.mapy = mapy;
+		public Builder setLocationMapy(float mapy) {
+			this.locationMapy = mapy;
 			return this;
 		}
 		public Builder setLocationTransportation(int locationTransportation) {
@@ -74,9 +74,9 @@ public class PlanLocationDto {
 		this.locationContentId = builder.locationContentId;
 		this.locationName = builder.locationName;
 		this.locationImage = builder.locationImage;
-		this.addr = builder.addr;
-		this.mapx = builder.mapx;
-		this.mapy = builder.mapy;
+		this.locationAddr = builder.locationAddr;
+		this.locationMapx = builder.locationMapx;
+		this.locationMapy = builder.locationMapy;
 		this.locationTransportation = builder.locationTransportation;
 		this.planId = builder.planId;
 	}
@@ -97,16 +97,16 @@ public class PlanLocationDto {
 		return locationImage;
 	}
 
-	public String getAddr() {
-		return addr;
+	public String getLocationAddr() {
+		return locationAddr;
 	}
 
-	public float getMapx() {
-		return mapx;
+	public float getLocationMapx() {
+		return locationMapx;
 	}
 
-	public float getMapy() {
-		return mapy;
+	public float getLocationMapy() {
+		return locationMapy;
 	}
 
 	public int getLocationTransportation() {
