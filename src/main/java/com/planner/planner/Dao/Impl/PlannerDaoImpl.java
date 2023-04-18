@@ -44,7 +44,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, A.title, A.plan_date_start, A.plan_date_end, A.expense, A.member_count, A.member_type_id, "
 			+ "A.like_count, A.create_date, A.update_date, "
 			+ "C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_date, D.plan_id, "
-			+ "E.location_id, E.location_name, E.location_content_id, E.location_image, E.location_transportation, E.plan_id "
+			+ "E.location_id, E.location_name, E.location_content_id, E.location_image, E.location_addr, E.location_mapx, E.location_mapy, E.location_transportation, E.plan_id "
 			+ "FROM planner AS A " + "LEFT JOIN plan_member AS B ON A.planner_id = B.planner_id "
 			+ "LEFT JOIN account AS C ON C.account_id = B.account_id "
 			+ "LEFT JOIN plan_memo AS M ON A.planner_id = M.planner_id "
@@ -70,9 +70,10 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String UPDATE_PLAN_SQL = "UPDATE plan SET plan.plan_date = ? WHERE plan.plan_id = ?;";
 	private final String DELETE_PLAN_SQL = "DELETE FROM plan WHERE plan.plan_id = ?;";
 
-	private final String INSERT_PLANLOCATION_SQL = "INSERT INTO plan_location(location_name, location_content_id, location_image, location_transportation, plan_id) VALUES(?, ?, ?, ?, ?);";
-	private final String FINDS_PLANLOCATION_SQL = "SELECT plan_location.location_id, plan_location.location_name, plan_location.location_content_id, plan_location.location_image, plan_location.location_transportation, plan_location.plan_id "
-			+ "FROM plan_location " + "WHERE plan_location.plan_id = ?;";
+	private final String INSERT_PLANLOCATION_SQL = "INSERT INTO plan_location(location_name, location_content_id, location_image, location_addr, location_mapx, location_mapy, location_transportation, plan_id) VALUES(?, ?, ?, ?, ?);";
+	private final String FINDS_PLANLOCATION_SQL = "SELECT plan_location.location_id, plan_location.location_name, plan_location.location_content_id, plan_location.location_image, plan_location.location_addr, plan_location.location_mapx, plan_location.location_mapy, plan_location.location_transportation, plan_location.plan_id "
+			+ "FROM plan_location " 
+			+ "WHERE plan_location.plan_id = ?;";
 	private final String UPDATE_PLANLOCATION_SQL = "UPDATE plan_location AS PL SET PL.location_name = ?, PL.location_content_id = ?, PL.location_image = ? , PL.location_transportation = ? WHERE PL.location_id = ?;";
 	private final String DELETE_PLANLOCATION_SQL = "DELETE FROM plan_location WHERE plan_location.location_id = ?;";
 
@@ -80,7 +81,8 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String DELETE_PLANNERLIKE_SQL = "DELETE FROM planner_like WHERE account_id = ? AND planner_id = ?;";
 	private final String PLANNERLIKE_COUNT_SQL = "SELECT count(*) as count FROM planner_like AS PL WHERE PL.account_id = ? AND PL.planner_id = ?;";
 	private final String FINDS_PLANNERLIKE_JOIN_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date "
-			+ "FROM planner AS P " + "LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id "
+			+ "FROM planner AS P " 
+			+ "LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id "
 			+ "WHERE P.planner_id = ? ORDER BY P.planner_id ASC LIMIT ?, ?;";
 
 	public PlannerDaoImpl(JdbcTemplate jdbcTemplate) {
@@ -235,16 +237,16 @@ public class PlannerDaoImpl implements PlannerDao {
 
 	@Override
 	public int insertPlanLocation(PlanLocationDto planLocationDto) {
-		// int result = jdbcTemplate.update(INSERT_PLANLOCATION_SQL,
-		// planLocationDto.getLocationContetntId(), planLocationDto.getLocationImage(),
-		// planLocationDto.getLocationTranspotation(), planLocationDto.getPlanId());
 		int result = jdbcTemplate.update(conn -> {
 			PreparedStatement ps = conn.prepareStatement(INSERT_PLANLOCATION_SQL, new String[] { "plan_location_id" });
 			ps.setString(1, planLocationDto.getLocationName());
 			ps.setInt(2, planLocationDto.getLocationContentId());
 			ps.setString(3, planLocationDto.getLocationImage());
-			ps.setInt(4, planLocationDto.getLocationTransportation());
-			ps.setInt(5, planLocationDto.getPlanId());
+			ps.setString(4, planLocationDto.getAddr());
+			ps.setFloat(5, planLocationDto.getMapx());
+			ps.setFloat(6, planLocationDto.getMapy());
+			ps.setInt(7, planLocationDto.getLocationTransportation());
+			ps.setInt(8, planLocationDto.getPlanId());
 			return ps;
 		}, keyHolder);
 		return keyHolder.getKey().intValue();

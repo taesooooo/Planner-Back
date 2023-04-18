@@ -1,12 +1,13 @@
 package com.planner.planner.Dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class PlanLocationDto {
 	private int locationId;
 	private int locationContentId;
 	private String locationName;
 	private String locationImage;
+	private String addr;
+	private float mapx;
+	private float mapy;
 	private int locationTransportation;
 	private int planId;
 	
@@ -15,6 +16,9 @@ public class PlanLocationDto {
 		private int locationContentId;
 		private String locationName;
 		private String locationImage;
+		private String addr;
+		private float mapx;
+		private float mapy;
 		private int locationTransportation;
 		private int planId;
 		
@@ -34,6 +38,18 @@ public class PlanLocationDto {
 		
 		public Builder setLocationImage(String locationImage) {
 			this.locationImage = locationImage;
+			return this;
+		}
+		public Builder setAddr(String addr) {
+			this.addr = addr;
+			return this;
+		}
+		public Builder setMapx(float mapx) {
+			this.mapx = mapx;
+			return this;
+		}
+		public Builder setMapy(float mapy) {
+			this.mapy = mapy;
 			return this;
 		}
 		public Builder setLocationTransportation(int locationTransportation) {
@@ -58,6 +74,9 @@ public class PlanLocationDto {
 		this.locationContentId = builder.locationContentId;
 		this.locationName = builder.locationName;
 		this.locationImage = builder.locationImage;
+		this.addr = builder.addr;
+		this.mapx = builder.mapx;
+		this.mapy = builder.mapy;
 		this.locationTransportation = builder.locationTransportation;
 		this.planId = builder.planId;
 	}
@@ -76,6 +95,18 @@ public class PlanLocationDto {
 
 	public String getLocationImage() {
 		return locationImage;
+	}
+
+	public String getAddr() {
+		return addr;
+	}
+
+	public float getMapx() {
+		return mapx;
+	}
+
+	public float getMapy() {
+		return mapy;
 	}
 
 	public int getLocationTransportation() {

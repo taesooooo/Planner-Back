@@ -389,7 +389,7 @@ public class PlannerServiceTest {
 		int plannerId = 1;
 		int planId = 1;
 		int planLocationId = 1;
-		PlanLocationDto planLocation = createPlanLocation(planLocationId, 1000, null, 1, planId);
+		PlanLocationDto planLocation = createPlanLocation();
 		
 		when(plannerDao.updatePlanLocation(planLocationId,planLocation)).thenReturn(0);
 		
@@ -450,14 +450,17 @@ public class PlannerServiceTest {
 				.build();
 	}
 	
-	private PlanLocationDto createPlanLocation(int locationId, int locationContentId, String image, int transportation, int planId) {
+	private PlanLocationDto createPlanLocation() {
 		return new PlanLocationDto.Builder()
-				.setLocationId(locationId)
-				.setLocationContentId(locationContentId)
+				.setLocationId(1)
+				.setLocationContentId(1000)
 				.setLocationName("바다")
-				.setLocationImage(image)
-				.setLocationTransportation(transportation)
-				.setPlanId(planId)
+				.setLocationImage("바다사진")
+				.setAddr("바다주소")
+				.setMapx(111.111f)
+				.setMapy(111.111f)
+				.setLocationTransportation(1)
+				.setPlanId(1)
 				.build();
 	}
 	
@@ -492,9 +495,10 @@ public class PlannerServiceTest {
 		List<String> memberEmails = new ArrayList<String>();
 		memberEmails.add("test2@naver.com");
 		List<PlanLocationDto> planLocations = new ArrayList<PlanLocationDto>();
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContentId(1000).setLocationName("바다").setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(2).setLocationContentId(2000).setLocationName("땅").setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(3).setLocationContentId(3000).setLocationName("하늘").setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		//planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContentId(1000).setLocationName("바다").setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		planLocations.add(createPlanLocation());
+		planLocations.add(createPlanLocation());
+		planLocations.add(createPlanLocation());
 		
 		List<PlanDto> plans = new ArrayList<PlanDto>();
 		plans.add(new PlanDto.Builder().setPlanId(1).setPlanLocations(planLocations).setPlannerId(plannerId).build());
