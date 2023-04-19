@@ -591,7 +591,10 @@ public class PlannerControllerTest {
 				.setLocationId(locationId)
 				.setLocationContentId(contentId)
 				.setLocationName("바다")
-				.setLocationImage("")
+				.setLocationImage("바다사진")
+				.setLocationAddr("바다주소")
+				.setLocationMapx(111.111f)
+				.setLocationMapy(111.111f)
 				.setLocationTransportation(transportation)
 				.setPlanId(planId)
 				.build();

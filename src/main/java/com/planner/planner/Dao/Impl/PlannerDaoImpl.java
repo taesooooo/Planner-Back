@@ -70,7 +70,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String UPDATE_PLAN_SQL = "UPDATE plan SET plan.plan_date = ? WHERE plan.plan_id = ?;";
 	private final String DELETE_PLAN_SQL = "DELETE FROM plan WHERE plan.plan_id = ?;";
 
-	private final String INSERT_PLANLOCATION_SQL = "INSERT INTO plan_location(location_name, location_content_id, location_image, location_addr, location_mapx, location_mapy, location_transportation, plan_id) VALUES(?, ?, ?, ?, ?);";
+	private final String INSERT_PLANLOCATION_SQL = "INSERT INTO plan_location(location_name, location_content_id, location_image, location_addr, location_mapx, location_mapy, location_transportation, plan_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
 	private final String FINDS_PLANLOCATION_SQL = "SELECT plan_location.location_id, plan_location.location_name, plan_location.location_content_id, plan_location.location_image, plan_location.location_addr, plan_location.location_mapx, plan_location.location_mapy, plan_location.location_transportation, plan_location.plan_id "
 			+ "FROM plan_location " 
 			+ "WHERE plan_location.plan_id = ?;";
