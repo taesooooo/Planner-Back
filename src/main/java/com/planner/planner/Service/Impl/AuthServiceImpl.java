@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.AuthService;
 
 @Service
@@ -24,8 +25,11 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public AccountDto login(AccountDto accountDto) {
+	public AccountDto login(AccountDto accountDto) throws Exception {
 		AccountDto user = accountDao.read(accountDto);
+		if(user == null) {
+			throw new NotFoundUserException("아이디 또는 비빌먼호를 잘못 입력했습니다.");
+		}
 		return user;
 	}
 

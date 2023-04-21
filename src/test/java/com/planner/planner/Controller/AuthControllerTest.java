@@ -56,8 +56,9 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
-				.content(node.toString())
-				.contentType(MediaType.APPLICATION_JSON))
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
 		.andDo(print())
 		.andExpect(status().isCreated());
 	}
@@ -69,6 +70,7 @@ public class AuthControllerTest {
 		node.put("password", "1234");
 
 		mockMvc.perform(post("/api/auth/login")
+				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
 		.andDo(print())
