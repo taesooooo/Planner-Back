@@ -83,7 +83,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String FINDS_PLANNERLIKE_JOIN_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date "
 			+ "FROM planner AS P " 
 			+ "LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id "
-			+ "WHERE P.planner_id = ? ORDER BY P.planner_id ASC LIMIT ?, ?;";
+			+ "WHERE PL.account_id = ? ORDER BY PL.planner_id ASC LIMIT ?, ?;";
 
 	public PlannerDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
