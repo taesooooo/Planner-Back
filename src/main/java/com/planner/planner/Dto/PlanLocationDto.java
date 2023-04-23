@@ -6,8 +6,8 @@ public class PlanLocationDto {
 	private String locationName;
 	private String locationImage;
 	private String locationAddr;
-	private float locationMapx;
-	private float locationMapy;
+	private double locationMapx;
+	private double locationMapy;
 	private int locationTransportation;
 	private int planId;
 	
@@ -17,8 +17,8 @@ public class PlanLocationDto {
 		private String locationName;
 		private String locationImage;
 		private String locationAddr;
-		private float locationMapx;
-		private float locationMapy;
+		private double locationMapx;
+		private double locationMapy;
 		private int locationTransportation;
 		private int planId;
 		
@@ -44,11 +44,11 @@ public class PlanLocationDto {
 			this.locationAddr = addr;
 			return this;
 		}
-		public Builder setLocationMapx(float mapx) {
+		public Builder setLocationMapx(double mapx) {
 			this.locationMapx = mapx;
 			return this;
 		}
-		public Builder setLocationMapy(float mapy) {
+		public Builder setLocationMapy(double mapy) {
 			this.locationMapy = mapy;
 			return this;
 		}
@@ -101,11 +101,11 @@ public class PlanLocationDto {
 		return locationAddr;
 	}
 
-	public float getLocationMapx() {
+	public double getLocationMapx() {
 		return locationMapx;
 	}
 
-	public float getLocationMapy() {
+	public double getLocationMapy() {
 		return locationMapy;
 	}
 

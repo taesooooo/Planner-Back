@@ -74,7 +74,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String FINDS_PLANLOCATION_SQL = "SELECT plan_location.location_id, plan_location.location_name, plan_location.location_content_id, plan_location.location_image, plan_location.location_addr, plan_location.location_mapx, plan_location.location_mapy, plan_location.location_transportation, plan_location.plan_id "
 			+ "FROM plan_location " 
 			+ "WHERE plan_location.plan_id = ?;";
-	private final String UPDATE_PLANLOCATION_SQL = "UPDATE plan_location AS PL SET PL.location_name = ?, PL.location_content_id = ?, PL.location_image = ? , PL.location_transportation = ? WHERE PL.location_id = ?;";
+	private final String UPDATE_PLANLOCATION_SQL = "UPDATE plan_location AS PL SET PL.location_name = ?, PL.location_content_id = ?, PL.location_image = ? , PL.location_addr = ?, PL.location_mapx = ?, PL.location_mapy = ?, PL.location_transportation = ? WHERE PL.location_id = ?;";
 	private final String DELETE_PLANLOCATION_SQL = "DELETE FROM plan_location WHERE plan_location.location_id = ?;";
 
 	private final String INSERT_PLANNERLIKE_SQL = "INSERT INTO planner_like(account_id, planner_id, like_date) VALUES(?, ?, NOW());";
@@ -243,8 +243,8 @@ public class PlannerDaoImpl implements PlannerDao {
 			ps.setInt(2, planLocationDto.getLocationContentId());
 			ps.setString(3, planLocationDto.getLocationImage());
 			ps.setString(4, planLocationDto.getLocationAddr());
-			ps.setFloat(5, planLocationDto.getLocationMapx());
-			ps.setFloat(6, planLocationDto.getLocationMapx());
+			ps.setDouble(5, planLocationDto.getLocationMapx());
+			ps.setDouble(6, planLocationDto.getLocationMapy());
 			ps.setInt(7, planLocationDto.getLocationTransportation());
 			ps.setInt(8, planLocationDto.getPlanId());
 			return ps;
@@ -259,9 +259,15 @@ public class PlannerDaoImpl implements PlannerDao {
 
 	@Override
 	public int updatePlanLocation(int planLocationId, PlanLocationDto planLocationDto) {
-		int result = jdbcTemplate.update(UPDATE_PLANLOCATION_SQL, planLocationDto.getLocationName(),
-				planLocationDto.getLocationContentId(), planLocationDto.getLocationImage(),
-				planLocationDto.getLocationTransportation(), planLocationDto.getLocationId());
+		int result = jdbcTemplate.update(UPDATE_PLANLOCATION_SQL, 
+				planLocationDto.getLocationName(),
+				planLocationDto.getLocationContentId(), 
+				planLocationDto.getLocationImage(),
+				planLocationDto.getLocationAddr(),
+				planLocationDto.getLocationMapx(),
+				planLocationDto.getLocationMapy(),
+				planLocationDto.getLocationTransportation(), 
+				planLocationDto.getLocationId());
 		return result;
 	}
 

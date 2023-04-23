@@ -1,8 +1,6 @@
 package com.planner.planner.Controller;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -21,8 +19,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,6 +26,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -45,7 +42,6 @@ import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Service.Impl.PlannerServiceImpl;
 import com.planner.planner.util.JwtUtil;
 
 @WebAppConfiguration
@@ -442,7 +438,7 @@ public class PlannerControllerTest {
 	public void 일정_새여행지() throws Exception {
 		int plannerId = 1;
 		int planId = 1;
-		PlanLocationDto planLocation = createPlanLocation(2, 1000, 1, planId );
+		PlanLocationDto planLocation = createPlanLocation(2, 1000, 1, planId);
 		String url = String.format("/api/planners/%d/plans/%d/plan-locations", plannerId, planId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -454,6 +450,7 @@ public class PlannerControllerTest {
 		.andExpect(status().isCreated())
 		.andExpect(jsonPath("$.data").value(planLocation.getLocationId()));
 	}
+	
 	@Test
 	public void 일정_새여행지_다른사용자_요청_접근거부() throws Exception {
 		int plannerId = 1;
@@ -593,8 +590,8 @@ public class PlannerControllerTest {
 				.setLocationName("바다")
 				.setLocationImage("바다사진")
 				.setLocationAddr("바다주소")
-				.setLocationMapx(111.111f)
-				.setLocationMapy(111.111f)
+				.setLocationMapx(123.1234567891)
+				.setLocationMapy(12.1234567891)
 				.setLocationTransportation(transportation)
 				.setPlanId(planId)
 				.build();

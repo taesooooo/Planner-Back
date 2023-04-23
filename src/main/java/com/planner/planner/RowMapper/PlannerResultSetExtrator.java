@@ -93,8 +93,8 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<PlannerDto> 
 							.setLocationName(rs.getString("location_name"))
 							.setLocationImage(rs.getString("location_image"))
 							.setLocationAddr(rs.getString("location_addr"))
-							.setLocationMapx(rs.getFloat("location_mapx"))
-							.setLocationMapy(rs.getFloat("location_mapy"))
+							.setLocationMapx(rs.getDouble("location_mapx"))
+							.setLocationMapy(rs.getDouble("location_mapy"))
 							.setLocationTransportation(rs.getInt("location_transportation"))
 							.setPlanId(rs.getInt("plan_id"))
 							.build();
