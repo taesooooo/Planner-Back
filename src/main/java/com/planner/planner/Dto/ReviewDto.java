@@ -19,6 +19,7 @@ public class ReviewDto {
 	private LocalDateTime updateDate;
 	
 	private List<String> fileNames;
+	private List<CommentDto> comments;
 	
 	public static class Builder {
 		private int reviewId;
@@ -31,6 +32,7 @@ public class ReviewDto {
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
 		private List<String> fileNames;
+		private List<CommentDto> comments;
 		
 		public Builder setReviewId(int reviewId) {
 			this.reviewId = reviewId;
@@ -71,8 +73,11 @@ public class ReviewDto {
 		public Builder setFileNames(List<String> fileNames) {
 			this.fileNames = fileNames;
 			return this;
+		}		
+		public Builder setComments(List<CommentDto> comments) {
+			this.comments = comments;
+			return this;
 		}
-		
 		public ReviewDto build() {
 			return new ReviewDto(this);
 		}
@@ -93,6 +98,7 @@ public class ReviewDto {
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
 		this.fileNames = builder.fileNames;
+		this.comments = builder.comments;
 	}
 
 	public int getReviewId() {
@@ -133,5 +139,9 @@ public class ReviewDto {
 
 	public List<String> getFileNames() {
 		return fileNames;
+	}
+
+	public List<CommentDto> getComments() {
+		return comments;
 	}
 }

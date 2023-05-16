@@ -15,6 +15,7 @@ import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.ReviewDto;
+import com.planner.planner.RowMapper.ReviewResultSetExtrator;
 import com.planner.planner.RowMapper.ReviewRowMapper;
 
 @Repository
@@ -26,7 +27,10 @@ public class ReviewDaoImpl implements ReviewDao {
 	
 	private final String INSERT_REVIEW_SQL = "INSERT INTO review(planner_id, title, content, writer, writer_id, create_date, update_date) VALUES(?, ?, ?, ?, ?, now(), now());";
 	private final String FIND_ALL_REVIEW_SQL = "SELECT review_id, planner_id, title, writer, writer_id, content, like_count, create_date, update_date FROM review ORDER BY review_id LIMIT ?, ?;";
-	private final String FIND_REVIEW_SQL = "SELECT review_id, planner_id, title, content, writer, writer_id, like_count, create_date, update_date FROM review WHERE review_id = ?;";
+	private final String FIND_REVIEW_SQL = "SELECT R.review_id, R.planner_id, R.title, R.writer, R.writer_id, R.content, R.like_count, R.create_date, R.update_date, \r\n"
+			+ "RC.comment_id, RC.review_id, RC.writer_id, RC.content, RC.parent_id, RC.create_date, RC.update_date FROM review AS R \r\n"
+			+ "LEFT JOIN review_comment AS RC ON RC.review_id = R.review_id \r\n"
+			+ "WHERE R.review_id = ?;";
 	private final String UPDATE_REVIEW_SQL = "UPDATE review SET title = ?, content = ?, update_date = now() WHERE review_id = ?;";
 	private final String DELETE_UPDATE_SQL = "DELETE FROM review WHERE review_id = ?;";
 	private final String FIND_TOTAL_COUNT_SQL = "SELECT count(*) FROM review;";
@@ -47,6 +51,7 @@ public class ReviewDaoImpl implements ReviewDao {
 			ps.setInt(5, accountDto.getAccountId());
 			return ps;
 		}, keyHolder);
+		
 		return keyHolder.getKey().intValue();
 	}
 
@@ -58,8 +63,7 @@ public class ReviewDaoImpl implements ReviewDao {
 
 	@Override
 	public ReviewDto findReview(int reviewId) {
-		List<ReviewDto> list = jdbcTemplate.query(FIND_REVIEW_SQL, new ReviewRowMapper(), reviewId);
-		ReviewDto review = DataAccessUtils.singleResult(list);
+		ReviewDto review = jdbcTemplate.query(FIND_REVIEW_SQL, new ReviewResultSetExtrator(), reviewId);
 		return review;
 	}
 

@@ -20,6 +20,10 @@ public class JwtTest {
 
 	@Autowired
 	private JwtUtil util;
+	
+	public JwtTest(JwtUtil util) {
+		this.util = util;
+	}
 
 	@Test
 	public void jwtCreateTest() {

@@ -1,6 +1,5 @@
 package com.planner.planner.Controller;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,16 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.internal.matchers.GreaterThan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,7 +21,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,7 +28,6 @@ import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
-import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.util.JwtUtil;
 
@@ -58,9 +48,6 @@ public class ReviewControllerTest {
 	
 	private ObjectMapper mapper = new ObjectMapper();
 	private String token;
-	
-	@Autowired
-	private ReviewDao reviewDao;
 
 	@Before
 	public void setUp() throws Exception {
@@ -110,7 +97,9 @@ public class ReviewControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.state").value(is(true)));
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.comments.length()").value(3));
 	}
 	
 	@Test
