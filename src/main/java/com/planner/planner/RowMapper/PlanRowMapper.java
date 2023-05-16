@@ -16,6 +16,7 @@ public class PlanRowMapper implements RowMapper<PlanDto>{
 		return new PlanDto.Builder()
 				.setPlanId(rs.getInt("plan_id"))
 				.setPlanDate(rs.getDate("plan_date").toLocalDate())
+				.setIndex(rs.getInt("plan_index"))
 				.setPlannerId(rs.getInt("planner_id"))
 				.setPlanLocations(new ArrayList<PlanLocationDto>())
 				.build();

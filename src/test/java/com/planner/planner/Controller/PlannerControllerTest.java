@@ -341,7 +341,7 @@ public class PlannerControllerTest {
 	@Test
 	public void 새일정() throws Exception {
 		int plannerId = 1;
-		PlanDto plan = createPlan(2, plannerId, LocalDate.of(2023, 1,29));
+		PlanDto plan = createPlan(2, plannerId, 1024, LocalDate.of(2023, 1,29));
 		String url = String.format("/api/planners/%d/plans", plannerId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -351,13 +351,13 @@ public class PlannerControllerTest {
 				.content(mapper.writeValueAsString(plan)))
 		.andDo(print())
 		.andExpect(status().isCreated())
-		.andExpect(jsonPath("$.data").value(plan.getPlanId()));
+		.andExpect(jsonPath("$.data").value(4));
 	}
 	@Test
 	public void 새일정_다른사용자_요청_접근거부() throws Exception {
 		int plannerId = 1;
 		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		PlanDto plan = createPlan(2, plannerId, LocalDate.of(2023, 1,29));
+		PlanDto plan = createPlan(2, plannerId, 1024, LocalDate.of(2023, 1,29));
 		String url = String.format("/api/planners/%d/plans", plannerId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -373,7 +373,7 @@ public class PlannerControllerTest {
 	public void 일정_수정() throws Exception {
 		int plannerId = 1;
 		int planId = 1;
-		PlanDto plan = createPlan(1, plannerId, LocalDate.of(2023, 02, 07));
+		PlanDto plan = createPlan(1, plannerId, 1024, LocalDate.of(2023, 02, 07));
 		String url = String.format("/api/planners/%d/plans/%d", plannerId, planId);
 		
 		this.mockMvc.perform(patch(url)
@@ -390,7 +390,7 @@ public class PlannerControllerTest {
 		int plannerId = 1;
 		int planId = 1;
 		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		PlanDto plan = createPlan(1, plannerId, LocalDate.of(2023, 02, 07));
+		PlanDto plan = createPlan(1, plannerId, 1024, LocalDate.of(2023, 02, 07));
 		String url = String.format("/api/planners/%d/plans/%d", plannerId, planId);
 		
 		this.mockMvc.perform(patch(url)
@@ -438,7 +438,7 @@ public class PlannerControllerTest {
 	public void 일정_새여행지() throws Exception {
 		int plannerId = 1;
 		int planId = 1;
-		PlanLocationDto planLocation = createPlanLocation(2, 1000, 1, planId);
+		PlanLocationDto planLocation = createPlanLocation(2, 1000, 1, 1024, planId);
 		String url = String.format("/api/planners/%d/plans/%d/plan-locations", plannerId, planId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -448,14 +448,14 @@ public class PlannerControllerTest {
 				.content(mapper.writeValueAsString(planLocation)))
 		.andDo(print())
 		.andExpect(status().isCreated())
-		.andExpect(jsonPath("$.data").value(planLocation.getLocationId()));
+		.andExpect(jsonPath("$.data").value(4));
 	}
 	
 	@Test
 	public void 일정_새여행지_다른사용자_요청_접근거부() throws Exception {
 		int plannerId = 1;
 		int planId = 1;
-		PlanLocationDto planLocation = createPlanLocation(2, 1000, 1, planId );
+		PlanLocationDto planLocation = createPlanLocation(2, 1000, 1, 1024, planId );
 		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
 		String url = String.format("/api/planners/%d/plans/%d/plan-locations", plannerId, planId);
 		this.mockMvc.perform(post(url)
@@ -473,7 +473,7 @@ public class PlannerControllerTest {
 		int plannerId = 1;
 		int planId = 1;
 		int planLocationId = 1;
-		PlanLocationDto planLocation = createPlanLocation(1, 2000, 1, planId);
+		PlanLocationDto planLocation = createPlanLocation(1, 2000, 1, 1024, planId);
 		String url = String.format("/api/planners/%d/plans/%d/plan-locations/%d", plannerId, planId, planLocationId);
 		this.mockMvc.perform(patch(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -484,12 +484,13 @@ public class PlannerControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
+	
 	@Test
 	public void 여행지_수정_다른사용자_요청_접근거부() throws Exception {
 		int plannerId = 1;
 		int planId = 1;
 		int planLocationId = 1;
-		PlanLocationDto planLocation = createPlanLocation(1, 2000, 1, planId);
+		PlanLocationDto planLocation = createPlanLocation(1, 2000, 1, 1024, planId);
 		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
 		String url = String.format("/api/planners/%d/plans/%d/plan-locations/%d", plannerId, planId, planLocationId);
 		this.mockMvc.perform(patch(url)
@@ -537,12 +538,12 @@ public class PlannerControllerTest {
 		List<String> members = new ArrayList<String>();
 		members.add("test2");
 		List<PlanLocationDto> planLocations = new ArrayList<PlanLocationDto>();
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContentId(1000).setLocationName("바다").setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(2).setLocationContentId(2000).setLocationName("땅").setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
-		planLocations.add(new PlanLocationDto.Builder().setLocationId(3).setLocationContentId(3000).setLocationName("하늘").setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContentId(1000).setLocationName("바다").setLocationImage("").setLocationTransportation(1).setIndex(1024).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(2).setLocationContentId(2000).setLocationName("땅").setLocationImage("").setLocationTransportation(1).setIndex(2048).setPlanId(1).build());
+		planLocations.add(new PlanLocationDto.Builder().setLocationId(3).setLocationContentId(3000).setLocationName("하늘").setLocationImage("").setLocationTransportation(1).setIndex(3072).setPlanId(1).build());
 		
 		List<PlanDto> plans = new ArrayList<PlanDto>();
-		plans.add(new PlanDto.Builder().setPlanId(1).setPlanLocations(planLocations).setPlannerId(plannerId).build());
+		plans.add(new PlanDto.Builder().setPlanId(1).setPlanLocations(planLocations).setIndex(1024).setPlannerId(plannerId).build());
 
 		PlannerDto planner = new PlannerDto.Builder()
 				.setPlannerId(plannerId)
@@ -574,16 +575,17 @@ public class PlannerControllerTest {
 				.build();
 	}
 	
-	private PlanDto createPlan(int planId, int plannerId, LocalDate planDate) {
+	private PlanDto createPlan(int planId, int plannerId, int index, LocalDate planDate) {
 		return new PlanDto.Builder()
 				.setPlanId(planId)
 				.setPlanDate(planDate)
 				.setPlanLocations(null)
+				.setIndex(index)
 				.setPlannerId(plannerId)
 				.build();
 	}
 	
-	private PlanLocationDto createPlanLocation(int locationId, int contentId, int transportation, int planId) {
+	private PlanLocationDto createPlanLocation(int locationId, int contentId, int transportation, int index, int planId) {
 		return new PlanLocationDto.Builder()
 				.setLocationId(locationId)
 				.setLocationContentId(contentId)
@@ -593,6 +595,7 @@ public class PlannerControllerTest {
 				.setLocationMapx(123.1234567891)
 				.setLocationMapy(12.1234567891)
 				.setLocationTransportation(transportation)
+				.setIndex(index)
 				.setPlanId(planId)
 				.build();
 	}
