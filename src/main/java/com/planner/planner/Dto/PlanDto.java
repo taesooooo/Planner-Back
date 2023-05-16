@@ -11,12 +11,14 @@ public class PlanDto {
 	private LocalDate planDate;
 	private int plannerId;
 	private List<PlanLocationDto> planLocations;
+	private int index;
 	
 	public static class Builder {
 		private int planId;
 		private LocalDate planDate;
 		private int plannerId;
 		private List<PlanLocationDto> planLocations;
+		private int index;
 		
 		public Builder setPlanId(int planId) {
 			this.planId = planId;
@@ -30,9 +32,12 @@ public class PlanDto {
 			this.plannerId = plannerId;
 			return this;
 		}
-		
 		public Builder setPlanLocations(List<PlanLocationDto> planLocations) {
 			this.planLocations = planLocations;
+			return this;
+		}
+		public Builder setIndex(int index) {
+			this.index = index;
 			return this;
 		}
 		public PlanDto build() {
@@ -49,6 +54,7 @@ public class PlanDto {
 		this.planDate = builder.planDate;
 		this.plannerId = builder.plannerId;
 		this.planLocations = builder.planLocations;
+		this.index = builder.index;
 	}
 
 	public int getPlanId() {
@@ -66,4 +72,9 @@ public class PlanDto {
 	public List<PlanLocationDto> getPlanLocations() {
 		return planLocations;
 	}
+
+	public int getIndex() {
+		return index;
+	}
+	
 }

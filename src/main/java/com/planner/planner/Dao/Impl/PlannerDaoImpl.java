@@ -43,8 +43,8 @@ public class PlannerDaoImpl implements PlannerDao {
 
 	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, A.title, A.plan_date_start, A.plan_date_end, A.expense, A.member_count, A.member_type_id, "
 			+ "A.like_count, A.create_date, A.update_date, "
-			+ "C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_date, D.plan_id, "
-			+ "E.location_id, E.location_name, E.location_content_id, E.location_image, E.location_addr, E.location_mapx, E.location_mapy, E.location_transportation, E.plan_id "
+			+ "C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_date, D.plan_index, D.plan_id,  "
+			+ "E.location_id, E.location_name, E.location_content_id, E.location_image, E.location_addr, E.location_mapx, E.location_mapy, E.location_transportation, E.location_index, E.plan_id "
 			+ "FROM planner AS A " + "LEFT JOIN plan_member AS B ON A.planner_id = B.planner_id "
 			+ "LEFT JOIN account AS C ON C.account_id = B.account_id "
 			+ "LEFT JOIN plan_memo AS M ON A.planner_id = M.planner_id "
@@ -65,16 +65,17 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String UPDATE_PLANMEMO_SQL = "UPDATE plan_memo AS M SET M.memo_title = ?, M.memo_content = ?, M.memo_update_date = NOW() WHERE M.memo_id = ?;";
 	private final String DELETE_PLANMEMO_SQL = "DELETE FROM plan_memo WHERE memo_id = ?;";
 
-	private final String INSERT_PlAN_SQL = "INSERT INTO plan (plan_date, planner_id) VALUES(?, ?);";
-	private final String FINDS_PLAN_SQL = "SELECT plan.plan_id, plan_plan_date, plan.planner_id FROM plan WHERE plan.planner_id = ?;";
-	private final String UPDATE_PLAN_SQL = "UPDATE plan SET plan.plan_date = ? WHERE plan.plan_id = ?;";
+	private final String INSERT_PlAN_SQL = "INSERT INTO plan (plan_date, planner_id, plan_index)  VALUES(?, ?, ?);";
+	private final String FINDS_PLAN_SQL = "SELECT plan.plan_id, plan.plan_date, plan.plan_index, plan.planner_id FROM plan WHERE plan.planner_id = ? ORDER BY plan_index;";
+	private final String UPDATE_PLAN_SQL = "UPDATE plan SET plan.plan_date = ?, plan.plan_index = ? WHERE plan.plan_id = ?;";
 	private final String DELETE_PLAN_SQL = "DELETE FROM plan WHERE plan.plan_id = ?;";
 
-	private final String INSERT_PLANLOCATION_SQL = "INSERT INTO plan_location(location_name, location_content_id, location_image, location_addr, location_mapx, location_mapy, location_transportation, plan_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
-	private final String FINDS_PLANLOCATION_SQL = "SELECT plan_location.location_id, plan_location.location_name, plan_location.location_content_id, plan_location.location_image, plan_location.location_addr, plan_location.location_mapx, plan_location.location_mapy, plan_location.location_transportation, plan_location.plan_id "
+	private final String INSERT_PLANLOCATION_SQL = "INSERT INTO plan_location(location_name, location_content_id, location_image, location_addr, location_mapx, location_mapy, location_transportation, location_index, plan_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
+	private final String FINDS_PLANLOCATION_SQL = "SELECT plan_location.location_id, plan_location.location_name, plan_location.location_content_id, plan_location.location_image, plan_location.location_addr, plan_location.location_mapx, plan_location.location_mapy, plan_location.location_transportation, plan_location.location_index, plan_location.plan_id "
 			+ "FROM plan_location " 
-			+ "WHERE plan_location.plan_id = ?;";
-	private final String UPDATE_PLANLOCATION_SQL = "UPDATE plan_location AS PL SET PL.location_name = ?, PL.location_content_id = ?, PL.location_image = ? , PL.location_addr = ?, PL.location_mapx = ?, PL.location_mapy = ?, PL.location_transportation = ? WHERE PL.location_id = ?;";
+			+ "WHERE plan_location.plan_id = ? "
+			+ "ORDER BY plan_location.location_index;";
+	private final String UPDATE_PLANLOCATION_SQL = "UPDATE plan_location AS PL SET PL.location_name = ?, PL.location_content_id = ?, PL.location_image = ? , PL.location_addr = ?, PL.location_mapx = ?, PL.location_mapy = ?, PL.location_transportation = ?, PL.location_index = ? WHERE PL.location_id = ?;";
 	private final String DELETE_PLANLOCATION_SQL = "DELETE FROM plan_location WHERE plan_location.location_id = ?;";
 
 	private final String INSERT_PLANNERLIKE_SQL = "INSERT INTO planner_like(account_id, planner_id, like_date) VALUES(?, ?, NOW());";
@@ -213,6 +214,7 @@ public class PlannerDaoImpl implements PlannerDao {
 			PreparedStatement ps = conn.prepareStatement(INSERT_PlAN_SQL, new String[] { "plan_id" });
 			ps.setDate(1, Date.valueOf(planDto.getPlanDate()));
 			ps.setInt(2, planDto.getPlannerId());
+			ps.setInt(3, planDto.getIndex());
 			return ps;
 		}, keyHolder);
 		return keyHolder.getKey().intValue();
@@ -225,7 +227,7 @@ public class PlannerDaoImpl implements PlannerDao {
 
 	@Override
 	public int updatePlan(int planId, PlanDto planDto) {
-		int result = jdbcTemplate.update(UPDATE_PLAN_SQL, planDto.getPlanDate(), planId);
+		int result = jdbcTemplate.update(UPDATE_PLAN_SQL, planDto.getPlanDate(), planDto.getIndex(), planId);
 		return result;
 	}
 
@@ -246,7 +248,8 @@ public class PlannerDaoImpl implements PlannerDao {
 			ps.setDouble(5, planLocationDto.getLocationMapx());
 			ps.setDouble(6, planLocationDto.getLocationMapy());
 			ps.setInt(7, planLocationDto.getLocationTransportation());
-			ps.setInt(8, planLocationDto.getPlanId());
+			ps.setInt(8, planLocationDto.getIndex());
+			ps.setInt(9, planLocationDto.getPlanId());
 			return ps;
 		}, keyHolder);
 		return keyHolder.getKey().intValue();
@@ -266,7 +269,8 @@ public class PlannerDaoImpl implements PlannerDao {
 				planLocationDto.getLocationAddr(),
 				planLocationDto.getLocationMapx(),
 				planLocationDto.getLocationMapy(),
-				planLocationDto.getLocationTransportation(), 
+				planLocationDto.getLocationTransportation(),
+				planLocationDto.getIndex(),
 				planLocationDto.getLocationId());
 		return result;
 	}

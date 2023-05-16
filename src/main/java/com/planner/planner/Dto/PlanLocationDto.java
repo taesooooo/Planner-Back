@@ -10,6 +10,7 @@ public class PlanLocationDto {
 	private double locationMapy;
 	private int locationTransportation;
 	private int planId;
+	private int index;
 	
 	public static class Builder {
 		private int locationId;
@@ -21,6 +22,7 @@ public class PlanLocationDto {
 		private double locationMapy;
 		private int locationTransportation;
 		private int planId;
+		private int index;
 		
 		public Builder setLocationId(int locationId) {
 			this.locationId = locationId;
@@ -60,6 +62,10 @@ public class PlanLocationDto {
 			this.planId = planId;
 			return this;
 		}
+		public Builder setIndex(int index) {
+			this.index = index;
+			return this;
+		}
 		public PlanLocationDto build(){
 			return new PlanLocationDto(this);
 		}
@@ -79,6 +85,7 @@ public class PlanLocationDto {
 		this.locationMapy = builder.locationMapy;
 		this.locationTransportation = builder.locationTransportation;
 		this.planId = builder.planId;
+		this.index = builder.index;
 	}
 
 	public int getLocationId() {
@@ -115,5 +122,9 @@ public class PlanLocationDto {
 
 	public int getPlanId() {
 		return planId;
+	}
+
+	public int getIndex() {
+		return index;
 	}
 }

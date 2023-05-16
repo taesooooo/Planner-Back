@@ -19,6 +19,7 @@ public class PlanLocationRowMapper implements RowMapper<PlanLocationDto> {
 				.setLocationMapx(rs.getDouble("location_mapx"))
 				.setLocationMapy(rs.getDouble("location_mapy"))
 				.setLocationTransportation(rs.getInt("location_transportation"))
+				.setIndex(rs.getInt("location_index"))
 				.setPlanId(rs.getInt("plan_id"))
 				.build();
 	}
