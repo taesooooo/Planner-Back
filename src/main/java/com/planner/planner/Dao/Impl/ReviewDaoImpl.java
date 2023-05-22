@@ -1,6 +1,7 @@
 package com.planner.planner.Dao.Impl;
 
 import java.sql.PreparedStatement;
+import java.sql.Types;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -28,8 +29,11 @@ public class ReviewDaoImpl implements ReviewDao {
 	private final String INSERT_REVIEW_SQL = "INSERT INTO review(planner_id, title, content, writer, writer_id, create_date, update_date) VALUES(?, ?, ?, ?, ?, now(), now());";
 	private final String FIND_ALL_REVIEW_SQL = "SELECT review_id, planner_id, title, writer, writer_id, content, like_count, create_date, update_date FROM review ORDER BY review_id LIMIT ?, ?;";
 	private final String FIND_REVIEW_SQL = "SELECT R.review_id, R.planner_id, R.title, R.writer, R.writer_id, R.content, R.like_count, R.create_date, R.update_date, \r\n"
-			+ "RC.comment_id, RC.review_id, RC.writer_id, RC.content, RC.parent_id, RC.create_date, RC.update_date FROM review AS R \r\n"
+			+ "RC.comment_id AS RC_comment_id, RC.review_id AS RC_review_id, RC.writer_id AS RC_writer_id, RC.content AS RC_content, \r\n"
+			+ "RC.parent_id AS RC_parent_id, RC.create_date AS RC_create_date, RC.update_date AS RC_update_date, AC.nickname AS AC_nickname \r\n"
+			+ "FROM review AS R \r\n"
 			+ "LEFT JOIN review_comment AS RC ON RC.review_id = R.review_id \r\n"
+			+ "LEFT JOIN account AS AC ON AC.account_id = RC.writer_id\r\n"
 			+ "WHERE R.review_id = ?;";
 	private final String UPDATE_REVIEW_SQL = "UPDATE review SET title = ?, content = ?, update_date = now() WHERE review_id = ?;";
 	private final String DELETE_UPDATE_SQL = "DELETE FROM review WHERE review_id = ?;";
@@ -44,7 +48,7 @@ public class ReviewDaoImpl implements ReviewDao {
 	public int insertReview(ReviewDto reviewDto, AccountDto accountDto) {
 		int result = jdbcTemplate.update(conn -> {
 			PreparedStatement ps = conn.prepareStatement(INSERT_REVIEW_SQL, new String[] {"review_id"});
-			ps.setInt(1, reviewDto.getPlannerId());
+			ps.setObject(1, reviewDto.getPlannerId(), Types.INTEGER);
 			ps.setString(2, reviewDto.getTitle());
 			ps.setString(3, reviewDto.getContent());
 			ps.setString(4, reviewDto.getWriter());

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class ReviewDto {
 	private int reviewId;
-	private int plannerId;
+	private Integer plannerId;
 	private String title;
 	private String writer;
 	private int writerId;
@@ -23,7 +23,7 @@ public class ReviewDto {
 	
 	public static class Builder {
 		private int reviewId;
-		private int plannerId;
+		private Integer plannerId;
 		private String title;
 		private String writer;
 		private int writerId;
@@ -38,7 +38,7 @@ public class ReviewDto {
 			this.reviewId = reviewId;
 			return this;
 		}
-		public Builder setPlannerId(int plannerId) {
+		public Builder setPlannerId(Integer plannerId) {
 			this.plannerId = plannerId;
 			return this;
 		}
@@ -105,7 +105,7 @@ public class ReviewDto {
 		return reviewId;
 	}
 
-	public int getPlannerId() {
+	public Integer getPlannerId() {
 		return plannerId;
 	}
 

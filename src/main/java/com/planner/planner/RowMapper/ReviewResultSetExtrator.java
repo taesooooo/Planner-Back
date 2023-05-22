@@ -20,18 +20,18 @@ public class ReviewResultSetExtrator implements ResultSetExtractor<ReviewDto> {
 		int latestCommentId = 0;
 		
 		while(rs.next()) {
-			int commentId = rs.getInt("comment_id");
+			int commentId = rs.getInt("RC_comment_id");
 			if(latestCommentId != commentId) {
 				latestCommentId = commentId;
 
 				CommentDto comment = new CommentDto.Builder()
-				.setCommentId(rs.getInt("comment_id"))
-				.setReviewId(rs.getInt("review_id"))
-				.setWriterId(rs.getInt("writer_id"))
-				.setWriter(rs.getString("writer"))
-				.setContent(rs.getString("content"))
-				.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
-				.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
+				.setCommentId(rs.getInt("RC_comment_id"))
+				.setReviewId(rs.getInt("RC_review_id"))
+				.setWriterId(rs.getInt("RC_writer_id"))
+				.setWriter(rs.getString("AC_nickname"))
+				.setContent(rs.getString("RC_content"))
+				.setCreateDate(rs.getTimestamp("RC_create_date").toLocalDateTime())
+				.setUpdateDate(rs.getTimestamp("RC_update_date").toLocalDateTime())
 				.build();
 				
 				comments.add(comment);
