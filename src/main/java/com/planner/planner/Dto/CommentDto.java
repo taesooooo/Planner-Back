@@ -1,6 +1,8 @@
 package com.planner.planner.Dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -16,6 +18,7 @@ public class CommentDto {
 	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
 	private LocalDateTime updateDate;
 	
+	private List<CommentDto> reComments = new ArrayList<CommentDto>();
 	
 	public static class Builder {
 		private int commentId;
@@ -26,6 +29,7 @@ public class CommentDto {
 		private Integer parentId;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
+		private List<CommentDto> reComments = new ArrayList<CommentDto>();
 		
 		public Builder setCommentId(int commentId) {
 			this.commentId = commentId;
@@ -60,6 +64,10 @@ public class CommentDto {
 			return this;
 		}
 		
+		public Builder setReComments(List<CommentDto> reComments) {
+			this.reComments = reComments;
+			return this;
+		}
 		public CommentDto build() {
 			return new CommentDto(this);
 		}
@@ -78,6 +86,7 @@ public class CommentDto {
 		this.parentId = builder.parentId;
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
+		this.reComments = builder.reComments;
 	}
 
 	public int getCommentId() {
@@ -111,6 +120,8 @@ public class CommentDto {
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
-	
-	
+
+	public List<CommentDto> getReComments() {
+		return reComments;
+	}
 }
