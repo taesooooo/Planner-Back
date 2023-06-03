@@ -61,7 +61,8 @@ public class SpotServiceTest {
 
 		assertThat(data).isNotNull();
 		assertThat(data.getItems()).isNotNull().usingRecursiveFieldByFieldElementComparator()
-		.containsExactlyElementsOf(item);
+				.containsExactlyElementsOf(item);
+
 		assertThat(data.getTotalCount()).isEqualTo(testList.getTotalCount());
 	}
 
@@ -90,8 +91,8 @@ public class SpotServiceTest {
 
 		assertThat(resultList).isNotNull();
 		assertThat(resultList.getItems()).isNotNull()
-		.extracting(SpotDto::getBasedSpot, SpotDto::getLikeState)
-		.containsExactly(tuple(item.getItems().get(0), true), tuple(item.getItems().get(1), false));
+				.extracting(SpotDto::getBasedSpot, SpotDto::getLikeState)
+				.containsExactly(tuple(item.getItems().get(0), true), tuple(item.getItems().get(1), false));
 		
 	}
 
@@ -151,8 +152,8 @@ public class SpotServiceTest {
 
 		assertThat(resultList).isNotNull();
 		assertThat(resultList.getItems()).isNotNull()
-		.extracting(SpotDto::getBasedSpot, SpotDto::getLikeState)
-		.containsExactly(tuple(item.getItems().get(0), true), tuple(item.getItems().get(1), false));
+				.extracting(SpotDto::getBasedSpot, SpotDto::getLikeState)
+				.containsExactly(tuple(item.getItems().get(0), true), tuple(item.getItems().get(1), false));
 		
 	}
 
@@ -171,11 +172,11 @@ public class SpotServiceTest {
 		SpotDetailDto resultDto = spotService.getDetail(accountId, contentId);
 		
 		assertThat(resultDto).isNotNull()
-		.hasFieldOrPropertyWithValue("likeCount", 1)
-		.hasFieldOrPropertyWithValue("likeState", true);
+				.hasFieldOrPropertyWithValue("likeCount", 1)
+				.hasFieldOrPropertyWithValue("likeState", true);
 		
 		assertThat(resultDto.getDetail()).usingRecursiveComparison()
-		.isEqualTo(testDetail);
+				.isEqualTo(testDetail);
 	}
 
 	@Test
