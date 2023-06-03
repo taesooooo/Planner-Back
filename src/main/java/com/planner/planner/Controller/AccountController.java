@@ -1,7 +1,5 @@
 package com.planner.planner.Controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -20,9 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Common.Page;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Dto.SpotLikeStateDto;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.util.ResponseMessage;
@@ -88,15 +84,7 @@ public class AccountController {
 		//LikeDto likes = accountService.allLikesList(accountId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));
 	}
-	
 
-	@GetMapping(value = "/likes/{accountId}/check")
-	public ResponseEntity<Object> spotLikeState(HttpServletRequest req, @PathVariable int accountId, ContentIdListDto contentIds) {
-		List<SpotLikeStateDto> stateList = accountService.spotLikeStateCheck(accountId, contentIds);
-
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", stateList));
-	}
-	
 	@GetMapping(value="/search-member")
 	public ResponseEntity<Object> searchMembers(HttpServletRequest req, @RequestParam(value="searchString") String searchString) throws Exception {
 		boolean emailCheck = accountService.searchEmail(searchString);

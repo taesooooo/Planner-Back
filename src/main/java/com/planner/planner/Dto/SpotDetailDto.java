@@ -1,40 +1,52 @@
 package com.planner.planner.Dto;
 
-import com.planner.planner.Dto.OpenApi.AbstractCommonDetailDto;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 
-public class SpotDetailDto extends AbstractCommonDetailDto {
+public class SpotDetailDto {
+	@JsonUnwrapped
+	private CommonDetailDto detail;
 	private int likeCount;
-
-	public SpotDetailDto(Builder builder) {
-		super(builder);
-		this.likeCount = builder.likeCount;
-	}
+	private boolean likeState;
 	
-	public static class Builder extends AbstractCommonDetailDto.Builder<Builder> {
+	public static class Builder {
+		private CommonDetailDto detail;
 		private int likeCount;
+		private boolean likeState;
 		
-		public Builder setLikeCount(int likeCount) {
-			this.likeCount = likeCount;
-			return self();
-		}
-		
-		@Override
-		public Builder self() {
-			// TODO Auto-generated method stub
+		public Builder setDetail(CommonDetailDto detail) {
+			this.detail = detail;
 			return this;
 		}
-
-		@Override
-		public SpotDetailDto build() {
-			// TODO Auto-generated method stub
-			return new SpotDetailDto(this);
+		public Builder setLikeCount(int likeCount) {
+			this.likeCount = likeCount;
+			return this;
+		}
+		public Builder setLikeState(boolean likeState) {
+			this.likeState = likeState;
+			return this;
 		}
 		
+		public SpotDetailDto build() {
+			return new SpotDetailDto(this);
+		}
+	}
+
+	public SpotDetailDto(Builder builder) {
+		this.detail = builder.detail;
+		this.likeCount = builder.likeCount;
+		this.likeState = builder.likeState;
+	}
+
+	public CommonDetailDto getDetail() {
+		return detail;
 	}
 
 	public int getLikeCount() {
 		return likeCount;
 	}
-	
-	
+
+	public boolean getLikeState() {
+		return likeState;
+	}
 }

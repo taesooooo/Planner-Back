@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.planner.planner.Exception.AuthCheckFail;
+import com.planner.planner.Exception.DuplicateLikeException;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundReviewException;
@@ -49,5 +50,10 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(NotFoundToken.class)
 	public ResponseEntity<Object> notFoundTokenEx(Exception e) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, e.getMessage()));
+	}
+	
+	@ExceptionHandler(DuplicateLikeException.class)
+	public ResponseEntity<Object> duplicateLike(Exception e) {
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, e.getMessage()));
 	}
 }

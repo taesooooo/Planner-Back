@@ -50,8 +50,6 @@ public class SpotControllerTest {
 	private MockMvc mockMvc;
 
 	private ObjectMapper mapper = new ObjectMapper();
-	
-	private int contentId = 2733967;
 
 	@Before
 	public void setUp() throws Exception {
@@ -68,6 +66,7 @@ public class SpotControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.state").value(true))
 		.andExpect(jsonPath("$.data").isNotEmpty());
 	}
 	
@@ -80,7 +79,10 @@ public class SpotControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.data").isNotEmpty());
+		.andExpect(jsonPath("$.state").value(true))
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.items").isNotEmpty())
+		.andExpect(jsonPath("$.data.items.length()").value(10));
 	}
 
 	@Test
@@ -92,11 +94,16 @@ public class SpotControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.data").isNotEmpty());
+		.andExpect(jsonPath("$.state").value(true))
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.items").isNotEmpty())
+		.andExpect(jsonPath("$.data.items.length()").value(10));
 	}
 	
 	@Test
 	public void 여행지_세부사항_가져오기() throws Exception {
+		int contentId = 2733967;
+		
 		mockMvc.perform(get("/api/spots/lists/"+Integer.toString(contentId))
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
@@ -104,11 +111,14 @@ public class SpotControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.state").value(true))
 		.andExpect(jsonPath("$.data").isNotEmpty());
 	}
 	
 	@Test
 	public void 여행지_좋아요() throws Exception {
+		int contentId = 2763807; // 번호 다름
+		
 		mockMvc.perform(post("/api/spots/likes/"+Integer.toString(contentId))
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
@@ -116,18 +126,47 @@ public class SpotControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.state").value(is(true)));
+		.andExpect(jsonPath("$.state").value(true));
 	}
 	
 	@Test
-	public void 여행지_좋아요취소() throws Exception {
-		mockMvc.perform(delete("/api/spots/likes/"+Integer.toString(contentId))
+	public void 여행지_좋아요_중복인경우() throws Exception {
+		int contentId = 2733967;
+		
+		mockMvc.perform(post("/api/spots/likes/"+Integer.toString(contentId))
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
 				.contentType(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.state").value(is(true)));
+		.andExpect(jsonPath("$.state").value(false));
+	}
+	
+	@Test
+	public void 여행지_좋아요취소() throws Exception {
+		int contentId = 2733967;
+		
+		mockMvc.perform(delete("/api/spots/likes/"+Integer.toString(contentId))
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.header("Authorization", token)
+				.contentType(MediaType.APPLICATION_JSON))
+		.andDo(print())
+		.andExpect(jsonPath("$.state").value(true));
+	}
+	
+
+	@Test
+	public void 여행지_좋아요취소_없는경우() throws Exception {
+		int contentId = 2763807; // 번호 다름
+		
+		mockMvc.perform(delete("/api/spots/likes/"+Integer.toString(contentId))
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.header("Authorization", token)
+				.contentType(MediaType.APPLICATION_JSON))
+		.andDo(print())
+		.andExpect(jsonPath("$.state").value(false));
 	}
 }

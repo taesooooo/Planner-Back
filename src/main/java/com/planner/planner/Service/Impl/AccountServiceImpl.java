@@ -2,7 +2,6 @@ package com.planner.planner.Service.Impl;
 
 import java.io.File;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +15,9 @@ import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Dto.ContentIdListDto;
 import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
-import com.planner.planner.Dto.SpotLikeStateDto;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.PlannerService;
@@ -111,24 +108,6 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public List<SpotLikeDto> spotLikesByAccountId(int accountId) {
 		return accountDao.spotLikesByAccountId(accountId);
-	}
-
-	@Override
-	public List<SpotLikeStateDto> spotLikeStateCheck(int accountId, ContentIdListDto contentIds) {
-		List<Integer> contentList = contentIds.getContentIds();
-		List<SpotLikeDto> list = accountDao.spotLikesByContentIds(accountId, contentList);
-
-		List<SpotLikeStateDto> likeStates = contentList.stream().map((i) -> {
-			SpotLikeStateDto item;
-			if (list.stream().anyMatch(like -> like.getContentId() == i)) {
-				item = new SpotLikeStateDto(i, true);
-			} else {
-				item = new SpotLikeStateDto(i, false);
-			}
-			return item;
-		}).collect(Collectors.toList());
-
-		return likeStates;
 	}
 
 	@Override

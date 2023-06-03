@@ -1,7 +1,5 @@
 package com.planner.planner.Controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -20,9 +18,9 @@ import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Dto.SpotListDto;
 import com.planner.planner.Dto.OpenApi.AreaCodeDto;
-import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Service.SpotService;
 import com.planner.planner.util.ResponseMessage;
+import com.planner.planner.util.UserIdUtil;
 
 @RestController
 @RequestMapping(value = "api/spots")
@@ -43,8 +41,10 @@ public class SpotController {
 	}
 
 	@GetMapping(value= "/lists-area")
-	public ResponseEntity<Object> spotAreaList(@RequestParam int areaCode, @RequestParam int contentTypeId, @RequestParam int index) throws Exception {
-		SpotListDto<SpotDto> spotList = spotService.getAreaList(areaCode, contentTypeId, index);
+	public ResponseEntity<Object> spotAreaList(HttpServletRequest req, @RequestParam int areaCode, @RequestParam int contentTypeId, @RequestParam int index) throws Exception {
+		int userId = UserIdUtil.getUserId(req);
+		
+		SpotListDto<SpotDto> spotList = spotService.getAreaList(userId, areaCode, contentTypeId, index);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", spotList));
 	}
@@ -57,39 +57,45 @@ public class SpotController {
 //	}
 
 	@GetMapping(value= "/lists-keyword")
-	public ResponseEntity<Object> spotKeyword(@RequestParam int areaCode, @RequestParam int contentTypeId,@RequestParam String keyword, @RequestParam int index) throws Exception {
-		SpotListDto<SpotDto> spotList = spotService.getKeyword(areaCode, contentTypeId, keyword, index);
+	public ResponseEntity<Object> spotKeyword(HttpServletRequest req, @RequestParam int areaCode, @RequestParam int contentTypeId,@RequestParam String keyword, @RequestParam int index) throws Exception {
+		int userId = UserIdUtil.getUserId(req);
+		
+		SpotListDto<SpotDto> spotList = spotService.getKeyword(userId, areaCode, contentTypeId, keyword, index);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",spotList));
 	}
 
 	@GetMapping(value= "/lists/{contentId}")
-	public ResponseEntity<Object> spotDetail(@PathVariable int contentId) throws Exception {
-		SpotDetailDto info = spotService.getDetail(contentId);
+	public ResponseEntity<Object> spotDetail(HttpServletRequest req, @PathVariable int contentId) throws Exception {
+		int userId = UserIdUtil.getUserId(req);
+		
+		SpotDetailDto info = spotService.getDetail(userId, contentId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", info));
 	}
 
 	@PostMapping(value = "/likes/{contentId}")
-	public ResponseEntity<Object> spotLike(HttpServletRequest req, @PathVariable int contentId) {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		boolean result = spotService.spotLike(id, contentId);
+	public ResponseEntity<Object> spotLike(HttpServletRequest req, @PathVariable int contentId) throws Exception {
+		int userId = UserIdUtil.getUserId(req);
+		
+		boolean result = spotService.addSpotLike(userId, contentId);
 		if(result == false) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(result,"좋아요 실패"));
 		}
 		
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,"좋아요 성공"));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true,"좋아요 성공"));
 	}
 
 	@DeleteMapping(value = "/likes/{contentId}")
-	public ResponseEntity<Object> spotLikeCancel(HttpServletRequest req, @PathVariable int contentId) {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		boolean result = spotService.spotLikeCancel(id, contentId);
+	public ResponseEntity<Object> spotLikeCancel(HttpServletRequest req, @PathVariable int contentId) throws Exception {
+		int userId = UserIdUtil.getUserId(req);
+		
+		boolean result = spotService.removeSpotLike(userId, contentId);
 		if(result == false) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(result,"좋아요 취소 실패"));
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(false, "좋아요 기록이 없습니다."));
 		}
 		
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(result,"좋아요 취소 성공"));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "좋아요 취소 성공"));
 	}
 
 }
