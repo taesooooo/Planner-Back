@@ -85,7 +85,6 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		
 		for(JsonNode node : data.get("items").get("item")) {
 			CommonBasedDto areaBased = new CommonBasedDto.Builder()
-					.setReadCount(node.get("readcount").asText())
 					.setSigunguCode(node.get("sigungucode").asText())
 					.setTel(node.get("tel").asText())
 					.setTitle(node.get("title").asText())
@@ -140,7 +139,6 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		
 		for(JsonNode node : data.get("items").get("item")) {
 			CommonBasedDto locationBased = new CommonBasedDto.Builder()
-					.setReadCount(node.get("readcount").asText())
 					.setSigunguCode(node.get("sigungucode").asText())
 					.setTel(node.get("tel").asText())
 					.setTitle(node.get("title").asText())
@@ -196,7 +194,6 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		
 		for(JsonNode node : data.get("items").get("item")) {
 			CommonBasedDto keywordBased = new CommonBasedDto.Builder()
-					.setReadCount(node.get("readcount").asText())
 					.setSigunguCode(node.get("sigungucode").asText())
 					.setTel(node.get("tel").asText())
 					.setTitle(node.get("title").asText())

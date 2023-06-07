@@ -1,7 +1,6 @@
 package com.planner.planner.Dto.OpenApi;
 
 public class CommonBasedDto {
-	private String readCount; // 조회수
 	private String sigunguCode; // 시군구코드
 	private String tel; // 전화번호
 	private String title; // 제목
@@ -24,7 +23,6 @@ public class CommonBasedDto {
 	private String zipcode; // 우편번호
 	
 	public static class Builder {
-		private String readCount; // 조회수
 		private String sigunguCode; // 시군구코드
 		private String tel; // 전화번호
 		private String title; // 제목
@@ -45,11 +43,7 @@ public class CommonBasedDto {
 		private String mlevel; // Map Level
 		private String modifiedtime; // 수정일
 		private String zipcode; // 우편번호
-		
-		public Builder setReadCount(String readCount) {
-			this.readCount = readCount;
-			return this;
-		}
+
 		public Builder setSigunguCode(String sigunguCode) {
 			this.sigunguCode = sigunguCode;
 			return this;
@@ -138,7 +132,6 @@ public class CommonBasedDto {
 	}
 	
 	public CommonBasedDto(Builder builder) {
-		this.readCount = builder.readCount;
 		this.sigunguCode = builder.sigunguCode;
 		this.tel = builder.tel;
 		this.title = builder.title;
@@ -159,10 +152,6 @@ public class CommonBasedDto {
 		this.mlevel = builder.mlevel;
 		this.modifiedtime = builder.modifiedtime;
 		this.zipcode = builder.zipcode;
-	}
-
-	public String getReadCount() {
-		return readCount;
 	}
 
 	public String getSigunguCode() {
