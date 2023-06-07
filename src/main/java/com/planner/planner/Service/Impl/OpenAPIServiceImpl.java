@@ -23,7 +23,7 @@ import com.planner.planner.Service.OpenAPIService;
 @Service
 public class OpenAPIServiceImpl implements OpenAPIService {
 
-	private String baseUrl = "http://apis.data.go.kr/B551011/KorService";
+	private String baseUrl = "http://apis.data.go.kr/B551011/KorService1";
 
 	@Value("${openAPI.serviceKey}")
 	private String serviceKey;
@@ -33,7 +33,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 	@Override
 	public CommonListDto<AreaCodeDto> getAreaNum() throws Exception{
-		String apiUrl = baseUrl+"/areaCode?ServiceKey="+serviceKey
+		String apiUrl = baseUrl+"/areaCode1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
 				+"&numOfRows=17"
@@ -63,7 +63,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 	@Override
 	public CommonListDto<CommonBasedDto> getAreaList(int areaCode, int contentTypeId, int index) throws Exception {
-		String apiUrl = baseUrl+"/areaBasedList?ServiceKey="+serviceKey
+		String apiUrl = baseUrl+"/areaBasedList1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
 				+"&numOfRows="+numOfRows
@@ -117,7 +117,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 	@Override
 	public CommonListDto<CommonBasedDto> getLocationBasedList(double mapX, double mapY, int radius, int index) throws Exception {
-		String apiUrl = baseUrl+"/areaBasedList?ServiceKey="+serviceKey
+		String apiUrl = baseUrl+"/areaBasedList1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
 				+"&numOfRows="+numOfRows
@@ -173,7 +173,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	@Override
 	public CommonListDto<CommonBasedDto> getKeyword(int areaCode, int contentTypeId, String keyword, int index) throws Exception
 	{
-		String apiUrl = baseUrl+"/searchKeyword?ServiceKey="+serviceKey
+		String apiUrl = baseUrl+"/searchKeyword1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
 				+"&numOfRows="+numOfRows
@@ -230,7 +230,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	{
 		JsonNode data = null;
 
-		String apiUrl = baseUrl+"/detailCommon?ServiceKey="+serviceKey
+		String apiUrl = baseUrl+"/detailCommon1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
 				+"&contentId="+contentId
