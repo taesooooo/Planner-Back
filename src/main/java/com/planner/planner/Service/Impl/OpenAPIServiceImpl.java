@@ -17,6 +17,7 @@ import com.planner.planner.Dto.OpenApi.AreaCodeDto;
 import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
+import com.planner.planner.Dto.OpenApi.OpenApiDto;
 import com.planner.planner.Exception.EmptyData;
 import com.planner.planner.Service.OpenAPIService;
 
@@ -29,7 +30,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	private String serviceKey;
 	private String mobileOS = "ETC";
 	private String mobileApp = "planner";
-	private int numOfRows = 10;
+	// private int numOfRows = 10; 요청으로 받는 값으로 변경
 
 	@Override
 	public CommonListDto<AreaCodeDto> getAreaNum() throws Exception{
@@ -62,14 +63,14 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	}
 
 	@Override
-	public CommonListDto<CommonBasedDto> getAreaList(int areaCode, int contentTypeId, int index) throws Exception {
+	public CommonListDto<CommonBasedDto> getAreaList(OpenApiDto openApiDto) throws Exception {
 		String apiUrl = baseUrl+"/areaBasedList1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
-				+"&numOfRows="+numOfRows
-				+"&pageNo="+index
-				+"&contentTypeId="+contentTypeId
-				+"&areaCode="+areaCode
+				+"&numOfRows="+openApiDto.getNumOfRows()
+				+"&pageNo="+openApiDto.getPageNo()
+				+"&contentTypeId="+openApiDto.getContentTypeId()
+				+"&areaCode="+openApiDto.getAreaCode()
 				+"&_type=json";
 
 		JsonNode data = getApiData(apiUrl);
@@ -115,15 +116,15 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	}
 
 	@Override
-	public CommonListDto<CommonBasedDto> getLocationBasedList(double mapX, double mapY, int radius, int index) throws Exception {
+	public CommonListDto<CommonBasedDto> getLocationBasedList(OpenApiDto openApiDto) throws Exception {
 		String apiUrl = baseUrl+"/areaBasedList1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
-				+"&numOfRows="+numOfRows
-				+"&pageNo="+index
-				+"&mapX="+mapX
-				+"&mapY="+mapY
-				+"&radius="+radius
+				+"&numOfRows="+openApiDto.getNumOfRows()
+				+"&pageNo="+openApiDto.getPageNo()
+				+"&mapX="+openApiDto.getMapX()
+				+"&mapY="+openApiDto.getMapY()
+				+"&radius="+openApiDto.getRadius()
 				+"&_type=json";
 
 		JsonNode data = getApiData(apiUrl);
@@ -169,16 +170,16 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	}
 
 	@Override
-	public CommonListDto<CommonBasedDto> getKeyword(int areaCode, int contentTypeId, String keyword, int index) throws Exception
+	public CommonListDto<CommonBasedDto> getKeyword(OpenApiDto openApiDto) throws Exception
 	{
 		String apiUrl = baseUrl+"/searchKeyword1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
-				+"&numOfRows="+numOfRows
-				+"&pageNo="+index
-				+"&contentTypeId="+contentTypeId
-				+"&areaCode="+areaCode
-				+"&keyword="+URLEncoder.encode(keyword, "UTF-8")
+				+"&numOfRows="+openApiDto.getNumOfRows()
+				+"&pageNo="+openApiDto.getPageNo()
+				+"&contentTypeId="+openApiDto.getContentTypeId()
+				+"&areaCode="+openApiDto.getAreaCode()
+				+"&keyword="+URLEncoder.encode(openApiDto.getKeyword(), "UTF-8")
 				+"&_type=json";
 		
 		JsonNode data = getApiData(apiUrl);

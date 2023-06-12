@@ -15,6 +15,7 @@ import com.planner.planner.Dto.OpenApi.AreaCodeDto;
 import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
+import com.planner.planner.Dto.OpenApi.OpenApiDto;
 import com.planner.planner.Service.OpenAPIService;
 import com.planner.planner.Service.SpotService;
 
@@ -38,8 +39,8 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public SpotListDto<SpotDto> getAreaList(int accountId, int areaCode, int contentTypeId, int index) throws Exception {
-		CommonListDto<CommonBasedDto> apiData = apiService.getAreaList(areaCode, contentTypeId, index);
+	public SpotListDto<SpotDto> getAreaList(int accountId, OpenApiDto openApiDto) throws Exception {
+		CommonListDto<CommonBasedDto> apiData = apiService.getAreaList(openApiDto);
 		
 		List<Integer> contentIdList = apiData.getItems().stream()
 				.map(item -> Integer.parseInt(item.getContentid()))
@@ -67,8 +68,8 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public SpotListDto<SpotDto> getLocationBasedList(int accountId, double mapX, double mapY, int radius, int index) throws Exception {
-		CommonListDto<CommonBasedDto> apiData = apiService.getLocationBasedList(mapX, mapY, radius, index);
+	public SpotListDto<SpotDto> getLocationBasedList(int accountId,OpenApiDto openApiDto) throws Exception {
+		CommonListDto<CommonBasedDto> apiData = apiService.getLocationBasedList(openApiDto);
 
 		List<Integer> contentIdList = apiData.getItems().stream()
 				.map(item -> Integer.parseInt(item.getContentid()))
@@ -93,8 +94,8 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public SpotListDto<SpotDto> getKeyword(int accountId, int areaCode, int contentTypeId, String keyword, int index) throws Exception {
-		CommonListDto<CommonBasedDto> apiData = apiService.getKeyword(areaCode, contentTypeId, keyword, index);
+	public SpotListDto<SpotDto> getKeyword(int accountId, OpenApiDto openApiDto) throws Exception {
+		CommonListDto<CommonBasedDto> apiData = apiService.getKeyword(openApiDto);
 		
 		List<Integer> contentIdList = apiData.getItems().stream()
 				.map(item -> Integer.parseInt(item.getContentid()))
