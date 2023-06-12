@@ -2,12 +2,17 @@ package com.planner.planner.Dto;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotBlank;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class PlanMemoDto {
 	private int memoId;
+	
+	@NotBlank(message = "제목을 입력해주세요.")
 	private String title;
 	private String content;
+	
 	@JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
 	private LocalDateTime createDate;
 	@JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")

@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +36,7 @@ import com.planner.planner.util.JwtUtil;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
 @Sql(scripts = {"classpath:/Planner_Test_DB.sql"})
+@Transactional
 public class AccountControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(AccountControllerTest.class);
 	@Autowired
@@ -63,10 +65,49 @@ public class AccountControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
+	
+	@Test
+	public void 계정정보수정_닉네임_미작성_유효성검사() throws Exception {
+		AccountDto test = new AccountDto.Builder()
+				.setAccountId(1)
+				.setNickName("")
+				.setPhone("01012341234")
+				.build();
+		
+		mockMvc.perform(patch("/api/users/1")
+				.content(mapper.writeValueAsString(test))
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.accept(MediaType.APPLICATION_JSON))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 계정정보수정_휴대폰번호_번호수_초과_유효성검사() throws Exception {
+		AccountDto test = new AccountDto.Builder()
+				.setAccountId(1)
+				.setNickName("test")
+				.setPhone("111111111111111")
+				.build();
+		
+		mockMvc.perform(patch("/api/users/1")
+				.content(mapper.writeValueAsString(test))
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.accept(MediaType.APPLICATION_JSON))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
 
 	@Test
 	public void 계정정보수정() throws Exception {
-		AccountDto test = new AccountDto.Builder().setAccountId(1).setNickName("test").setPhone("01012341234").build();
+		AccountDto test = new AccountDto.Builder()
+				.setAccountId(1)
+				.setNickName("test")
+				.setPhone("01012341234")
+				.build();
+		
 		mockMvc.perform(patch("/api/users/1")
 				.content(mapper.writeValueAsString(test))
 				.contentType(MediaType.APPLICATION_JSON)

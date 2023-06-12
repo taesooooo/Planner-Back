@@ -1,10 +1,16 @@
 package com.planner.planner.Handler;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -55,5 +61,14 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(DuplicateLikeException.class)
 	public ResponseEntity<Object> duplicateLike(Exception e) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, e.getMessage()));
+	}
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<Object> validFalie(Exception e, BindingResult result) {
+		Map<String, String> errors = new HashMap<String, String>();
+		result.getFieldErrors().forEach(error -> {
+			errors.put(error.getField(), error.getDefaultMessage());
+		});
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, errors));
 	}
 }

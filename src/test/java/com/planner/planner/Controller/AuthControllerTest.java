@@ -34,7 +34,7 @@ public class AuthControllerTest {
 
 	@Autowired
 	private WebApplicationContext context;
-
+	
 	private MockMvc mockMvc;
 
 	private ObjectMapper mapper = new ObjectMapper();
@@ -43,10 +43,180 @@ public class AuthControllerTest {
 	public void setUp() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 	}
+	
+	@Test
+	public void 회원가입_이메일_미작성_유효성검사() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("")
+				.setPassword("1234")
+				.setUserName("test0")
+				.setNickName("test0")
+				.setPhone("01012345678")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUserName());
+		node.put("nickname", testDto.getNickName());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 회원가입_이메일_잘못된형식_유효성검사() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("test!")
+				.setPassword("1234")
+				.setUserName("test0")
+				.setNickName("test0")
+				.setPhone("01012345678")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUserName());
+		node.put("nickname", testDto.getNickName());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 회원가입_비밀번호_미작성_유효성검사() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("test@naver.com")
+				.setPassword("")
+				.setUserName("test0")
+				.setNickName("test0")
+				.setPhone("01012345678")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUserName());
+		node.put("nickname", testDto.getNickName());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 회원가입_이름_미작성_유효성검사() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("test@naver.com")
+				.setPassword("1234")
+				.setUserName("")
+				.setNickName("test0")
+				.setPhone("01012345678")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUserName());
+		node.put("nickname", testDto.getNickName());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 회원가입_닉네임_미작성_유효성검사() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("test@naver.com")
+				.setPassword("1234")
+				.setUserName("test0")
+				.setNickName("")
+				.setPhone("01012345678")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUserName());
+		node.put("nickname", testDto.getNickName());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 회원가입_휴대폰번호_번호수_초과_유효성검사() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("test@naver.com")
+				.setPassword("1234")
+				.setUserName("")
+				.setNickName("test0")
+				.setPhone("11111111111111")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUserName());
+		node.put("nickname", testDto.getNickName());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
 
 	@Test
 	public void 회원가입() throws Exception{
-		AccountDto testDto = new AccountDto.Builder().setAccountId(0).setEmail("test0@naver.com").setPassword("1234").setUserName("test0").setNickName("test0").setPhone("01012345678").build();
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("test0@naver.com")
+				.setPassword("1234")
+				.setUserName("test0")
+				.setNickName("test0")
+				.setPhone("01012345678")
+				.build();
+		
 		ObjectNode node = mapper.createObjectNode();
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
@@ -61,6 +231,87 @@ public class AuthControllerTest {
 				.content(node.toString()))
 		.andDo(print())
 		.andExpect(status().isCreated());
+	}
+	
+	@Test
+	public void 로그인_이메일_미작성_유효성검사() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("")
+				.setPassword("1234")
+				.setUserName("test0")
+				.setNickName("test0")
+				.setPhone("01012345678")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUserName());
+		node.put("nickname", testDto.getNickName());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 로그인_이메일_잘못된형식_유효성검사() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("test!naver.com")
+				.setPassword("1234")
+				.setUserName("")
+				.setNickName("test0")
+				.setPhone("01012345678")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUserName());
+		node.put("nickname", testDto.getNickName());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 로그인_비밀번호_미작성_유효성검사() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("test@naver.com")
+				.setPassword("1234")
+				.setUserName("")
+				.setNickName("test0")
+				.setPhone("01012345678")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUserName());
+		node.put("nickname", testDto.getNickName());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
 	}
 
 	@Test

@@ -3,16 +3,25 @@ package com.planner.planner.Dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class ReviewDto {
 	private int reviewId;
 	private Integer plannerId;
+	
+	@NotBlank(message = "제목은 필수 항목입니다.")
 	private String title;
+	
 	private String writer;
+	
 	private int writerId;
+	
+	@NotBlank(message = "내용을 적어주세요.")
 	private String content;
 	private int likeCount;
+	
 	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
 	private LocalDateTime createDate;
 	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")

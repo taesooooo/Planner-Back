@@ -54,6 +54,44 @@ public class ReviewControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 		token = "Bearer "+ jwtUtil.createToken(1);	
 	}
+	
+	@Test
+	public void 리뷰_제목_공백_유효성검사() throws Exception {
+		ReviewDto testDto = new ReviewDto.Builder()
+				.setPlannerId(1)
+				.setTitle("")
+				.setContent("재미있었다.")
+				.setWriter("test")
+				.build();
+
+		mockMvc.perform(post("/api/reviews")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(testDto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 리뷰_내용_공백_유효성검사() throws Exception {
+		ReviewDto testDto = new ReviewDto.Builder()
+				.setPlannerId(1)
+				.setTitle("test")
+				.setContent("")
+				.setWriter("test")
+				.build();
+
+		mockMvc.perform(post("/api/reviews")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(testDto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
 
 	@Test
 	public void 리뷰_작성_테스트() throws Exception {
@@ -102,6 +140,44 @@ public class ReviewControllerTest {
 		.andExpect(jsonPath("$.data.comments.length()").value(1))
 		.andExpect(jsonPath("$.data.comments[0].reComments.length()").value(1))
 		.andExpect(jsonPath("$.data.comments[0].reComments[0].reComments.length()").value(1));
+	}
+	
+	@Test
+	public void 리뷰_수정_제목_공백_유효성검사() throws Exception {
+		ReviewDto testDto = new ReviewDto.Builder()
+				.setPlannerId(1)
+				.setTitle("")
+				.setContent("재미있었다.")
+				.setWriter("test")
+				.build();
+
+		mockMvc.perform(patch("/api/reviews/1")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(testDto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 리뷰_수정_내용_공백_유효성검사() throws Exception {
+		ReviewDto testDto = new ReviewDto.Builder()
+				.setPlannerId(1)
+				.setTitle("test")
+				.setContent("")
+				.setWriter("test")
+				.build();
+
+		mockMvc.perform(patch("/api/reviews/1")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(testDto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
 	}
 	
 	@Test

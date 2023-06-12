@@ -1,6 +1,7 @@
 package com.planner.planner.Controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class ReviewController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Object> writeReview(HttpServletRequest req, @RequestBody ReviewDto reviewDto) throws Exception {
+	public ResponseEntity<Object> writeReview(HttpServletRequest req, @RequestBody @Valid ReviewDto reviewDto) throws Exception {
 		int reviewId = reviewService.insertReview(Integer.parseInt(req.getAttribute("userId").toString()), reviewDto);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", reviewId));
@@ -54,7 +55,7 @@ public class ReviewController {
 	}
 	
 	@PatchMapping(value="/{reviewId}")
-	public ResponseEntity<Object> updateReivew(HttpServletRequest req, @PathVariable int reviewId, @RequestBody ReviewDto reviewDto) {
+	public ResponseEntity<Object> updateReivew(HttpServletRequest req, @PathVariable int reviewId, @RequestBody @Valid ReviewDto reviewDto) {
 		ReviewDto review = reviewService.findReview(reviewId);
 		if(review == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false,"게시글이 존재하지 않습니다."));
