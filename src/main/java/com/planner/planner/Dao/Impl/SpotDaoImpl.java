@@ -13,10 +13,11 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.mysql.cj.exceptions.MysqlErrorNumbers;
 import com.planner.planner.Dao.SpotDao;
+import com.planner.planner.Dto.SpotLikeCountDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Exception.DuplicateLikeException;
+import com.planner.planner.RowMapper.SpotLikeCountMapper;
 import com.planner.planner.RowMapper.SpotLikeRowMapper;
 
 @Repository
@@ -30,7 +31,8 @@ public class SpotDaoImpl implements SpotDao {
 	private final String INSERT_SPOT_LIKE_SQL = "INSERT INTO spot_like (account_id, content_id, like_date) VALUES (?, ?, now());";
 	private final String DELETE_SPOT_LIKE_SQL = "DELETE FROM spot_like WHERE account_id = ? and content_id = ?;";
 	private final String SELECT_SPOT_LIKE_COUNT_SQL = "SELECT count(content_id) as like_count FROM spot_like WHERE content_id = ?;";
-	private final String SELECT_SPOT_LIKE_STATE_SQL = "SELECT like_id, account_id, content_id, like_date FROM spot_like WHERE content_id IN (?) and account_id = ?;";
+	private final String SELECT_SPOT_LIKE_COUNT_LIST_SQL = "SELECT content_id, count(content_id) as like_count FROM spot_like WHERE content_id IN (%s) GROUP BY content_id;";
+	private final String SELECT_SPOT_LIKE_STATE_SQL = "SELECT like_id, account_id, content_id, like_date FROM spot_like WHERE content_id IN (%s) and account_id = ?;";
 
 	@Override
 	public boolean insertSpotLike(int accountId, int contentId) throws SQLException {
@@ -57,6 +59,16 @@ public class SpotDaoImpl implements SpotDao {
 	}
 
 	@Override
+	public List<SpotLikeCountDto> selectSpotLikeCountByContentIdList(List<Integer> contentIdList) throws Exception {
+		String contentIds = contentIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
+		String sql = String.format(SELECT_SPOT_LIKE_COUNT_LIST_SQL, contentIds);
+		
+		List<SpotLikeCountDto> list =jdbcTemplate.query(sql, new SpotLikeCountMapper());
+		
+		return list;
+	}
+
+	@Override
 	public boolean selectSpotLikeByContentId(int accountId, int contentId) {
 		if(accountId <= 0) {
 			return false;
@@ -79,8 +91,8 @@ public class SpotDaoImpl implements SpotDao {
 			return new ArrayList<SpotLikeDto>();
 		}
 		String contentIds = contentIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
-//		String sql = String.format(SELECT_SPOT_LIKE_STATE_SQL, contentList);
-		List<SpotLikeDto> states = jdbcTemplate.query(SELECT_SPOT_LIKE_STATE_SQL, new SpotLikeRowMapper(), contentIds, accountId);
+		String sql = String.format(SELECT_SPOT_LIKE_STATE_SQL, contentIds);
+		List<SpotLikeDto> states = jdbcTemplate.query(sql, new SpotLikeRowMapper(), accountId);
 
 		return states;
 	}

@@ -4,10 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +21,14 @@ import org.slf4j.LoggerFactory;
 import com.planner.planner.Dao.Impl.SpotDaoImpl;
 import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
+import com.planner.planner.Dto.SpotLikeCountDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotListDto;
 import com.planner.planner.Dto.OpenApi.AreaCodeDto;
 import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
+import com.planner.planner.Dto.OpenApi.OpenApiDto;
 import com.planner.planner.Service.Impl.OpenAPIServiceImpl;
 import com.planner.planner.Service.Impl.SpotServiceImpl;
 
@@ -60,7 +60,8 @@ public class SpotServiceTest {
 		SpotListDto<AreaCodeDto> data = spotService.getAreaNum();
 
 		assertThat(data).isNotNull();
-		assertThat(data.getItems()).isNotNull().usingRecursiveFieldByFieldElementComparator()
+		assertThat(data.getItems()).isNotNull()
+				.usingRecursiveFieldByFieldElementComparator()
 				.containsExactlyElementsOf(item);
 
 		assertThat(data.getTotalCount()).isEqualTo(testList.getTotalCount());
@@ -69,9 +70,12 @@ public class SpotServiceTest {
 	@Test
 	public void 여행지_지역기반리스트_가져오기() throws Exception {
 		int accountId = 1;
-		int areaCode = 1;
-		int contentTypeId = 12;
-		int index = 1;
+		
+		OpenApiDto param = new OpenApiDto.Builder()
+				.setAreaCode(1)
+				.setContentTypeId(12)
+				.setPageNo(1)
+				.build();
 		
 		CommonListDto<CommonBasedDto> item = createBasedDtoList();
 		
@@ -82,17 +86,34 @@ public class SpotServiceTest {
 				.setContentId(2733967)
 				.setLikeDate(LocalDate.now())
 				.build());
+		spotLikeList.add(new SpotLikeDto.Builder()
+				.setLikeId(2)
+				.setAccountId(1)
+				.setContentId(2763807)
+				.setLikeDate(LocalDate.now())
+				.build());
+		
+		List<SpotLikeCountDto> spotLikeCountList = new ArrayList<SpotLikeCountDto>();
+		spotLikeCountList.add(new SpotLikeCountDto.Builder()
+				.setContentId(2733967)
+				.setCount(1)
+				.build());
+		spotLikeCountList.add(new SpotLikeCountDto.Builder()
+				.setContentId(2763807)
+				.setCount(1)
+				.build());
 
 		//
-		when(apiSerivce.getAreaList(anyInt(), anyInt(), anyInt())).thenReturn(item);
+		when(apiSerivce.getAreaList(any(OpenApiDto.class))).thenReturn(item);
 		when(spotDao.selectSpotLikeByContentIdList(anyInt(), any())).thenReturn(spotLikeList);
+		when(spotDao.selectSpotLikeCountByContentIdList(any())).thenReturn(spotLikeCountList);
 
-		SpotListDto<SpotDto> resultList = spotService.getAreaList(accountId, areaCode, contentTypeId, index);
+		SpotListDto<SpotDto> resultList = spotService.getAreaList(accountId, param);
 
 		assertThat(resultList).isNotNull();
 		assertThat(resultList.getItems()).isNotNull()
-				.extracting(SpotDto::getBasedSpot, SpotDto::getLikeState)
-				.containsExactly(tuple(item.getItems().get(0), true), tuple(item.getItems().get(1), false));
+				.extracting(SpotDto::getBasedSpot, SpotDto::getLikeCount, SpotDto::getLikeState)
+				.containsExactly(tuple(item.getItems().get(0), 1, true), tuple(item.getItems().get(1), 1, true));
 		
 	}
 
@@ -129,10 +150,12 @@ public class SpotServiceTest {
 	@Test
 	public void 여행지_키워드별리스트_가져오기() throws Exception {
 		int accountId = 1;
-		int areaCode = 1;
-		int contentTypeId = 12;
-		int index = 1;
-		String keyword = "test";
+		OpenApiDto param = new OpenApiDto.Builder()
+				.setAreaCode(1)
+				.setContentTypeId(1)
+				.setKeyword("test")
+				.setPageNo(1)
+				.build();
 		
 		CommonListDto<CommonBasedDto> item = createBasedDtoList();
 		
@@ -143,17 +166,34 @@ public class SpotServiceTest {
 				.setContentId(2733967)
 				.setLikeDate(LocalDate.now())
 				.build());
+		spotLikeList.add(new SpotLikeDto.Builder()
+				.setLikeId(2)
+				.setAccountId(1)
+				.setContentId(2763807)
+				.setLikeDate(LocalDate.now())
+				.build());
+		
+		List<SpotLikeCountDto> spotLikeCountList = new ArrayList<SpotLikeCountDto>();
+		spotLikeCountList.add(new SpotLikeCountDto.Builder()
+				.setContentId(2733967)
+				.setCount(1)
+				.build());
+		spotLikeCountList.add(new SpotLikeCountDto.Builder()
+				.setContentId(2763807)
+				.setCount(1)
+				.build());
 
 		//
-		when(apiSerivce.getKeyword(anyInt(), anyInt(), anyString(), anyInt())).thenReturn(item);
+		when(apiSerivce.getKeyword(any(OpenApiDto.class))).thenReturn(item);
 		when(spotDao.selectSpotLikeByContentIdList(anyInt(), any())).thenReturn(spotLikeList);
-
-		SpotListDto<SpotDto> resultList = spotService.getKeyword(accountId, areaCode, contentTypeId, keyword, index);
+		when(spotDao.selectSpotLikeCountByContentIdList(any())).thenReturn(spotLikeCountList);
+		
+		SpotListDto<SpotDto> resultList = spotService.getKeyword(accountId, param);
 
 		assertThat(resultList).isNotNull();
 		assertThat(resultList.getItems()).isNotNull()
-				.extracting(SpotDto::getBasedSpot, SpotDto::getLikeState)
-				.containsExactly(tuple(item.getItems().get(0), true), tuple(item.getItems().get(1), false));
+		.extracting(SpotDto::getBasedSpot, SpotDto::getLikeCount, SpotDto::getLikeState)
+		.containsExactly(tuple(item.getItems().get(0), 1, true), tuple(item.getItems().get(1), 1, true));
 		
 	}
 
@@ -221,7 +261,6 @@ public class SpotServiceTest {
 				.setMapy("37.5820858828")
 				.setMlevel("6")
 				.setModifiedtime("20221024141458")
-				.setReadCount("")
 				.setSigunguCode("23")
 				.setTel("")
 				.setTitle("가회동성당")
@@ -244,7 +283,6 @@ public class SpotServiceTest {
 				.setMapy("37.5728520032")
 				.setMlevel("6")
 				.setModifiedtime("20211111194249")
-				.setReadCount("")
 				.setSigunguCode("11")
 				.setTel("")
 				.setTitle("간데메공원")

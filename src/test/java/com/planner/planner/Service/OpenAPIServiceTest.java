@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
+import com.planner.planner.Dto.OpenApi.OpenApiDto;
 import com.planner.planner.Service.Impl.OpenAPIServiceImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -33,7 +34,13 @@ public class OpenAPIServiceTest {
 	
 	@Test
 	public void OpenAPI_지역코드리스트_가져오기() throws Exception {
-		CommonListDto list = apiServiceImpl.getAreaList(1, 12, 1);
+		OpenApiDto param = new OpenApiDto.Builder()
+				.setAreaCode(1)
+				.setContentTypeId(12)
+				.setPageNo(1)
+				.build();
+		
+		CommonListDto list = apiServiceImpl.getAreaList(param);
 		
 		assertNotNull(list.getItems());
 		assertFalse(list.getItems().isEmpty());
@@ -41,7 +48,13 @@ public class OpenAPIServiceTest {
 	
 	@Test
 	public void OpenAPI_지역기반리스트_가져오기() throws Exception {
-		CommonListDto list = apiServiceImpl.getAreaList(1, 12, 1);
+		OpenApiDto param = new OpenApiDto.Builder()
+				.setAreaCode(1)
+				.setContentTypeId(12)
+				.setPageNo(1)
+				.build();
+		
+		CommonListDto list = apiServiceImpl.getAreaList(param);
 			
 		assertNotNull(list.getItems());
 		assertFalse(list.getItems().isEmpty());

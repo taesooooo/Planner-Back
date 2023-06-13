@@ -1,6 +1,7 @@
 package com.planner.planner.Service.Impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.planner.planner.Dao.SpotDao;
 import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
+import com.planner.planner.Dto.SpotLikeCountDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotListDto;
 import com.planner.planner.Dto.OpenApi.AreaCodeDto;
@@ -47,14 +49,25 @@ public class SpotServiceImpl implements SpotService {
 				.collect(Collectors.toList());
 		
 		List<SpotLikeDto> spotLikeList = spotDao.selectSpotLikeByContentIdList(accountId, contentIdList);
+		List<SpotLikeCountDto> spotLikeCountList = spotDao.selectSpotLikeCountByContentIdList(contentIdList);
 
 		List<SpotDto> spotList = apiData.getItems().stream()
 				.map(item -> {
 					boolean likeState = spotLikeList.stream()
 							.anyMatch(likeItem -> likeItem.getContentId() == Integer.parseInt(item.getContentid()));
 
+					Optional<SpotLikeCountDto> likeCountDto = spotLikeCountList.stream()
+							.filter(likeCountItem -> likeCountItem.getContentId() == Integer.parseInt(item.getContentid()))
+							.findFirst();
+					
+					int likeCount = 0;
+					if(likeCountDto.isPresent()) {
+						likeCount = likeCountDto.get().getCount();
+					}
+
 					SpotDto spot = new SpotDto.Builder()
 							.setBasedSpot(item)
+							.setLikeCount(likeCount)
 							.setLikeState(likeState)
 							.build();
 
@@ -76,13 +89,23 @@ public class SpotServiceImpl implements SpotService {
 				.collect(Collectors.toList());
 		
 		List<SpotLikeDto> spotLikeList = spotDao.selectSpotLikeByContentIdList(accountId, contentIdList);
+		List<SpotLikeCountDto> spotLikeCountList = spotDao.selectSpotLikeCountByContentIdList(contentIdList);
 
 		List<SpotDto> spotList = apiData.getItems().stream()
 				.map(item -> {
 					boolean likeState = spotLikeList.stream()
 							.anyMatch(likeItem -> likeItem.getContentId() == Integer.parseInt(item.getContentid()));
 
-					SpotDto spot = new SpotDto.Builder().setBasedSpot(item).setLikeState(likeState).build();
+					SpotLikeCountDto likeCount = spotLikeCountList.stream()
+							.filter(likeCountItem -> likeCountItem.getContentId() == Integer.parseInt(item.getContentid()))
+							.findFirst()
+							.get();
+
+					SpotDto spot = new SpotDto.Builder()
+							.setBasedSpot(item)
+							.setLikeCount(likeCount.getCount())
+							.setLikeState(likeState)
+							.build();
 
 					return spot;
 		})
@@ -102,13 +125,23 @@ public class SpotServiceImpl implements SpotService {
 				.collect(Collectors.toList());
 		
 		List<SpotLikeDto> spotLikeList = spotDao.selectSpotLikeByContentIdList(accountId, contentIdList);
-		
+		List<SpotLikeCountDto> spotLikeCountList = spotDao.selectSpotLikeCountByContentIdList(contentIdList);
+			
 		List<SpotDto> spotList = apiData.getItems().stream()
 				.map(item -> {
 					boolean likeState = spotLikeList.stream()
 							.anyMatch(likeItem -> likeItem.getContentId() == Integer.parseInt(item.getContentid()));
+					
+					SpotLikeCountDto likeCount = spotLikeCountList.stream()
+							.filter(likeCountItem -> likeCountItem.getContentId() == Integer.parseInt(item.getContentid()))
+							.findFirst()
+							.get();
 
-					SpotDto spot = new SpotDto.Builder().setBasedSpot(item).setLikeState(likeState).build();
+					SpotDto spot = new SpotDto.Builder()
+							.setBasedSpot(item)
+							.setLikeCount(likeCount.getCount())
+							.setLikeState(likeState)
+							.build();
 
 					return spot;
 		})
