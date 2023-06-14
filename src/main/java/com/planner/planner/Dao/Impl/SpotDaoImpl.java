@@ -36,7 +36,7 @@ public class SpotDaoImpl implements SpotDao {
 	private final String SELECT_SPOT_LIKE_lIST_SQL = "SELECT like_id, account_id, content_id, title, image, like_date FROM spot_like WHERE account_id = ? ORDER BY like_id ASC LIMIT ?, ?;";
 	private final String SELECT_SPOT_LIKE_COUNT_SQL = "SELECT count(content_id) as like_count FROM spot_like WHERE content_id = ?;";
 	private final String SELECT_SPOT_LIKE_COUNT_LIST_SQL = "SELECT content_id, count(content_id) as like_count FROM spot_like WHERE content_id IN (%s) GROUP BY content_id;";
-	private final String SELECT_SPOT_LIKE_STATE_SQL = "SELECT like_id, account_id, content_id, like_date FROM spot_like WHERE content_id IN (%s) and account_id = ?;";
+	private final String SELECT_SPOT_LIKE_STATE_SQL = "SELECT like_id, account_id, content_id, title, image, like_date FROM spot_like WHERE content_id IN (%s) and account_id = ?;";
 
 	@Override
 	public boolean insertSpotLike(int accountId, SpotLikeDto spotLikeDto) throws SQLException {
@@ -95,7 +95,8 @@ public class SpotDaoImpl implements SpotDao {
 		SpotLikeDto like = null;
 		
 		try {
-			like = jdbcTemplate.queryForObject(SELECT_SPOT_LIKE_STATE_SQL, new SpotLikeRowMapper(), contentId, accountId);			
+			String sql = String.format(SELECT_SPOT_LIKE_STATE_SQL, contentId);
+			like = jdbcTemplate.queryForObject(sql, new SpotLikeRowMapper(), accountId);			
 			return like != null ? true : false;
 		}
 		catch (EmptyResultDataAccessException e) {
