@@ -13,6 +13,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.SpotDao;
 import com.planner.planner.Dto.SpotLikeCountDto;
 import com.planner.planner.Dto.SpotLikeDto;
@@ -28,20 +29,23 @@ public class SpotDaoImpl implements SpotDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private final String INSERT_SPOT_LIKE_SQL = "INSERT INTO spot_like (account_id, content_id, like_date) VALUES (?, ?, now());";
+//	private final String INSERT_SPOT_LIKE_SQL = "INSERT INTO spot_like (account_id, content_id, like_date) VALUES (?, ?, now());";
+	private final String INSERT_SPOT_LIKE_SQL = "INSERT INTO spot_like (account_id, content_id, title, image, like_date) VALUES (?, ?, ?, ?, now());";
 	private final String DELETE_SPOT_LIKE_SQL = "DELETE FROM spot_like WHERE account_id = ? and content_id = ?;";
+	private final String SELECT_SPOT_LIKE_TOTAL_COUNT_BY_ACCOUNT_ID_SQL = "SELECT count(content_id) FROM spot_like WHERE account_id = ?;";
+	private final String SELECT_SPOT_LIKE_lIST_SQL = "SELECT like_id, account_id, content_id, title, image, like_date FROM spot_like WHERE account_id = ? ORDER BY like_id ASC LIMIT ?, ?;";
 	private final String SELECT_SPOT_LIKE_COUNT_SQL = "SELECT count(content_id) as like_count FROM spot_like WHERE content_id = ?;";
 	private final String SELECT_SPOT_LIKE_COUNT_LIST_SQL = "SELECT content_id, count(content_id) as like_count FROM spot_like WHERE content_id IN (%s) GROUP BY content_id;";
 	private final String SELECT_SPOT_LIKE_STATE_SQL = "SELECT like_id, account_id, content_id, like_date FROM spot_like WHERE content_id IN (%s) and account_id = ?;";
 
 	@Override
-	public boolean insertSpotLike(int accountId, int contentId) throws SQLException {
+	public boolean insertSpotLike(int accountId, SpotLikeDto spotLikeDto) throws SQLException {
 		try {
-			int result = jdbcTemplate.update(INSERT_SPOT_LIKE_SQL, accountId, contentId);			
+			int result = jdbcTemplate.update(INSERT_SPOT_LIKE_SQL, accountId, spotLikeDto.getContentId(), spotLikeDto.getTitle(), spotLikeDto.getImage());			
 			return result > 0 ? true : false;
 		}
 		catch (DuplicateKeyException e) {
-			throw new DuplicateLikeException("좋아요를 했습니다.");
+			throw new DuplicateLikeException("중복된 좋아요입니다.");
 		}
 	}
 
@@ -51,6 +55,20 @@ public class SpotDaoImpl implements SpotDao {
 		return result > 0 ? true : false;
 	}
 	
+	@Override
+	public int selectSpotLikeTotalCountByAccountId(int accountId) throws Exception {
+		Integer totalCount = jdbcTemplate.queryForObject(SELECT_SPOT_LIKE_TOTAL_COUNT_BY_ACCOUNT_ID_SQL, Integer.class, accountId);
+		
+		return totalCount.intValue();
+	}
+
+	@Override
+	public List<SpotLikeDto> selectSpotLikeList(int accountId, PageInfo pageInfo) throws Exception {
+		List<SpotLikeDto> list = jdbcTemplate.query(SELECT_SPOT_LIKE_lIST_SQL, new SpotLikeRowMapper(), accountId, pageInfo.getPageOffSet(), pageInfo.getPageItemCount());
+		
+		return list;
+	}
+
 	@Override
 	public int selectSpotLikeCountByContentId(int contentId) {
 		Integer likeCount = jdbcTemplate.queryForObject(SELECT_SPOT_LIKE_COUNT_SQL, Integer.class, contentId);

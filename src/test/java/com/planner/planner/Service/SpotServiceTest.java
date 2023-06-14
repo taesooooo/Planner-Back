@@ -18,6 +18,8 @@ import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.planner.planner.Common.Page;
+import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.Impl.SpotDaoImpl;
 import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
@@ -222,11 +224,16 @@ public class SpotServiceTest {
 	@Test
 	public void 여행지_좋아요() throws Exception {
 		int accountId = 1;
-		int contentId = 2733967;
 		
-		when(spotDao.insertSpotLike(anyInt(), anyInt())).thenReturn(true);
+		SpotLikeDto spotLikeDto = new SpotLikeDto.Builder()
+				.setContentId(2733967)
+				.setTitle("테스트")
+				.setImage("테스트이미지")
+				.build();
+		
+		when(spotDao.insertSpotLike(anyInt(), any())).thenReturn(true);
 
-		boolean like = spotService.addSpotLike(accountId, contentId);
+		boolean like = spotService.addSpotLike(accountId, spotLikeDto);
 		
 		assertThat(like).isEqualTo(true);
 	}
@@ -241,6 +248,35 @@ public class SpotServiceTest {
 		boolean like = spotService.removeSpotLike(accountId, contentId);
 		
 		assertThat(like).isEqualTo(true);
+	}
+	
+	@Test
+	public void 여행지_좋아요_리스트_가져오기() throws Exception {
+		List<SpotLikeDto> list = new ArrayList<SpotLikeDto>();
+		list.add(new SpotLikeDto.Builder()
+				.setLikeId(1)
+				.setAccountId(1)
+				.setContentId(2733967)
+				.setTitle("테스트")
+				.setImage("테스트이미지")
+				.build());
+		list.add(new SpotLikeDto.Builder()
+				.setLikeId(2)
+				.setAccountId(1)
+				.setContentId(2733967)
+				.setTitle("테스트")
+				.setImage("테스트이미지")
+				.build());
+
+		//
+		when(spotDao.selectSpotLikeList(anyInt(), any(PageInfo.class))).thenReturn(list);
+		when(spotDao.selectSpotLikeTotalCountByAccountId(anyInt())).thenReturn(2);
+		
+		Page<SpotLikeDto> spotLikePage = spotService.getSpotLikeList(1, 1);
+		
+		assertThat(spotLikePage.getList()).isNotNull()
+				.usingRecursiveComparison()
+				.isEqualTo(list);
 	}
 
 	private CommonListDto<CommonBasedDto> createBasedDtoList() {
