@@ -70,9 +70,6 @@ public class PlannerServiceImpl implements PlannerService {
 	public Page<PlannerDto> findPlannersByAccountId(int page, int accountId) throws Exception {
 		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
 		List<PlannerDto> plannerList = plannerDao.findPlannersByAccountId(accountId, pInfo);
-		if (plannerList.isEmpty()) {
-			throw new NotFoundPlanner();
-		}
 
 		int totalCount = plannerDao.getTotalCount(accountId);
 
@@ -88,9 +85,6 @@ public class PlannerServiceImpl implements PlannerService {
 	public Page<PlannerDto> findPlannerAll(int page) throws Exception {
 		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
 		List<PlannerDto> plannerList = plannerDao.findPlannerAll(pInfo);
-		if (plannerList.isEmpty()) {
-			throw new NotFoundPlanner();
-		}
 
 		int totalCount = plannerDao.getTotalCount();
 
@@ -207,9 +201,6 @@ public class PlannerServiceImpl implements PlannerService {
 	public Page<PlannerDto> getLikePlannerList(int page, int accountId) throws Exception {
 		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
 		List<PlannerDto> plannerList = plannerDao.likePlannerList(accountId, pInfo);
-		if (plannerList.isEmpty()) {
-			throw new NotFoundPlanner();
-		}
 
 		int totalCount = plannerDao.getTotalCountByLike(accountId);
 
