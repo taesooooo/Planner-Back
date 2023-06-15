@@ -48,7 +48,9 @@ public class PlannerContorller {
 
 	@GetMapping
 	public ResponseEntity<Object> plannerList(HttpServletRequest req, @RequestParam(value = "page")int page) throws Exception {
-		Page<PlannerDto> planners = plannerService.findPlannerAll(page);
+		int userId = UserIdUtil.getUserId(req);
+		
+		Page<PlannerDto> planners = plannerService.findPlannerAll(userId, page);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", planners));
 	}
 	

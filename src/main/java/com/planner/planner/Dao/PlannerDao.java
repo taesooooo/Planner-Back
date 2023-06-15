@@ -14,7 +14,7 @@ public interface PlannerDao {
 	public int insertPlanner(PlannerDto plannerDto);
 	public PlannerDto findPlannerByPlannerId(int plannerId);
 	public List<PlannerDto> findPlannersByAccountId(int accountId, PageInfo pageInfo);
-	public List<PlannerDto> findPlannerAll(PageInfo pageInfo);
+	public List<PlannerDto> findPlannerAll(int accountId, PageInfo pageInfo);
 	public int updatePlanner(int plannerId, PlannerDto plannerDto);
 	public int deletePlanner(int plannerId);
 	public int getTotalCount();
@@ -49,6 +49,7 @@ public interface PlannerDao {
 	public int plannerLike(int accountId, int plannerId);
 	public int plannerUnLike(int accountId, int plannerId);
 	public boolean isLike(int accountId, int plannerId);
+	public List<Integer> returnLikePlannerIdList(int accountId, List<Integer> plannerIdList);
 	public List<PlannerDto> likePlannerList(int accountId, PageInfo pageInfo);
 }
 
