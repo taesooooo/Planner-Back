@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.HashMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -109,6 +112,24 @@ public class AccountControllerTest {
 	}
 	
 	@Test
+	public void 나의_플래너_가져오기_개수_설정() throws Exception {
+		mockMvc.perform(get("/api/users/1/planners")
+				.header("Authorization", token)
+				.accept(MediaType.APPLICATION_JSON)
+				.param("itemCount","5")
+				.param("page", "1"))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list.length()").value(3))
+		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
+	
+	@Test
 	public void 좋아요_플래너_가져오기() throws Exception {
 		mockMvc.perform(get("/api/users/1/likes?type=planner")
 				.header("Authorization", token)
@@ -125,28 +146,6 @@ public class AccountControllerTest {
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
 
-//	@Test
-//	public void 좋아요모두가져오기() throws Exception {
-//		mockMvc.perform(get("/api/users/likes/1")
-//				.header("Authorization", token)
-//				.accept(MediaType.APPLICATION_JSON))
-//		.andDo(print())
-//		.andExpect(status().isOk());
-//	}
-
-	@Test
-	public void 좋아요여행지확인() throws Exception {
-		mockMvc.perform(get("/api/users/likes/1/check")
-				.param("contentIds", "2733967, 2733968")
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.header("Authorization", token))
-		.andDo(print())
-		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.data[0].contentId").isNumber())
-		.andExpect(jsonPath("$.data[0].state").isBoolean());
-	}
-	
 	@Test
 	public void 계정_확인_이메일() throws Exception {
 		String searchEmail = "test@naver.com";

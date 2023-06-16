@@ -89,20 +89,13 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public LikeDto allLikesList(int accountId) {
-		List<SpotLikeDto> likeS = accountDao.likeSpots(accountId);
-
-		return new LikeDto.Builder().setLikePlanners(null).setLikeSpots(likeS).build();
+	public Page<PlannerDto> getMyPlanner(int itemCount, int page, int accountId) throws Exception {
+		return plannerService.findPlannersByAccountId(itemCount, page, accountId); 
 	}
 
 	@Override
-	public Page<PlannerDto> getMyPlanner(int page, int accountId) throws Exception {
-		return plannerService.findPlannersByAccountId(page, accountId); 
-	}
-
-	@Override
-	public Page<PlannerDto> getLikePlanner(int page, int accountId) throws Exception {
-		return plannerService.getLikePlannerList(page, accountId);
+	public Page<PlannerDto> getLikePlanner(int itemCount, int page, int accountId) throws Exception {
+		return plannerService.getLikePlannerList(itemCount, page, accountId);
 	}
 
 	@Override

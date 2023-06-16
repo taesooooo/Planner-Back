@@ -47,8 +47,18 @@ public class PlannerContorller {
 	}
 
 	@GetMapping
-	public ResponseEntity<Object> plannerList(HttpServletRequest req, @RequestParam(value = "page")int page) throws Exception {
-		Page<PlannerDto> planners = plannerService.findPlannerAll(page);
+	public ResponseEntity<Object> plannerList(HttpServletRequest req, @RequestParam(value="itemCount", required = false) Integer itemCount,
+			@RequestParam(value = "page", required = false) Integer page) throws Exception {
+		
+		if(itemCount == null) {
+			itemCount = new Integer(10);
+		}
+		
+		if(page == null) {
+			page = new Integer(1);
+		}
+		
+		Page<PlannerDto> planners = plannerService.findPlannerAll(itemCount, page);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", planners));
 	}
 	

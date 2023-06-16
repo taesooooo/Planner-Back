@@ -66,20 +66,41 @@ public class AccountController {
 	}
 	
 	@GetMapping(value = "/{accountId}/planners")
-	public ResponseEntity<Object> likePlanners(HttpServletRequest req, @RequestParam(value="page") int page, @PathVariable int accountId) throws Exception {
+	public ResponseEntity<Object> likePlanners(HttpServletRequest req, @RequestParam(value="itemCount", required = false) Integer itemCount,
+			@RequestParam(value = "page", required = false) Integer page,
+			@PathVariable int accountId) throws Exception {
 		checkAuth(req, accountId);
 		
-		Page<PlannerDto> list = accountService.getMyPlanner(page, accountId);
+		if(itemCount == null) {
+			itemCount = new Integer(10);
+		}
+		
+		if(page == null) {
+			page = new Integer(1);
+		}
+		
+		Page<PlannerDto> list = accountService.getMyPlanner(itemCount, page, accountId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));
 	}
 
 	@GetMapping(value = "/{accountId}/likes")
-	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId,  @RequestParam(value="page") int page, @RequestParam("type") String type) throws Exception {
+	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId,  @RequestParam(value="itemCount", required = false) Integer itemCount,
+			@RequestParam(value = "page", required = false) Integer page,
+			@RequestParam("type") String type) throws Exception {
 		checkAuth(req, accountId);
 		Object list = null;
+		
+		if(itemCount == null) {
+			itemCount = new Integer(10);
+		}
+		
+		if(page == null) {
+			page = new Integer(1);
+		}
+		
 		if(type.equals("planner")) {
-			list = accountService.getLikePlanner(page, accountId);
+			list = accountService.getLikePlanner(itemCount, page, accountId);
 		}
 		//LikeDto likes = accountService.allLikesList(accountId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));

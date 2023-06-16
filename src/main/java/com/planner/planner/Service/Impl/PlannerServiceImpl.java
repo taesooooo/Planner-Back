@@ -67,8 +67,8 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public Page<PlannerDto> findPlannersByAccountId(int page, int accountId) throws Exception {
-		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
+	public Page<PlannerDto> findPlannersByAccountId(int itemCount, int page, int accountId) throws Exception {
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(itemCount).build();
 		List<PlannerDto> plannerList = plannerDao.findPlannersByAccountId(accountId, pInfo);
 		if (plannerList.isEmpty()) {
 			throw new NotFoundPlanner();
@@ -85,8 +85,8 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public Page<PlannerDto> findPlannerAll(int page) throws Exception {
-		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
+	public Page<PlannerDto> findPlannerAll(int itemCount, int page) throws Exception {
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(itemCount).build();
 		List<PlannerDto> plannerList = plannerDao.findPlannerAll(pInfo);
 		if (plannerList.isEmpty()) {
 			throw new NotFoundPlanner();
@@ -204,8 +204,8 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public Page<PlannerDto> getLikePlannerList(int page, int accountId) throws Exception {
-		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
+	public Page<PlannerDto> getLikePlannerList(int itemCount, int page, int accountId) throws Exception {
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(itemCount).build();
 		List<PlannerDto> plannerList = plannerDao.likePlannerList(accountId, pInfo);
 		if (plannerList.isEmpty()) {
 			throw new NotFoundPlanner();

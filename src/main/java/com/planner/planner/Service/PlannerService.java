@@ -13,8 +13,8 @@ public interface PlannerService {
 	// 플래너 생성, 가져오기, 수정, 삭제
 	public int newPlanner(PlannerDto plannerDto) throws Exception;
 	public PlannerDto findPlannerByPlannerId(int plannerId) throws Exception;
-	public Page<PlannerDto> findPlannersByAccountId(int page, int accountId) throws Exception;
-	public Page<PlannerDto> findPlannerAll(int page) throws Exception;
+	public Page<PlannerDto> findPlannersByAccountId(int itemCount, int page, int accountId) throws Exception;
+	public Page<PlannerDto> findPlannerAll(int itemCount, int page) throws Exception;
 	public void updatePlanner(PlannerDto plannerDto) throws Exception;
 	public void deletePlanner(int plannerId) throws Exception;
 	
@@ -41,5 +41,5 @@ public interface PlannerService {
 	
 	// 플래너 좋아요, 좋아요 취소, 좋아요 목록 가져오기
 	public void plannerLikeOrUnLike(int accountId, int plannerId);
-	public Page<PlannerDto> getLikePlannerList(int page, int accountId) throws Exception;
+	public Page<PlannerDto> getLikePlannerList(int itemCount, int page, int accountId) throws Exception;
 }
