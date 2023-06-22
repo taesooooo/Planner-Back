@@ -143,7 +143,7 @@ public class AccountServiceTest {
 		
 		when(plannerService.findPlannersByAccountId(anyInt(),anyInt())).thenReturn(plannerListPage);
 
-		Page<PlannerDto> list = accountService.getMyPlanner(1, testAccountId);
+		Page<PlannerDto> list = accountService.myPlanners(1, testAccountId);
 		
 		verify(plannerService).findPlannersByAccountId(anyInt(), anyInt());
 		

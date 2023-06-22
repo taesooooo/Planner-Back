@@ -16,9 +16,10 @@ public interface AccountService {
 	public boolean accountImageUpdate(int accountId, MultipartFile image) throws Exception;
 	public boolean passwordUpdate(AccountDto accountDto);
 	public void acceptInvite(int plannerId, int accountId);
-	public LikeDto allLikesList(int accountId);
-	public Page<PlannerDto> getMyPlanner(int page, int accountId) throws Exception;
-	public Page<PlannerDto> getLikePlanner(int page, int accountId) throws Exception;
-	public List<SpotLikeDto> spotLikesByAccountId(int accountId);
+	
+	public Page<PlannerDto> myPlanners(int page, int accountId) throws Exception;
+	public Page<PlannerDto> likePlanners(int page, int accountId) throws Exception;
+	public Page<SpotLikeDto> likeSpots(int accountId, int page) throws Exception;
+	
 	public boolean searchEmail(String searchEmail) throws Exception;
 }

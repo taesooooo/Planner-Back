@@ -6,12 +6,16 @@ public class SpotLikeDto {
 	private int likeId;
 	private int accountId;
 	private int contentId;
+	private String title;
+	private String image;
 	private LocalDate likeDate;
 
 	public static class Builder {
 		private int likeId;
 		private int accountId;
 		private int contentId;
+		private String title;
+		private String image;
 		private LocalDate likeDate;
 
 		public Builder setLikeId(int likeId) {
@@ -24,6 +28,14 @@ public class SpotLikeDto {
 		}
 		public Builder setContentId(int contentId) {
 			this.contentId = contentId;
+			return this;
+		}
+		public Builder setTitle(String title) {
+			this.title = title;
+			return this;
+		}
+		public Builder setImage(String image) {
+			this.image = image;
 			return this;
 		}
 		public Builder setLikeDate(LocalDate likeDate) {
@@ -43,6 +55,8 @@ public class SpotLikeDto {
 		this.likeId = builder.likeId;
 		this.accountId = builder.accountId;
 		this.contentId = builder.contentId;
+		this.title = builder.title;
+		this.image = builder.image;
 		this.likeDate = builder.likeDate;
 	}
 
@@ -56,6 +70,14 @@ public class SpotLikeDto {
 
 	public int getContentId() {
 		return contentId;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public String getImage() {
+		return image;
 	}
 
 	public LocalDate getLikeDate() {

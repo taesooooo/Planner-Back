@@ -1,7 +1,6 @@
 package com.planner.planner.Service.Impl;
 
 import java.io.File;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +14,12 @@ import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.PlannerService;
+import com.planner.planner.Service.SpotService;
 import com.planner.planner.util.FileStore;
 
 @Service
@@ -31,13 +30,15 @@ public class AccountServiceImpl implements AccountService {
 	private AccountDao accountDao;
 	private PlannerService plannerService;
 	private PlannerDao plannerDao;
+	private SpotService spotService;
 
 	private FileStore fileStore;
 
-	public AccountServiceImpl(AccountDao accountDao, PlannerService plannerService, PlannerDao plannerDao, FileStore fileStore) {
+	public AccountServiceImpl(AccountDao accountDao, PlannerService plannerService, PlannerDao plannerDao, SpotService spotService, FileStore fileStore) {
 		this.accountDao = accountDao;
 		this.plannerService = plannerService;
 		this.plannerDao = plannerDao;
+		this.spotService = spotService;
 		this.fileStore = fileStore;
 	}
 
@@ -89,25 +90,18 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public LikeDto allLikesList(int accountId) {
-		List<SpotLikeDto> likeS = accountDao.likeSpots(accountId);
-
-		return new LikeDto.Builder().setLikePlanners(null).setLikeSpots(likeS).build();
-	}
-
-	@Override
-	public Page<PlannerDto> getMyPlanner(int page, int accountId) throws Exception {
+	public Page<PlannerDto> myPlanners(int page, int accountId) throws Exception {
 		return plannerService.findPlannersByAccountId(page, accountId); 
 	}
 
 	@Override
-	public Page<PlannerDto> getLikePlanner(int page, int accountId) throws Exception {
+	public Page<PlannerDto> likePlanners(int page, int accountId) throws Exception {
 		return plannerService.getLikePlannerList(page, accountId);
 	}
 
 	@Override
-	public List<SpotLikeDto> spotLikesByAccountId(int accountId) {
-		return accountDao.spotLikesByAccountId(accountId);
+	public Page<SpotLikeDto> likeSpots(int page, int accountId) throws Exception {
+		return spotService.getSpotLikeList(accountId, page);
 	}
 
 	@Override

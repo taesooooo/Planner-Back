@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.ValidationGroups.AccountUpdateGroup;
+import com.planner.planner.Common.PostType;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.ForbiddenException;
@@ -71,19 +72,22 @@ public class AccountController {
 	public ResponseEntity<Object> likePlanners(HttpServletRequest req, @RequestParam(value="page") int page, @PathVariable int accountId) throws Exception {
 		checkAuth(req, accountId);
 		
-		Page<PlannerDto> list = accountService.getMyPlanner(page, accountId);
+		Page<PlannerDto> list = accountService.myPlanners(page, accountId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));
 	}
 
 	@GetMapping(value = "/{accountId}/likes")
-	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId,  @RequestParam(value="page") int page, @RequestParam("type") String type) throws Exception {
+	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId,  @RequestParam(value="page") int page, @RequestParam("type") PostType postType) throws Exception {
 		checkAuth(req, accountId);
-		Object list = null;
-		if(type.equals("planner")) {
-			list = accountService.getLikePlanner(page, accountId);
+		Page<?> list = null;
+		if(postType == PostType.PLANNER) {
+			list = accountService.likePlanners(page, accountId);
 		}
-		//LikeDto likes = accountService.allLikesList(accountId);
+		else if(postType == PostType.SPOT) {
+			list = accountService.likeSpots(accountId, page);
+		}
+
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));
 	}
 

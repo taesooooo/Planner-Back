@@ -14,6 +14,8 @@ public class SpotLikeRowMapper implements RowMapper<SpotLikeDto> {
 		SpotLikeDto spotLike = new SpotLikeDto.Builder()
 				.setLikeId(rs.getInt("like_id"))
 				.setAccountId(rs.getInt("account_id"))
+				.setTitle(rs.getString("title"))
+				.setImage(rs.getString("image"))
 				.setContentId(rs.getInt("content_id"))
 				.setLikeDate(rs.getDate("like_date").toLocalDate())
 				.build();

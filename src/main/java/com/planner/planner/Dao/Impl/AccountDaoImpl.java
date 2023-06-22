@@ -1,20 +1,13 @@
 package com.planner.planner.Dao.Impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.RowMapper.AccountRowMapper;
 
 @Repository
@@ -34,11 +27,6 @@ public class AccountDaoImpl implements AccountDao {
 	private final String imageUpdateSQL = "UPDATE account SET image = ?, update_date = now() WHERE account_id = ?";
 	private final String passwordUpdateSQL = "UPDATE account SET password = ?, update_date = now() WHERE account_id = ?";
 	private final String nicknameUpdateSQL = "UPDATE account SET nickname = ?, update_date = now() WHERE account_id = ?";
-	private final String likePlannersSQL = "SELECT planner_id, title, plan_date_start, plan_date_end FROM planner WHERE planner_id "
-			+ "IN (SELECT planner_id FROM plannerlike WHERE account_id = ?);";
-	private final String likeSpotsSQL = "SELECT like_id, account_id, content_id, like_date FROM spotlike WHERE account_id = ?;";
-	private final String spotLikesByAccountId = "SELECT like_id, account_id, content_id, like_date FROM spotlike WHERE account_id = ?;";
-	private final String spotLikeStateSQL = "SELECT like_id, account_id, content_id, like_date FROM spotlike WHERE content_id IN (%s) and account_id = ?;";
 	private final String SEARCH_EMAIL_SQL = "SELECT A.email FROM account AS A WHERE A.email like ?;";
 
 	public AccountDaoImpl(JdbcTemplate jdbcTemplate) {
@@ -111,53 +99,6 @@ public class AccountDaoImpl implements AccountDao {
 		catch (EmptyResultDataAccessException e) {
 			return null;
 		}
-	}
-
-	@Override
-	public List<SpotLikeDto> likeSpots(int accountId) {
-		List<SpotLikeDto> likes = jdbcTemplate.query(likeSpotsSQL, new RowMapper<SpotLikeDto>() {
-			@Override
-			public SpotLikeDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-				SpotLikeDto spotLike = new SpotLikeDto.Builder().setLikeId(rs.getInt(1)).setAccountId(rs.getInt(2))
-						.setContentId(rs.getInt(3)).setLikeDate(rs.getDate(4).toLocalDate()).build();
-				return spotLike;
-			}
-		}, accountId);
-		return likes;
-	}
-
-	@Override
-	public List<SpotLikeDto> spotLikesByAccountId(int accountId) {
-		List<SpotLikeDto> likes =  jdbcTemplate.query(spotLikesByAccountId, new RowMapper<SpotLikeDto>() {
-			@Override
-			public SpotLikeDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-				SpotLikeDto spotLike = new SpotLikeDto.Builder()
-						.setLikeId(rs.getInt(1))
-						.setAccountId(rs.getInt(2))
-						.setContentId(rs.getInt(3))
-						.setLikeDate(rs.getDate(4).toLocalDate())
-						.build();
-				return spotLike;
-			}
-		}, accountId);
-		return likes;
-	}
-
-	@Override
-	public List<SpotLikeDto> spotLikesByContentIds(int accountId, List<Integer> contentId) {
-		String contentList = contentId.stream().map(String::valueOf).collect(Collectors.joining(","));
-		String sql = String.format(spotLikeStateSQL, contentList);
-		List<SpotLikeDto> states = jdbcTemplate.query(sql, (rs, rowNum) -> {
-			SpotLikeDto spotLike = new SpotLikeDto.Builder()
-					.setLikeId(rs.getInt(1))
-					.setAccountId(rs.getInt(2))
-					.setContentId(rs.getInt(3))
-					.setLikeDate(rs.getDate(4).toLocalDate())
-					.build();
-			return spotLike;
-		}, accountId);
-
-		return states;
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import com.planner.planner.Dto.OpenApi.AreaCodeDto;
 import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
+import com.planner.planner.Dto.OpenApi.OpenApiDto;
 import com.planner.planner.Exception.EmptyData;
 import com.planner.planner.Service.OpenAPIService;
 
@@ -29,7 +30,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	private String serviceKey;
 	private String mobileOS = "ETC";
 	private String mobileApp = "planner";
-	private int numOfRows = 10;
+	// private int numOfRows = 10; 요청으로 받는 값으로 변경
 
 	@Override
 	public CommonListDto<AreaCodeDto> getAreaNum() throws Exception{
@@ -62,14 +63,14 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	}
 
 	@Override
-	public CommonListDto<CommonBasedDto> getAreaList(int areaCode, int contentTypeId, int index) throws Exception {
+	public CommonListDto<CommonBasedDto> getAreaList(OpenApiDto openApiDto) throws Exception {
 		String apiUrl = baseUrl+"/areaBasedList1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
-				+"&numOfRows="+numOfRows
-				+"&pageNo="+index
-				+"&contentTypeId="+contentTypeId
-				+"&areaCode="+areaCode
+				+"&numOfRows="+openApiDto.getNumOfRows()
+				+"&pageNo="+openApiDto.getPageNo()
+				+"&contentTypeId="+openApiDto.getContentTypeId()
+				+"&areaCode="+openApiDto.getAreaCode()
 				+"&_type=json";
 
 		JsonNode data = getApiData(apiUrl);
@@ -95,15 +96,15 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 					.setCat1(node.get("cat1").asText())
 					.setCat2(node.get("cat2").asText())
 					.setCat3(node.get("cat3").asText())
-					.setContentid(node.get("contentid").asText())
-					.setContenttypeid(node.get("contenttypeid").asText())
-					.setCreatedtime(node.get("createdtime").asText())
-					.setFirstimage(node.get("firstimage").asText())
-					.setFirstimage2(node.get("firstimage2").asText())
+					.setContentId(node.get("contentid").asText())
+					.setContentTypeId(node.get("contenttypeid").asText())
+					.setCreatedTime(node.get("createdtime").asText())
+					.setFirstImage(node.get("firstimage").asText())
+					.setFirstImage2(node.get("firstimage2").asText())
 					.setMapx(node.get("mapx").asText())
 					.setMapy(node.get("mapy").asText())
 					.setMlevel(node.get("mlevel").asText())
-					.setModifiedtime(node.get("modifiedtime").asText())
+					.setModifiedTime(node.get("modifiedtime").asText())
 					.setZipcode(node.get("zipcode").asText())
 					.build();
 			areaBasedList.add(areaBased);
@@ -115,15 +116,15 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	}
 
 	@Override
-	public CommonListDto<CommonBasedDto> getLocationBasedList(double mapX, double mapY, int radius, int index) throws Exception {
+	public CommonListDto<CommonBasedDto> getLocationBasedList(OpenApiDto openApiDto) throws Exception {
 		String apiUrl = baseUrl+"/areaBasedList1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
-				+"&numOfRows="+numOfRows
-				+"&pageNo="+index
-				+"&mapX="+mapX
-				+"&mapY="+mapY
-				+"&radius="+radius
+				+"&numOfRows="+openApiDto.getNumOfRows()
+				+"&pageNo="+openApiDto.getPageNo()
+				+"&mapX="+openApiDto.getMapX()
+				+"&mapY="+openApiDto.getMapY()
+				+"&radius="+openApiDto.getRadius()
 				+"&_type=json";
 
 		JsonNode data = getApiData(apiUrl);
@@ -149,15 +150,15 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 					.setCat1(node.get("cat1").asText())
 					.setCat2(node.get("cat2").asText())
 					.setCat3(node.get("cat3").asText())
-					.setContentid(node.get("contentid").asText())
-					.setContenttypeid(node.get("contenttypeid").asText())
-					.setCreatedtime(node.get("createdtime").asText())
-					.setFirstimage(node.get("firstimage").asText())
-					.setFirstimage2(node.get("firstimage2").asText())
+					.setContentId(node.get("contentid").asText())
+					.setContentTypeId(node.get("contenttypeid").asText())
+					.setCreatedTime(node.get("createdtime").asText())
+					.setFirstImage(node.get("firstimage").asText())
+					.setFirstImage2(node.get("firstimage2").asText())
 					.setMapx(node.get("mapx").asText())
 					.setMapy(node.get("mapy").asText())
 					.setMlevel(node.get("mlevel").asText())
-					.setModifiedtime(node.get("modifiedtime").asText())
+					.setModifiedTime(node.get("modifiedtime").asText())
 					.setZipcode(node.get("zipcode").asText())
 					.build();
 			locationBasedList.add(locationBased);
@@ -169,16 +170,16 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	}
 
 	@Override
-	public CommonListDto<CommonBasedDto> getKeyword(int areaCode, int contentTypeId, String keyword, int index) throws Exception
+	public CommonListDto<CommonBasedDto> getKeyword(OpenApiDto openApiDto) throws Exception
 	{
 		String apiUrl = baseUrl+"/searchKeyword1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
 				+"&MobileApp="+mobileApp
-				+"&numOfRows="+numOfRows
-				+"&pageNo="+index
-				+"&contentTypeId="+contentTypeId
-				+"&areaCode="+areaCode
-				+"&keyword="+URLEncoder.encode(keyword, "UTF-8")
+				+"&numOfRows="+openApiDto.getNumOfRows()
+				+"&pageNo="+openApiDto.getPageNo()
+				+"&contentTypeId="+openApiDto.getContentTypeId()
+				+"&areaCode="+openApiDto.getAreaCode()
+				+"&keyword="+URLEncoder.encode(openApiDto.getKeyword(), "UTF-8")
 				+"&_type=json";
 		
 		JsonNode data = getApiData(apiUrl);
@@ -204,15 +205,15 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 					.setCat1(node.get("cat1").asText())
 					.setCat2(node.get("cat2").asText())
 					.setCat3(node.get("cat3").asText())
-					.setContentid(node.get("contentid").asText())
-					.setContenttypeid(node.get("contenttypeid").asText())
-					.setCreatedtime(node.get("createdtime").asText())
-					.setFirstimage(node.get("firstimage").asText())
-					.setFirstimage2(node.get("firstimage2").asText())
+					.setContentId(node.get("contentid").asText())
+					.setContentTypeId(node.get("contenttypeid").asText())
+					.setCreatedTime(node.get("createdtime").asText())
+					.setFirstImage(node.get("firstimage").asText())
+					.setFirstImage2(node.get("firstimage2").asText())
 					.setMapx(node.get("mapx").asText())
 					.setMapy(node.get("mapy").asText())
 					.setMlevel(node.get("mlevel").asText())
-					.setModifiedtime(node.get("modifiedtime").asText())
+					.setModifiedTime(node.get("modifiedtime").asText())
 					.build();
 			keywordBasedList.add(keywordBased);
 		}
@@ -246,6 +247,13 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		JsonNode node = data.get("items").get("item").get(0);
 		
 		CommonDetailDto keywordBased = new CommonDetailDto.Builder()
+				.setTitle(node.get("title").asText())
+				.setAddr1(node.get("addr1").asText())
+				.setAddr2(node.get("addr2").asText())
+				.setFirstImage(node.get("firstimage").asText())
+				.setFirstImage2(node.get("firstimage2").asText())
+				.setMapx(node.get("mapx").asText())
+				.setMapy(node.get("mapy").asText())
 				.setHomepage(node.get("homepage").asText())
 				.setTelname(node.get("telname").asText())
 				.setZipcode(node.get("zipcode").asText())

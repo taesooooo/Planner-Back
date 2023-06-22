@@ -29,6 +29,7 @@ import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
+import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.util.JwtUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -72,7 +73,7 @@ public class SpotControllerTest {
 	
 	@Test
 	public void 여행지_지역기반리스트_가져오기() throws Exception {
-		mockMvc.perform(get("/api/spots/lists-area?areaCode=1&contentTypeId=12&index=1")
+		mockMvc.perform(get("/api/spots/lists-area?areaCode=1&contentTypeId=12&numOfRows=10&pageNo=1")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
@@ -87,7 +88,7 @@ public class SpotControllerTest {
 
 	@Test
 	public void 여행지_키워드별리스트_가져오기() throws Exception {
-		mockMvc.perform(get("/api/spots/lists-keyword?areaCode=1&contentTypeId=12&keyword=서울&index=1")
+		mockMvc.perform(get("/api/spots/lists-keyword?areaCode=1&contentTypeId=12&keyword=서울&numOfRows=10&pageNo=1")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
@@ -117,13 +118,18 @@ public class SpotControllerTest {
 	
 	@Test
 	public void 여행지_좋아요() throws Exception {
-		int contentId = 2763807; // 번호 다름
+		SpotLikeDto likeDto = new SpotLikeDto.Builder()
+				.setContentId(2763807)
+				.setTitle("테스트")
+				.setImage("테스트이미지주소")
+				.build();
 		
-		mockMvc.perform(post("/api/spots/likes/"+Integer.toString(contentId))
+		mockMvc.perform(post("/api/spots/likes/")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(likeDto)))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(true));
@@ -131,13 +137,18 @@ public class SpotControllerTest {
 	
 	@Test
 	public void 여행지_좋아요_중복인경우() throws Exception {
-		int contentId = 2733967;
+		SpotLikeDto likeDto = new SpotLikeDto.Builder()
+				.setContentId(2733967)
+				.setTitle("테스트")
+				.setImage("테스트이미지주소")
+				.build();
 		
-		mockMvc.perform(post("/api/spots/likes/"+Integer.toString(contentId))
+		mockMvc.perform(post("/api/spots/likes/")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(likeDto)))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(false));
