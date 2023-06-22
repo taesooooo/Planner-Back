@@ -3,6 +3,7 @@ package com.planner.planner.Dao.Impl;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,20 +37,30 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String INSERT_PLANNER_SQL = "INSERT INTO planner(account_id, creator, title, plan_date_start, plan_date_end, expense, member_count, member_type_id, create_date, update_date)"
 			+ "VALUES(?, ?, ?, ?, ?, ? ,? ,? , now(), now());";
 	private final String FIND_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date FROM planner AS p WHERE p.planner_id = ?;";
-	private final String FINDS_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date FROM planner AS p WHERE p.account_id = ? ORDER BY P.planner_id ASC LIMIT ?, ?;";
-	private final String FIND_ALL_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date FROM planner AS p ORDER BY P.planner_id ASC LIMIT ?, ?;";
+	private final String FINDS_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date, PL.like_id "
+			+ "FROM planner AS p "
+			+ "LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id AND PL.account_id = ? "
+			+ "WHERE p.account_id = ? "
+			+ "ORDER BY P.planner_id ASC LIMIT ?, ?;";
+	private final String FIND_ALL_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date, PL.like_id "
+			+ "FROM planner AS P "
+			+ "LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id AND PL.account_id = ? "
+			+ "ORDER BY P.planner_id ASC LIMIT ?, ?;";
 	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS P SET P.title = ?, P.plan_date_start = ?, P.plan_date_end = ?, P.expense = ?, P.member_count = ?, P.member_type_id = ?, P.update_date = NOW() WHERE P.planner_id = ?;";
 	private final String DELETE_PLANNER_SQL = "DELETE FROM planner WHERE planner_id = ?;";
 
 	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, A.title, A.plan_date_start, A.plan_date_end, A.expense, A.member_count, A.member_type_id, "
 			+ "A.like_count, A.create_date, A.update_date, "
 			+ "C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_date, D.plan_index, D.plan_id,  "
-			+ "E.location_id, E.location_name, E.location_content_id, E.location_image, E.location_addr, E.location_mapx, E.location_mapy, E.location_transportation, E.location_index, E.plan_id "
+			+ "E.location_id, E.location_name, E.location_content_id, E.location_image, E.location_addr, E.location_mapx, E.location_mapy, E.location_transportation, E.location_index, E.plan_id, "
+			+ "PL.like_id "
 			+ "FROM planner AS A " + "LEFT JOIN plan_member AS B ON A.planner_id = B.planner_id "
 			+ "LEFT JOIN account AS C ON C.account_id = B.account_id "
 			+ "LEFT JOIN plan_memo AS M ON A.planner_id = M.planner_id "
 			+ "LEFT JOIN plan AS D ON A.planner_id = D.planner_id "
-			+ "LEFT JOIN plan_location AS E ON D.plan_id = E.plan_id " + "WHERE A.planner_id = ?;";
+			+ "LEFT JOIN planner_like AS PL ON A.planner_id = PL.planner_id AND A.account_id = PL.account_id "
+			+ "LEFT JOIN plan_location AS E ON D.plan_id = E.plan_id " 
+			+ "WHERE A.planner_id = ?;";
 
 	private final String FIND_TOTAL_COUNT_SQL = "SELECT count(*) AS total_count  FROM planner;";
 	private final String FIND_TOTAL_COUNT_BY_ACCOUNT_ID_SQL = "SELECT count(*) AS total_count FROM planner WHERE account_id = ?;";
@@ -85,6 +96,7 @@ public class PlannerDaoImpl implements PlannerDao {
 			+ "FROM planner AS P " 
 			+ "LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id "
 			+ "WHERE PL.account_id = ? ORDER BY PL.planner_id ASC LIMIT ?, ?;";
+	private final String FINDS_PLANNER_LIKE__PLANNER_ID_LIST = "SELECT planner_id FROM planner_like WHERE planner_id IN (%s) AND account_id = ?;";
 
 	public PlannerDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -115,12 +127,12 @@ public class PlannerDaoImpl implements PlannerDao {
 
 	@Override
 	public List<PlannerDto> findPlannersByAccountId(int accountId, PageInfo pageInfo) {
-		return jdbcTemplate.query(FINDS_SQL, new PlannerRowMapper(), accountId, pageInfo.getPageOffSet(), pageInfo.getPageItemCount());
+		return jdbcTemplate.query(FINDS_SQL, new PlannerRowMapper(), accountId, accountId, pageInfo.getPageOffSet(), pageInfo.getPageItemCount());
 	}
 
 	@Override
-	public List<PlannerDto> findPlannerAll(PageInfo pageInfo) {
-		return jdbcTemplate.query(FIND_ALL_SQL, new PlannerRowMapper(), pageInfo.getPageOffSet(), pageInfo.getPageItemCount());
+	public List<PlannerDto> findPlannerAll(int accountId, PageInfo pageInfo) {
+		return jdbcTemplate.query(FIND_ALL_SQL, new PlannerRowMapper(), accountId, pageInfo.getPageOffSet(), pageInfo.getPageItemCount());
 	}
 
 	@Override
@@ -301,6 +313,15 @@ public class PlannerDaoImpl implements PlannerDao {
 		} catch (EmptyResultDataAccessException e) {
 			return false;
 		}
+	}
+
+	@Override
+	public List<Integer> returnLikePlannerIdList(int accountId, List<Integer> plannerIdList) {
+		String plannerIds = plannerIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
+		String sql = String.format(FINDS_PLANNER_LIKE__PLANNER_ID_LIST, plannerIds);
+		List<Integer> list = jdbcTemplate.queryForList(sql, Integer.class, accountId);
+		
+		return list;
 	}
 
 	@Override

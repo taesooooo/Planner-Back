@@ -22,6 +22,7 @@ public class PlannerRowMapper implements RowMapper<PlannerDto> {
 				.setMemberCount(rs.getInt("member_count"))
 				.setMemberTypeId(rs.getInt("member_type_id"))
 				.setLikeCount(rs.getInt("like_count"))
+				.setLikeState(rs.getInt("like_id") != 0 ? true : false)
 				.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
 				.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
 				.build();

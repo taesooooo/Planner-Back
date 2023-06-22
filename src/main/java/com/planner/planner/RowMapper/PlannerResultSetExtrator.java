@@ -40,6 +40,7 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<PlannerDto> 
 						.setMemberCount(rs.getInt("member_count"))
 						.setMemberTypeId(rs.getInt("member_type_id"))
 						.setLikeCount(rs.getInt("like_count"))
+						.setLikeState(rs.getInt("like_id") > 0 ? true : false)
 						.setPlanMembers(members)
 						.setPlanMemos(memos)
 						.setPlans(plans)

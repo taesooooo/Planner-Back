@@ -2,6 +2,7 @@ package com.planner.planner.Service.Impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,10 +71,13 @@ public class PlannerServiceImpl implements PlannerService {
 	public Page<PlannerDto> findPlannersByAccountId(int page, int accountId) throws Exception {
 		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
 		List<PlannerDto> plannerList = plannerDao.findPlannersByAccountId(accountId, pInfo);
-		if (plannerList.isEmpty()) {
-			throw new NotFoundPlanner();
-		}
-
+		
+		List<Integer> plannerIdList = plannerList.stream()
+				.map(item -> item.getPlannerId())
+				.collect(Collectors.toList());
+		
+		List<Integer> likeList = plannerDao.returnLikePlannerIdList(accountId, plannerIdList);
+		
 		int totalCount = plannerDao.getTotalCount(accountId);
 
 		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
@@ -85,12 +89,9 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public Page<PlannerDto> findPlannerAll(int page) throws Exception {
+	public Page<PlannerDto> findPlannerAll(int accountId, int page) throws Exception {
 		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
-		List<PlannerDto> plannerList = plannerDao.findPlannerAll(pInfo);
-		if (plannerList.isEmpty()) {
-			throw new NotFoundPlanner();
-		}
+		List<PlannerDto> plannerList = plannerDao.findPlannerAll(accountId, pInfo);
 
 		int totalCount = plannerDao.getTotalCount();
 
@@ -207,9 +208,6 @@ public class PlannerServiceImpl implements PlannerService {
 	public Page<PlannerDto> getLikePlannerList(int page, int accountId) throws Exception {
 		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
 		List<PlannerDto> plannerList = plannerDao.likePlannerList(accountId, pInfo);
-		if (plannerList.isEmpty()) {
-			throw new NotFoundPlanner();
-		}
 
 		int totalCount = plannerDao.getTotalCountByLike(accountId);
 

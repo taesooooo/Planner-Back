@@ -45,6 +45,7 @@ public class PlannerDto {
 	@Max(value = 4,  message = "멤버 유형이 잘못되었습니다.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
 	private int memberTypeId;
 	private int likeCount;
+	private boolean likeState;
 	
 	private List<PlanMemoDto> planMemos;
 	private List<PlanDto> plans;
@@ -80,6 +81,7 @@ public class PlannerDto {
 		private int memberCount;
 		private int memberTypeId;
 		private int likeCount;
+		private boolean likeState;
 		private List<PlanMemoDto> planMemos;
 		private List<PlanDto> plans;
 		private LocalDateTime createDate;
@@ -140,6 +142,11 @@ public class PlannerDto {
 			return this;
 		}
 		
+		public Builder setLikeState(boolean likeState) {
+			this.likeState = likeState;
+			return this;
+		}
+
 		public Builder setPlanMemos(List<PlanMemoDto> planMemos) {
 			this.planMemos = planMemos;
 			return this;
@@ -182,6 +189,7 @@ public class PlannerDto {
 		this.memberCount = builder.memberCount;
 		this.memberTypeId = builder.memberTypeId;
 		this.likeCount = builder.likeCount;
+		this.likeState = builder.likeState;
 		this.planMemos = builder.planMemos;
 		this.plans = builder.plans;
 		this.createDate = builder.createDate;
@@ -232,6 +240,10 @@ public class PlannerDto {
 		return likeCount;
 	}
 	
+	public boolean isLikeState() {
+		return likeState;
+	}
+
 	public List<PlanMemoDto> getPlanMemos() {
 		return planMemos;
 	}
