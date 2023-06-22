@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
+import com.planner.planner.Common.SortCriteria;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemoDto;
@@ -51,10 +53,11 @@ public class PlannerContorller {
 	}
 
 	@GetMapping
-	public ResponseEntity<Object> plannerList(HttpServletRequest req, @RequestParam(value = "page")int page) throws Exception {
+	public ResponseEntity<Object> plannerList(HttpServletRequest req, @RequestBody CommonRequestParamDto commonRequestParamDto) throws Exception {
 		int userId = UserIdUtil.getUserId(req);
-		
-		Page<PlannerDto> planners = plannerService.findPlannerAll(userId, page);
+	
+		Page<PlannerDto> planners = plannerService.findPlannerAll(userId, commonRequestParamDto);
+
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", planners));
 	}
 	
@@ -66,7 +69,7 @@ public class PlannerContorller {
 //	}
 
 	@GetMapping(value="/{plannerId}")
-	public ResponseEntity<Object> findPlannerById(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
+	public ResponseEntity<Object> findPlannerByPlannerId(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
 		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",planner));

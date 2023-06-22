@@ -12,6 +12,7 @@ import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemberDto;
@@ -68,17 +69,19 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public Page<PlannerDto> findPlannersByAccountId(int page, int accountId) throws Exception {
-		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
-		List<PlannerDto> plannerList = plannerDao.findPlannersByAccountId(accountId, pInfo);
+	public Page<PlannerDto> findPlannersByAccountId(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(commonRequestParamDto.getPageNum()).setPageItemCount(commonRequestParamDto.getItemCount()).build();
+		List<PlannerDto> plannerList = plannerDao.findPlannersByAccountId(accountId, commonRequestParamDto.getSortCriteria(), commonRequestParamDto.getKeyword(), pInfo);
 		
-		List<Integer> plannerIdList = plannerList.stream()
-				.map(item -> item.getPlannerId())
-				.collect(Collectors.toList());
+		int totalCount = 0;
+		String keyword = commonRequestParamDto.getKeyword();
 		
-		List<Integer> likeList = plannerDao.returnLikePlannerIdList(accountId, plannerIdList);
-		
-		int totalCount = plannerDao.getTotalCount(accountId);
+		if(keyword != null) {
+			totalCount = plannerDao.getTotalCountByKeyword(keyword);
+		}
+		else {
+			totalCount = plannerDao.getTotalCount();
+		}
 
 		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
 				.setList(plannerList)
@@ -89,12 +92,20 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public Page<PlannerDto> findPlannerAll(int accountId, int page) throws Exception {
-		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
-		List<PlannerDto> plannerList = plannerDao.findPlannerAll(accountId, pInfo);
-
-		int totalCount = plannerDao.getTotalCount();
-
+	public Page<PlannerDto> findPlannerAll(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(commonRequestParamDto.getPageNum()).setPageItemCount(10).build();
+		List<PlannerDto> plannerList = plannerDao.findPlannerAll(accountId, commonRequestParamDto.getSortCriteria(), commonRequestParamDto.getKeyword(), pInfo);
+		
+		int totalCount = 0;
+		String keyword = commonRequestParamDto.getKeyword();
+		
+		if(keyword != null) {
+			totalCount = plannerDao.getTotalCountByKeyword(keyword);
+		}
+		else {
+			totalCount = plannerDao.getTotalCount();
+		}
+		
 		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
 				.setList(plannerList)
 				.setPageInfo(pInfo)

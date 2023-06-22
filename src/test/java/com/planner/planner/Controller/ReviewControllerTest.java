@@ -24,10 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.util.JwtUtil;
 
@@ -109,19 +111,75 @@ public class ReviewControllerTest {
 	}
 	
 	@Test
-	public void 리뷰_목록가져오기_테스트() throws Exception {
+	public void 리뷰_목록_가져오기_최신순_테스트() throws Exception {
+		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setSortCriteria(SortCriteria.LATEST)
+				.setPageNum(1)
+				.build();
+		
 		mockMvc.perform(get("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
 				.contentType(MediaType.APPLICATION_JSON)
-				.param("page", "1"))
+				.content(mapper.writeValueAsString(dto)))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)))
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list[0].reviewId").value(3))
 		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
+	
+	@Test
+	public void 리뷰_목록_가져오기_인기순_테스트() throws Exception {
+		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setSortCriteria(SortCriteria.LIKECOUNT)
+				.setPageNum(1)
+				.build();
+		
+		mockMvc.perform(get("/api/reviews")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list[0].reviewId").value(3))
+		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
+	
+	@Test
+	public void 리뷰_목록_가져오기_키워드_테스트() throws Exception {
+		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setKeyword("테스트")
+				.setPageNum(1)
+				.build();
+		
+		mockMvc.perform(get("/api/reviews")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.totalCount").value(1))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}

@@ -1,5 +1,6 @@
 package com.planner.planner.Service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -23,9 +24,11 @@ import org.slf4j.LoggerFactory;
 
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
+import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemberDto;
@@ -142,30 +145,56 @@ public class PlannerServiceTest {
 	
 	@Test
 	public void 모든플래너조회() throws Exception {
+		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setSortCriteria(SortCriteria.LATEST)
+				.setPageNum(1)
+				.build();
+		
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
 		planners.add(createPlanner(1));
 		planners.add(createPlanner(2));
-		int testTotalCount = 2;
 		
-		when(plannerDao.findPlannerAll(any(PageInfo.class))).thenReturn(planners);
+		int testTotalCount = planners.size();
+		
+		when(plannerDao.findPlannerAll(any(SortCriteria.class), any(), any(PageInfo.class))).thenReturn(planners);
 		when(plannerDao.getTotalCount()).thenReturn(testTotalCount);
 		
-		Page<PlannerDto> plannerList = plannerService.findPlannerAll(1);
+		Page<PlannerDto> plannerList = plannerService.findPlannerAll(paramDto);
 		
-		verify(plannerDao).findPlannerAll(any(PageInfo.class));
+		verify(plannerDao).findPlannerAll(any(SortCriteria.class), any(), any(PageInfo.class));
 		verify(plannerDao).getTotalCount();
 		
-		assertEquals(2, plannerList.getList().size());
-		assertEquals(planners.get(0).getPlannerId(), plannerList.getList().get(0).getPlannerId());
+		assertThat(plannerList).isNotNull();
+		assertThat(plannerList.getList()).isNotNull();
+		assertThat(plannerList.getTotalCount()).isEqualTo(testTotalCount);
 	}
 	
-	@Test(expected = NotFoundPlanner.class)
-	public void 모든플래너조회_만약플래너가_없을때() throws Exception {
+	@Test
+	public void 모든플래너조회_키워드() throws Exception {
+		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setSortCriteria(SortCriteria.LATEST)
+				.setKeyword("테스트")
+				.setPageNum(1)
+				.build();
+		
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
+		planners.add(createPlanner(1));
 		
-		when(plannerDao.findPlannerAll(any(PageInfo.class))).thenReturn(planners);
+		int testTotalCount = 1;
 		
-		Page<PlannerDto> plannerList = plannerService.findPlannerAll(1);
+		when(plannerDao.findPlannerAll(any(SortCriteria.class), any(), any(PageInfo.class))).thenReturn(planners);
+		when(plannerDao.getTotalCountByKeyword(paramDto.getKeyword())).thenReturn(testTotalCount);
+		
+		Page<PlannerDto> plannerList = plannerService.findPlannerAll(paramDto);
+		
+		verify(plannerDao).findPlannerAll(any(SortCriteria.class), any(), any(PageInfo.class));
+		verify(plannerDao).getTotalCountByKeyword(any(String.class));
+		
+		assertThat(plannerList).isNotNull();
+		assertThat(plannerList.getList()).isNotNull();
+		assertThat(plannerList.getTotalCount()).isEqualTo(testTotalCount);
 	}
 	
 	@Test

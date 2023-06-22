@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.planner.planner.Common.Converter.PostTypeConverter;
+import com.planner.planner.Common.Converter.SortCriteriaConverter;
 import com.planner.planner.Interceptor.AuthInterceptor;
 
 @Configuration
@@ -51,6 +52,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		registry.addConverter(new PostTypeConverter());
+		registry.addConverter(new SortCriteriaConverter());
 	}
 	
 	
