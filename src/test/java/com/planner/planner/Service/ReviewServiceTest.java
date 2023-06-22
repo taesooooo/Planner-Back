@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -71,7 +72,7 @@ public class ReviewServiceTest {
 		
 		int testTotalCount = testList.size();
 		
-		when(reviewDao.findAllReview(any(SortCriteria.class), any(String.class), any(PageInfo.class))).thenReturn(testList);
+		when(reviewDao.findAllReview(any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(testList);
 		when(reviewDao.getTotalCount()).thenReturn(testTotalCount);
 		
 		Page<ReviewDto> reviewList = reviewService.findAllReview(paramDto);
@@ -96,13 +97,13 @@ public class ReviewServiceTest {
 		
 		int testTotalCount = 1;
 		
-		when(reviewDao.findAllReview(any(SortCriteria.class), any(String.class), any(PageInfo.class))).thenReturn(testList);
+		when(reviewDao.findAllReview(any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(testList);
 		when(reviewDao.getTotalCountByKeyword(any(String.class))).thenReturn(testTotalCount);
 		
 		Page<ReviewDto> reviewList = reviewService.findAllReview(paramDto);
 		
 		verify(reviewDao).findAllReview(any(SortCriteria.class), any(), any(PageInfo.class));
-		verify(reviewDao).getTotalCountByKeyword(paramDto.getKeyword());
+		verify(reviewDao).getTotalCountByKeyword(anyString());
 		
 		assertThat(reviewList).isNotNull();
 		assertThat(reviewList.getList()).isNotNull();
