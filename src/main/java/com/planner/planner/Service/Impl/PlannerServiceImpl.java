@@ -11,6 +11,7 @@ import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemberDto;
@@ -85,15 +86,20 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public Page<PlannerDto> findPlannerAll(int page) throws Exception {
-		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
-		List<PlannerDto> plannerList = plannerDao.findPlannerAll(pInfo);
-		if (plannerList.isEmpty()) {
-			throw new NotFoundPlanner();
+	public Page<PlannerDto> findPlannerAll(CommonRequestParamDto commonRequestParamDto) throws Exception {
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(commonRequestParamDto.getPageNum()).setPageItemCount(10).build();
+		List<PlannerDto> plannerList = plannerDao.findPlannerAll(commonRequestParamDto.getSortCriteria(), commonRequestParamDto.getKeyword(), pInfo);
+		
+		int totalCount = 0;
+		String keyword = commonRequestParamDto.getKeyword();
+		
+		if(keyword != null) {
+			totalCount = plannerDao.getTotalCountByKeyword(keyword);
 		}
-
-		int totalCount = plannerDao.getTotalCount();
-
+		else {
+			totalCount = plannerDao.getTotalCount();
+		}
+		
 		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
 				.setList(plannerList)
 				.setPageInfo(pInfo)

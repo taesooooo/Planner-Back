@@ -26,7 +26,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -34,10 +34,12 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemoDto;
@@ -81,20 +83,78 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
-	public void 플래너_리스트_조회() throws Exception {
+	public void 플래너_리스트_조회_최신순() throws Exception {
+		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setSortCriteria(SortCriteria.LATEST)
+				.setPageNum(1)
+				.build();
+		
 		this.mockMvc.perform(get("/api/planners")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
-				.param("page", "1"))
+				.content(mapper.writeValueAsString(dto)))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)))
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.list").exists())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list[0].plannerId").value(3))
 		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
+	
+	@Test
+	public void 플래너_리스트_조회_인기순() throws Exception {
+		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setSortCriteria(SortCriteria.LIKECOUNT)
+				.setPageNum(1)
+				.build();
+		
+		ResultActions result =  this.mockMvc.perform(get("/api/planners")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list[0].plannerId").value(3))
+		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
+	
+	@Test
+	public void 플래너_리스트_조회_키워드() throws Exception {
+		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setKeyword("테스트")
+				.setPageNum(1)
+				.build();
+		
+		ResultActions result =  this.mockMvc.perform(get("/api/planners")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.totalCount").value(1))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}

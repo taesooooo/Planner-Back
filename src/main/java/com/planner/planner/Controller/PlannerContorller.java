@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Common.Page;
+import com.planner.planner.Common.SortCriteria;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemoDto;
@@ -47,8 +49,8 @@ public class PlannerContorller {
 	}
 
 	@GetMapping
-	public ResponseEntity<Object> plannerList(HttpServletRequest req, @RequestParam(value = "page")int page) throws Exception {
-		Page<PlannerDto> planners = plannerService.findPlannerAll(page);
+	public ResponseEntity<Object> plannerList(HttpServletRequest req, @RequestBody CommonRequestParamDto commonRequestParamDto) throws Exception {
+		Page<PlannerDto> planners = plannerService.findPlannerAll(commonRequestParamDto);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", planners));
 	}
 	

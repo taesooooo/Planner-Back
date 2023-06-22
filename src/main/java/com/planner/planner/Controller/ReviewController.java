@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Common.Page;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Service.ReviewService;
 import com.planner.planner.util.ResponseMessage;
@@ -40,8 +41,8 @@ public class ReviewController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<Object> reviews(@RequestParam(value="page") int page) throws Exception {
-		Page<ReviewDto> reviews = reviewService.findAllReview(page);
+	public ResponseEntity<Object> reviews(@RequestBody CommonRequestParamDto commonRequestParamDto) throws Exception {
+		Page<ReviewDto> reviews = reviewService.findAllReview(commonRequestParamDto);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",reviews));
 	}

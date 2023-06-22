@@ -11,6 +11,7 @@ import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Exception.NotFoundReviewException;
 import com.planner.planner.Service.AccountService;
@@ -50,15 +51,20 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public Page<ReviewDto> findAllReview(int page) throws Exception{
-		PageInfo pInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
+	public Page<ReviewDto> findAllReview(CommonRequestParamDto commonRequestParamDto) throws Exception{
+		PageInfo pInfo = new PageInfo.Builder().setPageNum(commonRequestParamDto.getPageNum()).setPageItemCount(10).build();
 		
-		List<ReviewDto> reviewList = reviewDao.findAllReview(pInfo);
-		if(reviewList.isEmpty()) {
-			throw new NotFoundReviewException();
+		List<ReviewDto> reviewList = reviewDao.findAllReview(commonRequestParamDto.getSortCriteria(), commonRequestParamDto.getKeyword(), pInfo);
+		
+		int totalCount = 0;
+		String keyword = commonRequestParamDto.getKeyword();
+		
+		if(keyword != null) {
+			totalCount = reviewDao.getTotalCountByKeyword(keyword);
 		}
-		
-		int totalCount = reviewDao.findTotalCount();
+		else {
+			totalCount = reviewDao.getTotalCount();
+		}
 		
 		Page<ReviewDto> ReviewListPage = new Page.Builder<ReviewDto>()
 				.setList(reviewList)

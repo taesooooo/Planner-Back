@@ -3,6 +3,7 @@ package com.planner.planner.Service;
 import java.util.List;
 
 import com.planner.planner.Common.Page;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemberDto;
@@ -14,7 +15,7 @@ public interface PlannerService {
 	public int newPlanner(PlannerDto plannerDto) throws Exception;
 	public PlannerDto findPlannerByPlannerId(int plannerId) throws Exception;
 	public Page<PlannerDto> findPlannersByAccountId(int page, int accountId) throws Exception;
-	public Page<PlannerDto> findPlannerAll(int page) throws Exception;
+	public Page<PlannerDto> findPlannerAll(CommonRequestParamDto commonRequestParamDto) throws Exception;
 	public void updatePlanner(PlannerDto plannerDto) throws Exception;
 	public void deletePlanner(int plannerId) throws Exception;
 	
