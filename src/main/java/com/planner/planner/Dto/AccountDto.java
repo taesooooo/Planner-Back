@@ -2,22 +2,39 @@ package com.planner.planner.Dto;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.planner.planner.Common.ValidationGroups.AccountUpdateGroup;
+import com.planner.planner.Common.ValidationGroups.LoginGroup;
+import com.planner.planner.Common.ValidationGroups.RegisterGroup;
 
 @JsonInclude(value = Include.NON_NULL)
 public class AccountDto {
 
 	private int accountId;
+	@NotBlank(message = "이메일은 필수 항목입니다.", groups = { RegisterGroup.class, LoginGroup.class })
+	@Email(message = "이메일 형식이 아닙니다.", groups = { RegisterGroup.class, LoginGroup.class })
 	private String email;
+	
 	@JsonProperty(access = Access.WRITE_ONLY)
+	@NotBlank(message = "비밀번호는 필수 항목입니다.", groups = { RegisterGroup.class, LoginGroup.class })
 	private String password;
+	
 	@JsonProperty("username")
+	@NotBlank(message = "이름은 필수 항목입니다.", groups = RegisterGroup.class)
 	private String userName;
+	
 	@JsonProperty("nickname")
+	@NotBlank(message = "닉네임은 필수 항목입니다.", groups = { RegisterGroup.class, AccountUpdateGroup.class })
 	private String nickName;
+	
+	@Size(min = 11, max = 11, message = "휴대폰 번호를 다시 작성해주세요.", groups = { RegisterGroup.class, AccountUpdateGroup.class })
 	private String phone;
 	private String image;
 	private LocalDateTime createDate;

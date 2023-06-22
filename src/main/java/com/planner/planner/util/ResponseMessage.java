@@ -5,22 +5,22 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class ResponseMessage {
 	private boolean state;
-	private String message;
+	private Object message;
 	private Object data;
 	@JsonInclude(value = Include.NON_NULL)
 	private String token;
 
-	public ResponseMessage(boolean state,String message) {
+	public ResponseMessage(boolean state,Object message) {
 		this.state = state;
 		this.message = message;
 	}
 
-	public ResponseMessage(boolean state,String message, Object data) {
+	public ResponseMessage(boolean state,Object message, Object data) {
 		this.state = state;
 		this.message = message;
 		this.data = data;
 	}
-	public ResponseMessage(boolean state,String message, Object data, String token) {
+	public ResponseMessage(boolean state,Object message, Object data, String token) {
 		this.state = state;
 		this.message = message;
 		this.data = data;
@@ -39,7 +39,7 @@ public class ResponseMessage {
 		this.message = message;
 	}
 
-	public String getMessage() {
+	public Object getMessage() {
 		return message;
 	}
 

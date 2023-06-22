@@ -4,31 +4,68 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
+import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
 
 @JsonInclude(value = Include.NON_NULL)
 public class PlannerDto {
 	private int plannerId;
 	private int accountId;
+	
+	@NotBlank(message = "생성자는 필수입니다.", groups = { PlannerCreateGroup.class } )
 	private String creator;
+	
+	@NotBlank(message = "제목을 입력해주세요.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
 	private String title;
+	
 	@JsonFormat(pattern = "yyyy-MM-dd")
+	@NotNull(message = "시작 날짜는 필수 항목입니다.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
 	private LocalDate planDateStart;
+	
 	@JsonFormat(pattern = "yyyy-MM-dd")
+	@NotNull(message = "종료 날짜는 필수 항목입니다.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
 	private LocalDate planDateEnd;
+	
 	private List<String> planMembers;
 	private int expense;
+	
+	@Min(value = 1,  message = "멤버는 0명일 수 없습니다.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
 	private int memberCount;
+	
+	@Min(value = 1,  message = "멤버 유형이 잘못되었습니다.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
+	@Max(value = 4,  message = "멤버 유형이 잘못되었습니다.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
 	private int memberTypeId;
 	private int likeCount;
+	
 	private List<PlanMemoDto> planMemos;
 	private List<PlanDto> plans;
+	
 	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
 	private LocalDateTime createDate;
 	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
 	private LocalDateTime updateDate;
+	
+	@AssertTrue(message = "종료 날짜가 시작 날짜보다 늦을수 없습니다.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
+	private boolean isDateCheck() {
+		if(planDateStart == null || planDateEnd == null) {
+			return false;
+		}
+		if(planDateEnd.isEqual(planDateStart) || planDateEnd.isBefore(planDateStart)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	
 
 	public static class Builder {

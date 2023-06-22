@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Common.Page;
+import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
+import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemoDto;
@@ -41,7 +45,7 @@ public class PlannerContorller {
 	}
 
 	@PostMapping
-	public ResponseEntity<Object> newPlanner(HttpServletRequest req, @RequestBody PlannerDto plannerDto) throws Exception {
+	public ResponseEntity<Object> newPlanner(HttpServletRequest req, @RequestBody @Validated(PlannerCreateGroup.class) PlannerDto plannerDto) throws Exception {
 		int newPlannerId = plannerService.newPlanner(plannerDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", newPlannerId));
 	}
@@ -67,7 +71,8 @@ public class PlannerContorller {
 	}
 	
 	@PatchMapping(value="/{plannerId}")
-	public ResponseEntity<Object> modifyPlanner(HttpServletRequest req, @PathVariable int plannerId, @RequestBody PlannerDto plannerDto) throws Exception {
+	public ResponseEntity<Object> modifyPlanner(HttpServletRequest req, @PathVariable int plannerId, 
+			@RequestBody @Validated(PlannerUpdateGroup.class) PlannerDto plannerDto) throws Exception {
 		checkAuth(req, plannerId);
 		
 		plannerService.updatePlanner(plannerDto);
@@ -93,7 +98,7 @@ public class PlannerContorller {
 	}
 	
 	@PostMapping(value="/{plannerId}/memos")
-	public ResponseEntity<Object> newMemo(HttpServletRequest req, @PathVariable int plannerId, @RequestBody PlanMemoDto planMemoDto) throws Exception {
+	public ResponseEntity<Object> newMemo(HttpServletRequest req, @PathVariable int plannerId, @RequestBody @Valid PlanMemoDto planMemoDto) throws Exception {
 		checkAuth(req, plannerId);
 		
 		int planMemoId = plannerService.newMemo(plannerId, planMemoDto);
@@ -102,7 +107,7 @@ public class PlannerContorller {
 	}
 	
 	@PatchMapping(value="/{plannerId}/memos/{memoId}")
-	public ResponseEntity<Object> updateMemo(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int memoId, @RequestBody PlanMemoDto planMemoDto) throws Exception {
+	public ResponseEntity<Object> updateMemo(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int memoId, @RequestBody @Valid PlanMemoDto planMemoDto) throws Exception {
 		checkAuth(req, plannerId);
 		
 		plannerService.updateMemo(memoId, planMemoDto);
@@ -138,7 +143,7 @@ public class PlannerContorller {
 	}
 	
 	@PostMapping(value="/{plannerId}/plans")
-	public ResponseEntity<Object> newPlan(HttpServletRequest req, @PathVariable int plannerId, @RequestBody PlanDto planDto) throws Exception {
+	public ResponseEntity<Object> newPlan(HttpServletRequest req, @PathVariable int plannerId, @RequestBody @Valid PlanDto planDto) throws Exception {
 		checkAuth(req, plannerId);
 		
 		int planId = plannerService.newPlan(planDto);
@@ -146,7 +151,7 @@ public class PlannerContorller {
 	}
 	
 	@PatchMapping(value="/{plannerId}/plans/{planId}")
-	public ResponseEntity<Object> updatePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody PlanDto planDto) throws Exception {
+	public ResponseEntity<Object> updatePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody @Valid PlanDto planDto) throws Exception {
 		checkAuth(req, plannerId);
 		
 		plannerService.updatePlan(planId, planDto);
@@ -163,7 +168,7 @@ public class PlannerContorller {
 	}
 	
 	@PostMapping(value="/{plannerId}/plans/{planId}/plan-locations")
-	public ResponseEntity<Object> newPlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody PlanLocationDto planLocationDto) throws Exception {
+	public ResponseEntity<Object> newPlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody @Valid PlanLocationDto planLocationDto) throws Exception {
 		checkAuth(req, plannerId);
 		
 		int planLocationId = plannerService.newPlanLocation(planLocationDto);
@@ -171,7 +176,7 @@ public class PlannerContorller {
 	}
 	
 	@PatchMapping(value="/{plannerId}/plans/{planId}/plan-locations/{planLocationId}")
-	public ResponseEntity<Object> updatePlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @PathVariable int planLocationId, @RequestBody PlanLocationDto planLocationDto) throws Exception {
+	public ResponseEntity<Object> updatePlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @PathVariable int planLocationId, @RequestBody @Valid PlanLocationDto planLocationDto) throws Exception {
 		checkAuth(req, plannerId);
 		
 		plannerService.updatePlanLocation(planLocationId, planLocationDto);

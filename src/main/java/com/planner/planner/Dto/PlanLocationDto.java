@@ -1,14 +1,23 @@
 package com.planner.planner.Dto;
 
+import javax.validation.constraints.Min;
+
 public class PlanLocationDto {
 	private int locationId;
+	
+	@Min(value = 1, message = "콘텐츠 아이디가 잘못되었습니다.")
 	private int locationContentId;
+	
 	private String locationName;
 	private String locationImage;
 	private String locationAddr;
 	private double locationMapx;
 	private double locationMapy;
+	
+	@Min(value = 1, message = "이동수단이 잘못되었습니다.")
 	private int locationTransportation;
+	
+	@Min(value = 1, message = "인덱스가 잘못되었습니다.")
 	private int index;
 	private int planId;
 	

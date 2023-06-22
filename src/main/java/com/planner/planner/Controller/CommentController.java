@@ -1,6 +1,7 @@
 package com.planner.planner.Controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Dto.CommentDto;
 import com.planner.planner.Exception.ForbiddenException;
-import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.CommentService;
 import com.planner.planner.util.ResponseMessage;
 import com.planner.planner.util.UserIdUtil;
@@ -26,23 +26,21 @@ import com.planner.planner.util.UserIdUtil;
 public class CommentController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommentController.class);
 	
-	private AccountService accountService;
 	private CommentService commentService;
 	
-	public CommentController(AccountService accountService, CommentService commentService) {
-		this.accountService = accountService;
+	public CommentController(CommentService commentService) {
 		this.commentService = commentService;
 	}
 	
 	@PostMapping(value = "/reviews/{reviewId}/comments")
-	public ResponseEntity<Object> newComment(HttpServletRequest req, @PathVariable int reviewId, @RequestBody CommentDto comment) throws Exception {
+	public ResponseEntity<Object> newComment(HttpServletRequest req, @PathVariable int reviewId, @RequestBody @Valid CommentDto comment) throws Exception {
 		int newCommentId = commentService.newComment(reviewId, comment);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", newCommentId));
 	}
 	
 	@PatchMapping(value = "/reviews/{reviewId}/comments/{commentId}")
-	public ResponseEntity<Object> modifyComment(HttpServletRequest req, @PathVariable int reviewId, @PathVariable int commentId, @RequestBody CommentDto comment) throws Exception {
+	public ResponseEntity<Object> modifyComment(HttpServletRequest req, @PathVariable int reviewId, @PathVariable int commentId, @RequestBody @Valid CommentDto comment) throws Exception {
 		checkAuth(req, commentId);
 		
 		commentService.updateComment(reviewId, comment);

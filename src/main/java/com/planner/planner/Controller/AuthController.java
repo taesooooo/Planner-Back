@@ -5,16 +5,18 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.planner.planner.Common.ValidationGroups.LoginGroup;
+import com.planner.planner.Common.ValidationGroups.RegisterGroup;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Service.AuthService;
 import com.planner.planner.util.JwtUtil;
@@ -38,7 +40,7 @@ public class AuthController {
 	}
 
 	@PostMapping(value = "/register")
-	public ResponseEntity<Object> register(HttpServletRequest req, @RequestBody AccountDto accountDto) {
+	public ResponseEntity<Object> register(HttpServletRequest req, @RequestBody @Validated(RegisterGroup.class) AccountDto accountDto) {
 		String pwEncode = passwordEncoder.encode(accountDto.getPassword());
 		AccountDto userDto = new AccountDto.Builder().setEmail(accountDto.getEmail()).setPassword(pwEncode)
 				.setUserName(accountDto.getUserName()).setNickName(accountDto.getNickName())
@@ -56,7 +58,7 @@ public class AuthController {
 	}
 
 	@PostMapping(value = "/login")
-	public ResponseEntity<Object> login(HttpServletRequest req, @RequestBody AccountDto accountDto) throws Exception {
+	public ResponseEntity<Object> login(HttpServletRequest req, @RequestBody @Validated(LoginGroup.class) AccountDto accountDto) throws Exception {
 		AccountDto user = authService.login(accountDto);
 		if (passwordEncoder.matches(accountDto.getPassword(), user.getPassword())) {
 			String token = jwtUtil.createToken(user.getAccountId());
@@ -66,6 +68,7 @@ public class AuthController {
 					.body(new ResponseMessage(false, "아이디 또는 비밀번호를 잘 못입력헀습니다."));
 		}
 	}
+
 
 	@GetMapping(value = "/logout")
 	public ResponseEntity<Object> logout(HttpServletRequest req) {

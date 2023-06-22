@@ -26,7 +26,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -65,10 +64,214 @@ public class PlannerControllerTest {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 		this.token = "Bearer " + jwtUtil.createToken(1);
 	}
+	
+	@Test
+	public void 새플래너_생성자_공백_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 29))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		this.mockMvc.perform(post("/api/planners")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 새플래너_제목_공백_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("")
+				.setPlanDateStart(LocalDate.of(2023, 1, 29))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		this.mockMvc.perform(post("/api/planners")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 새플래너_시작날짜_공백_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 27))
+				.setPlanDateEnd(null)
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		this.mockMvc.perform(post("/api/planners")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 새플래너_종료날짜_공백_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(null)
+				.setPlanDateEnd(LocalDate.of(2023, 1, 27))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		this.mockMvc.perform(post("/api/planners")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	
+	@Test
+	public void 새플래너_잘못된멤버수_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 29))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(0)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		this.mockMvc.perform(post("/api/planners")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 새플래너_잘못된멤버유형_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 29))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(5)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		this.mockMvc.perform(post("/api/planners")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 새플래너_잘못된날짜_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 27))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 28))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		this.mockMvc.perform(post("/api/planners")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
 
 	@Test
 	public void 새플래너() throws Exception {
-		PlannerDto planner = createPlanner(0);
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.now())
+				.setPlanDateEnd(LocalDate.now())
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(new ArrayList<String>())
+				.setPlans(new ArrayList<PlanDto>())
+				.setLikeCount(0)
+				.build();
+		
 		this.mockMvc.perform(post("/api/planners")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
@@ -114,9 +317,191 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
+	public void 플래너_수정_제목_공백_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("")
+				.setPlanDateStart(LocalDate.of(2023, 1, 29))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		String url = String.format("/api/planners/%d", 1);
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 플래너_수정_시작날짜_공백_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(null)
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		String url = String.format("/api/planners/%d", 1);
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 플래너_수정_종료날짜_공백_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 31))
+				.setPlanDateEnd(null)
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		String url = String.format("/api/planners/%d", 1);
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 플래너_수정_잘못된멤버수_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 29))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(0)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		String url = String.format("/api/planners/%d", 1);
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 플래너_수정_잘못된멤버유형_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 29))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(5)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		String url = String.format("/api/planners/%d", 1);
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 플래너_수정_잘못된날짜_유효성검사() throws Exception {
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 27))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 28))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
+		String url = String.format("/api/planners/%d", 1);
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planner)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
 	public void 플래너_수정() throws Exception {
 		int plannerId = 1;
-		PlannerDto planner = createPlanner(1); // 기본 데이터는 제목이 초보여행
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 28))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 28))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();
+		
 		String url = String.format("/api/planners/%d", plannerId);
 		this.mockMvc.perform(patch(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -132,7 +517,21 @@ public class PlannerControllerTest {
 	public void 플래너_수정_다른사용자_요청_접근거부() throws Exception {
 		int plannerId = 1;
 		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		PlannerDto planner = createPlanner(1); // 기본 데이터는 제목이 초보여행
+		PlannerDto planner = new PlannerDto.Builder()
+				.setPlannerId(1)
+				.setAccountId(1)
+				.setCreator("test")
+				.setTitle("테스트여행")
+				.setPlanDateStart(LocalDate.of(2023, 1, 28))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 28))
+				.setExpense(1000)
+				.setMemberCount(1)
+				.setMemberTypeId(1)
+				.setPlanMembers(null)
+				.setPlans(null)
+				.setLikeCount(0)
+				.build();// 기본 데이터는 제목이 초보여행
+		
 		String url = String.format("/api/planners/%d", plannerId);
 		this.mockMvc.perform(patch(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -183,6 +582,21 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
+	public void 새메모_제목_공백_유효성검사() throws Exception {
+		PlanMemoDto memo = createPlanMemo(0, "", "test", 1, null, null);
+		String url = String.format("/api/planners/%d/memos", 1);
+		
+		this.mockMvc.perform(post(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(memo)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
 	public void 새메모() throws Exception {
 		int plannerId = 1;
 		PlanMemoDto memo = createPlanMemo(0, "test", "test", plannerId, null, null);
@@ -215,6 +629,21 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
+	public void 메모_수정_제목_공백_유효성검사() throws Exception {
+		PlanMemoDto memo = createPlanMemo(0, "", "test", 1, null, null);
+		String url = String.format("/api/planners/%d/memos/%d", 1, 1);
+		
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(memo)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
 	public void 메모_수정() throws Exception {
 		int plannerId = 1;
 		int memoId = 1;
@@ -229,6 +658,7 @@ public class PlannerControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
+	
 	@Test
 	public void 메모_수정_다른사용자_요청_접근거부() throws Exception {
 		int plannerId = 1;
@@ -339,9 +769,42 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
+	public void 새일정_날짜_공백_유효성검사() throws Exception {
+		int plannerId = 1;
+		PlanDto plan = createPlan(2, plannerId, 1024, null);
+		String url = String.format("/api/planners/%d/plans", plannerId);
+		
+		this.mockMvc.perform(post(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(plan)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 새일정_정렬_인덱스_유효성검사() throws Exception {
+		int plannerId = 1;
+		PlanDto plan = createPlan(2, plannerId, 0, LocalDate.of(2023, 1,29));
+		String url = String.format("/api/planners/%d/plans", plannerId);
+		
+		this.mockMvc.perform(post(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(plan)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	
+	@Test
 	public void 새일정() throws Exception {
 		int plannerId = 1;
-		PlanDto plan = createPlan(2, plannerId, 1024, LocalDate.of(2023, 1,29));
+		PlanDto plan = createPlan(2, plannerId, 1024, LocalDate.now());
 		String url = String.format("/api/planners/%d/plans", plannerId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -353,11 +816,12 @@ public class PlannerControllerTest {
 		.andExpect(status().isCreated())
 		.andExpect(jsonPath("$.data").value(4));
 	}
+	
 	@Test
 	public void 새일정_다른사용자_요청_접근거부() throws Exception {
 		int plannerId = 1;
 		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		PlanDto plan = createPlan(2, plannerId, 1024, LocalDate.of(2023, 1,29));
+		PlanDto plan = createPlan(2, plannerId, 1024, LocalDate.now());
 		String url = String.format("/api/planners/%d/plans", plannerId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -370,10 +834,42 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
+	public void 일정수정_날짜_공백_유효성검사() throws Exception {
+		int plannerId = 1;
+		PlanDto plan = createPlan(2, plannerId, 1024, null);
+		String url = String.format("/api/planners/%d/plans/%d", plannerId, 1);
+		
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(plan)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 일정수정_정렬_인덱스_유효성검사() throws Exception {
+		int plannerId = 1;
+		PlanDto plan = createPlan(2, plannerId, 0, LocalDate.of(2023, 1,29));
+		String url = String.format("/api/planners/%d/plans/%d", plannerId, 1);
+		
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(plan)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
 	public void 일정_수정() throws Exception {
 		int plannerId = 1;
 		int planId = 1;
-		PlanDto plan = createPlan(1, plannerId, 1024, LocalDate.of(2023, 02, 07));
+		PlanDto plan = createPlan(1, plannerId, 1024, LocalDate.now());
 		String url = String.format("/api/planners/%d/plans/%d", plannerId, planId);
 		
 		this.mockMvc.perform(patch(url)
@@ -390,7 +886,7 @@ public class PlannerControllerTest {
 		int plannerId = 1;
 		int planId = 1;
 		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		PlanDto plan = createPlan(1, plannerId, 1024, LocalDate.of(2023, 02, 07));
+		PlanDto plan = createPlan(1, plannerId, 1024, LocalDate.now());
 		String url = String.format("/api/planners/%d/plans/%d", plannerId, planId);
 		
 		this.mockMvc.perform(patch(url)
@@ -435,6 +931,54 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
+	public void 일정_새여행지_잘못된콘텐츠아이디_유효성검사() throws Exception {
+		int plannerId = 1;
+		int planId = 1;
+		PlanLocationDto planLocation = createPlanLocation(2, 0, 1, 1024, planId);
+		String url = String.format("/api/planners/%d/plans/%d/plan-locations", plannerId, planId);
+		this.mockMvc.perform(post(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planLocation)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 일정_새여행지_잘못된이동수단_유효성검사() throws Exception {
+		int plannerId = 1;
+		int planId = 1;
+		PlanLocationDto planLocation = createPlanLocation(2, 1000, 0, 1024, planId);
+		String url = String.format("/api/planners/%d/plans/%d/plan-locations", plannerId, planId);
+		this.mockMvc.perform(post(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planLocation)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 일정_새여행지_잘못된정렬인덱스_유효성검사() throws Exception {
+		int plannerId = 1;
+		int planId = 1;
+		PlanLocationDto planLocation = createPlanLocation(2, 1000, 1, 0, planId);
+		String url = String.format("/api/planners/%d/plans/%d/plan-locations", plannerId, planId);
+		this.mockMvc.perform(post(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planLocation)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
 	public void 일정_새여행지() throws Exception {
 		int plannerId = 1;
 		int planId = 1;
@@ -466,6 +1010,57 @@ public class PlannerControllerTest {
 				.content(mapper.writeValueAsString(planLocation)))
 		.andDo(print())
 		.andExpect(status().isForbidden());
+	}
+	
+	@Test
+	public void 여행지_수정_잘못된콘텐츠아이디_유효성검사() throws Exception {
+		int plannerId = 1;
+		int planId = 1;
+		int planLocationId = 1;
+		PlanLocationDto planLocation = createPlanLocation(1, 0, 1, 1024, planId);
+		String url = String.format("/api/planners/%d/plans/%d/plan-locations/%d", plannerId, planId, planLocationId);
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planLocation)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 여행지_수정_잘못된이동수단_유효성검사() throws Exception {
+		int plannerId = 1;
+		int planId = 1;
+		int planLocationId = 1;
+		PlanLocationDto planLocation = createPlanLocation(1, 2000, 0, 1024, planId);
+		String url = String.format("/api/planners/%d/plans/%d/plan-locations/%d", plannerId, planId, planLocationId);
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planLocation)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 여행지_수정_잘못된정렬인덱스_유효성검사() throws Exception {
+		int plannerId = 1;
+		int planId = 1;
+		int planLocationId = 1;
+		PlanLocationDto planLocation = createPlanLocation(1, 2000, 1, 0, planId);
+		String url = String.format("/api/planners/%d/plans/%d/plan-locations/%d", plannerId, planId, planLocationId);
+		this.mockMvc.perform(patch(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(planLocation)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
 	}
 	
 	@Test
