@@ -25,11 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.util.JwtUtil;
 
 @WebAppConfiguration
@@ -136,8 +138,9 @@ public class AccountControllerTest {
 	public void 나의_플래너_가져오기() throws Exception {
 		mockMvc.perform(get("/api/users/1/planners")
 				.header("Authorization", token)
-				.accept(MediaType.APPLICATION_JSON)
-				.param("page", "1"))
+				.param("itemCount", "10")
+				.param("sortCriteria", "1")
+				.param("pageNum", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.data").isNotEmpty())
@@ -151,11 +154,14 @@ public class AccountControllerTest {
 	
 	@Test
 	public void 좋아요_플래너_가져오기() throws Exception {
-		mockMvc.perform(get("/api/users/1/likes?type=1")
+		mockMvc.perform(get("/api/users/1/likes")
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
 				.accept(MediaType.APPLICATION_JSON)
-				.param("page", "1"))
+				.param("itemCount", "10")
+				.param("sortCriteria", "1")
+				.param("postType", "1")
+				.param("pageNum", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.data").isNotEmpty())
@@ -168,12 +174,16 @@ public class AccountControllerTest {
 	}
 	
 	@Test
-	public void 좋아요_여행지_가져오기() throws Exception {
-		mockMvc.perform(get("/api/users/1/likes?type=2")
+	public void 좋아요_플래너_가져오기_키워드() throws Exception {
+		mockMvc.perform(get("/api/users/1/likes")
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
 				.accept(MediaType.APPLICATION_JSON)
-				.param("page", "1"))
+				.param("itemCount", "10")
+				.param("sortCriteria", "1")
+				.param("keyword", "테스트")
+				.param("postType", "1")
+				.param("pageNum", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.data").isNotEmpty())
@@ -184,15 +194,49 @@ public class AccountControllerTest {
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
-
-//	@Test
-//	public void 좋아요모두가져오기() throws Exception {
-//		mockMvc.perform(get("/api/users/likes/1")
-//				.header("Authorization", token)
-//				.accept(MediaType.APPLICATION_JSON))
-//		.andDo(print())
-//		.andExpect(status().isOk());
-//	}
+	
+	@Test
+	public void 좋아요_여행지_가져오기() throws Exception {
+		mockMvc.perform(get("/api/users/1/likes")
+				.characterEncoding("UTF-8")
+				.header("Authorization", token)
+				.accept(MediaType.APPLICATION_JSON)
+				.param("itemCount", "10")
+				.param("sortCriteria", "1")
+				.param("postType", "2")
+				.param("pageNum", "1"))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list.length()").value(1))
+		.andExpect(jsonPath("$.data.totalCount").value(1))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
+	
+	@Test
+	public void 좋아요_여행지_가져오기_키워드() throws Exception {
+		mockMvc.perform(get("/api/users/1/likes")
+				.characterEncoding("UTF-8")
+				.header("Authorization", token)
+				.accept(MediaType.APPLICATION_JSON)
+				.param("itemCount", "10")
+				.param("sortCriteria", "1")
+				.param("keyword", "테스트")
+				.param("postType", "2")
+				.param("pageNum", "1"))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list.length()").value(2))
+		.andExpect(jsonPath("$.data.totalCount").value(2))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
 
 	@Test
 	public void 좋아요여행지확인() throws Exception {

@@ -115,7 +115,7 @@ public class PlannerServiceTest {
 	}
 	
 	@Test
-	public void 나의_플래너_가져오기() throws Exception {
+	public void 계정_모든_플래너_가져오기() throws Exception {
 		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
 				.setItemCount(10)
 				.setSortCriteria(SortCriteria.LATEST)
@@ -142,7 +142,7 @@ public class PlannerServiceTest {
 	}
 	
 	@Test
-	public void 나의_플래너_가져오기_키워드() throws Exception {
+	public void 계정_모든_플래너_가져오기_키워드() throws Exception {
 		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
 				.setItemCount(10)
 				.setSortCriteria(SortCriteria.LATEST)
@@ -465,35 +465,59 @@ public class PlannerServiceTest {
 	
 	@Test
 	public void 좋아요_플래너_모두_조회() throws Exception {
-		int plannerId = 1;
+		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setSortCriteria(SortCriteria.LATEST)
+				.setPageNum(1)
+				.build();
+		
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
 		planners.add(createPlanner(1));
 		planners.add(createPlanner(2));
-		int testTotalCount = 2;
 		
-		when(plannerDao.likePlannerList(anyInt(), any(PageInfo.class))).thenReturn(planners);
+		int testTotalCount = planners.size();
+		
+		when(plannerDao.likePlannerList(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(planners);
 		when(plannerDao.getTotalCountByLike(anyInt())).thenReturn(testTotalCount);
 		
-		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, plannerId);
+		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, paramDto);
 		
-		assertEquals(plannerList.getList().size(), 2);
-		assertEquals(planners.get(0).getPlannerId(), plannerList.getList().get(0).getPlannerId());
+		verify(plannerDao).likePlannerList(anyInt(), any(SortCriteria.class), any(), any(PageInfo.class));
+		verify(plannerDao).getTotalCount();
+		
+		assertThat(plannerList).isNotNull();
+		assertThat(plannerList.getList()).isNotNull();
+		assertThat(plannerList.getTotalCount()).isEqualTo(testTotalCount);
 	}
 	
-	@Test(expected = NotFoundPlanner.class)
-	public void 좋아요_플래너_모두_조회_없는경우() throws Exception {
-		int plannerId = 1;
+	@Test
+	public void 좋아요_플래너_모두_조회_키워드() throws Exception {
+		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setSortCriteria(SortCriteria.LATEST)
+				.setKeyword("테스트")
+				.setPageNum(1)
+				.build();
+		
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
-		int testTotalCount = 2;
+		planners.add(createPlanner(1));
+		planners.add(createPlanner(2));
 		
-		when(plannerDao.likePlannerList(anyInt(), any(PageInfo.class))).thenReturn(planners);
-		//when(plannerDao.getTotalCountByLike(anyInt())).thenReturn(testTotalCount);
+		int testTotalCount = planners.size();
 		
-		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, plannerId);
+		when(plannerDao.likePlannerList(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(planners);
+		when(plannerDao.getTotalCountByKeyword(anyInt(), anyString())).thenReturn(testTotalCount);
 		
-//		assertEquals(plannerList.getPlannerList().size(), 2);
-//		assertEquals(planners.get(0).getPlannerId(), plannerList.getPlannerList().get(0).getPlannerId());
+		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, paramDto);
+		
+		verify(plannerDao).likePlannerList(anyInt(), any(SortCriteria.class), any(), any(PageInfo.class));
+		verify(plannerDao).getTotalCount();
+		
+		assertThat(plannerList).isNotNull();
+		assertThat(plannerList.getList()).isNotNull();
+		assertThat(plannerList.getTotalCount()).isEqualTo(testTotalCount);
 	}
+	
 	
 	private PlanMemoDto createPlanMemo(int memoId, String title, String content, int plannerId, LocalDateTime create, LocalDateTime update) {
 		return new PlanMemoDto.Builder()

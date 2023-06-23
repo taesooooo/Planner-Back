@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.SpotDao;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Dto.SpotLikeCountDto;
@@ -181,12 +182,23 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public Page<SpotLikeDto> getSpotLikeList(int accountId, int page) throws Exception {
-		PageInfo pageInfo = new PageInfo.Builder().setPageNum(page).setPageItemCount(10).build();
+	public Page<SpotLikeDto> getSpotLikeList(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+		PageInfo pageInfo = new PageInfo.Builder()
+				.setPageNum(commonRequestParamDto.getPageNum())
+				.setPageItemCount(commonRequestParamDto.getItemCount())
+				.build();
 		
-		List<SpotLikeDto> spotLikelist = spotDao.selectSpotLikeList(accountId, pageInfo);
+		List<SpotLikeDto> spotLikelist = spotDao.selectSpotLikeList(accountId, commonRequestParamDto.getSortCriteria(), commonRequestParamDto.getKeyword(), pageInfo);
 		
-		int totalCount = spotDao.selectSpotLikeTotalCountByAccountId(accountId);
+		int totalCount = 0;
+		String keyword = commonRequestParamDto.getKeyword();
+		
+		if(keyword != null) {
+			totalCount = spotDao.getTotalCountByAccountId(accountId, keyword);
+		}
+		else {
+			totalCount = spotDao.getTotalCountByAccountId(accountId);
+		}
 		
 		Page<SpotLikeDto> spotLikePage = new Page.Builder<SpotLikeDto>()
 				.setList(spotLikelist)

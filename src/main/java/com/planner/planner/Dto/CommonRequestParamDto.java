@@ -1,6 +1,7 @@
 package com.planner.planner.Dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.planner.planner.Common.PostType;
 import com.planner.planner.Common.SortCriteria;
 
 public class CommonRequestParamDto {
@@ -10,12 +11,14 @@ public class CommonRequestParamDto {
 	private SortCriteria sortCriteria = SortCriteria.LATEST;
 	private String keyword;
 	private Integer pageNum;
+	private PostType postType;
 	
 	public static class Builder {
 		private Integer itemCount;
 		private SortCriteria sortCriteria;
 		private String keyword;
 		private Integer pageNum;
+		private PostType postType;
 
 		public Builder setItemCount(Integer itemCount) {
 			this.itemCount = itemCount;
@@ -37,6 +40,11 @@ public class CommonRequestParamDto {
 			return this;
 		}
 		
+		public Builder setPostType(PostType postType) {
+			this.postType = postType;
+			return this;
+		}
+
 		public CommonRequestParamDto build() {
 			return new CommonRequestParamDto(this);
 		}
@@ -51,6 +59,7 @@ public class CommonRequestParamDto {
 		this.sortCriteria = builder.sortCriteria;
 		this.keyword = builder.keyword;
 		this.pageNum = builder.pageNum;
+		this.postType = builder.postType;
 	}
 
 	public Integer getItemCount() {
@@ -68,4 +77,9 @@ public class CommonRequestParamDto {
 	public Integer getPageNum() {
 		return pageNum;
 	}
+
+	public PostType getPostType() {
+		return postType;
+	}
+	
 }

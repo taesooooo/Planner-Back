@@ -102,9 +102,4 @@ public class SpotController {
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "좋아요 취소 성공"));
 	}
-
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-		binder.initDirectFieldAccess();
-	}
 }

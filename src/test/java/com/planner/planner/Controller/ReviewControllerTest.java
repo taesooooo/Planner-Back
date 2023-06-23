@@ -111,19 +111,14 @@ public class ReviewControllerTest {
 	}
 	
 	@Test
-	public void 리뷰_목록_가져오기_최신순_테스트() throws Exception {
-		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setSortCriteria(SortCriteria.LATEST)
-				.setPageNum(1)
-				.build();
-		
+	public void 리뷰_목록_가져오기_최신순_테스트() throws Exception {		
 		mockMvc.perform(get("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(dto)))
+				.param("itemCount", "10")
+				.param("sortCriteria", "1")
+				.param("pageNum", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)))
@@ -137,18 +132,13 @@ public class ReviewControllerTest {
 	
 	@Test
 	public void 리뷰_목록_가져오기_인기순_테스트() throws Exception {
-		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setSortCriteria(SortCriteria.LIKECOUNT)
-				.setPageNum(1)
-				.build();
-		
 		mockMvc.perform(get("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(dto)))
+				.param("itemCount", "10")
+				.param("sortCriteria", "2")
+				.param("pageNum", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)))
@@ -162,18 +152,14 @@ public class ReviewControllerTest {
 	
 	@Test
 	public void 리뷰_목록_가져오기_키워드_테스트() throws Exception {
-		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setKeyword("테스트")
-				.setPageNum(1)
-				.build();
-		
 		mockMvc.perform(get("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(dto)))
+				.param("itemCount", "10")
+				.param("sortCriteria", "1")
+				.param("keyword", "테스트")
+				.param("pageNum", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)))

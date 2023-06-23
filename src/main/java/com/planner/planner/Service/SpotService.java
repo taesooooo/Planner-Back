@@ -1,6 +1,7 @@
 package com.planner.planner.Service;
 
 import com.planner.planner.Common.Page;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Dto.SpotLikeDto;
@@ -17,5 +18,5 @@ public interface SpotService {
 	
 	public boolean addSpotLike(int accountId, SpotLikeDto spotLikeDto) throws Exception;
 	public boolean removeSpotLike(int accountId, int contentId) throws Exception;
-	public Page<SpotLikeDto> getSpotLikeList(int accountId, int page) throws Exception;
+	public Page<SpotLikeDto> getSpotLikeList(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 }

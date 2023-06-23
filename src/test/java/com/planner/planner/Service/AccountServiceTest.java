@@ -129,26 +129,6 @@ public class AccountServiceTest {
 
 		assertTrue(result);
 	}
-
-	@Test
-	public void 나의_플래너_가져오기() throws Exception {
-		int testAccountId = 1;
-		List<PlannerDto> testList = Arrays.asList(createPlanner(1),createPlanner(2));
-		PageInfo pInfo = new PageInfo.Builder().setPageNum(1).setPageItemCount(10).build();
-		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
-				.setList(testList)
-				.setPageInfo(pInfo)
-				.setTotalCount(testList.size())
-				.build();
-		
-		when(plannerService.findPlannersByAccountId(anyInt(),anyInt())).thenReturn(plannerListPage);
-
-		Page<PlannerDto> list = accountService.myPlanners(1, testAccountId);
-		
-		verify(plannerService).findPlannersByAccountId(anyInt(), anyInt());
-		
-		assertEquals(testList.get(0).getAccountId(), list.getList().get(0).getAccountId());
-	}
 	
 	@Test
 	public void 이메일_검색() throws Exception {

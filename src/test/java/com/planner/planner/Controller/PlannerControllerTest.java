@@ -287,18 +287,13 @@ public class PlannerControllerTest {
 	
 	@Test
 	public void 플래너_리스트_조회_최신순() throws Exception {
-		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setSortCriteria(SortCriteria.LATEST)
-				.setPageNum(1)
-				.build();
-		
 		this.mockMvc.perform(get("/api/planners")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
-				.content(mapper.writeValueAsString(dto)))
+				.param("itemCount", "10")
+				.param("sortCriteria", "1")
+				.param("pageNum", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)))
@@ -313,18 +308,13 @@ public class PlannerControllerTest {
 	
 	@Test
 	public void 플래너_리스트_조회_인기순() throws Exception {
-		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setSortCriteria(SortCriteria.LIKECOUNT)
-				.setPageNum(1)
-				.build();
-		
 		 this.mockMvc.perform(get("/api/planners")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
-				.content(mapper.writeValueAsString(dto)))
+				.param("itemCount", "10")
+				.param("sortCriteria", "2")
+				.param("pageNum", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)))
@@ -339,18 +329,14 @@ public class PlannerControllerTest {
 	
 	@Test
 	public void 플래너_리스트_조회_키워드() throws Exception {
-		CommonRequestParamDto dto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setKeyword("테스트")
-				.setPageNum(1)
-				.build();
-		
 		this.mockMvc.perform(get("/api/planners")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
-				.content(mapper.writeValueAsString(dto)))
+				.param("itemCount", "10")
+				.param("sortCriteria", "1")
+				.param("keyword", "테스트")
+				.param("pageNum", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)))

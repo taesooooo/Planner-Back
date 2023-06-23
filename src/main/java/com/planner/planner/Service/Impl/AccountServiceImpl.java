@@ -14,6 +14,7 @@ import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Exception.NotFoundUserException;
@@ -90,18 +91,18 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public Page<PlannerDto> myPlanners(int page, int accountId) throws Exception {
-		return plannerService.findPlannersByAccountId(page, accountId); 
+	public Page<PlannerDto> myPlanners(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+		return plannerService.findPlannersByAccountId(accountId, commonRequestParamDto); 
 	}
 
 	@Override
-	public Page<PlannerDto> likePlanners(int page, int accountId) throws Exception {
-		return plannerService.getLikePlannerList(page, accountId);
+	public Page<PlannerDto> likePlanners(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+		return plannerService.getLikePlannerList(accountId, commonRequestParamDto);
 	}
 
 	@Override
-	public Page<SpotLikeDto> likeSpots(int page, int accountId) throws Exception {
-		return spotService.getSpotLikeList(accountId, page);
+	public Page<SpotLikeDto> likeSpots(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+		return spotService.getSpotLikeList(accountId, commonRequestParamDto);
 	}
 
 	@Override

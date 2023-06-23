@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Common.Page;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.LikeDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
@@ -17,9 +18,9 @@ public interface AccountService {
 	public boolean passwordUpdate(AccountDto accountDto);
 	public void acceptInvite(int plannerId, int accountId);
 	
-	public Page<PlannerDto> myPlanners(int page, int accountId) throws Exception;
-	public Page<PlannerDto> likePlanners(int page, int accountId) throws Exception;
-	public Page<SpotLikeDto> likeSpots(int accountId, int page) throws Exception;
+	public Page<PlannerDto> myPlanners(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
+	public Page<PlannerDto> likePlanners(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
+	public Page<SpotLikeDto> likeSpots(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 	
 	public boolean searchEmail(String searchEmail) throws Exception;
 }

@@ -42,5 +42,5 @@ public interface PlannerService {
 	
 	// 플래너 좋아요, 좋아요 취소, 좋아요 목록 가져오기
 	public void plannerLikeOrUnLike(int accountId, int plannerId);
-	public Page<PlannerDto> getLikePlannerList(int page, int accountId) throws Exception;
+	public Page<PlannerDto> getLikePlannerList(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 }

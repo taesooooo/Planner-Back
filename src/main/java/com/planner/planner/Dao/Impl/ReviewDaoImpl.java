@@ -111,7 +111,4 @@ public class ReviewDaoImpl implements ReviewDao {
 		
 		return jdbcTemplate.queryForObject(sql, Integer.class);
 	}
-	
-	
-
 }

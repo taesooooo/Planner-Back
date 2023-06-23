@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +23,7 @@ import com.planner.planner.Common.Page;
 import com.planner.planner.Common.ValidationGroups.AccountUpdateGroup;
 import com.planner.planner.Common.PostType;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.AccountService;
@@ -69,23 +72,25 @@ public class AccountController {
 	}
 	
 	@GetMapping(value = "/{accountId}/planners")
-	public ResponseEntity<Object> likePlanners(HttpServletRequest req, @RequestParam(value="page") int page, @PathVariable int accountId) throws Exception {
+	public ResponseEntity<Object> myPlanners(HttpServletRequest req, @PathVariable int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		checkAuth(req, accountId);
 		
-		Page<PlannerDto> list = accountService.myPlanners(page, accountId);
+		Page<PlannerDto> list = accountService.myPlanners(accountId, commonRequestParamDto);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));
 	}
 
 	@GetMapping(value = "/{accountId}/likes")
-	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId,  @RequestParam(value="page") int page, @RequestParam("type") PostType postType) throws Exception {
+	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		checkAuth(req, accountId);
 		Page<?> list = null;
+		PostType postType = commonRequestParamDto.getPostType();
+		
 		if(postType == PostType.PLANNER) {
-			list = accountService.likePlanners(page, accountId);
+			list = accountService.likePlanners(accountId, commonRequestParamDto);
 		}
 		else if(postType == PostType.SPOT) {
-			list = accountService.likeSpots(accountId, page);
+			list = accountService.likeSpots(accountId, commonRequestParamDto);
 		}
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -20,7 +21,9 @@ import org.slf4j.LoggerFactory;
 
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
+import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Dao.Impl.SpotDaoImpl;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Dto.SpotLikeCountDto;
@@ -252,6 +255,12 @@ public class SpotServiceTest {
 	
 	@Test
 	public void 여행지_좋아요_리스트_가져오기() throws Exception {
+		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setSortCriteria(SortCriteria.LATEST)
+				.setPageNum(1)
+				.build();
+		
 		List<SpotLikeDto> list = new ArrayList<SpotLikeDto>();
 		list.add(new SpotLikeDto.Builder()
 				.setLikeId(1)
@@ -269,14 +278,43 @@ public class SpotServiceTest {
 				.build());
 
 		//
-		when(spotDao.selectSpotLikeList(anyInt(), any(PageInfo.class))).thenReturn(list);
-		when(spotDao.selectSpotLikeTotalCountByAccountId(anyInt())).thenReturn(2);
+		when(spotDao.selectSpotLikeList(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(list);
+		when(spotDao.getTotalCountByAccountId(anyInt())).thenReturn(2);
 		
-		Page<SpotLikeDto> spotLikePage = spotService.getSpotLikeList(1, 1);
+		Page<SpotLikeDto> spotList = spotService.getSpotLikeList(1, paramDto);
 		
-		assertThat(spotLikePage.getList()).isNotNull()
-				.usingRecursiveComparison()
-				.isEqualTo(list);
+		assertThat(spotList).isNotNull();
+		assertThat(spotList.getList()).isNotNull();
+		assertThat(spotList.getTotalCount()).isEqualTo(2);
+	}
+	
+	@Test
+	public void 여행지_좋아요_리스트_가져오기_키워드() throws Exception {
+		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setSortCriteria(SortCriteria.LATEST)
+				.setKeyword("테스트")
+				.setPageNum(1)
+				.build();
+		
+		List<SpotLikeDto> list = new ArrayList<SpotLikeDto>();
+		list.add(new SpotLikeDto.Builder()
+				.setLikeId(1)
+				.setAccountId(1)
+				.setContentId(2733967)
+				.setTitle("테스트")
+				.setImage("테스트이미지")
+				.build());
+
+		//
+		when(spotDao.selectSpotLikeList(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(list);
+		when(spotDao.getTotalCountByAccountId(anyInt(), anyString())).thenReturn(1);
+		
+		Page<SpotLikeDto> spotList = spotService.getSpotLikeList(1, paramDto);
+		
+		assertThat(spotList).isNotNull();
+		assertThat(spotList.getList()).isNotNull();
+		assertThat(spotList.getTotalCount()).isEqualTo(1);
 	}
 
 	private CommonListDto<CommonBasedDto> createBasedDtoList() {
