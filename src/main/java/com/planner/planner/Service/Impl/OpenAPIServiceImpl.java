@@ -172,9 +172,9 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	@Override
 	public CommonListDto<CommonBasedDto> getKeyword(OpenApiDto openApiDto) throws Exception
 	{
-//		if(openApiDto.getKeyword() == null || openApiDto.getKeyword().isEmpty()) {
-//			throw new IllegalArgumentException("키워드는 공백이거나 빈칸일 수 었습니다.");
-//		}
+		if(openApiDto.getKeyword() == null || openApiDto.getKeyword().isEmpty()) {
+			throw new IllegalArgumentException("키워드는 공백이거나 빈칸일 수 었습니다.");
+		}
 		
 		String apiUrl = baseUrl+"/searchKeyword1?ServiceKey="+serviceKey
 				+"&MobileOS="+mobileOS
