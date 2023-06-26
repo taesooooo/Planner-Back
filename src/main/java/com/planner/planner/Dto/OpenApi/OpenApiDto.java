@@ -7,7 +7,7 @@ public class OpenApiDto {
 	private double mapX; 
 	private double mapY; 
 	private int radius;
-	private String keyword; 
+	private String keyword;
 	private int contentId;
 	private int pageNo;
 	

@@ -96,23 +96,26 @@ public class SpotServiceImpl implements SpotService {
 
 		List<SpotDto> spotList = apiData.getItems().stream()
 				.map(item -> {
-					boolean likeState = spotLikeList.stream()
-							.anyMatch(likeItem -> likeItem.getContentId() == Integer.parseInt(item.getContentId()));
-
-					SpotLikeCountDto likeCount = spotLikeCountList.stream()
-							.filter(likeCountItem -> likeCountItem.getContentId() == Integer.parseInt(item.getContentId()))
-							.findFirst()
-							.get();
-
-					SpotDto spot = new SpotDto.Builder()
-							.setBasedSpot(item)
-							.setLikeCount(likeCount.getCount())
-							.setLikeState(likeState)
-							.build();
-
-					return spot;
-		})
-		.collect(Collectors.toList());
+				boolean likeState = spotLikeList.stream()
+						.anyMatch(likeItem -> likeItem.getContentId() == Integer.parseInt(item.getContentId()));
+	
+				Optional<SpotLikeCountDto> likeCountDto = spotLikeCountList.stream()
+						.filter(likeCountItem -> likeCountItem.getContentId() == Integer.parseInt(item.getContentId()))
+						.findFirst();
+	
+				int likeCount = 0;
+				if (likeCountDto.isPresent()) {
+					likeCount = likeCountDto.get().getCount();
+				}
+	
+				SpotDto spot = new SpotDto.Builder()
+						.setBasedSpot(item)
+						.setLikeCount(likeCount)
+						.setLikeState(likeState)
+						.build();
+	
+				return spot;
+		}).collect(Collectors.toList());
 		
 		SpotListDto<SpotDto> list = new SpotListDto<SpotDto>(spotList, apiData.getTotalCount());
 				
@@ -135,14 +138,18 @@ public class SpotServiceImpl implements SpotService {
 					boolean likeState = spotLikeList.stream()
 							.anyMatch(likeItem -> likeItem.getContentId() == Integer.parseInt(item.getContentId()));
 					
-					SpotLikeCountDto likeCount = spotLikeCountList.stream()
+					Optional<SpotLikeCountDto> likeCountDto = spotLikeCountList.stream()
 							.filter(likeCountItem -> likeCountItem.getContentId() == Integer.parseInt(item.getContentId()))
-							.findFirst()
-							.get();
+							.findFirst();
+		
+					int likeCount = 0;
+					if (likeCountDto.isPresent()) {
+						likeCount = likeCountDto.get().getCount();
+					}
 
 					SpotDto spot = new SpotDto.Builder()
 							.setBasedSpot(item)
-							.setLikeCount(likeCount.getCount())
+							.setLikeCount(likeCount)
 							.setLikeState(likeState)
 							.build();
 
