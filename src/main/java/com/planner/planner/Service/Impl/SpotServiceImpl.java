@@ -193,7 +193,7 @@ public class SpotServiceImpl implements SpotService {
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();
 		
-		if(keyword != null) {
+		if(keyword != null && !keyword.isEmpty()) {
 			totalCount = spotDao.getTotalCountByAccountId(accountId, keyword);
 		}
 		else {

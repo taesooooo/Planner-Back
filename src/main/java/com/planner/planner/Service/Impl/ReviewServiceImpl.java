@@ -59,7 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();
 		
-		if(keyword != null) {
+		if(keyword != null && !keyword.isEmpty()) {
 			totalCount = reviewDao.getTotalCountByKeyword(keyword);
 		}
 		else {

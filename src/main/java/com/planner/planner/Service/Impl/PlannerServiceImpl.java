@@ -79,7 +79,7 @@ public class PlannerServiceImpl implements PlannerService {
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();
 		
-		if(keyword != null) {
+		if(keyword != null && !keyword.isEmpty()) {
 			totalCount = plannerDao.getTotalCountByKeyword(accountId, keyword);
 		}
 		else {
@@ -105,7 +105,7 @@ public class PlannerServiceImpl implements PlannerService {
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();
 		
-		if(keyword != null) {
+		if(keyword != null && !keyword.isEmpty()) {
 			totalCount = plannerDao.getTotalCountByKeyword(keyword);
 		}
 		else {
@@ -229,7 +229,7 @@ public class PlannerServiceImpl implements PlannerService {
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();
 		
-		if(keyword != null) {
+		if(keyword != null && !keyword.isEmpty()) {
 			totalCount = plannerDao.getTotalCountByLike(accountId, keyword);
 		}
 		else {
