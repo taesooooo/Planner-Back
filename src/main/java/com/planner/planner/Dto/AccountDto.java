@@ -26,13 +26,11 @@ public class AccountDto {
 	@NotBlank(message = "비밀번호는 필수 항목입니다.", groups = { RegisterGroup.class, LoginGroup.class })
 	private String password;
 	
-	@JsonProperty("username")
 	@NotBlank(message = "이름은 필수 항목입니다.", groups = RegisterGroup.class)
-	private String userName;
+	private String username;
 	
-	@JsonProperty("nickname")
 	@NotBlank(message = "닉네임은 필수 항목입니다.", groups = { RegisterGroup.class, AccountUpdateGroup.class })
-	private String nickName;
+	private String nickname;
 	
 	@Size(min = 11, max = 11, message = "휴대폰 번호를 다시 작성해주세요.", groups = { RegisterGroup.class, AccountUpdateGroup.class })
 	private String phone;
@@ -44,8 +42,8 @@ public class AccountDto {
 		private int accountId;
 		private String email;
 		private String password;
-		private String userName;
-		private String nickName;
+		private String username;
+		private String nickname;
 		private String phone;
 		private String image;
 		private LocalDateTime createDate;
@@ -66,13 +64,13 @@ public class AccountDto {
 			return this;
 		}
 
-		public Builder setUserName(String userName) {
-			this.userName = userName;
+		public Builder setUsername(String username) {
+			this.username = username;
 			return this;
 		}
 
-		public Builder setNickName(String nickName) {
-			this.nickName = nickName;
+		public Builder setNickname(String username) {
+			this.nickname = username;
 			return this;
 		}
 
@@ -109,8 +107,8 @@ public class AccountDto {
 		this.accountId = builder.accountId;
 		this.email = builder.email;
 		this.password = builder.password;
-		this.userName = builder.userName;
-		this.nickName = builder.nickName;
+		this.username = builder.username;
+		this.nickname = builder.nickname;
 		this.phone = builder.phone;
 		this.image = builder.image;
 		this.createDate = builder.createDate;
@@ -129,12 +127,12 @@ public class AccountDto {
 		return password;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getUsername() {
+		return username;
 	}
 
-	public String getNickName() {
-		return nickName;
+	public String getNickname() {
+		return nickname;
 	}
 
 	public String getPhone() {
@@ -155,7 +153,7 @@ public class AccountDto {
 
 	@Override
 	public String toString() {
-		return "AccountDto [accountId=" + accountId + ", email=" + email + ", userName=" + userName + ", nickName="
-				+ nickName + ", phone=" + phone + ", image=" + image + "]";
+		return "AccountDto [accountId=" + accountId + ", email=" + email + ", userName=" + username + ", nickName="
+				+ nickname + ", phone=" + phone + ", image=" + image + "]";
 	}
 }

@@ -60,7 +60,7 @@ public class AccountServiceTest {
 	@Before
 	public void setup() {
 		 MockitoAnnotations.openMocks(this);
-		 testDto = new AccountDto.Builder().setAccountId(1).setEmail("test@naver.com").setUserName("test").setNickName("test").build();
+		 testDto = new AccountDto.Builder().setAccountId(1).setEmail("test@naver.com").setUsername("test").setNickname("test").build();
 	}
 	
 	@Test
@@ -151,7 +151,7 @@ public class AccountServiceTest {
 	}
 	
 	private AccountDto createAccount(int accountId, String email, String name, String nickName) {
-		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setUserName(name).setNickName(nickName).build();
+		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setUsername(name).setNickname(nickName).build();
 	}
 	
 	private PlannerDto createPlanner(int plannerId) {

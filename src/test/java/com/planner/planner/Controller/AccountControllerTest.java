@@ -72,7 +72,7 @@ public class AccountControllerTest {
 	public void 계정정보수정_닉네임_미작성_유효성검사() throws Exception {
 		AccountDto test = new AccountDto.Builder()
 				.setAccountId(1)
-				.setNickName("")
+				.setNickname("")
 				.setPhone("01012341234")
 				.build();
 		
@@ -89,7 +89,7 @@ public class AccountControllerTest {
 	public void 계정정보수정_휴대폰번호_번호수_초과_유효성검사() throws Exception {
 		AccountDto test = new AccountDto.Builder()
 				.setAccountId(1)
-				.setNickName("test")
+				.setNickname("test")
 				.setPhone("111111111111111")
 				.build();
 		
@@ -106,7 +106,7 @@ public class AccountControllerTest {
 	public void 계정정보수정() throws Exception {
 		AccountDto test = new AccountDto.Builder()
 				.setAccountId(1)
-				.setNickName("test")
+				.setNickname("test")
 				.setPhone("01012341234")
 				.build();
 		

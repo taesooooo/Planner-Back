@@ -43,7 +43,7 @@ public class AuthController {
 	public ResponseEntity<Object> register(HttpServletRequest req, @RequestBody @Validated(RegisterGroup.class) AccountDto accountDto) {
 		String pwEncode = passwordEncoder.encode(accountDto.getPassword());
 		AccountDto userDto = new AccountDto.Builder().setEmail(accountDto.getEmail()).setPassword(pwEncode)
-				.setUserName(accountDto.getUserName()).setNickName(accountDto.getNickName())
+				.setUsername(accountDto.getUsername()).setNickname(accountDto.getNickname())
 				.setImage(accountDto.getImage()).setPhone(accountDto.getPhone()).build();
 		try {
 			boolean result = authService.register(userDto);

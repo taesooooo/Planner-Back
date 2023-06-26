@@ -50,8 +50,8 @@ public class AuthControllerTest {
 				.setAccountId(0)
 				.setEmail("")
 				.setPassword("1234")
-				.setUserName("test0")
-				.setNickName("test0")
+				.setUsername("test0")
+				.setNickname("test0")
 				.setPhone("01012345678")
 				.build();
 		
@@ -59,8 +59,8 @@ public class AuthControllerTest {
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
 		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUserName());
-		node.put("nickname", testDto.getNickName());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
@@ -77,8 +77,8 @@ public class AuthControllerTest {
 				.setAccountId(0)
 				.setEmail("test!")
 				.setPassword("1234")
-				.setUserName("test0")
-				.setNickName("test0")
+				.setUsername("test0")
+				.setNickname("test0")
 				.setPhone("01012345678")
 				.build();
 		
@@ -86,8 +86,8 @@ public class AuthControllerTest {
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
 		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUserName());
-		node.put("nickname", testDto.getNickName());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
@@ -104,8 +104,8 @@ public class AuthControllerTest {
 				.setAccountId(0)
 				.setEmail("test@naver.com")
 				.setPassword("")
-				.setUserName("test0")
-				.setNickName("test0")
+				.setUsername("test0")
+				.setNickname("test0")
 				.setPhone("01012345678")
 				.build();
 		
@@ -113,8 +113,8 @@ public class AuthControllerTest {
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
 		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUserName());
-		node.put("nickname", testDto.getNickName());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
@@ -131,8 +131,8 @@ public class AuthControllerTest {
 				.setAccountId(0)
 				.setEmail("test@naver.com")
 				.setPassword("1234")
-				.setUserName("")
-				.setNickName("test0")
+				.setUsername("")
+				.setNickname("test0")
 				.setPhone("01012345678")
 				.build();
 		
@@ -140,8 +140,8 @@ public class AuthControllerTest {
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
 		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUserName());
-		node.put("nickname", testDto.getNickName());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
@@ -158,8 +158,8 @@ public class AuthControllerTest {
 				.setAccountId(0)
 				.setEmail("test@naver.com")
 				.setPassword("1234")
-				.setUserName("test0")
-				.setNickName("")
+				.setUsername("test0")
+				.setNickname("")
 				.setPhone("01012345678")
 				.build();
 		
@@ -167,8 +167,8 @@ public class AuthControllerTest {
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
 		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUserName());
-		node.put("nickname", testDto.getNickName());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
@@ -185,8 +185,8 @@ public class AuthControllerTest {
 				.setAccountId(0)
 				.setEmail("test@naver.com")
 				.setPassword("1234")
-				.setUserName("")
-				.setNickName("test0")
+				.setUsername("")
+				.setNickname("test0")
 				.setPhone("11111111111111")
 				.build();
 		
@@ -194,8 +194,8 @@ public class AuthControllerTest {
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
 		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUserName());
-		node.put("nickname", testDto.getNickName());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
@@ -212,8 +212,8 @@ public class AuthControllerTest {
 				.setAccountId(0)
 				.setEmail("test0@naver.com")
 				.setPassword("1234")
-				.setUserName("test0")
-				.setNickName("test0")
+				.setUsername("test0")
+				.setNickname("test0")
 				.setPhone("01012345678")
 				.build();
 		
@@ -221,8 +221,8 @@ public class AuthControllerTest {
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
 		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUserName());
-		node.put("nickname", testDto.getNickName());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
@@ -239,8 +239,8 @@ public class AuthControllerTest {
 				.setAccountId(0)
 				.setEmail("")
 				.setPassword("1234")
-				.setUserName("test0")
-				.setNickName("test0")
+				.setUsername("test0")
+				.setNickname("test0")
 				.setPhone("01012345678")
 				.build();
 		
@@ -248,8 +248,8 @@ public class AuthControllerTest {
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
 		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUserName());
-		node.put("nickname", testDto.getNickName());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
@@ -266,8 +266,8 @@ public class AuthControllerTest {
 				.setAccountId(0)
 				.setEmail("test!naver.com")
 				.setPassword("1234")
-				.setUserName("")
-				.setNickName("test0")
+				.setUsername("")
+				.setNickname("test0")
 				.setPhone("01012345678")
 				.build();
 		
@@ -275,8 +275,8 @@ public class AuthControllerTest {
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
 		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUserName());
-		node.put("nickname", testDto.getNickName());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
@@ -293,8 +293,8 @@ public class AuthControllerTest {
 				.setAccountId(0)
 				.setEmail("test@naver.com")
 				.setPassword("1234")
-				.setUserName("")
-				.setNickName("test0")
+				.setUsername("")
+				.setNickname("test0")
 				.setPhone("01012345678")
 				.build();
 		
@@ -302,8 +302,8 @@ public class AuthControllerTest {
 		node.put("accountId", testDto.getAccountId());
 		node.put("email", testDto.getEmail());
 		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUserName());
-		node.put("nickname", testDto.getNickName());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
