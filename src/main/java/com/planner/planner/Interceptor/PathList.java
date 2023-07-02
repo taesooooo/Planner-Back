@@ -25,7 +25,17 @@ public class PathList {
 		boolean hasAddPath = addPathList.entrySet().stream()
 				.anyMatch(t -> pathMatch(t.getKey(), t.getValue(), path, pathMethod) );
 		
-		return hasExcludePath || !hasAddPath;
+		if(hasExcludePath) {
+			return true;
+		}
+		
+		if(hasAddPath) {
+			return false;
+		}
+		else 
+		{
+			return false;
+		}
 	}
 	
 	private boolean pathMatch(String path, RequestMethod pathMethod, String targetPath, RequestMethod targetPathMethod) {

@@ -61,6 +61,7 @@ public class PathListTest {
 		
 		assertThat(pl.isPass("/api/test", RequestMethod.GET)).isEqualTo(false);
 	}
+	
 	@Test
 	public void isPass_notPass_3_test() {
 		PathList pl = new PathList();
