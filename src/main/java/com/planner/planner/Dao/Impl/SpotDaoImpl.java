@@ -141,10 +141,11 @@ public class SpotDaoImpl implements SpotDao {
 	}
 
 	@Override
-	public List<SpotLikeDto> selectSpotLikeByContentIdList(int accountId, List<Integer> contentIdList) {
-		if(accountId <= 0) {
+	public List<SpotLikeDto> selectSpotLikeByContentIdList(Integer accountId, List<Integer> contentIdList) {
+		if(accountId == null) {
 			return new ArrayList<SpotLikeDto>();
 		}
+		
 		String contentIds = contentIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
 		String sql = String.format(SELECT_SPOT_LIKE_STATE_SQL, contentIds);
 		List<SpotLikeDto> states = jdbcTemplate.query(sql, new SpotLikeRowMapper(), accountId);

@@ -26,6 +26,7 @@ import com.planner.planner.RowMapper.PlanLocationRowMapper;
 import com.planner.planner.RowMapper.PlanMemberRowMapper;
 import com.planner.planner.RowMapper.PlanMemoRowMapper;
 import com.planner.planner.RowMapper.PlanRowMapper;
+import com.planner.planner.RowMapper.PlannerNoLikeIdRowMapper;
 import com.planner.planner.RowMapper.PlannerResultSetExtrator;
 import com.planner.planner.RowMapper.PlannerRowMapper;
 
@@ -42,7 +43,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	// 동적 쿼리
 	private final String FIND_ALL_BY_ACCOUNT_ID_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date, PL.like_id ";
 	// 동적 쿼리
-	private final String FIND_ALL_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date, PL.like_id ";
+	private final String FIND_ALL_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date ";
 	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS P SET P.title = ?, P.plan_date_start = ?, P.plan_date_end = ?, P.expense = ?, P.member_count = ?, P.member_type_id = ?, P.update_date = NOW() WHERE P.planner_id = ?;";
 	private final String DELETE_PLANNER_SQL = "DELETE FROM planner WHERE planner_id = ?;";
 
@@ -150,10 +151,17 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public List<PlannerDto> findPlannerAll(int accountId, SortCriteria criteria, String keyword, PageInfo pageInfo) {
+	public List<PlannerDto> findPlannerAll(Integer accountId, SortCriteria criteria, String keyword, PageInfo pageInfo) {
 		StringBuilder sb = new StringBuilder(FIND_ALL_SQL);
-		sb.append("FROM planner AS P ");
-		sb.append("LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id AND PL.account_id = ? ");
+		
+		if(accountId != null) {
+			sb.append(", PL.like_id ");
+			sb.append("FROM planner AS P ");
+			sb.append("LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id AND PL.account_id = ? ");
+		}
+		else {
+			sb.append("FROM planner AS P ");
+		}
 		
 		if(keyword != null) {
 			sb.append("WHERE P.title LIKE \"%").append(keyword).append("%\" ");
@@ -168,7 +176,12 @@ public class PlannerDaoImpl implements PlannerDao {
 		
 		sb.append("LIMIT ?, ?;");
 		
-		return jdbcTemplate.query(sb.toString(), new PlannerRowMapper(), accountId, pageInfo.getPageOffSet(), pageInfo.getPageItemCount());
+		if(accountId != null) {
+			return jdbcTemplate.query(sb.toString(), new PlannerRowMapper(), accountId, pageInfo.getPageOffSet(), pageInfo.getPageItemCount());			
+		}
+		else {
+			return jdbcTemplate.query(sb.toString(), new PlannerNoLikeIdRowMapper(), pageInfo.getPageOffSet(), pageInfo.getPageItemCount());
+		}
 	}
 
 	@Override

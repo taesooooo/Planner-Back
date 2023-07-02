@@ -48,7 +48,7 @@ public class SpotController {
 
 	@GetMapping(value= "/lists-area")
 	public ResponseEntity<Object> spotAreaList(HttpServletRequest req, OpenApiDto openApiDto) throws Exception {
-		int userId = UserIdUtil.getUserId(req);
+		Integer userId = UserIdUtil.getUserId(req);
 		
 		SpotListDto<SpotDto> spotList = spotService.getAreaList(userId, openApiDto);
 
@@ -64,7 +64,7 @@ public class SpotController {
 
 	@GetMapping(value= "/lists-keyword")
 	public ResponseEntity<Object> spotKeyword(HttpServletRequest req, OpenApiDto openApiDto) throws Exception {
-		int userId = UserIdUtil.getUserId(req);
+		Integer userId = UserIdUtil.getUserId(req);
 		
 		SpotListDto<SpotDto> spotList = spotService.getKeyword(userId, openApiDto);
 
@@ -73,7 +73,7 @@ public class SpotController {
 
 	@GetMapping(value= "/lists/{contentId}")
 	public ResponseEntity<Object> spotDetail(HttpServletRequest req, @PathVariable int contentId) throws Exception {
-		int userId = UserIdUtil.getUserId(req);
+		Integer userId = UserIdUtil.getUserId(req);
 		
 		SpotDetailDto info = spotService.getDetail(userId, contentId);
 		
@@ -82,7 +82,7 @@ public class SpotController {
 
 	@PostMapping(value = "/likes")
 	public ResponseEntity<Object> spotLike(HttpServletRequest req, @RequestBody SpotLikeDto spotLikeDto) throws Exception {
-		int userId = UserIdUtil.getUserId(req);
+		Integer userId = UserIdUtil.getUserId(req);
 		
 		boolean result = spotService.addSpotLike(userId, spotLikeDto);
 		if(result == false) {
@@ -94,7 +94,7 @@ public class SpotController {
 
 	@DeleteMapping(value = "/likes/{contentId}")
 	public ResponseEntity<Object> spotLikeCancel(HttpServletRequest req, @PathVariable int contentId) throws Exception {
-		int userId = UserIdUtil.getUserId(req);
+		Integer userId = UserIdUtil.getUserId(req);
 		
 		boolean result = spotService.removeSpotLike(userId, contentId);
 		if(result == false) {

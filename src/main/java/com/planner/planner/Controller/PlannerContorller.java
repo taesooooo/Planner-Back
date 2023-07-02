@@ -55,7 +55,7 @@ public class PlannerContorller {
 
 	@GetMapping
 	public ResponseEntity<Object> plannerList(HttpServletRequest req, CommonRequestParamDto commonRequestParamDto) throws Exception {
-		int userId = UserIdUtil.getUserId(req);
+		Integer userId = UserIdUtil.getUserId(req);
 	
 		Page<PlannerDto> planners = plannerService.findPlannerAll(userId, commonRequestParamDto);
 

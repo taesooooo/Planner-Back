@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import com.planner.planner.Common.Converter.PostTypeConverter;
 import com.planner.planner.Common.Converter.SortCriteriaConverter;
 import com.planner.planner.Interceptor.AuthInterceptor;
+import com.planner.planner.Interceptor.RequestMethodProxyInterceptor;
 
 @Configuration
 @EnableWebMvc
@@ -46,7 +48,19 @@ public class ServletAppContext implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(authInterceptor()).excludePathPatterns("/api/auth/**").excludePathPatterns("/api/upload/files/**");
+		RequestMethodProxyInterceptor methodProxyInterceptor = new RequestMethodProxyInterceptor(new AuthInterceptor())
+				.excludePath("/api/auth/**", null)
+				.excludePath("/api/upload/files/**", null)
+				.excludePath("/api/spots/area-codes", RequestMethod.GET)
+				.excludePath("/api/spots/lists-area", RequestMethod.GET)
+				.excludePath("/api/spots/lists-keyword", RequestMethod.GET)
+				.excludePath("/api/spots/lists/*", RequestMethod.GET)
+				.excludePath("/api/planners", RequestMethod.GET)
+				.excludePath("/api/planners/*", RequestMethod.GET)
+				.excludePath("api/reviews", RequestMethod.GET)
+				.excludePath("api/reviews/*", RequestMethod.GET);
+		
+		registry.addInterceptor(methodProxyInterceptor);
 	}
 
 	@Override
