@@ -48,7 +48,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		RequestMethodProxyInterceptor methodProxyInterceptor = new RequestMethodProxyInterceptor(new AuthInterceptor())
+		RequestMethodProxyInterceptor methodProxyInterceptor = new RequestMethodProxyInterceptor(authInterceptor())
 				.excludePath("/api/auth/**", null)
 				.excludePath("/api/upload/files/**", null)
 				.excludePath("/api/spots/area-codes", RequestMethod.GET)
