@@ -11,10 +11,10 @@ import com.planner.planner.Dto.OpenApi.OpenApiDto;
 
 public interface SpotService {
 	public SpotListDto<AreaCodeDto> getAreaNum() throws Exception;
-	public SpotListDto<SpotDto> getAreaList(int accountId, OpenApiDto openApiDto) throws Exception;
-	public SpotListDto<SpotDto> getLocationBasedList(int accountId, OpenApiDto openApiDto) throws Exception;
-	public SpotListDto<SpotDto> getKeyword(int accountId, OpenApiDto openApiDto) throws Exception;
-	public SpotDetailDto getDetail(int accountId, int contentId) throws Exception;
+	public SpotListDto<SpotDto> getAreaList(Integer accountId, OpenApiDto openApiDto) throws Exception;
+	public SpotListDto<SpotDto> getLocationBasedList(Integer accountId, OpenApiDto openApiDto) throws Exception;
+	public SpotListDto<SpotDto> getKeyword(Integer accountId, OpenApiDto openApiDto) throws Exception;
+	public SpotDetailDto getDetail(Integer accountId, int contentId) throws Exception;
 	
 	public boolean addSpotLike(int accountId, SpotLikeDto spotLikeDto) throws Exception;
 	public boolean removeSpotLike(int accountId, int contentId) throws Exception;

@@ -95,7 +95,7 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public Page<PlannerDto> findPlannerAll(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+	public Page<PlannerDto> findPlannerAll(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		PageInfo pInfo = new PageInfo.Builder()
 				.setPageNum(commonRequestParamDto.getPageNum())
 				.setPageItemCount(commonRequestParamDto.getItemCount())

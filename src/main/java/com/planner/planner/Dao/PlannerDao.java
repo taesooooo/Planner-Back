@@ -16,7 +16,7 @@ public interface PlannerDao {
 	public int insertPlanner(PlannerDto plannerDto);
 	public PlannerDto findPlannerByPlannerId(int plannerId);
 	public List<PlannerDto> findPlannersByAccountId(int accountId, SortCriteria criteria, String keyword, PageInfo pageInfo);
-	public List<PlannerDto> findPlannerAll(int accountId, SortCriteria criteria, String keyword, PageInfo pageInfo);
+	public List<PlannerDto> findPlannerAll(Integer accountId, SortCriteria criteria, String keyword, PageInfo pageInfo);
 	public int updatePlanner(int plannerId, PlannerDto plannerDto);
 	public int deletePlanner(int plannerId);
 	public int getTotalCount();

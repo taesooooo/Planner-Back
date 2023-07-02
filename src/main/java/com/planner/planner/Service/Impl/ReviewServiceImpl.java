@@ -31,8 +31,6 @@ public class ReviewServiceImpl implements ReviewService {
 	
 	private FileStore fileStore;
 	
-	private int listItemCount = 10;
-	
 	public ReviewServiceImpl(ReviewDao reviewDao, AccountService accountService, FileUploadService fileUploadService, FileStore fileStore) {
 		this.reviewDao = reviewDao;
 		this.accountService = accountService;

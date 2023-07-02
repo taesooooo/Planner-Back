@@ -15,7 +15,7 @@ public interface PlannerService {
 	public int newPlanner(PlannerDto plannerDto) throws Exception;
 	public PlannerDto findPlannerByPlannerId(int plannerId) throws Exception;
 	public Page<PlannerDto> findPlannersByAccountId(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
-	public Page<PlannerDto> findPlannerAll(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
+	public Page<PlannerDto> findPlannerAll(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 	public void updatePlanner(PlannerDto plannerDto) throws Exception;
 	public void deletePlanner(int plannerId) throws Exception;
 	

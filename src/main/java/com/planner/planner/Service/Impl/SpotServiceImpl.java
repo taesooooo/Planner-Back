@@ -44,7 +44,7 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public SpotListDto<SpotDto> getAreaList(int accountId, OpenApiDto openApiDto) throws Exception {
+	public SpotListDto<SpotDto> getAreaList(Integer accountId, OpenApiDto openApiDto) throws Exception {
 		CommonListDto<CommonBasedDto> apiData = apiService.getAreaList(openApiDto);
 		
 		List<Integer> contentIdList = apiData.getItems().stream()
@@ -84,7 +84,7 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public SpotListDto<SpotDto> getLocationBasedList(int accountId,OpenApiDto openApiDto) throws Exception {
+	public SpotListDto<SpotDto> getLocationBasedList(Integer accountId,OpenApiDto openApiDto) throws Exception {
 		CommonListDto<CommonBasedDto> apiData = apiService.getLocationBasedList(openApiDto);
 
 		List<Integer> contentIdList = apiData.getItems().stream()
@@ -123,7 +123,7 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public SpotListDto<SpotDto> getKeyword(int accountId, OpenApiDto openApiDto) throws Exception {
+	public SpotListDto<SpotDto> getKeyword(Integer accountId, OpenApiDto openApiDto) throws Exception {
 		CommonListDto<CommonBasedDto> apiData = apiService.getKeyword(openApiDto);
 		
 		List<Integer> contentIdList = apiData.getItems().stream()
@@ -163,7 +163,7 @@ public class SpotServiceImpl implements SpotService {
 	}
 
 	@Override
-	public SpotDetailDto getDetail(int accountId, int contentId) throws Exception {
+	public SpotDetailDto getDetail(Integer accountId, int contentId) throws Exception {
 		CommonDetailDto detail = apiService.getDetail(contentId);
 		
 		int likeCount = spotDao.selectSpotLikeCountByContentId(contentId);
