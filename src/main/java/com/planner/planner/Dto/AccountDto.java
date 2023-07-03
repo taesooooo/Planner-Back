@@ -6,6 +6,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,7 +36,10 @@ public class AccountDto {
 	@Size(min = 11, max = 11, message = "휴대폰 번호를 다시 작성해주세요.", groups = { RegisterGroup.class, AccountUpdateGroup.class })
 	private String phone;
 	private String image;
+	
+	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
 	private LocalDateTime createDate;
+	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
 	private LocalDateTime updateDate;
 
 	public static class Builder {

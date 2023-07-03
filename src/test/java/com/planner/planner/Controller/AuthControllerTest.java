@@ -12,10 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +31,8 @@ import com.planner.planner.Dto.AccountDto;
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
+@Sql(scripts = {"classpath:/Planner_Test_DB.sql"})
+@Transactional
 public class AuthControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(AuthControllerTest.class);
 
@@ -102,7 +106,7 @@ public class AuthControllerTest {
 	public void 회원가입_비밀번호_미작성_유효성검사() throws Exception{
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
-				.setEmail("test@naver.com")
+				.setEmail("test0@naver.com")
 				.setPassword("")
 				.setUsername("test0")
 				.setNickname("test0")
@@ -129,7 +133,7 @@ public class AuthControllerTest {
 	public void 회원가입_이름_미작성_유효성검사() throws Exception{
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
-				.setEmail("test@naver.com")
+				.setEmail("test0@naver.com")
 				.setPassword("1234")
 				.setUsername("")
 				.setNickname("test0")
@@ -156,7 +160,7 @@ public class AuthControllerTest {
 	public void 회원가입_닉네임_미작성_유효성검사() throws Exception{
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
-				.setEmail("test@naver.com")
+				.setEmail("test0@naver.com")
 				.setPassword("1234")
 				.setUsername("test0")
 				.setNickname("")
@@ -183,7 +187,7 @@ public class AuthControllerTest {
 	public void 회원가입_휴대폰번호_번호수_초과_유효성검사() throws Exception{
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
-				.setEmail("test@naver.com")
+				.setEmail("test0@naver.com")
 				.setPassword("1234")
 				.setUsername("")
 				.setNickname("test0")
