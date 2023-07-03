@@ -56,16 +56,20 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<PlannerDto> 
 			}
 			
 			int memoId = rs.getInt("memo_id");
-			if(memoId != 0 && latestMemoId != memoId) {
-				latestMemoId = memoId;
-				PlanMemoDto memo = new PlanMemoDto.Builder()
-						.setMemoId(memoId)
-						.setTitle(rs.getString("memo_title"))
-						.setContent(rs.getString("memo_content"))
-						.setCreateDate(rs.getTimestamp("memo_create_date").toLocalDateTime())
-						.setUpdateDate(rs.getTimestamp("memo_update_date").toLocalDateTime())
-						.build();
-				memos.add(memo);
+			if (memoId != 0 && latestMemoId != memoId) {
+				boolean isFind = memos.stream().anyMatch(item -> item.getMemoId() == memoId);
+
+				if (!isFind) {
+					latestMemoId = memoId;
+					PlanMemoDto memo = new PlanMemoDto.Builder()
+							.setMemoId(memoId)
+							.setTitle(rs.getString("memo_title"))
+							.setContent(rs.getString("memo_content"))
+							.setCreateDate(rs.getTimestamp("memo_create_date").toLocalDateTime())
+							.setUpdateDate(rs.getTimestamp("memo_update_date").toLocalDateTime())
+							.build();
+					memos.add(memo);
+				}
 			}
 			
 			int planId = rs.getInt("plan_id");
