@@ -7,6 +7,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.planner.planner.Common.ValidationGroups.PlanUpdateGroup;
 
 public class PlanDto {
 	private int planId;
@@ -18,7 +19,7 @@ public class PlanDto {
 	private int plannerId;
 	private List<PlanLocationDto> planLocations;
 	
-	@Min(value = 1, message = "인덱스가 잘못되었습니다.")
+	@Min(value = 1, message = "인덱스가 잘못되었습니다.", groups = PlanUpdateGroup.class)
 	private int index;
 	
 	public static class Builder {

@@ -11,10 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Common.Page;
+import com.planner.planner.Common.ValidationGroups.PlanUpdateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
 import com.planner.planner.Dto.CommonRequestParamDto;
@@ -150,7 +149,7 @@ public class PlannerContorller {
 	}
 	
 	@PatchMapping(value="/{plannerId}/plans/{planId}")
-	public ResponseEntity<Object> updatePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody @Valid PlanDto planDto) throws Exception {
+	public ResponseEntity<Object> updatePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody @Validated(PlanUpdateGroup.class) PlanDto planDto) throws Exception {
 		checkAuth(req, plannerId);
 		
 		plannerService.updatePlan(planId, planDto);

@@ -81,12 +81,14 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String UPDATE_PLANMEMO_SQL = "UPDATE plan_memo AS M SET M.memo_title = ?, M.memo_content = ?, M.memo_update_date = NOW() WHERE M.memo_id = ?;";
 	private final String DELETE_PLANMEMO_SQL = "DELETE FROM plan_memo WHERE memo_id = ?;";
 
-	private final String INSERT_PlAN_SQL = "INSERT INTO plan (plan_date, planner_id, plan_index)  VALUES(?, ?, ?);";
+	private final String INSERT_PlAN_SQL = "INSERT INTO plan (plan_date, planner_id, plan_index) VALUES"
+			+ "(?, ?, (SELECT ifnull(MAX(p.plan_index), 0) + 1024 FROM plan AS p WHERE p.planner_id = ?));";
 	private final String FINDS_PLAN_SQL = "SELECT plan.plan_id, plan.plan_date, plan.plan_index, plan.planner_id FROM plan WHERE plan.planner_id = ? ORDER BY plan_index;";
 	private final String UPDATE_PLAN_SQL = "UPDATE plan SET plan.plan_date = ?, plan.plan_index = ? WHERE plan.plan_id = ?;";
 	private final String DELETE_PLAN_SQL = "DELETE FROM plan WHERE plan.plan_id = ?;";
 
-	private final String INSERT_PLANLOCATION_SQL = "INSERT INTO plan_location(location_name, location_content_id, location_image, location_addr, location_mapx, location_mapy, location_transportation, location_index, plan_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
+	private final String INSERT_PLANLOCATION_SQL = "INSERT INTO plan_location(location_name, location_content_id, location_image, location_addr, location_mapx, location_mapy, location_transportation, location_index, plan_id) VALUES"
+			+ "(?, ?, ?, ?, ?, ?, ?, (SELECT ifnull(MAX(pl.location_index), 0) + 1024 FROM plan_location AS pl WHERE pl.plan_id = ?), ?);";
 	private final String FINDS_PLANLOCATION_SQL = "SELECT plan_location.location_id, plan_location.location_name, plan_location.location_content_id, plan_location.location_image, plan_location.location_addr, plan_location.location_mapx, plan_location.location_mapy, plan_location.location_transportation, plan_location.location_index, plan_location.plan_id "
 			+ "FROM plan_location " 
 			+ "WHERE plan_location.plan_id = ? "
@@ -293,7 +295,7 @@ public class PlannerDaoImpl implements PlannerDao {
 			PreparedStatement ps = conn.prepareStatement(INSERT_PlAN_SQL, new String[] { "plan_id" });
 			ps.setDate(1, Date.valueOf(planDto.getPlanDate()));
 			ps.setInt(2, planDto.getPlannerId());
-			ps.setInt(3, planDto.getIndex());
+			ps.setInt(3, planDto.getPlannerId());
 			return ps;
 		}, keyHolder);
 		return keyHolder.getKey().intValue();
@@ -327,10 +329,11 @@ public class PlannerDaoImpl implements PlannerDao {
 			ps.setDouble(5, planLocationDto.getLocationMapx());
 			ps.setDouble(6, planLocationDto.getLocationMapy());
 			ps.setInt(7, planLocationDto.getLocationTransportation());
-			ps.setInt(8, planLocationDto.getIndex());
+			ps.setInt(8, planLocationDto.getPlanId());
 			ps.setInt(9, planLocationDto.getPlanId());
 			return ps;
 		}, keyHolder);
+		
 		return keyHolder.getKey().intValue();
 	}
 

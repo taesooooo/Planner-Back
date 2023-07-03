@@ -6,4 +6,5 @@ public class ValidationGroups {
 	public interface AccountUpdateGroup { };
 	public interface PlannerCreateGroup { };
 	public interface PlannerUpdateGroup { };
+	public interface PlanUpdateGroup { };
 }
