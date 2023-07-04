@@ -19,6 +19,7 @@ import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
 import com.planner.planner.Dto.OpenApi.OpenApiDto;
 import com.planner.planner.Exception.EmptyData;
+import com.planner.planner.Exception.NoValidArgumentException;
 import com.planner.planner.Service.OpenAPIService;
 
 @Service
@@ -173,7 +174,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	public CommonListDto<CommonBasedDto> getKeyword(OpenApiDto openApiDto) throws Exception
 	{
 		if(openApiDto.getKeyword() == null || openApiDto.getKeyword().isEmpty()) {
-			throw new IllegalArgumentException("키워드는 공백이거나 빈칸일 수 었습니다.");
+			throw new NoValidArgumentException("키워드는 공백이거나 빈칸일 수 었습니다.");
 		}
 		
 		String apiUrl = baseUrl+"/searchKeyword1?ServiceKey="+serviceKey

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.planner.planner.Exception.AuthCheckFail;
 import com.planner.planner.Exception.DuplicateLikeException;
 import com.planner.planner.Exception.ForbiddenException;
+import com.planner.planner.Exception.NoValidArgumentException;
 import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundReviewException;
 import com.planner.planner.Exception.NotFoundToken;
@@ -32,7 +33,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Object> Exception(Exception e) {
 		e.printStackTrace();
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseMessage(false, e.getMessage() != null ? e.getMessage() : "다시 시도하세요."));
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseMessage(false, "다시 시도하세요."));
 	}
 
 	@ExceptionHandler(EmptyResultDataAccessException.class)
@@ -63,6 +64,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(DuplicateLikeException.class)
 	public ResponseEntity<Object> duplicateLike(Exception e) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, e.getMessage()));
+	}
+	
+	@ExceptionHandler(NoValidArgumentException.class)
+	public ResponseEntity<Object> noValid(Exception e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, e.getMessage()));
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
