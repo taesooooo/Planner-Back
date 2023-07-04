@@ -57,7 +57,7 @@ public class PlannerDto {
 	
 	@AssertTrue(message = "종료 날짜가 시작 날짜보다 늦을수 없습니다.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
 	private boolean isDateCheck() {
-		if(planDateEnd.isAfter(planDateStart)) {
+		if(planDateEnd.isAfter(planDateStart) || planDateEnd.isEqual(planDateStart)) {
 			return true;
 		}
 		else {
