@@ -57,8 +57,8 @@ public class ServletAppContext implements WebMvcConfigurer {
 				.excludePath("/api/spots/lists/*", RequestMethod.GET)
 				.excludePath("/api/planners", RequestMethod.GET)
 				.excludePath("/api/planners/*", RequestMethod.GET)
-				.excludePath("api/reviews", RequestMethod.GET)
-				.excludePath("api/reviews/*", RequestMethod.GET);
+				.excludePath("/api/reviews", RequestMethod.GET)
+				.excludePath("/api/reviews/*", RequestMethod.GET);
 		
 		registry.addInterceptor(methodProxyInterceptor);
 	}
