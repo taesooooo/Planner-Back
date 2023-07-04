@@ -58,7 +58,7 @@ public class PlannerDaoImpl implements PlannerDao {
 			+ "LEFT JOIN plan AS D ON A.planner_id = D.planner_id "
 			+ "LEFT JOIN planner_like AS PL ON A.planner_id = PL.planner_id AND A.account_id = PL.account_id "
 			+ "LEFT JOIN plan_location AS E ON D.plan_id = E.plan_id "
-			+ "LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like WHERE planner_id = ? GROUP BY planner_id) AS SUB ON A.planner_id = SUB.planner_id"
+			+ "LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like WHERE planner_id = ? GROUP BY planner_id) AS SUB ON A.planner_id = SUB.planner_id "
 			+ "WHERE A.planner_id = ?;";
 
 	private final String FIND_TOTAL_COUNT_SQL = "SELECT count(*) AS total_count FROM planner;";
