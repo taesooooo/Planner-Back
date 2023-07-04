@@ -3,6 +3,7 @@ package com.planner.planner.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,16 +14,42 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
+import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
 
-public class PlannerResultSetExtrator implements ResultSetExtractor<List<PlannerDto>> {
+public class PlannerFullResultSetExtrator implements ResultSetExtractor<PlannerDto> {
 
 	@Override
-	public List<PlannerDto> extractData(ResultSet rs) throws SQLException, DataAccessException {
-		Map<Integer, PlannerDto> planners = new HashMap<Integer, PlannerDto>();
+	public PlannerDto extractData(ResultSet rs) throws SQLException, DataAccessException {
+		List<String> members = new ArrayList<String>();
+		List<PlanMemoDto> memos = new ArrayList<PlanMemoDto>();
 		Map<Integer, PlanDto> plans = new HashMap<Integer, PlanDto>();
+
+		PlannerDto plannerDto = null;
 		
 		while(rs.next()) {
+			String member = rs.getString("nickname");
+			boolean memberCheck = members.stream().anyMatch((m) -> m.equals(member));
+			if(!memberCheck) {
+				members.add(member);
+			}
+			
+			int memoId = rs.getInt("memo_id");
+			if(memoId != 0) {
+				boolean isFound = memos.stream().anyMatch(item -> item.getMemoId() == memoId);
+	
+				if (!isFound) {
+					PlanMemoDto memo = new PlanMemoDto.Builder()
+							.setMemoId(memoId)
+							.setTitle(rs.getString("memo_title"))
+							.setContent(rs.getString("memo_content"))
+							.setCreateDate(rs.getTimestamp("memo_create_date").toLocalDateTime())
+							.setUpdateDate(rs.getTimestamp("memo_update_date").toLocalDateTime())
+							.build();
+					memos.add(memo);
+				}
+			}
+			
 			Integer planId = rs.getObject("plan_id", Integer.class);
 			if(planId != null) {
 				PlanDto plan = plans.get(planId);
@@ -64,11 +91,10 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<List<Planner
 				}
 			}
 			
-			Integer plannerId = rs.getObject("planner_id", Integer.class);
-			PlannerDto planner = planners.get(plannerId);
-			if(planner == null) {
+			
+			if(rs.isLast() && plannerDto == null) {
 				List<PlanDto> planList = plans.values().stream().collect(Collectors.toList());
-				planner = new PlannerDto.Builder()
+				plannerDto = new PlannerDto.Builder()
 						.setPlannerId(rs.getInt("planner_id"))
 						.setAccountId(rs.getInt("account_id"))
 						.setCreator(rs.getString("creator"))
@@ -80,16 +106,15 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<List<Planner
 						.setMemberTypeId(rs.getInt("member_type_id"))
 						.setLikeCount(rs.getInt("like_count"))
 						.setLikeState(rs.getInt("like_id") > 0 ? true : false)
+						.setPlanMembers(members)
+						.setPlanMemos(memos)
 						.setPlans(planList)
 						.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
 						.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
 						.build();
-				
-				planners.put(plannerId, planner);
 			}
 		}
-		
-		return planners.values().stream().collect(Collectors.toList());
+		return plannerDto;
 	}
 
 }

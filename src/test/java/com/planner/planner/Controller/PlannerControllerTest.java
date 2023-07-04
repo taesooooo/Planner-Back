@@ -288,6 +288,7 @@ public class PlannerControllerTest {
 	@Test
 	public void 플래너_리스트_조회_최신순() throws Exception {
 		this.mockMvc.perform(get("/api/planners")
+				.servletPath("/api/planners")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
@@ -301,8 +302,8 @@ public class PlannerControllerTest {
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.list").exists())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
-		.andExpect(jsonPath("$.data.list[0].plannerId").value(3))
-		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.list.length()").value(9))
+		.andExpect(jsonPath("$.data.totalCount").value(9))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
@@ -323,8 +324,8 @@ public class PlannerControllerTest {
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.list").exists())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
-		.andExpect(jsonPath("$.data.list[0].plannerId").value(3))
-		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.list.length()").value(9))
+		.andExpect(jsonPath("$.data.totalCount").value(9))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
@@ -345,6 +346,7 @@ public class PlannerControllerTest {
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.list").exists())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list.length()").value(3))
 		.andExpect(jsonPath("$.data.totalCount").value(1))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));

@@ -169,8 +169,8 @@ public class AccountControllerTest {
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.list").exists())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
-		.andExpect(jsonPath("$.data.list.length()").value(3))
-		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.list.length()").value(5))
+		.andExpect(jsonPath("$.data.totalCount").value(5))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
@@ -191,8 +191,8 @@ public class AccountControllerTest {
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.list").exists())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
-		.andExpect(jsonPath("$.data.list.length()").value(1))
-		.andExpect(jsonPath("$.data.totalCount").value(1))
+		.andExpect(jsonPath("$.data.list.length()").value(2))
+		.andExpect(jsonPath("$.data.totalCount").value(2))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
