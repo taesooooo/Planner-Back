@@ -280,8 +280,8 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		if(conn.getResponseCode() == 200)
 		{
 			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			JsonNode node = om.readTree(reader.readLine());
-
+			String readData = reader.readLine();
+			JsonNode node = om.readTree(readData);
 //			int totalCount = node.get("response").get("body").get("totalCount").asInt();
 //			if(totalCount == 0) {
 //				return null;

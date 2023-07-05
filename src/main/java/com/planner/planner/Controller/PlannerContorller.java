@@ -31,6 +31,11 @@ import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.ForbiddenException;
+import com.planner.planner.Service.PlanLocationService;
+import com.planner.planner.Service.PlanMemberService;
+import com.planner.planner.Service.PlanMemoService;
+import com.planner.planner.Service.PlanService;
+import com.planner.planner.Service.PlannerLikeService;
 import com.planner.planner.Service.PlannerService;
 import com.planner.planner.util.ResponseMessage;
 import com.planner.planner.util.UserIdUtil;
@@ -41,9 +46,21 @@ public class PlannerContorller {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PlannerContorller.class);
 
 	private PlannerService plannerService;
+	private PlanMemberService planMemberService;
+	private PlanMemoService planMemoService;
+	private PlanService planService;
+	private PlanLocationService planLocationService;
+	private PlannerLikeService plannerLikeService;
 	
-	public PlannerContorller(PlannerService plannerService) {
+	public PlannerContorller(PlannerService plannerService, PlanMemberService planMemberService,
+			PlanMemoService planMemoService, PlanService planService, PlanLocationService planLocationService,
+			PlannerLikeService plannerLikeService) {
 		this.plannerService = plannerService;
+		this.planMemberService = planMemberService;
+		this.planMemoService = planMemoService;
+		this.planService = planService;
+		this.planLocationService = planLocationService;
+		this.plannerLikeService = plannerLikeService;
 	}
 
 	@PostMapping
@@ -90,7 +107,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> likePlanner(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
 		int id = UserIdUtil.getUserId(req);
 		
-		plannerService.plannerLikeOrUnLike(id, plannerId);
+		plannerLikeService.plannerLikeOrUnLike(id, plannerId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
@@ -99,7 +116,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> newMemo(HttpServletRequest req, @PathVariable int plannerId, @RequestBody @Valid PlanMemoDto planMemoDto) throws Exception {
 		checkAuth(req, plannerId);
 		
-		int planMemoId = plannerService.newMemo(plannerId, planMemoDto);
+		int planMemoId = planMemoService.newMemo(plannerId, planMemoDto);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", planMemoId));
 	}
@@ -108,7 +125,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> updateMemo(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int memoId, @RequestBody @Valid PlanMemoDto planMemoDto) throws Exception {
 		checkAuth(req, plannerId);
 		
-		plannerService.updateMemo(memoId, planMemoDto);
+		planMemoService.updateMemo(memoId, planMemoDto);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
@@ -117,7 +134,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> deleteMemo(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int memoId) throws Exception {
 		checkAuth(req, plannerId);
 		
-		plannerService.deleteMemo(memoId);
+		planMemoService.deleteMemo(memoId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
@@ -126,7 +143,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> inviteMember(HttpServletRequest req, @PathVariable int plannerId, @RequestBody HashMap<String, List<String>> members) throws Exception {
 		checkAuth(req, plannerId);
 		
-		plannerService.inviteMembers(plannerId, members.get("members"));
+		planMemberService.inviteMembers(plannerId, members.get("members"));
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
@@ -135,7 +152,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> deleteMember(HttpServletRequest req, @PathVariable int plannerId, @RequestParam(value="nick_name") String nickName) throws Exception {
 		checkAuth(req, plannerId);
 		
-		plannerService.deleteMember(plannerId, nickName);
+		planMemberService.deleteMember(plannerId, nickName);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
@@ -144,7 +161,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> newPlan(HttpServletRequest req, @PathVariable int plannerId, @RequestBody @Valid PlanDto planDto) throws Exception {
 		checkAuth(req, plannerId);
 		
-		int planId = plannerService.newPlan(planDto);
+		int planId = planService.newPlan(planDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", planId));
 	}
 	
@@ -152,7 +169,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> updatePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody @Validated(PlanUpdateGroup.class) PlanDto planDto) throws Exception {
 		checkAuth(req, plannerId);
 		
-		plannerService.updatePlan(planId, planDto);
+		planService.updatePlan(planId, planDto);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
 	
@@ -160,7 +177,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> deletePlan(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId) throws Exception {
 		checkAuth(req, plannerId);
 		
-		plannerService.deletePlan(planId);
+		planService.deletePlan(planId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
@@ -169,7 +186,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> newPlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody @Valid PlanLocationDto planLocationDto) throws Exception {
 		checkAuth(req, plannerId);
 		
-		int planLocationId = plannerService.newPlanLocation(planLocationDto);
+		int planLocationId = planLocationService.newPlanLocation(planLocationDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", planLocationId));
 	}
 	
@@ -177,7 +194,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> updatePlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @PathVariable int planLocationId, @RequestBody @Valid PlanLocationDto planLocationDto) throws Exception {
 		checkAuth(req, plannerId);
 		
-		plannerService.updatePlanLocation(planLocationId, planLocationDto);
+		planLocationService.updatePlanLocation(planLocationId, planLocationDto);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
 	
@@ -185,7 +202,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> deletePlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @PathVariable int planLocationId) throws Exception {
 		checkAuth(req, plannerId);
 		
-		plannerService.deletePlanLocation(planLocationId);
+		planLocationService.deletePlanLocation(planLocationId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}

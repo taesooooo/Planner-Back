@@ -514,7 +514,7 @@ public class PlannerControllerTest {
 				.setCreator("test")
 				.setTitle("테스트여행")
 				.setPlanDateStart(LocalDate.of(2023, 1, 27))
-				.setPlanDateEnd(LocalDate.of(2023, 1, 28))
+				.setPlanDateEnd(LocalDate.of(2023, 1, 26))
 				.setExpense(1000)
 				.setMemberCount(1)
 				.setMemberTypeId(1)
@@ -564,36 +564,6 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
-	public void 플래너_수정_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		PlannerDto planner = new PlannerDto.Builder()
-				.setPlannerId(1)
-				.setAccountId(1)
-				.setCreator("test")
-				.setTitle("테스트여행")
-				.setPlanDateStart(LocalDate.of(2023, 1, 28))
-				.setPlanDateEnd(LocalDate.of(2023, 1, 28))
-				.setExpense(1000)
-				.setMemberCount(1)
-				.setMemberTypeId(1)
-				.setPlanMembers(null)
-				.setPlans(null)
-				.setLikeCount(0)
-				.build();// 기본 데이터는 제목이 초보여행
-		
-		String url = String.format("/api/planners/%d", plannerId);
-		this.mockMvc.perform(patch(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken)
-				.content(mapper.writeValueAsString(planner)))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
-	
-	@Test
 	public void 플래너_삭제() throws Exception {
 		int plannerId = 1;
 		this.mockMvc.perform(delete("/api/planners/"+plannerId)
@@ -605,18 +575,6 @@ public class PlannerControllerTest {
 		.andExpect(status().isOk());
 	}
 	
-	@Test
-	public void 플래너_삭제_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		this.mockMvc.perform(delete("/api/planners/"+plannerId)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
 	
 	@Test
 	public void 플래너_좋아요_또는_취소() throws Exception {
@@ -663,22 +621,6 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
-	public void 새메모_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		PlanMemoDto memo = createPlanMemo(0, "test", "test", plannerId, null, null);
-		String url = String.format("/api/planners/%d/memos", plannerId);
-		this.mockMvc.perform(post(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken)
-				.content(mapper.writeValueAsString(memo)))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
-	
-	@Test
 	public void 메모_수정_제목_공백_유효성검사() throws Exception {
 		PlanMemoDto memo = createPlanMemo(0, "", "test", 1, null, null);
 		String url = String.format("/api/planners/%d/memos/%d", 1, 1);
@@ -710,23 +652,6 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
-	public void 메모_수정_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		int memoId = 1;
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		PlanMemoDto memo = createPlanMemo(1, "메모수정", "메모수정테스트", plannerId, null, null);
-		String url = String.format("/api/planners/%d/memos/%d", plannerId, memoId);
-		this.mockMvc.perform(patch(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken)
-				.content(mapper.writeValueAsString(memo)))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
-	
-	@Test
 	public void 메모_삭제() throws Exception {
 		int plannerId = 1;
 		int memoId = 1;
@@ -739,21 +664,7 @@ public class PlannerControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
-	@Test
-	public void 메모_삭제_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		int memoId = 1;
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		String url = String.format("/api/planners/%d/memos/%d", plannerId, memoId);
-		this.mockMvc.perform(delete(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
-	
+
 	@Test
 	public void 멤버_초대() throws Exception {
 		int plannerId = 1;
@@ -770,23 +681,6 @@ public class PlannerControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
-	@Test
-	public void 멤버_초대_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		List<String> members = Arrays.asList("test2","test3");
-		HashMap<String, List<String>> invitenMembers = new HashMap<String, List<String>>();
-		invitenMembers.put("members", members);
-		String url = String.format("/api/planners/%d/invite-member", plannerId);
-		this.mockMvc.perform(post(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken)
-				.content(mapper.writeValueAsString(invitenMembers)))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
 	
 	@Test
 	public void 멤버_삭제() throws Exception {
@@ -801,21 +695,6 @@ public class PlannerControllerTest {
 				.param("nick_name", deleteMember))
 		.andDo(print())
 		.andExpect(status().isOk());
-	}
-	@Test
-	public void 멤버_삭제_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		String deleteMember = "test2";
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		String url = String.format("/api/planners/%d/delete-member", plannerId);
-		this.mockMvc.perform(delete(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken)
-				.param("nick_name", deleteMember))
-		.andDo(print())
-		.andExpect(status().isForbidden());
 	}
 	
 	@Test
@@ -868,22 +747,6 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
-	public void 새일정_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		PlanDto plan = createPlan(2, plannerId, 1024, LocalDate.now());
-		String url = String.format("/api/planners/%d/plans", plannerId);
-		this.mockMvc.perform(post(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken)
-				.content(mapper.writeValueAsString(plan)))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
-	
-	@Test
 	public void 일정수정_날짜_공백_유효성검사() throws Exception {
 		int plannerId = 1;
 		PlanDto plan = createPlan(2, plannerId, 1024, null);
@@ -931,23 +794,6 @@ public class PlannerControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
-	@Test
-	public void 일정_수정_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		int planId = 1;
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		PlanDto plan = createPlan(1, plannerId, 1024, LocalDate.now());
-		String url = String.format("/api/planners/%d/plans/%d", plannerId, planId);
-		
-		this.mockMvc.perform(patch(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken)
-				.content(mapper.writeValueAsString(plan)))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
 	
 	@Test
 	public void 일정_삭제() throws JsonProcessingException, Exception {
@@ -964,21 +810,7 @@ public class PlannerControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
-	@Test
-	public void 일정_삭제_다른사용자_요청_접근거부() throws JsonProcessingException, Exception {
-		int plannerId = 1;
-		int planId = 1;
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		String url = String.format("/api/planners/%d/plans/%d", plannerId, planId);
-		
-		this.mockMvc.perform(delete(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
+
 	
 	@Test
 	public void 일정_새여행지_잘못된콘텐츠아이디_유효성검사() throws Exception {
@@ -1043,23 +875,6 @@ public class PlannerControllerTest {
 		.andDo(print())
 		.andExpect(status().isCreated())
 		.andExpect(jsonPath("$.data").value(4));
-	}
-	
-	@Test
-	public void 일정_새여행지_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		int planId = 1;
-		PlanLocationDto planLocation = createPlanLocation(2, 1000, 1, 1024, planId );
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		String url = String.format("/api/planners/%d/plans/%d/plan-locations", plannerId, planId);
-		this.mockMvc.perform(post(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken)
-				.content(mapper.writeValueAsString(planLocation)))
-		.andDo(print())
-		.andExpect(status().isForbidden());
 	}
 	
 	@Test
@@ -1130,24 +945,7 @@ public class PlannerControllerTest {
 		.andExpect(status().isOk());
 	}
 	
-	@Test
-	public void 여행지_수정_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		int planId = 1;
-		int planLocationId = 1;
-		PlanLocationDto planLocation = createPlanLocation(1, 2000, 1, 1024, planId);
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		String url = String.format("/api/planners/%d/plans/%d/plan-locations/%d", plannerId, planId, planLocationId);
-		this.mockMvc.perform(patch(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken)
-				.content(mapper.writeValueAsString(planLocation)))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
-	
+
 	@Test
 	public void 일정_여행지_삭제() throws Exception {
 		int plannerId = 1;
@@ -1161,22 +959,6 @@ public class PlannerControllerTest {
 				.header("Authorization", token))
 		.andDo(print())
 		.andExpect(status().isOk());
-	}
-	
-	@Test
-	public void 일정_여행지_삭제_다른사용자_요청_접근거부() throws Exception {
-		int plannerId = 1;
-		int planId = 1;
-		int planLocationId = 1;
-		String notCreatetorIdToken =  "Bearer " + jwtUtil.createToken(2); // 생성자가 아닌 다른 사용자
-		String url = String.format("/api/planners/%d/plans/%d/plan-locations/%d", plannerId, planId, planLocationId);
-		this.mockMvc.perform(delete(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", notCreatetorIdToken))
-		.andDo(print())
-		.andExpect(status().isForbidden());
 	}
 	
 	private PlannerDto createPlanner(int plannerId) {

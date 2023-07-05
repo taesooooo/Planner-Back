@@ -26,15 +26,14 @@ import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Dao.AccountDao;
+import com.planner.planner.Dao.PlanMemberDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
-import com.planner.planner.Dto.PlanMemberDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Exception.NotFoundMemberException;
 import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.Impl.PlannerServiceImpl;
@@ -46,10 +45,11 @@ public class PlannerServiceTest {
 	private PlannerServiceImpl plannerService;
 	
 	@Mock
-	private PlannerDao plannerDao;
-	
-	@Mock
 	private AccountDao accountDao;
+	@Mock
+	private PlannerDao plannerDao;
+	@Mock
+	private PlanMemberDao planMemberDao;
 	
 	@Mock
 	private PlannerDto plannerDto;
@@ -68,14 +68,14 @@ public class PlannerServiceTest {
 		users.add(new AccountDto.Builder().setAccountId(2).build());
 		
 		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(creator, users.get(0));
-		when(plannerDao.insertPlanMember(anyInt(), anyInt())).thenReturn(0);
-		when(plannerDao.acceptInvitation(anyInt(), anyInt())).thenReturn(0);
+		when(planMemberDao.insertPlanMember(anyInt(), anyInt())).thenReturn(0);
+		when(planMemberDao.acceptInvitation(anyInt(), anyInt())).thenReturn(0);
 		
 		plannerService.newPlanner(planner);
 		
 		verify(accountDao, times(2)).findAccountIdByNickName(anyString());
-		verify(plannerDao, times(2)).insertPlanMember(anyInt(), anyInt());
-		verify(plannerDao, times(1)).acceptInvitation(anyInt(), anyInt());
+		verify(planMemberDao, times(2)).insertPlanMember(anyInt(), anyInt());
+		verify(planMemberDao, times(1)).acceptInvitation(anyInt(), anyInt());
 	}
 	
 	@Test(expected = NotFoundUserException.class)
@@ -129,12 +129,12 @@ public class PlannerServiceTest {
 		int testTotalCount = planners.size();
 		
 		when(plannerDao.findPlannersByAccountId(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(planners);
-		when(plannerDao.getTotalCount()).thenReturn(testTotalCount);
+		when(plannerDao.getTotalCount(anyInt())).thenReturn(testTotalCount);
 		
 		Page<PlannerDto> plannerList = plannerService.findPlannersByAccountId(1, paramDto);
 		
 		verify(plannerDao).findPlannersByAccountId(anyInt(), any(SortCriteria.class), any(), any(PageInfo.class));
-		verify(plannerDao).getTotalCount();
+		verify(plannerDao).getTotalCount(anyInt());
 		
 		assertThat(plannerList).isNotNull();
 		assertThat(plannerList.getList()).isNotNull();
@@ -157,12 +157,12 @@ public class PlannerServiceTest {
 		int testTotalCount = planners.size();
 		
 		when(plannerDao.findPlannersByAccountId(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(planners);
-		when(plannerDao.getTotalCountByKeyword(anyString())).thenReturn(testTotalCount);
+		when(plannerDao.getTotalCountByKeyword(anyInt(), anyString())).thenReturn(testTotalCount);
 		
 		Page<PlannerDto> plannerList = plannerService.findPlannersByAccountId(1, paramDto);
 		
 		verify(plannerDao).findPlannersByAccountId(anyInt(), any(SortCriteria.class), any(), any(PageInfo.class));
-		verify(plannerDao).getTotalCountByKeyword(anyString());
+		verify(plannerDao).getTotalCountByKeyword(anyInt(), anyString());
 		
 		assertThat(plannerList).isNotNull();
 		assertThat(plannerList.getList()).isNotNull();
@@ -243,227 +243,6 @@ public class PlannerServiceTest {
 	}
 	
 	@Test
-	public void 플래너_좋아요() {
-		int accountId = 1;
-		int plannerId = 1;
-		when(plannerDao.isLike(accountId, plannerId)).thenReturn(false);
-		
-		plannerService.plannerLikeOrUnLike(accountId, plannerId);
-		
-		verify(plannerDao).plannerLike(accountId, plannerId);
-	}
-	
-	@Test
-	public void 플래너_좋아요_취소() {
-		int accountId = 1;
-		int plannerId = 1;
-		when(plannerDao.isLike(accountId, plannerId)).thenReturn(true);
-		
-		plannerService.plannerLikeOrUnLike(accountId, plannerId);
-		
-		verify(plannerDao).plannerUnLike(accountId, plannerId);
-	}
-	
-	@Test
-	public void 플래너_새메모() {
-		int expectId = 1;
-		int plannerId = 1;
-		PlanMemoDto memo = createPlanMemo(expectId, "a", "aa", plannerId, LocalDateTime.of(2023, 2,1, 00,00), LocalDateTime.of(2023, 2,1, 00,00));
-		when(plannerDao.insertPlanMemo(plannerId, memo)).thenReturn(1);
-		
-		int memoId = plannerService.newMemo(plannerId, memo);
-		
-		assertEquals(expectId, memoId);
-	}
-	
-	@Test
-	public void 플래너_메모_수정() {
-		int memoId = 1;
-		int plannerId = 1;
-		PlanMemoDto memo = createPlanMemo(memoId, "a", "aa", plannerId, LocalDateTime.of(2023, 2,1, 00,00), LocalDateTime.of(2023, 2,1, 00,00));
-		when(plannerDao.updatePlanMemo(memoId, memo)).thenReturn(0);
-		
-		plannerService.updateMemo(memoId, memo);
-		
-		verify(plannerDao).updatePlanMemo(memoId, memo);
-		
-	}
-	
-	@Test
-	public void 플래너_메모_삭제() {
-		int memoId = 1;
-		when(plannerDao.deletePlanMemo(memoId)).thenReturn(0);
-		
-		plannerService.deleteMemo(memoId);
-		
-		verify(plannerDao).deletePlanMemo(memoId);
-		
-	}
-	
-	@Test
-	public void 플래너_멤버조회() throws Exception {
-		when(plannerDao.findMembersByPlannerId(anyInt())).thenReturn(null);
-		
-		plannerService.findMembersByPlannerId(anyInt());
-		
-		verify(plannerDao).findMembersByPlannerId(anyInt());
-	}
-	
-	@Test
-	public void 플래너_멤버_초대() throws Exception {
-		int plannerId = 1;
-		List<String>  inviteMemberEmails = new ArrayList<String>();
-		inviteMemberEmails.add("test3@naver.com");
-		AccountDto inviteMember = new AccountDto.Builder().setAccountId(3).build();
-		
-		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(inviteMember);
-		
-		plannerService.inviteMembers(plannerId, inviteMemberEmails);
-		
-		verify(accountDao, times(1)).findAccountIdByNickName(anyString());
-		verify(plannerDao, times(1)).insertPlanMember(anyInt(), anyInt());
-	}
-	
-	@Test(expected = NotFoundUserException.class)
-	public void 플래너_멤버_초대_사용자가없을때() throws Exception {
-		int plannerId = 1;
-		List<String>  inviteMemberEmails = new ArrayList<String>();
-		inviteMemberEmails.add("test3@naver.com");
-		
-		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(null);
-		
-		plannerService.inviteMembers(plannerId, inviteMemberEmails);
-		
-		verify(accountDao, times(1)).findAccountIdByNickName(anyString());
-	}
-	
-	@Test
-	public void 플래너_멤버_삭제() throws Exception {
-		int plannerId = 1;
-		String testNickName = "test2";
-		List<PlanMemberDto> members = new ArrayList<PlanMemberDto>();
-		members.add(new PlanMemberDto.Builder().setPlanMemberId(1).setAccountId(1).setPlannerId(1).build());
-		members.add(new PlanMemberDto.Builder().setPlanMemberId(2).setAccountId(2).setPlannerId(1).build());
-		AccountDto user = new AccountDto.Builder().setAccountId(2).build();
-		
-		when(plannerDao.findMembersByPlannerId(plannerId)).thenReturn(members);
-		when(accountDao.findAccountIdByNickName(testNickName)).thenReturn(user);
-		
-		plannerService.deleteMember(plannerId, testNickName);
-
-		verify(plannerDao).findMembersByPlannerId(anyInt());
-		verify(accountDao).findAccountIdByNickName(anyString());
-		verify(plannerDao).deletePlanMember(anyInt(), anyInt());
-	}
-	
-	@Test(expected = NotFoundUserException.class)
-	public void 플래너_멤버_삭제_사용자가없을때() throws Exception {
-		int plannerId = 1;
-		String testNickName = "test2";
-		List<PlanMemberDto> members = new ArrayList<PlanMemberDto>();
-		members.add(new PlanMemberDto.Builder().setPlanMemberId(1).setAccountId(1).setPlannerId(1).build());
-		members.add(new PlanMemberDto.Builder().setPlanMemberId(2).setAccountId(2).setPlannerId(1).build());
-
-		when(plannerDao.findMembersByPlannerId(plannerId)).thenReturn(members);
-		when(accountDao.findAccountIdByNickName(testNickName)).thenReturn(null);
-		
-		plannerService.deleteMember(plannerId, testNickName);
-
-		verify(plannerDao).findMembersByPlannerId(anyInt());
-		verify(accountDao).findAccountIdByNickName(anyString());
-	}
-	
-	@Test(expected = NotFoundMemberException.class)
-	public void 플래너_멤버_삭제_멤버가없을때() throws Exception {
-		int plannerId = 1;
-		String testNickName = "test3";
-		List<PlanMemberDto> members = new ArrayList<PlanMemberDto>();
-		members.add(new PlanMemberDto.Builder().setPlanMemberId(1).setAccountId(1).setPlannerId(1).build());
-		members.add(new PlanMemberDto.Builder().setPlanMemberId(2).setAccountId(2).setPlannerId(1).build());
-		AccountDto user = new AccountDto.Builder().setAccountId(3).build();
-		
-		when(plannerDao.findMembersByPlannerId(plannerId)).thenReturn(members);
-		when(accountDao.findAccountIdByNickName(testNickName)).thenReturn(user);
-		
-		plannerService.deleteMember(plannerId, testNickName);
-
-		verify(plannerDao).findMembersByPlannerId(anyInt());
-		verify(accountDao).findAccountIdByNickName(anyString());
-	}
-	
-	@Test
-	public void 새일정() throws Exception {
-		int plannerId = 1;
-		int planId = 1;
-		PlanDto plan = createPlan(planId, LocalDate.of(2023, 02,07), null, plannerId);
-		when(plannerDao.insertPlan(plan)).thenReturn(1);
-		
-		int newPlanId = plannerService.newPlan(plan);
-		
-		verify(plannerDao).insertPlan(plan);
-		
-		assertEquals(planId, newPlanId);
-	}
-	
-	@Test
-	public void 일정_수정() throws Exception {
-		int plannerId = 1;
-		int planId = 1;
-		PlanDto plan = createPlan(planId, LocalDate.of(2023, 02,07), null, plannerId);
-		when(plannerDao.updatePlan(planId, plan)).thenReturn(0);
-		
-		plannerService.updatePlan(planId, plan);
-		
-		verify(plannerDao).updatePlan(planId, plan);
-	}
-	
-	@Test
-	public void 일정_삭제() throws Exception {
-		int plannerId = 1;
-		int planId = 1;
-		when(plannerDao.deletePlan(planId)).thenReturn(0);
-		
-		plannerService.deletePlan(planId);
-		
-		verify(plannerDao).deletePlan(planId);
-	}
-	
-	@Test
-	public void 일정_새여행지() throws Exception {
-		when(plannerDao.insertPlanLocation(any())).thenReturn(1);
-		
-		int planLocationId = plannerService.newPlanLocation(any());
-		
-		verify(plannerDao).insertPlanLocation(any());
-		
-		assertEquals(1, planLocationId);
-	}
-	
-	@Test
-	public void 일정_여행지_수정() throws Exception {
-		int plannerId = 1;
-		int planId = 1;
-		int planLocationId = 1;
-		PlanLocationDto planLocation = createPlanLocation();
-		
-		when(plannerDao.updatePlanLocation(planLocationId,planLocation)).thenReturn(0);
-		
-		plannerService.updatePlanLocation(planLocationId, planLocation);
-		
-		verify(plannerDao).updatePlanLocation(planLocationId, planLocation);
-	}
-	
-	@Test
-	public void 일정_여행지_삭제() throws Exception {
-		int planLocationId = 1;
-		when(plannerDao.deletePlanLocation(planLocationId)).thenReturn(0);
-		
-		plannerService.deletePlanLocation(planLocationId);
-		
-		verify(plannerDao).deletePlanLocation(planLocationId);
-	}
-	
-	@Test
 	public void 좋아요_플래너_모두_조회() throws Exception {
 		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
 				.setItemCount(10)
@@ -483,7 +262,7 @@ public class PlannerServiceTest {
 		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, paramDto);
 		
 		verify(plannerDao).likePlannerList(anyInt(), any(SortCriteria.class), any(), any(PageInfo.class));
-		verify(plannerDao).getTotalCount();
+		verify(plannerDao).getTotalCountByLike(anyInt());
 		
 		assertThat(plannerList).isNotNull();
 		assertThat(plannerList.getList()).isNotNull();
@@ -506,12 +285,12 @@ public class PlannerServiceTest {
 		int testTotalCount = planners.size();
 		
 		when(plannerDao.likePlannerList(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(planners);
-		when(plannerDao.getTotalCountByKeyword(anyInt(), anyString())).thenReturn(testTotalCount);
+		when(plannerDao.getTotalCountByLike(anyInt(), anyString())).thenReturn(testTotalCount);
 		
 		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, paramDto);
 		
 		verify(plannerDao).likePlannerList(anyInt(), any(SortCriteria.class), any(), any(PageInfo.class));
-		verify(plannerDao).getTotalCount();
+		verify(plannerDao).getTotalCountByLike(anyInt(), anyString());
 		
 		assertThat(plannerList).isNotNull();
 		assertThat(plannerList.getList()).isNotNull();

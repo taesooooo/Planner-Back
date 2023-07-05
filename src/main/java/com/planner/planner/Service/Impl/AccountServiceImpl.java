@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.planner.planner.Common.Image;
 import com.planner.planner.Common.Page;
 import com.planner.planner.Dao.AccountDao;
+import com.planner.planner.Dao.PlanMemberDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
@@ -31,14 +32,17 @@ public class AccountServiceImpl implements AccountService {
 	private AccountDao accountDao;
 	private PlannerService plannerService;
 	private PlannerDao plannerDao;
+	private PlanMemberDao planMemberDao;
 	private SpotService spotService;
 
 	private FileStore fileStore;
 
-	public AccountServiceImpl(AccountDao accountDao, PlannerService plannerService, PlannerDao plannerDao, SpotService spotService, FileStore fileStore) {
+	public AccountServiceImpl(AccountDao accountDao, PlannerService plannerService, PlannerDao plannerDao,
+			PlanMemberDao planMemberDao, SpotService spotService, FileStore fileStore) {
 		this.accountDao = accountDao;
 		this.plannerService = plannerService;
 		this.plannerDao = plannerDao;
+		this.planMemberDao = planMemberDao;
 		this.spotService = spotService;
 		this.fileStore = fileStore;
 	}
@@ -87,7 +91,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public void acceptInvite(int plannerId, int accountId) {
-		plannerDao.acceptInvitation(plannerId, accountId);
+		planMemberDao.acceptInvitation(plannerId, accountId);
 	}
 
 	@Override

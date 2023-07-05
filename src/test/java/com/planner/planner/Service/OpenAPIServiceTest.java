@@ -8,19 +8,27 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
+import com.planner.planner.Config.SecurityContext;
+import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
 import com.planner.planner.Dto.OpenApi.OpenApiDto;
 import com.planner.planner.Service.Impl.OpenAPIServiceImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class })
+@TestPropertySource("classpath:/config/config.properties")
 public class OpenAPIServiceTest {
 	private static final Logger logger = LoggerFactory.getLogger(OpenAPIServiceTest.class);
 	
@@ -34,13 +42,7 @@ public class OpenAPIServiceTest {
 	
 	@Test
 	public void OpenAPI_지역코드리스트_가져오기() throws Exception {
-		OpenApiDto param = new OpenApiDto.Builder()
-				.setAreaCode(1)
-				.setContentTypeId(12)
-				.setPageNo(1)
-				.build();
-		
-		CommonListDto list = apiServiceImpl.getAreaList(param);
+		CommonListDto list = apiServiceImpl.getAreaNum();
 		
 		assertNotNull(list.getItems());
 		assertFalse(list.getItems().isEmpty());
