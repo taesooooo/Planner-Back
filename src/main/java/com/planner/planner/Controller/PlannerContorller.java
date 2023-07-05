@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Common.Page;
+import com.planner.planner.Common.ValidationGroups.PlanCreateGroup;
+import com.planner.planner.Common.ValidationGroups.PlanLocationCreateGroup;
+import com.planner.planner.Common.ValidationGroups.PlanLocationUpdateGroup;
 import com.planner.planner.Common.ValidationGroups.PlanUpdateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
@@ -158,7 +161,7 @@ public class PlannerContorller {
 	}
 	
 	@PostMapping(value="/{plannerId}/plans")
-	public ResponseEntity<Object> newPlan(HttpServletRequest req, @PathVariable int plannerId, @RequestBody @Valid PlanDto planDto) throws Exception {
+	public ResponseEntity<Object> newPlan(HttpServletRequest req, @PathVariable int plannerId, @RequestBody @Validated(PlanCreateGroup.class) PlanDto planDto) throws Exception {
 		checkAuth(req, plannerId);
 		
 		int planId = planService.newPlan(planDto);
@@ -183,7 +186,7 @@ public class PlannerContorller {
 	}
 	
 	@PostMapping(value="/{plannerId}/plans/{planId}/plan-locations")
-	public ResponseEntity<Object> newPlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody @Valid PlanLocationDto planLocationDto) throws Exception {
+	public ResponseEntity<Object> newPlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody @Validated(PlanLocationCreateGroup.class) PlanLocationDto planLocationDto) throws Exception {
 		checkAuth(req, plannerId);
 		
 		int planLocationId = planLocationService.newPlanLocation(planLocationDto);
@@ -191,7 +194,7 @@ public class PlannerContorller {
 	}
 	
 	@PatchMapping(value="/{plannerId}/plans/{planId}/plan-locations/{planLocationId}")
-	public ResponseEntity<Object> updatePlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @PathVariable int planLocationId, @RequestBody @Valid PlanLocationDto planLocationDto) throws Exception {
+	public ResponseEntity<Object> updatePlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @PathVariable int planLocationId, @RequestBody @Validated(PlanLocationUpdateGroup.class) PlanLocationDto planLocationDto) throws Exception {
 		checkAuth(req, plannerId);
 		
 		planLocationService.updatePlanLocation(planLocationId, planLocationDto);

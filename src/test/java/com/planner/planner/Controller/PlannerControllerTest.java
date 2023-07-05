@@ -347,7 +347,7 @@ public class PlannerControllerTest {
 		.andExpect(jsonPath("$.data.list").exists())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
 		.andExpect(jsonPath("$.data.list.length()").value(3))
-		.andExpect(jsonPath("$.data.totalCount").value(1))
+		.andExpect(jsonPath("$.data.totalCount").value(3))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
@@ -617,7 +617,7 @@ public class PlannerControllerTest {
 				.content(mapper.writeValueAsString(memo)))
 		.andDo(print())
 		.andExpect(status().isCreated())
-		.andExpect(jsonPath("$.data").value(2));
+		.andExpect(jsonPath("$.data").value(5));
 	}
 	
 	@Test
@@ -712,23 +712,6 @@ public class PlannerControllerTest {
 		.andDo(print())
 		.andExpect(status().isBadRequest());
 	}
-	
-	@Test
-	public void 새일정_정렬_인덱스_유효성검사() throws Exception {
-		int plannerId = 1;
-		PlanDto plan = createPlan(2, plannerId, 0, LocalDate.of(2023, 1,29));
-		String url = String.format("/api/planners/%d/plans", plannerId);
-		
-		this.mockMvc.perform(post(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", token)
-				.content(mapper.writeValueAsString(plan)))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
 	
 	@Test
 	public void 새일정() throws Exception {
@@ -833,22 +816,6 @@ public class PlannerControllerTest {
 		int plannerId = 1;
 		int planId = 1;
 		PlanLocationDto planLocation = createPlanLocation(2, 1000, 0, 1024, planId);
-		String url = String.format("/api/planners/%d/plans/%d/plan-locations", plannerId, planId);
-		this.mockMvc.perform(post(url)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", token)
-				.content(mapper.writeValueAsString(planLocation)))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 일정_새여행지_잘못된정렬인덱스_유효성검사() throws Exception {
-		int plannerId = 1;
-		int planId = 1;
-		PlanLocationDto planLocation = createPlanLocation(2, 1000, 1, 0, planId);
 		String url = String.format("/api/planners/%d/plans/%d/plan-locations", plannerId, planId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)

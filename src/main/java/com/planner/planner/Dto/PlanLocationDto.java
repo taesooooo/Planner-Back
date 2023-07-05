@@ -2,10 +2,13 @@ package com.planner.planner.Dto;
 
 import javax.validation.constraints.Min;
 
+import com.planner.planner.Common.ValidationGroups.PlanLocationCreateGroup;
+import com.planner.planner.Common.ValidationGroups.PlanLocationUpdateGroup;
+
 public class PlanLocationDto {
 	private int locationId;
 	
-	@Min(value = 1, message = "콘텐츠 아이디가 잘못되었습니다.")
+	@Min(value = 1, message = "콘텐츠 아이디가 잘못되었습니다.", groups = {PlanLocationCreateGroup.class, PlanLocationUpdateGroup.class})
 	private int locationContentId;
 	
 	private String locationName;
@@ -14,10 +17,10 @@ public class PlanLocationDto {
 	private double locationMapx;
 	private double locationMapy;
 	
-	@Min(value = 1, message = "이동수단이 잘못되었습니다.")
+	@Min(value = 1, message = "이동수단이 잘못되었습니다.", groups = {PlanLocationCreateGroup.class, PlanLocationUpdateGroup.class})
 	private int locationTransportation;
 	
-	@Min(value = 1, message = "인덱스가 잘못되었습니다.")
+	@Min(value = 1, message = "인덱스가 잘못되었습니다.", groups = PlanLocationUpdateGroup.class)
 	private int index;
 	private int planId;
 	

@@ -51,7 +51,7 @@ public class PlannerFullResultSetExtrator implements ResultSetExtractor<PlannerD
 			}
 			
 			Integer planId = rs.getObject("plan_id", Integer.class);
-			if(planId != null) {
+			if(planId != null && planId != null) {
 				PlanDto plan = plans.get(planId);
 				if(plan == null) {
 					List<PlanLocationDto> planLocations = new ArrayList<PlanLocationDto>();
@@ -70,7 +70,7 @@ public class PlannerFullResultSetExtrator implements ResultSetExtractor<PlannerD
 				
 				List<PlanLocationDto> planLocations = plans.get(planId).getPlanLocations();
 				
-				if(planLocations != null) {
+				if(planLocations != null && locationId != null) {
 					boolean hasLocation = planLocations.stream().anyMatch(item -> item.getLocationId() == locationId);
 					
 					if(!hasLocation) {

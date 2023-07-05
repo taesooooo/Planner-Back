@@ -7,13 +7,14 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.planner.planner.Common.ValidationGroups.PlanCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlanUpdateGroup;
 
 public class PlanDto {
 	private int planId;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd")
-	@NotNull(message = "날짜 항목은 필수 항목입니다.")
+	@NotNull(message = "날짜 항목은 필수 항목입니다.", groups = {PlanCreateGroup.class, PlanUpdateGroup.class})
 	private LocalDate planDate;
 	
 	private int plannerId;
