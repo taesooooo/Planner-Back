@@ -367,6 +367,26 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
+	public void 플래너_조회_정렬_확인() throws Exception {
+		int plannerId = 1;
+		String url = String.format("/api/planners/%d", plannerId);
+		this.mockMvc.perform(get(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.plans[0].planId").value(1))
+		.andExpect(jsonPath("$.data.plans[0].planLocations[0].locationId").value(1))
+		.andExpect(jsonPath("$.data.plans[0].planLocations[1].locationId").value(3))
+		.andExpect(jsonPath("$.data.plans[0].planLocations[2].locationId").value(2))
+		.andExpect(jsonPath("$.data.plans[1].planId").value(3))
+		.andExpect(jsonPath("$.data.plans[2].planId").value(2));
+	}
+	
+	@Test
 	public void 플래너_수정_제목_공백_유효성검사() throws Exception {
 		PlannerDto planner = new PlannerDto.Builder()
 				.setAccountId(1)

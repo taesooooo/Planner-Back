@@ -3,8 +3,7 @@ package com.planner.planner.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,7 +22,7 @@ public class PlannerFullResultSetExtrator implements ResultSetExtractor<PlannerD
 	public PlannerDto extractData(ResultSet rs) throws SQLException, DataAccessException {
 		List<String> members = new ArrayList<String>();
 		List<PlanMemoDto> memos = new ArrayList<PlanMemoDto>();
-		Map<Integer, PlanDto> plans = new HashMap<Integer, PlanDto>();
+		Map<Integer, PlanDto> plans = new LinkedHashMap<Integer, PlanDto>();
 
 		PlannerDto plannerDto = null;
 		
