@@ -3,6 +3,8 @@ package com.planner.planner.Dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -16,6 +18,7 @@ public class ReviewDto {
 	
 	private String writer;
 	
+	@Min(value=1, message = "잘못된 사용자 정보입니다.")
 	private int writerId;
 	
 	@NotBlank(message = "내용을 적어주세요.")
