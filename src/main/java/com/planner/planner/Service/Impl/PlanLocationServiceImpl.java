@@ -15,8 +15,8 @@ public class PlanLocationServiceImpl implements PlanLocationService {
 	}
 
 	@Override
-	public int newPlanLocation(PlanLocationDto planLocationDto) throws Exception {
-		return planLocationDao.insertPlanLocation(planLocationDto);
+	public int newPlanLocation(int planId, PlanLocationDto planLocationDto) throws Exception {
+		return planLocationDao.insertPlanLocation(planId, planLocationDto);
 	}
 
 	@Override

@@ -228,7 +228,7 @@ public class ReviewControllerTest {
 	
 	@Test
 	public void 리뷰_수정_테스트() throws Exception {
-		ReviewDto testDto = new ReviewDto.Builder().setReviewId(1).setPlannerId(1).setTitle("update").setContent("수정테스트").setWriter("test").build();
+		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("update").setContent("수정테스트").setWriter("test").build();
 		
 		mockMvc.perform(patch("/api/reviews/1")
 				.characterEncoding("UTF-8")

@@ -90,8 +90,8 @@ public class ReviewDaoImpl implements ReviewDao {
 	}
 
 	@Override
-	public void updateReview(ReviewDto reviewDto) {
-		int result = jdbcTemplate.update(UPDATE_REVIEW_SQL,reviewDto.getTitle(), reviewDto.getContent(), reviewDto.getReviewId());
+	public void updateReview(int reviewId, ReviewDto reviewDto) {
+		int result = jdbcTemplate.update(UPDATE_REVIEW_SQL,reviewDto.getTitle(), reviewDto.getContent(), reviewId);
 	}
 
 	@Override

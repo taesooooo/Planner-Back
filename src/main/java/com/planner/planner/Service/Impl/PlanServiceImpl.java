@@ -15,8 +15,8 @@ public class PlanServiceImpl implements PlanService {
 	}
 
 	@Override
-	public int newPlan(PlanDto planDto) throws Exception {
-		return planDao.insertPlan(planDto);
+	public int newPlan(int plannerId, PlanDto planDto) throws Exception {
+		return planDao.insertPlan(plannerId, planDto);
 	}
 
 	@Override

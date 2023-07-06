@@ -6,7 +6,7 @@ import com.planner.planner.Dto.PlanLocationDto;
 
 public interface PlanLocationDao {
 	// 여행지 생성, 조회, 수정, 삭제
-	public int insertPlanLocation(PlanLocationDto planLocationDto);
+	public int insertPlanLocation(int planId, PlanLocationDto planLocationDto);
 
 	public List<PlanLocationDto> findPlanLocationsByPlanId(int planId);
 

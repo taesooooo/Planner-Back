@@ -66,7 +66,7 @@ public class ReviewController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false,"게시글이 존재하지 않습니다."));
 		}
 		
-		reviewService.updateReview(reviewDto);
+		reviewService.updateReview(reviewId, reviewDto);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}

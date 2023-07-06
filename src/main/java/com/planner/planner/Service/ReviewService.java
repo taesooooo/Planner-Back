@@ -8,6 +8,6 @@ public interface ReviewService {
 	public int insertReview(int accountId, ReviewDto review) throws Exception;
 	public Page<ReviewDto> findAllReview(CommonRequestParamDto commonRequestParamDto) throws Exception;
 	public ReviewDto findReview(int reviewId);
-	public void updateReview(ReviewDto review);
+	public void updateReview(int reviewId, ReviewDto review);
 	public void deleteReview(int reviewId);
 }

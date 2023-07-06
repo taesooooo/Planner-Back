@@ -369,7 +369,6 @@ public class PlannerControllerTest {
 	@Test
 	public void 플래너_수정_제목_공백_유효성검사() throws Exception {
 		PlannerDto planner = new PlannerDto.Builder()
-				.setPlannerId(1)
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("")
@@ -397,7 +396,6 @@ public class PlannerControllerTest {
 	@Test
 	public void 플래너_수정_시작날짜_공백_유효성검사() throws Exception {
 		PlannerDto planner = new PlannerDto.Builder()
-				.setPlannerId(1)
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("테스트여행")
@@ -425,7 +423,6 @@ public class PlannerControllerTest {
 	@Test
 	public void 플래너_수정_종료날짜_공백_유효성검사() throws Exception {
 		PlannerDto planner = new PlannerDto.Builder()
-				.setPlannerId(1)
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("테스트여행")
@@ -453,7 +450,6 @@ public class PlannerControllerTest {
 	@Test
 	public void 플래너_수정_잘못된멤버수_유효성검사() throws Exception {
 		PlannerDto planner = new PlannerDto.Builder()
-				.setPlannerId(1)
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("테스트여행")
@@ -481,7 +477,6 @@ public class PlannerControllerTest {
 	@Test
 	public void 플래너_수정_잘못된멤버유형_유효성검사() throws Exception {
 		PlannerDto planner = new PlannerDto.Builder()
-				.setPlannerId(1)
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("테스트여행")
@@ -509,7 +504,6 @@ public class PlannerControllerTest {
 	@Test
 	public void 플래너_수정_잘못된날짜_유효성검사() throws Exception {
 		PlannerDto planner = new PlannerDto.Builder()
-				.setPlannerId(1)
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("테스트여행")
@@ -538,7 +532,6 @@ public class PlannerControllerTest {
 	public void 플래너_수정() throws Exception {
 		int plannerId = 1;
 		PlannerDto planner = new PlannerDto.Builder()
-				.setPlannerId(1)
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("테스트여행")
@@ -716,7 +709,7 @@ public class PlannerControllerTest {
 	@Test
 	public void 새일정() throws Exception {
 		int plannerId = 1;
-		PlanDto plan = createPlan(2, plannerId, 1024, LocalDate.now());
+		PlanDto plan = createPlan(0, plannerId, 1024, LocalDate.now());
 		String url = String.format("/api/planners/%d/plans", plannerId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -732,7 +725,7 @@ public class PlannerControllerTest {
 	@Test
 	public void 일정수정_날짜_공백_유효성검사() throws Exception {
 		int plannerId = 1;
-		PlanDto plan = createPlan(2, plannerId, 1024, null);
+		PlanDto plan = createPlan(0, 0, 1024, null);
 		String url = String.format("/api/planners/%d/plans/%d", plannerId, 1);
 		
 		this.mockMvc.perform(patch(url)
@@ -748,7 +741,7 @@ public class PlannerControllerTest {
 	@Test
 	public void 일정수정_정렬_인덱스_유효성검사() throws Exception {
 		int plannerId = 1;
-		PlanDto plan = createPlan(2, plannerId, 0, LocalDate.of(2023, 1,29));
+		PlanDto plan = createPlan(0, 0, 0, LocalDate.of(2023, 1,29));
 		String url = String.format("/api/planners/%d/plans/%d", plannerId, 1);
 		
 		this.mockMvc.perform(patch(url)
@@ -765,7 +758,7 @@ public class PlannerControllerTest {
 	public void 일정_수정() throws Exception {
 		int plannerId = 1;
 		int planId = 1;
-		PlanDto plan = createPlan(1, plannerId, 1024, LocalDate.now());
+		PlanDto plan = createPlan(0, 0, 1024, LocalDate.now());
 		String url = String.format("/api/planners/%d/plans/%d", plannerId, planId);
 		
 		this.mockMvc.perform(patch(url)
@@ -779,7 +772,7 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
-	public void 일정_삭제() throws JsonProcessingException, Exception {
+	public void 일정_삭제() throws Exception {
 		int plannerId = 1;
 		int planId = 1;
 		
@@ -849,7 +842,7 @@ public class PlannerControllerTest {
 		int plannerId = 1;
 		int planId = 1;
 		int planLocationId = 1;
-		PlanLocationDto planLocation = createPlanLocation(1, 0, 1, 1024, planId);
+		PlanLocationDto planLocation = createPlanLocation(1, 0, 1, 1024, 0);
 		String url = String.format("/api/planners/%d/plans/%d/plan-locations/%d", plannerId, planId, planLocationId);
 		this.mockMvc.perform(patch(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -866,7 +859,7 @@ public class PlannerControllerTest {
 		int plannerId = 1;
 		int planId = 1;
 		int planLocationId = 1;
-		PlanLocationDto planLocation = createPlanLocation(1, 2000, 0, 1024, planId);
+		PlanLocationDto planLocation = createPlanLocation(1, 2000, 0, 1024, 0);
 		String url = String.format("/api/planners/%d/plans/%d/plan-locations/%d", plannerId, planId, planLocationId);
 		this.mockMvc.perform(patch(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -883,7 +876,7 @@ public class PlannerControllerTest {
 		int plannerId = 1;
 		int planId = 1;
 		int planLocationId = 1;
-		PlanLocationDto planLocation = createPlanLocation(1, 2000, 1, 0, planId);
+		PlanLocationDto planLocation = createPlanLocation(1, 2000, 1, 0, 0);
 		String url = String.format("/api/planners/%d/plans/%d/plan-locations/%d", plannerId, planId, planLocationId);
 		this.mockMvc.perform(patch(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -900,7 +893,7 @@ public class PlannerControllerTest {
 		int plannerId = 1;
 		int planId = 1;
 		int planLocationId = 1;
-		PlanLocationDto planLocation = createPlanLocation(1, 2000, 1, 1024, planId);
+		PlanLocationDto planLocation = createPlanLocation(1, 2000, 1, 1024, 0);
 		String url = String.format("/api/planners/%d/plans/%d/plan-locations/%d", plannerId, planId, planLocationId);
 		this.mockMvc.perform(patch(url)
 				.accept(MediaType.APPLICATION_JSON)

@@ -79,8 +79,8 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public void updateReview(ReviewDto reviewDto) {
-		reviewDao.updateReview(reviewDto);
+	public void updateReview(int reviewId, ReviewDto reviewDto) {
+		reviewDao.updateReview(reviewId, reviewDto);
 	}
 
 	@Override

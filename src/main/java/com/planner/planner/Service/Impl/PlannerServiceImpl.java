@@ -142,14 +142,12 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public void updatePlanner(PlannerDto plannerDto) throws Exception {
-		// 플래너 기본 정보 업데이트(컨트롤러에서 접근권한 체크 후 해야함)
-		plannerDao.updatePlanner(plannerDto.getPlannerId(), plannerDto);
+	public void updatePlanner(int plannerId, PlannerDto plannerDto) throws Exception {
+		plannerDao.updatePlanner(plannerId, plannerDto);
 	}
 
 	@Override
 	public void deletePlanner(int plannerId) throws Exception {
-		// 컨트롤러에서 접근권한 체크 후 해야함
 		plannerDao.deletePlanner(plannerId);
 	}
 

@@ -6,7 +6,7 @@ import com.planner.planner.Dto.PlanDto;
 
 public interface PlanDao {
 	// 일정 생성, 조회, 수정, 삭제
-	public int insertPlan(PlanDto planDto);
+	public int insertPlan(int plannerId, PlanDto planDto);
 
 	public List<PlanDto> findPlansByPlannerId(int plannerId);
 

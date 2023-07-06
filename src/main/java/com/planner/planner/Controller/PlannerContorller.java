@@ -93,7 +93,7 @@ public class PlannerContorller {
 			@RequestBody @Validated(PlannerUpdateGroup.class) PlannerDto plannerDto) throws Exception {
 		checkAuth(req, plannerId);
 		
-		plannerService.updatePlanner(plannerDto);
+		plannerService.updatePlanner(plannerId, plannerDto);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
@@ -164,7 +164,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> newPlan(HttpServletRequest req, @PathVariable int plannerId, @RequestBody @Validated(PlanCreateGroup.class) PlanDto planDto) throws Exception {
 		checkAuth(req, plannerId);
 		
-		int planId = planService.newPlan(planDto);
+		int planId = planService.newPlan(plannerId, planDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", planId));
 	}
 	
@@ -189,7 +189,7 @@ public class PlannerContorller {
 	public ResponseEntity<Object> newPlanLocation(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int planId, @RequestBody @Validated(PlanLocationCreateGroup.class) PlanLocationDto planLocationDto) throws Exception {
 		checkAuth(req, plannerId);
 		
-		int planLocationId = planLocationService.newPlanLocation(planLocationDto);
+		int planLocationId = planLocationService.newPlanLocation(planId, planLocationDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", planLocationId));
 	}
 	

@@ -11,7 +11,7 @@ public interface ReviewDao {
 	public int insertReview(ReviewDto reviewDto, AccountDto accountDto);
 	public List<ReviewDto> findAllReview(SortCriteria sortCriteria, String keyword, PageInfo pageInfo);
 	public ReviewDto findReview(int reviewId);
-	public void updateReview(ReviewDto reviewDto);
+	public void updateReview(int reviewId, ReviewDto reviewDto);
 	public void deleteReview(int reviewId);
 	public int getTotalCount();
 	public int getTotalCountByKeyword(String keyword);

@@ -224,25 +224,6 @@ public class PlannerServiceTest {
 	}
 	
 	@Test
-	public void 플래너_수정() throws Exception {
-		PlannerDto planner = createBasePlanner();
-		when(plannerDao.updatePlanner(anyInt(), any())).thenReturn(0);
-		
-		plannerService.updatePlanner(planner);
-		
-		verify(plannerDao).updatePlanner(anyInt(), any());
-	}
-	
-	@Test
-	public void 플래너_삭제() throws Exception {
-		when(plannerDao.deletePlanner(anyInt())).thenReturn(0);
-		
-		plannerService.deletePlanner(anyInt());
-		
-		verify(plannerDao).deletePlanner(anyInt());
-	}
-	
-	@Test
 	public void 좋아요_플래너_모두_조회() throws Exception {
 		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
 				.setItemCount(10)

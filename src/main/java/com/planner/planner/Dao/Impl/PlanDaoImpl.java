@@ -35,12 +35,12 @@ public class PlanDaoImpl implements PlanDao {
 	}
 
 	@Override
-	public int insertPlan(PlanDto planDto) {
+	public int insertPlan(int plannerId, PlanDto planDto) {
 		int result = jdbcTemplate.update(conn -> {
 			PreparedStatement ps = conn.prepareStatement(INSERT_PlAN_SQL, new String[] { "plan_id" });
 			ps.setDate(1, Date.valueOf(planDto.getPlanDate()));
-			ps.setInt(2, planDto.getPlannerId());
-			ps.setInt(3, planDto.getPlannerId());
+			ps.setInt(2, plannerId);
+			ps.setInt(3, plannerId);
 			return ps;
 		}, keyHolder);
 		return keyHolder.getKey().intValue();

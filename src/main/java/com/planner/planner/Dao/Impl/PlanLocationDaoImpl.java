@@ -37,7 +37,7 @@ public class PlanLocationDaoImpl implements PlanLocationDao {
 	}
 
 	@Override
-	public int insertPlanLocation(PlanLocationDto planLocationDto) {
+	public int insertPlanLocation(int planId, PlanLocationDto planLocationDto) {
 		int result = jdbcTemplate.update(conn -> {
 			PreparedStatement ps = conn.prepareStatement(INSERT_PLANLOCATION_SQL, new String[] { "plan_location_id" });
 			ps.setString(1, planLocationDto.getLocationName());
@@ -47,8 +47,8 @@ public class PlanLocationDaoImpl implements PlanLocationDao {
 			ps.setDouble(5, planLocationDto.getLocationMapx());
 			ps.setDouble(6, planLocationDto.getLocationMapy());
 			ps.setInt(7, planLocationDto.getLocationTransportation());
-			ps.setInt(8, planLocationDto.getPlanId());
-			ps.setInt(9, planLocationDto.getPlanId());
+			ps.setInt(8, planId);
+			ps.setInt(9, planId);
 			return ps;
 		}, keyHolder);
 		

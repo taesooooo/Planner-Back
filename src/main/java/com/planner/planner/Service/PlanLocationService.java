@@ -4,7 +4,7 @@ import com.planner.planner.Dto.PlanLocationDto;
 
 public interface PlanLocationService {
 	// 일정 여행지 추가, 수정, 삭제
-	public int newPlanLocation(PlanLocationDto planLocationDto) throws Exception;
+	public int newPlanLocation(int planId, PlanLocationDto planLocationDto) throws Exception;
 
 	public void updatePlanLocation(int planLocationId, PlanLocationDto planLocationDto) throws Exception;
 

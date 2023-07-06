@@ -11,7 +11,7 @@ public interface PlannerService {
 	public Page<PlannerDto> findPlannersByAccountId(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 	public Page<PlannerDto> findPlannerAll(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 	public Page<PlannerDto> getLikePlannerList(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
-	public void updatePlanner(PlannerDto plannerDto) throws Exception;
+	public void updatePlanner(int plannerId, PlannerDto plannerDto) throws Exception;
 	public void deletePlanner(int plannerId) throws Exception;
 	
 	// 메모, 일정, 여행지 플래너 메소드에서 모두 가져옴
