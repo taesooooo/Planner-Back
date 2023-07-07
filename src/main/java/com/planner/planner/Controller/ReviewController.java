@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Common.Page;
+import com.planner.planner.Common.ValidationGroups.ReviewCreateGroup;
+import com.planner.planner.Common.ValidationGroups.ReviewUpdateGroup;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Exception.ForbiddenException;
@@ -36,7 +39,7 @@ public class ReviewController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Object> writeReview(HttpServletRequest req, @RequestBody @Valid ReviewDto reviewDto) throws Exception {
+	public ResponseEntity<Object> writeReview(HttpServletRequest req, @RequestBody @Validated(ReviewCreateGroup.class) ReviewDto reviewDto) throws Exception {
 		int userId = UserIdUtil.getUserId(req);
 		int reviewId = reviewService.insertReview(userId, reviewDto);
 
@@ -58,7 +61,7 @@ public class ReviewController {
 	}
 	
 	@PatchMapping(value="/{reviewId}")
-	public ResponseEntity<Object> updateReivew(HttpServletRequest req, @PathVariable int reviewId, @RequestBody @Valid ReviewDto reviewDto) throws Exception {
+	public ResponseEntity<Object> updateReivew(HttpServletRequest req, @PathVariable int reviewId, @RequestBody @Validated(ReviewUpdateGroup.class) ReviewDto reviewDto) throws Exception {
 		checkAuth(req, reviewId);
 		
 		ReviewDto review = reviewService.findReview(reviewId);

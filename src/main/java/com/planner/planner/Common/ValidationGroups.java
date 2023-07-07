@@ -10,4 +10,6 @@ public class ValidationGroups {
 	public interface PlanUpdateGroup { };
 	public interface PlanLocationCreateGroup { };
 	public interface PlanLocationUpdateGroup { };
+	public interface ReviewCreateGroup { };
+	public interface ReviewUpdateGroup { };
 }
