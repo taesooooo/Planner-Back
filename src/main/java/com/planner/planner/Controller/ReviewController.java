@@ -62,7 +62,7 @@ public class ReviewController {
 	
 	@PatchMapping(value="/{reviewId}")
 	public ResponseEntity<Object> updateReivew(HttpServletRequest req, @PathVariable int reviewId, @RequestBody @Validated(ReviewUpdateGroup.class) ReviewDto reviewDto) throws Exception {
-		checkAuth(req, reviewId);
+		//checkAuth(req, reviewId);
 		
 		ReviewDto review = reviewService.findReview(reviewId);
 		if(review == null) {
@@ -76,7 +76,7 @@ public class ReviewController {
 	
 	@DeleteMapping(value="/{reviewId}")
 	public ResponseEntity<Object> deleteReview(HttpServletRequest req, @PathVariable int reviewId) throws Exception {
-		checkAuth(req, reviewId);
+		//checkAuth(req, reviewId);
 		
 		ReviewDto review = reviewService.findReview(reviewId);
 		if(review == null) {

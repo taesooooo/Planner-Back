@@ -8,75 +8,54 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.planner.planner.Interceptor.PathList;
 
 public class PathListTest {
-	
+
 	@Test
-	public void isPass_pass_test() {
+	public void isPass_pass_1_test() {
 		PathList pl = new PathList();
-		pl.excludePath("/api/test", RequestMethod.GET);
-		pl.addPath("/api/test", RequestMethod.GET);
+		pl.excludePath("/api/test/test", null);
 		
-		assertThat(pl.isPass("/api/test", RequestMethod.GET)).isEqualTo(true);
+		assertThat(pl.isPass("/api/test/test", RequestMethod.GET)).isEqualTo(true);
 	}
 	
 	@Test
 	public void isPass_pass_2_test() {
 		PathList pl = new PathList();
-		pl.excludePath("/api/*", RequestMethod.GET);
-		pl.addPath("/api/*", RequestMethod.GET);
+		pl.excludePath("/api/test/test", RequestMethod.GET);
+		pl.excludePath("/api/test2", null);
 		
-		assertThat(pl.isPass("/api/test", RequestMethod.GET)).isEqualTo(true);
+		assertThat(pl.isPass("/api/test2", RequestMethod.POST)).isEqualTo(true);
 	}
 	
 	@Test
 	public void isPass_pass_3_test() {
 		PathList pl = new PathList();
-		pl.excludePath("/api/test/test", null);
 		pl.addPath("/api/test", RequestMethod.GET);
 		
 		assertThat(pl.isPass("/api/test/test", RequestMethod.GET)).isEqualTo(true);
 	}
 	
 	@Test
-	public void isPass_pass_4_test() {
+	public void isPass_not_pass_1_test() {
 		PathList pl = new PathList();
-		pl.excludePath("/api/test/test", RequestMethod.GET);
-		pl.addPath("/api/test", RequestMethod.GET);
+		pl.addPath("/api/test/test", null);
 		
-		assertThat(pl.isPass("/api/test/test", null)).isEqualTo(true);
+		assertThat(pl.isPass("/api/test/test", RequestMethod.GET)).isEqualTo(false);
 	}
 	
 	@Test
-	public void isPass_notPass_test() {
+	public void isPass_not_pass_2_test() {
 		PathList pl = new PathList();
-		pl.addPath("/api/test", RequestMethod.GET);
+		pl.addPath("/api/test/test", RequestMethod.GET);
 		
-		assertThat(pl.isPass("/api/test", RequestMethod.GET)).isEqualTo(false);
+		assertThat(pl.isPass("/api/test/test", RequestMethod.GET)).isEqualTo(false);
 	}
 	
 	@Test
-	public void isPass_notPass_2_test() {
+	public void isPass_not_pass_3_test() {
 		PathList pl = new PathList();
-		pl.excludePath("/api/test/test", RequestMethod.GET);
-		pl.addPath("/api/*", RequestMethod.GET);
+		pl.addPath("/api/test/*", RequestMethod.GET);
 		
-		assertThat(pl.isPass("/api/test", RequestMethod.GET)).isEqualTo(false);
-	}
-
-	@Test
-	public void isPass_notPass_3_test() {
-		PathList pl = new PathList();
-		pl.excludePath("/api/test/test", RequestMethod.GET);
-		pl.addPath("/api/test", RequestMethod.GET);
-		
-		assertThat(pl.isPass("/api/test", null)).isEqualTo(false);
+		assertThat(pl.isPass("/api/test/test", RequestMethod.GET)).isEqualTo(false);
 	}
 	
-	@Test
-	public void isPass_notPass_4_test() {
-		PathList pl = new PathList();
-		pl.excludePath("/api/test/test", RequestMethod.GET);
-		pl.addPath("/api/test", null);
-		
-		assertThat(pl.isPass("/api/test", RequestMethod.POST)).isEqualTo(false);
-	}
 }

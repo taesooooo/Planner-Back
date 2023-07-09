@@ -1,5 +1,6 @@
 package com.planner.planner.Interceptor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,44 +10,69 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 public class PathList {
 	private PathMatcher pathMatcher;
-	private Map<String, RequestMethod> addPathList;
-	private Map<String, RequestMethod> excludePathList;
+	private Map<String, ArrayList<RequestMethod>> addPathList;
+	private Map<String, ArrayList<RequestMethod>> excludePathList;
 	
 	public PathList() {
 		this.pathMatcher = new AntPathMatcher();
-		this.addPathList = new HashMap<String, RequestMethod>();
-		this.excludePathList = new HashMap<String, RequestMethod>();
+		this.addPathList = new HashMap<String, ArrayList<RequestMethod>>();
+		this.excludePathList = new HashMap<String, ArrayList<RequestMethod>>();
 	}
 	
-	public Boolean isPass(String path, RequestMethod pathMethod) {		
-		boolean hasExcludePath = excludePathList.entrySet().stream()
-				.anyMatch(t -> pathMatch(t.getKey(), t.getValue(), path, pathMethod) );
+	public Boolean isPass(String path, RequestMethod pathMethod) {
+		if(addPathList.isEmpty() && excludePathList.isEmpty()) {
+			return false;
+		}
 		
-		boolean hasAddPath = addPathList.entrySet().stream()
+		boolean hasExcludePath = excludePathList.entrySet().stream()
 				.anyMatch(t -> pathMatch(t.getKey(), t.getValue(), path, pathMethod) );
 		
 		if(hasExcludePath) {
 			return true;
 		}
 		
+		boolean hasAddPath = addPathList.entrySet().stream()
+				.anyMatch(t -> pathMatch(t.getKey(), t.getValue(), path, pathMethod) );
+		
 		if(hasAddPath) {
 			return false;
 		}
-		else 
-		{
-			return false;
+		
+		if(!hasAddPath && !addPathList.isEmpty()) {
+			return true;
 		}
+		
+		return false;
 	}
 	
-	private boolean pathMatch(String path, RequestMethod pathMethod, String targetPath, RequestMethod targetPathMethod) {
-		return pathMatcher.match(path, targetPath) && (targetPathMethod == null ? true : pathMethod == null ? true : pathMethod.equals(targetPathMethod));
+	private boolean pathMatch(String path,  ArrayList<RequestMethod> pathMethods, String targetPath, RequestMethod targetPathMethod) {
+		boolean match = pathMethods.stream().anyMatch(item -> item == null ? true: item.equals(targetPathMethod));
+		
+		return pathMatcher.match(path, targetPath) && (targetPathMethod == null ? true : pathMethods.isEmpty() ? true : match);
 	}
 	
 	public void addPath(String path, RequestMethod pathMethod) {
-		this.addPathList.put(path, pathMethod);
+		ArrayList<RequestMethod> list = addPathList.get(path);
+		if(list == null) {
+			list = new ArrayList<RequestMethod>();
+			list.add(pathMethod);
+		}
+		else {
+			list.add(pathMethod);
+		}
+		
+		this.addPathList.put(path, list);
 	}
 	
 	public void excludePath(String path, RequestMethod pathMethod) {
-		this.excludePathList.put(path, pathMethod);
+		ArrayList<RequestMethod> list = excludePathList.get(path);
+		if(list == null) {
+			list = new ArrayList<RequestMethod>();
+			list.add(pathMethod);
+		}
+		else {
+			list.add(pathMethod);
+		}
+		this.excludePathList.put(path, list);
 	}
 }

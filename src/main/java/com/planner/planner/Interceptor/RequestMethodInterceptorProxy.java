@@ -6,11 +6,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-public class RequestMethodProxyInterceptor implements HandlerInterceptor {
+public class RequestMethodInterceptorProxy implements HandlerInterceptor {
 	private PathList pathList;
 	private HandlerInterceptor handlerInterceptor;
 	
-	public RequestMethodProxyInterceptor(HandlerInterceptor handlerInterceptor) {
+	public RequestMethodInterceptorProxy(HandlerInterceptor handlerInterceptor) {
 		this.pathList = new PathList();
 		this.handlerInterceptor = handlerInterceptor;
 	}
@@ -30,12 +30,12 @@ public class RequestMethodProxyInterceptor implements HandlerInterceptor {
 		}
 	}
 	
-	public RequestMethodProxyInterceptor addPath(String path, RequestMethod method) {
+	public RequestMethodInterceptorProxy addPath(String path, RequestMethod method) {
 		this.pathList.addPath(path, method);
 		return this;
 	}
 	
-	public RequestMethodProxyInterceptor excludePath(String path, RequestMethod method) {
+	public RequestMethodInterceptorProxy excludePath(String path, RequestMethod method) {
 		this.pathList.excludePath(path, method);
 		return this;
 	}
