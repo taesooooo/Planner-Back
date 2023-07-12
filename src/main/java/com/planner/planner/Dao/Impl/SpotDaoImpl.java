@@ -123,8 +123,8 @@ public class SpotDaoImpl implements SpotDao {
 	}
 
 	@Override
-	public boolean selectSpotLikeByContentId(int accountId, int contentId) {
-		if(accountId <= 0) {
+	public boolean selectSpotLikeByContentId(Integer accountId, int contentId) {
+		if(accountId == null) {
 			return false;
 		}
 		

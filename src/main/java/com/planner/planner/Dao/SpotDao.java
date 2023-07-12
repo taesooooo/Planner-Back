@@ -18,6 +18,6 @@ public interface SpotDao {
 	
 	public int selectSpotLikeCountByContentId(int contentId) throws Exception;
 	public List<SpotLikeCountDto> selectSpotLikeCountByContentIdList(List<Integer> contentIdList) throws Exception;
-	public boolean selectSpotLikeByContentId(int accountId, int contentId) throws Exception;
+	public boolean selectSpotLikeByContentId(Integer accountId, int contentId) throws Exception;
 	public List<SpotLikeDto> selectSpotLikeByContentIdList(Integer accountId, List<Integer> contentIdList) throws Exception;
 }
