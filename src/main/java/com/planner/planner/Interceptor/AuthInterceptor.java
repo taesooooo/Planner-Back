@@ -10,7 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.planner.planner.Exception.AuthCheckFail;
 import com.planner.planner.Exception.NotFoundToken;
-import com.planner.planner.util.JwtUtil;
+import com.planner.planner.Util.JwtUtil;
 
 public class AuthInterceptor implements HandlerInterceptor {
 

@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -18,13 +16,12 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import com.planner.planner.Common.Converter.PostTypeConverter;
 import com.planner.planner.Common.Converter.SortCriteriaConverter;
 import com.planner.planner.Interceptor.AuthInterceptor;
-import com.planner.planner.Interceptor.RequestMethodInterceptorProxy;
 import com.planner.planner.Interceptor.DataAccessAuthInterceptor;
-import com.planner.planner.Service.ReviewService;
+import com.planner.planner.Interceptor.RequestMethodInterceptorProxy;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = { "com.planner.planner.Controller", "com.planner.planner.Handler", "com.planner.planner.Config", "com.planner.planner.Interceptor"})
+@ComponentScan(basePackages = { "com.planner.planner.Controller", "com.planner.planner.Handler",  "com.planner.planner.Interceptor"})
 @PropertySource("classpath:config/config.properties")
 public class ServletAppContext implements WebMvcConfigurer {
 	@Value("${upload.path}")
@@ -60,6 +57,9 @@ public class ServletAppContext implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		RequestMethodInterceptorProxy methodProxyInterceptor = new RequestMethodInterceptorProxy(authInterceptor())
 				.excludePath("/api/auth/**", null)
+				.excludePath("/api/users/find-email", null)
+				.excludePath("/api/users/find-password", null)
+				.excludePath("/api/users/change-password", null)
 				.excludePath("/api/upload/files/**", null)
 				.excludePath("/api/spots/area-codes", RequestMethod.GET)
 				.excludePath("/api/spots/lists-area", RequestMethod.GET)
@@ -85,7 +85,4 @@ public class ServletAppContext implements WebMvcConfigurer {
 		registry.addConverter(new PostTypeConverter());
 		registry.addConverter(new SortCriteriaConverter());
 	}
-	
-	
-
 }

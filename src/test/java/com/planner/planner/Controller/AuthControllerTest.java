@@ -26,11 +26,13 @@ import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
+import com.planner.planner.Config.ValidationConfig;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.AuthenticationCodeDto;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
+@ContextConfiguration(classes = { ValidationConfig.class, RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
 @Sql(scripts = {"classpath:/Planner_Test_DB.sql"})
 @Transactional
 public class AuthControllerTest {
@@ -68,6 +70,7 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -95,6 +98,7 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -122,6 +126,7 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -149,6 +154,7 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -176,6 +182,7 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -203,6 +210,7 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -230,6 +238,7 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -257,6 +266,7 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -284,6 +294,7 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -311,6 +322,7 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -325,10 +337,115 @@ public class AuthControllerTest {
 		node.put("password", "1234");
 
 		mockMvc.perform(post("/api/auth/login")
+				.servletPath("/api/auth/login")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
 		.andDo(print())
 		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 인증코드_전송_정상() throws Exception {
+		String phone = "01094124113";
+		this.mockMvc.perform(post("/api/auth/authentication-code/send")
+				.servletPath("/api/auth/authentication-code/send")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.param("phone", phone))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 인증코드_전송_휴대폰번호_미작성_유효성검사() throws Exception {
+		String phone = "";
+		this.mockMvc.perform(post("/api/auth/authentication-code/send")
+				.servletPath("/api/auth/authentication-code/send")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.param("phone", phone))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 인증코드_전송_휴대폰번호_11글자_이하_유효성검사() throws Exception {
+		String phone = "01012345";
+		this.mockMvc.perform(post("/api/auth/authentication-code/send")
+				.servletPath("/api/auth/authentication-code/send")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.param("phone", phone))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 인증코드_확인_정상() throws Exception {
+		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
+				.setPhone("01012345678")
+				.setCode("123456")
+				.build();
+		
+		this.mockMvc.perform(post("/api/auth/authentication-code/check")
+				.servletPath("/api/auth/authentication-code/check")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(authenticationCodeDto)))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 인증코드_확인_휴대폰번호_미작성_유효성검사() throws Exception {
+		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
+				.setPhone("")
+				.setCode("123456")
+				.build();
+		
+		this.mockMvc.perform(post("/api/auth/authentication-code/check")
+				.servletPath("/api/auth/authentication-code/check")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(authenticationCodeDto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 인증코드_확인_인증코드_미작성_유효성검사() throws Exception {
+		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
+				.setPhone("01012345678")
+				.setCode("")
+				.build();
+		
+		this.mockMvc.perform(post("/api/auth/authentication-code/check")
+				.servletPath("/api/auth/authentication-code/check")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(authenticationCodeDto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 인증코드_확인_인증코드_6글자_유효성검사() throws Exception {
+		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
+				.setPhone("01012345678")
+				.setCode("1234")
+				.build();
+		
+		this.mockMvc.perform(post("/api/auth/authentication-code/check")
+				.servletPath("/api/auth/authentication-code/check")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(authenticationCodeDto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
 	}
 }

@@ -25,8 +25,8 @@ import com.planner.planner.Dto.OpenApi.AreaCodeDto;
 import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.OpenApiDto;
 import com.planner.planner.Service.SpotService;
-import com.planner.planner.util.ResponseMessage;
-import com.planner.planner.util.UserIdUtil;
+import com.planner.planner.Util.ResponseMessage;
+import com.planner.planner.Util.UserIdUtil;
 
 @RestController
 @RequestMapping(value = "api/spots")

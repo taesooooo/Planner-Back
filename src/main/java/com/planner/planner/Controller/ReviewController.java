@@ -24,8 +24,8 @@ import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.ReviewService;
-import com.planner.planner.util.ResponseMessage;
-import com.planner.planner.util.UserIdUtil;
+import com.planner.planner.Util.ResponseMessage;
+import com.planner.planner.Util.UserIdUtil;
 
 @RestController
 @RequestMapping(value="/api/reviews")

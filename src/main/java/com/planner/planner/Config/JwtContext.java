@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
-import com.planner.planner.util.JwtUtil;
+import com.planner.planner.Util.JwtUtil;
 
 @Configuration
 @PropertySource("classpath:config/config.properties")

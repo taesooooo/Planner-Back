@@ -39,8 +39,8 @@ import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dao.CommentDao;
 import com.planner.planner.Dto.CommentDto;
 import com.planner.planner.Service.CommentService;
-import com.planner.planner.util.JwtUtil;
-import com.planner.planner.util.UserIdUtil;
+import com.planner.planner.Util.JwtUtil;
+import com.planner.planner.Util.UserIdUtil;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)

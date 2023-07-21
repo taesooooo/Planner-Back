@@ -3,6 +3,7 @@ package com.planner.planner.Controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,14 +26,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Dto.CommonRequestParamDto;
-import com.planner.planner.util.JwtUtil;
+import com.planner.planner.Dto.AuthenticationCodeDto;
+import com.planner.planner.Dto.FindPasswordDto;
+import com.planner.planner.Dto.PasswordDto;
+import com.planner.planner.Util.JwtUtil;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -280,5 +282,153 @@ public class AccountControllerTest {
 		.andDo(print())
 		.andExpect(status().isNotFound());
 	}
+	
+	@Test
+	public void 계정_찾기_유효성검사_공백() throws Exception {
+		String url = "/api/users/find-email";
+		AuthenticationCodeDto dto = new AuthenticationCodeDto.Builder()
+				.setPhone("")
+				.setCode("")
+				.build();
+		
+		this.mockMvc.perform(post(url)
+				.servletPath(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.message.phone").exists())
+		.andExpect(jsonPath("$.message.code").exists());
+	}
 
+	@Test
+	public void 계정_찾기_유효성검사_잘못된입력() throws Exception {
+		String url = "/api/users/find-email";
+		AuthenticationCodeDto dto = new AuthenticationCodeDto.Builder()
+				.setPhone("010")
+				.setCode("0")
+				.build();
+		
+		this.mockMvc.perform(post(url)
+				.servletPath(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.message.phone").exists())
+		.andExpect(jsonPath("$.message.code").exists());
+	}
+	
+	@Test
+	public void 계정_찾기_정상() throws Exception {
+		String url = "/api/users/find-email";
+		AuthenticationCodeDto dto = new AuthenticationCodeDto.Builder()
+				.setPhone("01012345678")
+				.setCode("123456")
+				.build();
+		
+		this.mockMvc.perform(post(url)
+				.servletPath(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 비밀번호_찾기_유효성검사_공백() throws Exception {
+		String url = "/api/users/find-password";
+		FindPasswordDto dto = new FindPasswordDto.Builder().setEmail("").build();
+		
+		this.mockMvc.perform(post(url)
+				.servletPath(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 비밀번호_찾기_정상() throws Exception {
+		String url = "/api/users/find-password";
+		FindPasswordDto dto = new FindPasswordDto.Builder().setEmail("test@naver.com").build();
+		
+		this.mockMvc.perform(post(url)
+				.servletPath(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 비밀번호_변경_유효성검사_공백() throws Exception {
+		String url = "/api/users/change-password";
+		PasswordDto dto = new PasswordDto.Builder()
+				.setNewPassword("")
+				.setConfirmPassword("")
+				.setKey("")
+				.build();
+		
+		this.mockMvc.perform(post(url)
+				.servletPath(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.message.newPassword").exists())
+		.andExpect(jsonPath("$.message.confirmPassword").exists())
+		.andExpect(jsonPath("$.message.key").exists());
+	}
+	
+	@Test
+	public void 비밀번호_변경_비밀번호_다름() throws Exception {
+		String url = "/api/users/change-password";
+		PasswordDto dto = new PasswordDto.Builder()
+				.setNewPassword("abcdefghijk!")
+				.setConfirmPassword("abcdefghijk")
+				.setKey("")
+				.build();
+		
+		this.mockMvc.perform(post(url)
+				.servletPath(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.message.equalsPassword").exists());
+	}
+	
+	@Test
+	public void 비밀번호_변경_정상() throws Exception {
+		String url = "/api/users/change-password";
+		PasswordDto dto = new PasswordDto.Builder()
+				.setNewPassword("test")
+				.setConfirmPassword("test")
+				.setKey("b7d2703cc82093b67c55cf33e8c40ed46f92bd7bcebe6323ab35fcbbfb9cdf2e")
+				.build();
+		
+		this.mockMvc.perform(post(url)
+				.servletPath(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
 }

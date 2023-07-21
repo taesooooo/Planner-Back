@@ -10,13 +10,14 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import com.planner.planner.util.FileStore;
+import com.planner.planner.Util.FileStore;
 
 @Configuration
 @Profile("dev")
-@ComponentScan(basePackages = {"com.planner.planner.Service", "com.planner.planner.Dao"})
+@ComponentScan(basePackages = {"com.planner.planner.Service", "com.planner.planner.Dao", "com.planner.planner.Util", "com.planner.planner.Config"})
 @PropertySource("classpath:config/config.properties")
 @EnableTransactionManagement
 public class RootAppDevContext {
@@ -58,5 +59,10 @@ public class RootAppDevContext {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate();
 		jdbcTemplate.setDataSource(dataSource());
 		return jdbcTemplate;
+	}
+	
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
 	}
 }

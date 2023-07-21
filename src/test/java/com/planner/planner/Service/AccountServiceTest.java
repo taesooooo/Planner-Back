@@ -11,8 +11,6 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -27,15 +25,13 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.planner.planner.Common.Image;
-import com.planner.planner.Common.Page;
-import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.Impl.AccountServiceImpl;
 import com.planner.planner.Service.Impl.PlannerServiceImpl;
-import com.planner.planner.util.FileStore;
+import com.planner.planner.Util.FileStore;
 
 public class AccountServiceTest {
 	private static final Logger logger = LoggerFactory.getLogger(AccountServiceTest.class);
@@ -115,18 +111,6 @@ public class AccountServiceTest {
 		verify(accountDao).accountImageUpdate(anyInt(), anyString());
 
 		assertTrue(new File(dir.getAbsolutePath() + File.separator + "test.jpg").exists());
-		assertTrue(result);
-	}
-
-	@Test
-	public void 계정패스트워드변경() {
-		AccountDto ac = testDto;
-		when(accountDao.passwordUpdate(ac)).thenReturn(true);
-
-		boolean result = accountService.passwordUpdate(testDto);
-
-		verify(accountDao).passwordUpdate(ac);
-
 		assertTrue(result);
 	}
 	

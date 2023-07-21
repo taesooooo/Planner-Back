@@ -31,7 +31,7 @@ import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.ReviewDto;
-import com.planner.planner.util.JwtUtil;
+import com.planner.planner.Util.JwtUtil;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)

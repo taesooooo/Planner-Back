@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.planner.planner.Dto.CommentDto;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.CommentService;
-import com.planner.planner.util.ResponseMessage;
-import com.planner.planner.util.UserIdUtil;
+import com.planner.planner.Util.ResponseMessage;
+import com.planner.planner.Util.UserIdUtil;
 
 @RestController
 @RequestMapping(value = "/api")

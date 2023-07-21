@@ -1,17 +1,19 @@
 package com.planner.planner.Controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,15 +22,23 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Common.Page;
-import com.planner.planner.Common.ValidationGroups.AccountUpdateGroup;
 import com.planner.planner.Common.PostType;
+import com.planner.planner.Common.ValidationGroups.AccountUpdateGroup;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.AuthenticationCodeDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
+import com.planner.planner.Dto.FindPasswordDto;
+import com.planner.planner.Dto.PasswordDto;
+import com.planner.planner.Dto.PasswordResetkeyDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.AccountService;
-import com.planner.planner.util.ResponseMessage;
-import com.planner.planner.util.UserIdUtil;
+import com.planner.planner.Service.AuthenticationCodeService;
+import com.planner.planner.Service.EmailService;
+import com.planner.planner.Service.PasswordResetKeyService;
+import com.planner.planner.Util.RandomCode;
+import com.planner.planner.Util.ResponseMessage;
+import com.planner.planner.Util.UserIdUtil;
 
 @RestController
 @RequestMapping(value = "/api/users")
@@ -36,9 +46,18 @@ public class AccountController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
 	private AccountService accountService;
+	private AuthenticationCodeService authenticationCodeService;
+	private PasswordResetKeyService passwordResetKeyService;
+	private EmailService mailService;
+	private RandomCode randomCode;
 
-	public AccountController(AccountService accountService) {
+	public AccountController(AccountService accountService, AuthenticationCodeService authenticationCodeService,
+			PasswordResetKeyService passwordResetKeyService, EmailService mailService, RandomCode randomCode) {
 		this.accountService = accountService;
+		this.authenticationCodeService = authenticationCodeService;
+		this.passwordResetKeyService = passwordResetKeyService;
+		this.mailService = mailService;
+		this.randomCode = randomCode;
 	}
 
 	@GetMapping(value = "/{accountId}")
@@ -101,6 +120,49 @@ public class AccountController {
 		boolean emailCheck = accountService.searchEmail(searchString);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", emailCheck));
+	}
+	
+	@PostMapping(value = "/find-email")
+	public ResponseEntity<Object> findEmail(HttpServletRequest req, @RequestBody @Valid AuthenticationCodeDto authenticationCodeDto) throws Exception {
+		boolean check = authenticationCodeService.codeCheck(authenticationCodeDto);
+		if(!check) {
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, "인증 코드를 정확히 입력해주세요."));
+		}
+		
+		List<String> foundEmails = accountService.findEmailByPhone(authenticationCodeDto.getPhone());
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", foundEmails));
+	}
+	
+	
+	@PostMapping(value = "/find-password")
+	public ResponseEntity<Object> findPassword(@RequestBody @Valid FindPasswordDto findPasswordDto) throws Exception {
+		String mail = findPasswordDto.getEmail();
+		
+		AccountDto user = accountService.findByEmail(mail);
+		
+		String resetKey = randomCode.createStrCode(6, true);
+		
+		passwordResetKeyService.createPasswordResetKey(resetKey, user.getAccountId());
+		
+		mailService.sendPasswordResetEmail(mail,resetKey);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "비밀번호 재설정 메일이 전송 되었습니다."));
+	}
+	
+	@PostMapping(value = "/change-password")
+	public ResponseEntity<Object> changePassword(@RequestBody @Valid PasswordDto passwordDto) {
+		boolean check = passwordResetKeyService.validatePasswordResetKey(passwordDto.getKey());
+		if(check) {
+			PasswordResetkeyDto resetKey = passwordResetKeyService.findBykey(passwordDto.getKey());
+			
+			accountService.passwordUpdate(resetKey.getAccountId(), passwordDto.getNewPassword());
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(true, "만료되었습니다. 비밀번호 재설정을 다시 시도 하세요."));
+		}
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "비밀번호가 재설정 되었습니다."));
 	}
 	
 	private void checkAuth(HttpServletRequest req, int accountId) throws Exception {

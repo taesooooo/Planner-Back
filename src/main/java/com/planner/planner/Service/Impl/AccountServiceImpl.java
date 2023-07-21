@@ -1,9 +1,11 @@
 package com.planner.planner.Service.Impl;
 
 import java.io.File;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,13 +18,15 @@ import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
+import com.planner.planner.Dto.FindEmailDto;
+import com.planner.planner.Dto.PasswordDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.PlannerService;
 import com.planner.planner.Service.SpotService;
-import com.planner.planner.util.FileStore;
+import com.planner.planner.Util.FileStore;
 
 @Service
 @Transactional
@@ -36,20 +40,41 @@ public class AccountServiceImpl implements AccountService {
 	private SpotService spotService;
 
 	private FileStore fileStore;
+	private BCryptPasswordEncoder passwordEncoder;
 
 	public AccountServiceImpl(AccountDao accountDao, PlannerService plannerService, PlannerDao plannerDao,
-			PlanMemberDao planMemberDao, SpotService spotService, FileStore fileStore) {
+			PlanMemberDao planMemberDao, SpotService spotService, FileStore fileStore,
+			BCryptPasswordEncoder passwordEncoder) {
 		this.accountDao = accountDao;
 		this.plannerService = plannerService;
 		this.plannerDao = plannerDao;
 		this.planMemberDao = planMemberDao;
 		this.spotService = spotService;
 		this.fileStore = fileStore;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	@Override
 	public AccountDto findById(int accountId) throws Exception {
 		AccountDto user = accountDao.findById(accountId);
+		if(user == null) {
+			throw new NotFoundUserException();
+		}
+		return user;
+	}
+
+	@Override
+	public List<String> findEmailByPhone(String phone) throws Exception {
+		List<String> emails = accountDao.findEmailByPhone(phone);
+		if(emails.isEmpty()) {
+			throw new NotFoundUserException("해당 정보로 가입된 계정이 없습니다.");
+		}
+		return emails;
+	}
+
+	@Override
+	public AccountDto findByEmail(String email) throws Exception {
+		AccountDto user = accountDao.findByEmail(email);
 		if(user == null) {
 			throw new NotFoundUserException();
 		}
@@ -85,8 +110,10 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public boolean passwordUpdate(AccountDto accountDto) {
-		return accountDao.passwordUpdate(accountDto);
+	public boolean passwordUpdate(int accountId, String password) {
+		String newPassword = passwordEncoder.encode(password);
+		
+		return accountDao.passwordUpdate(accountId, newPassword);
 	}
 
 	@Override
@@ -117,4 +144,16 @@ public class AccountServiceImpl implements AccountService {
 		}
 		return true;
 	}
+
+	@Override
+	public String findEmail(FindEmailDto findEmailDto) throws Exception {
+		AccountDto user = accountDao.findAccount(findEmailDto.getUsername(), findEmailDto.getPhone());
+		if(user == null) {
+			throw new NotFoundUserException("해당하는 정보로 가입된 아이디가 존재하지 않습니다.");
+		}
+		
+		return user.getEmail();
+	}
+	
+	
 }

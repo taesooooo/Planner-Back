@@ -33,7 +33,7 @@ import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Exception.NotFoundReviewException;
 import com.planner.planner.Service.Impl.ReviewServiceImpl;
-import com.planner.planner.util.FileStore;
+import com.planner.planner.Util.FileStore;
 
 public class ReviewServiceTest {
 	private static final Logger logger = LoggerFactory.getLogger(ReviewServiceTest.class);
