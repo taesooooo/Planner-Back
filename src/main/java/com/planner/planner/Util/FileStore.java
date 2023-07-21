@@ -1,4 +1,4 @@
-package com.planner.planner.util;
+package com.planner.planner.Util;
 
 import java.io.File;
 import java.io.IOException;

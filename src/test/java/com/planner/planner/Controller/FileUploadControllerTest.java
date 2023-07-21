@@ -32,7 +32,7 @@ import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Service.FileUploadService;
-import com.planner.planner.util.JwtUtil;
+import com.planner.planner.Util.JwtUtil;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)

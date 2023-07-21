@@ -40,8 +40,8 @@ import com.planner.planner.Service.PlanMemoService;
 import com.planner.planner.Service.PlanService;
 import com.planner.planner.Service.PlannerLikeService;
 import com.planner.planner.Service.PlannerService;
-import com.planner.planner.util.ResponseMessage;
-import com.planner.planner.util.UserIdUtil;
+import com.planner.planner.Util.ResponseMessage;
+import com.planner.planner.Util.UserIdUtil;
 
 @RestController
 @RequestMapping(value="/api/planners")

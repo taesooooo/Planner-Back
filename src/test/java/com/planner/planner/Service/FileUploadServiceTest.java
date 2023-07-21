@@ -30,7 +30,7 @@ import com.planner.planner.Dao.FileUploadDao;
 import com.planner.planner.Dto.FileInfoDto;
 import com.planner.planner.Dto.UploadFileDto;
 import com.planner.planner.Service.Impl.FileUploadServiceImpl;
-import com.planner.planner.util.FileStore;
+import com.planner.planner.Util.FileStore;
 
 public class FileUploadServiceTest {
 	

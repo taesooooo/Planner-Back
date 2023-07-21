@@ -1,5 +1,7 @@
 package com.planner.planner.Dao.Impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.PasswordDto;
 import com.planner.planner.RowMapper.AccountRowMapper;
 
 @Repository
@@ -22,6 +25,8 @@ public class AccountDaoImpl implements AccountDao {
 	private final String FIND_BY_NICKNAME = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE nickname = ?";
 	private final String FIND_BY_ID_SQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE account_id = ?";
 	private final String FIND_ACCOUNTID_BY_EMAIL = "SELECT account_id FROM account WHERE email = ?";
+	private final String FIND_ACCOUNT_SQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE name = ? AND phone = ?;";
+	private final String FIND_EMAIL_BY_PHONE_SQL = "SELECT email FROM account WHERE phone = ?";;
 	private final String updateSQL = "UPDATE ACCOUNT SET nickname = ?, phone = ?, update_date = now() WHERE account_id = ?;";
 	private final String deleteSQL = "DELETE FROM ACCOUNT WHERE email = ?;";
 	private final String imageUpdateSQL = "UPDATE account SET image = ?, update_date = now() WHERE account_id = ?";
@@ -49,6 +54,56 @@ public class AccountDaoImpl implements AccountDao {
 			return null;
 		}
 	}
+	
+	@Override
+	public AccountDto findById(int accountId) {
+		try {
+			return jdbcTemplate.queryForObject(FIND_BY_ID_SQL, new AccountRowMapper(), accountId);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public AccountDto findAccountIdByNickName(String nickName) {
+		try {
+			return jdbcTemplate.queryForObject(FIND_BY_NICKNAME, new AccountRowMapper(), nickName);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public AccountDto findAccount(String userName, String phone) {
+		try {
+			return jdbcTemplate.queryForObject(FIND_ACCOUNT_SQL, new AccountRowMapper(), userName, phone);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public List<String> findEmailByPhone(String phone) {
+		try {
+			return jdbcTemplate.queryForList(FIND_EMAIL_BY_PHONE_SQL, String.class, phone);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public AccountDto findByEmail(String email) {
+		try {
+			return jdbcTemplate.queryForObject(FIND_BY_EMAIL, new AccountRowMapper(), email);
+		}
+		catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+	}
 
 	@Override
 	public boolean update(AccountDto accountDto) {
@@ -70,8 +125,8 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public boolean passwordUpdate(AccountDto accountDto) {
-		int result = jdbcTemplate.update(passwordUpdateSQL, accountDto.getPassword(), accountDto.getAccountId());
+	public boolean passwordUpdate(int accountId, String password) {
+		int result = jdbcTemplate.update(passwordUpdateSQL, password, accountId);
 		return result > 0 ? true : false;
 	}
 
@@ -79,26 +134,6 @@ public class AccountDaoImpl implements AccountDao {
 	public boolean nickNameUpdate(AccountDto accountDto) {
 		int result = jdbcTemplate.update(nicknameUpdateSQL, accountDto.getNickname(), accountDto.getAccountId());
 		return result > 0 ? true : false;
-	}
-
-	@Override
-	public AccountDto findById(int accountId) {
-		try {
-			return jdbcTemplate.queryForObject(FIND_BY_ID_SQL, new AccountRowMapper(), accountId);
-		}
-		catch (EmptyResultDataAccessException e) {
-			return null;
-		}
-	}
-
-	@Override
-	public AccountDto findAccountIdByNickName(String nickName) {
-		try {
-			return jdbcTemplate.queryForObject(FIND_BY_NICKNAME, new AccountRowMapper(), nickName);
-		}
-		catch (EmptyResultDataAccessException e) {
-			return null;
-		}
 	}
 
 	@Override
