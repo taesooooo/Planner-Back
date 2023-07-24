@@ -124,9 +124,13 @@ public class AccountController {
 	
 	@PostMapping(value = "/find-email")
 	public ResponseEntity<Object> findEmail(HttpServletRequest req, @RequestBody @Valid AuthenticationCodeDto authenticationCodeDto) throws Exception {
-		boolean check = authenticationCodeService.codeCheck(authenticationCodeDto);
-		if(!check) {
-			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, "인증 코드를 정확히 입력해주세요."));
+		if(authenticationCodeDto.getEmail() == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "", "휴대폰 번호를 입력해주세요."));
+		}
+		
+		AuthenticationCodeDto authCode = authenticationCodeService.findByPhone(authenticationCodeDto.getEmail());
+		if(!authCode.isConfirm()) {
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, "", "인증되지 않았습니다. 다시 시도해 주세요."));
 		}
 		
 		List<String> foundEmails = accountService.findEmailByPhone(authenticationCodeDto.getPhone());

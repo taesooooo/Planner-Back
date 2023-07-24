@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dto.SENS.Messages;
 import com.planner.planner.Dto.SENS.SMSRequestDto;
 import com.planner.planner.Dto.SENS.SMSResponesDto;
@@ -28,6 +29,8 @@ import com.planner.planner.Util.RandomCode;
 public class SENSServiceImpl implements SENSService {
 	
 	private RestTemplate restTemplate;
+	
+	private AuthenticationCodeDao authentcationCodeDao;
 		
 	@Value("${SENS.smsURL}")
 	private String smsURL;
@@ -68,11 +71,11 @@ public class SENSServiceImpl implements SENSService {
 				.setMessages(Arrays.asList(new Messages.Builder().setTo(phone).build()))
 				.build();
 
-		String body = objectMapper.writeValueAsString(request);
+		String body = this.objectMapper.writeValueAsString(request);
 		
 		HttpEntity<String> httpEntity = new HttpEntity<String>(body, header);
 
-		SMSResponesDto response = restTemplate.postForObject(smsURL, httpEntity, SMSResponesDto.class);
+		SMSResponesDto response = this.restTemplate.postForObject(smsURL, httpEntity, SMSResponesDto.class);
 		
 		int statusCode = Integer.parseInt(response.getStatusCode());
 		

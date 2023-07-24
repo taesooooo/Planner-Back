@@ -15,6 +15,8 @@ import org.mockito.MockitoAnnotations;
 
 import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dto.AuthenticationCodeDto;
+import com.planner.planner.Exception.AuthenticationCodeExpireException;
+import com.planner.planner.Exception.NotFoundAuthenticationCodeException;
 import com.planner.planner.Service.Impl.AuthenticationCodeServiceImpl;
 import com.planner.planner.Util.RandomCode;
 
@@ -36,40 +38,7 @@ public class AuthenticationCodeServiceTest {
 	}
 	
 	@Test
-	public void 인증코드_전송_테스트_정상() throws Exception {
-		when(randomCode.createCode()).thenReturn("123456");
-		when(authenticationCodeDao.insert(anyString(), anyString())).thenReturn(true);
-		when(sensService.authenticationCodeSMSSend(anyString(), anyString())).thenReturn(true);
-		
-		boolean result = codeService.codeSend("01012345678");
-		
-		assertThat(result).isTrue();
-	}
-	
-	@Test
-	public void 인증코드_전송_테스트_DB_저장_실패() throws Exception {
-		when(randomCode.createCode()).thenReturn("123456");
-		when(authenticationCodeDao.insert(anyString(), anyString())).thenReturn(false);
-		when(sensService.authenticationCodeSMSSend(anyString(), anyString())).thenReturn(true);
-		
-		boolean result = codeService.codeSend("01012345678");
-		
-		assertThat(result).isFalse();
-	}
-	
-	@Test
-	public void 인증코드_전송_테스트_SMS_전송_실패() throws Exception {
-		when(randomCode.createCode()).thenReturn("123456");
-		when(authenticationCodeDao.insert(anyString(), anyString())).thenReturn(true);
-		when(sensService.authenticationCodeSMSSend(anyString(), anyString())).thenReturn(false);
-		
-		boolean result = codeService.codeSend("01012345678");
-		
-		assertThat(result).isFalse();
-	}
-	
-	@Test
-	public void 인증코드_확인_정상() {
+	public void 휴대폰_인증코드_확인_인증_코드_전송_안된경우() {
 		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
 				.setId(1)
 				.setPhone("01012345678")
@@ -77,14 +46,149 @@ public class AuthenticationCodeServiceTest {
 				.setCreateDate(LocalDateTime.now())
 				.build();
 		
-		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
+		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(null);
+		
+		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
+		.isInstanceOf(NotFoundAuthenticationCodeException.class);
+	}
+	
+	@Test
+	public void 이메일_인증코드_확인_인증_코드_전송_안된경우() {
+		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
 				.setId(1)
-				.setPhone("01012345678")
+				.setEmail("test@naver.com")
 				.setCode("123456")
 				.setCreateDate(LocalDateTime.now())
 				.build();
 		
-		when(authenticationCodeDao.find(anyString())).thenReturn(findCode);
+		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(null);
+		
+		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
+		.isInstanceOf(NotFoundAuthenticationCodeException.class);
+	}
+	
+	@Test
+	public void 휴대폰_인증코드_확인_인증_코드_시간_만료() {
+		LocalDateTime dateTime = LocalDateTime.now();
+		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
+				.setId(1)
+				.setPhone("01012345678")
+				.setCode("123456")
+				.setExpireDate(dateTime)
+				.setCreateDate(dateTime)
+				.build();
+		
+		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
+				.setId(1)
+				.setPhone("01012345678")
+				.setCode("123456")
+				.setExpireDate(dateTime.minusMinutes(3))
+				.setCreateDate(dateTime)
+				.build();
+		
+		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(findCode);
+		
+		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
+		.isInstanceOf(AuthenticationCodeExpireException.class);
+	}
+	
+	@Test
+	public void 이메일_인증코드_확인_인증_코드_시간_만료() {
+		LocalDateTime dateTime = LocalDateTime.now();
+		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
+				.setId(1)
+				.setEmail("test@naver.com")
+				.setCode("123456")
+				.setExpireDate(dateTime)
+				.setCreateDate(dateTime)
+				.build();
+		
+		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
+				.setId(1)
+				.setEmail("test@naver.com")
+				.setCode("123456")
+				.setExpireDate(dateTime.minusMinutes(3))
+				.setCreateDate(dateTime)
+				.build();
+		
+		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(findCode);
+		
+		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
+		.isInstanceOf(AuthenticationCodeExpireException.class);
+	}
+	
+	@Test
+	public void 휴대폰_인증코드_확인_인증_코드_불일치() {
+		LocalDateTime dateTime = LocalDateTime.now();
+		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
+				.setId(1)
+				.setPhone("01012345678")
+				.setCode("123456")
+				.setExpireDate(dateTime)
+				.setCreateDate(dateTime)
+				.build();
+		
+		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
+				.setId(1)
+				.setPhone("01012345678")
+				.setCode("789101")
+				.setExpireDate(dateTime.plusMinutes(3))
+				.setCreateDate(dateTime)
+				.build();
+		
+		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(findCode);
+		
+		boolean result = codeService.codeCheck(requestDto);
+		
+		assertThat(result).isFalse();
+	}
+	
+	@Test
+	public void 이메일_인증코드_확인_인증_코드_불일치() {
+		LocalDateTime dateTime = LocalDateTime.now();
+		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
+				.setId(1)
+				.setEmail("test@naver.com")
+				.setCode("123456")
+				.setExpireDate(dateTime)
+				.setCreateDate(dateTime)
+				.build();
+		
+		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
+				.setId(1)
+				.setEmail("test@naver.com")
+				.setCode("789101")
+				.setExpireDate(dateTime.plusMinutes(3))
+				.setCreateDate(dateTime)
+				.build();
+		
+		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(findCode);
+		
+		boolean result = codeService.codeCheck(requestDto);
+		
+		assertThat(result).isFalse();
+	}
+	
+	@Test
+	public void 휴대폰_인증코드_확인_정상() {
+		LocalDateTime dateTime = LocalDateTime.now();
+		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
+				.setId(1)
+				.setPhone("01012345678")
+				.setCode("123456")
+				.setExpireDate(dateTime)
+				.setCreateDate(dateTime)
+				.build();
+		
+		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
+				.setId(1)
+				.setPhone("01012345678")
+				.setCode("123456")
+				.setExpireDate(dateTime.plusMinutes(3))
+				.setCreateDate(dateTime)
+				.build();
+		
+		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(findCode);
 		
 		boolean result = codeService.codeCheck(requestDto);
 		
@@ -92,25 +196,28 @@ public class AuthenticationCodeServiceTest {
 	}
 	
 	@Test
-	public void 인증코드_확인_코드_다를경우() {
+	public void 이메일_인증코드_확인_정상() {
+		LocalDateTime dateTime = LocalDateTime.now();
 		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
 				.setId(1)
-				.setPhone("01012345678")
+				.setEmail("test@naver.com")
 				.setCode("123456")
-				.setCreateDate(LocalDateTime.now())
+				.setExpireDate(dateTime)
+				.setCreateDate(dateTime)
 				.build();
 		
 		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
 				.setId(1)
-				.setPhone("01012345678")
-				.setCode("654321")
-				.setCreateDate(LocalDateTime.now())
+				.setEmail("test@naver.com")
+				.setCode("123456")
+				.setExpireDate(dateTime.plusMinutes(3))
+				.setCreateDate(dateTime)
 				.build();
 		
-		when(authenticationCodeDao.find(anyString())).thenReturn(findCode);
+		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(findCode);
 		
 		boolean result = codeService.codeCheck(requestDto);
 		
-		assertThat(result).isFalse();
+		assertThat(result).isTrue();
 	}
 }

@@ -38,7 +38,7 @@ import com.planner.planner.Util.JwtUtil;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
-@Sql(scripts = {"classpath:/Planner_Test_DB.sql"})
+@Sql(scripts = {"classpath:/PlannerData.sql"})
 @Transactional
 public class FileUploadControllerTest {
 	@Autowired

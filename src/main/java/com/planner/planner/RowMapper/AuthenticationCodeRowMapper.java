@@ -14,7 +14,10 @@ public class AuthenticationCodeRowMapper implements RowMapper<AuthenticationCode
 		return new AuthenticationCodeDto.Builder()
 				.setId(rs.getInt("id"))
 				.setPhone(rs.getString("phone"))
+				.setEmail(rs.getString("email"))
 				.setCode(rs.getString("code"))
+				.setConfirm(rs.getBoolean("code_confirm"))
+				.setExpireDate(rs.getTimestamp("expire_date").toLocalDateTime())
 				.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
 				.build();
 	}

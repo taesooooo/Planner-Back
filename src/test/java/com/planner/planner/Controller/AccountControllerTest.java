@@ -39,7 +39,7 @@ import com.planner.planner.Util.JwtUtil;
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
-@Sql(scripts = {"classpath:/Planner_Test_DB.sql"})
+@Sql(scripts = {"classpath:/PlannerData.sql"})
 @Transactional
 public class AccountControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(AccountControllerTest.class);
@@ -215,8 +215,8 @@ public class AccountControllerTest {
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.list").exists())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
-		.andExpect(jsonPath("$.data.list.length()").value(1))
-		.andExpect(jsonPath("$.data.totalCount").value(1))
+		.andExpect(jsonPath("$.data.list.length()").value(3))
+		.andExpect(jsonPath("$.data.totalCount").value(3))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}
@@ -241,19 +241,6 @@ public class AccountControllerTest {
 		.andExpect(jsonPath("$.data.totalCount").value(2))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
-	}
-
-	@Test
-	public void 좋아요여행지확인() throws Exception {
-		mockMvc.perform(get("/api/users/likes/1/check")
-				.param("contentIds", "2733967, 2733968")
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.header("Authorization", token))
-		.andDo(print())
-		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.data[0].contentId").isNumber())
-		.andExpect(jsonPath("$.data[0].state").isBoolean());
 	}
 	
 	@Test

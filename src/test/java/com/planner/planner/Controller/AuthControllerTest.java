@@ -33,7 +33,7 @@ import com.planner.planner.Dto.AuthenticationCodeDto;
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { ValidationConfig.class, RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
-@Sql(scripts = {"classpath:/Planner_Test_DB.sql"})
+@Sql(scripts = {"classpath:/PlannerData.sql"})
 @Transactional
 public class AuthControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(AuthControllerTest.class);
@@ -110,7 +110,7 @@ public class AuthControllerTest {
 	public void 회원가입_비밀번호_미작성_유효성검사() throws Exception{
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
-				.setEmail("test0@naver.com")
+				.setEmail("test4@naver.com")
 				.setPassword("")
 				.setUsername("test0")
 				.setNickname("test0")
@@ -138,7 +138,7 @@ public class AuthControllerTest {
 	public void 회원가입_이름_미작성_유효성검사() throws Exception{
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
-				.setEmail("test0@naver.com")
+				.setEmail("test4@naver.com")
 				.setPassword("1234")
 				.setUsername("")
 				.setNickname("test0")
@@ -166,7 +166,7 @@ public class AuthControllerTest {
 	public void 회원가입_닉네임_미작성_유효성검사() throws Exception{
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
-				.setEmail("test0@naver.com")
+				.setEmail("test4@naver.com")
 				.setPassword("1234")
 				.setUsername("test0")
 				.setNickname("")
@@ -194,11 +194,39 @@ public class AuthControllerTest {
 	public void 회원가입_휴대폰번호_번호수_초과_유효성검사() throws Exception{
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
-				.setEmail("test0@naver.com")
+				.setEmail("test4@naver.com")
 				.setPassword("1234")
 				.setUsername("")
 				.setNickname("test0")
 				.setPhone("11111111111111")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 회원가입_이메일_인증_안된경우() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("testtest@naver.com")
+				.setPassword("1234")
+				.setUsername("test0")
+				.setNickname("test0")
+				.setPhone("01012345678")
 				.build();
 		
 		ObjectNode node = mapper.createObjectNode();
@@ -222,7 +250,7 @@ public class AuthControllerTest {
 	public void 회원가입() throws Exception{
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
-				.setEmail("test0@naver.com")
+				.setEmail("test4@naver.com")
 				.setPassword("1234")
 				.setUsername("test0")
 				.setNickname("test0")
@@ -346,8 +374,8 @@ public class AuthControllerTest {
 	}
 	
 	@Test
-	public void 인증코드_전송_정상() throws Exception {
-		String phone = "01094124113";
+	public void 휴대폰_인증코드_전송_정상() throws Exception {
+		String phone = "";
 		this.mockMvc.perform(post("/api/auth/authentication-code/send")
 				.servletPath("/api/auth/authentication-code/send")
 				.characterEncoding("UTF-8")
@@ -358,15 +386,15 @@ public class AuthControllerTest {
 	}
 	
 	@Test
-	public void 인증코드_전송_휴대폰번호_미작성_유효성검사() throws Exception {
-		String phone = "";
+	public void 이메일_인증코드_전송_정상() throws Exception {
+		String email = "";
 		this.mockMvc.perform(post("/api/auth/authentication-code/send")
 				.servletPath("/api/auth/authentication-code/send")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
-				.param("phone", phone))
+				.param("email", email))
 		.andDo(print())
-		.andExpect(status().isBadRequest());
+		.andExpect(status().isOk());
 	}
 	
 	@Test
@@ -382,9 +410,21 @@ public class AuthControllerTest {
 	}
 	
 	@Test
-	public void 인증코드_확인_정상() throws Exception {
+	public void 인증코드_전송_이메일_유효성검사() throws Exception {
+		String email = "test@";
+		this.mockMvc.perform(post("/api/auth/authentication-code/send")
+				.servletPath("/api/auth/authentication-code/send")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.param("email", email))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 휴대폰_인증코드_확인_정상() throws Exception {
 		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
-				.setPhone("01012345678")
+				.setPhone("")
 				.setCode("123456")
 				.build();
 		
@@ -399,9 +439,59 @@ public class AuthControllerTest {
 	}
 	
 	@Test
-	public void 인증코드_확인_휴대폰번호_미작성_유효성검사() throws Exception {
+	public void 이메일_인증코드_확인_정상() throws Exception {
 		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
-				.setPhone("")
+				.setEmail("")
+				.setCode("123456")
+				.build();
+		
+		this.mockMvc.perform(post("/api/auth/authentication-code/check")
+				.servletPath("/api/auth/authentication-code/check")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(authenticationCodeDto)))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 인증코드_확인_휴대폰번호_유효성검사() throws Exception {
+		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
+				.setPhone("010")
+				.setCode("123456")
+				.build();
+		
+		this.mockMvc.perform(post("/api/auth/authentication-code/check")
+				.servletPath("/api/auth/authentication-code/check")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(authenticationCodeDto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 인증코드_확인_이메일_유효성검사() throws Exception {
+		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
+				.setEmail("test@")
+				.setCode("123456")
+				.build();
+		
+		this.mockMvc.perform(post("/api/auth/authentication-code/check")
+				.servletPath("/api/auth/authentication-code/check")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(authenticationCodeDto)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 인증코드_확인_휴대폰번호_이메일_모두_없는경우() throws Exception {
+		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
 				.setCode("123456")
 				.build();
 		

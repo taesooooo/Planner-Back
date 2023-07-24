@@ -1,6 +1,5 @@
 package com.planner.planner.Controller;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,8 +34,8 @@ import com.planner.planner.Util.JwtUtil;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
+@Sql(scripts = {"classpath:/PlannerData.sql"})
 @Transactional
-@Sql(scripts = {"classpath:/Planner_Test_DB.sql"})
 public class SpotControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(SpotControllerTest.class);
 

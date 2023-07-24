@@ -36,8 +36,8 @@ import com.planner.planner.Util.JwtUtil;
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
+@Sql(scripts = {"classpath:/PlannerData.sql"})
 @Transactional
-@Sql(scripts = {"classpath:/Planner_Test_DB.sql"})
 public class ReviewControllerTest {
 	
 	@Autowired
