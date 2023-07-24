@@ -97,7 +97,12 @@ public class PlannerDaoImpl implements PlannerDao {
 		sb.append("LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON P.planner_id = SUB.planner_id ");
 		sb.append("LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id AND PL.account_id = ? ");
 		
-		sb.append("WHERE p.account_id = ? AND P.title LIKE \"%").append(keyword).append("%\" ");
+		if(keyword != null) {
+			sb.append("WHERE p.account_id = ? AND P.title LIKE \"%").append(keyword).append("%\" ");			
+		}
+		else {
+			sb.append("WHERE p.account_id = ? ");
+		}
 		
 		
 		if(sortCriteria == SortCriteria.LATEST) {
@@ -119,7 +124,9 @@ public class PlannerDaoImpl implements PlannerDao {
 		sb.append("LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON P.planner_id = SUB.planner_id ");
 		sb.append("LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id AND PL.account_id = ? ");
 		
-		sb.append("WHERE P.title LIKE \"%").append(keyword).append("%\" ");
+		if(keyword != null) {
+			sb.append("WHERE P.title LIKE \"%").append(keyword).append("%\" ");			
+		}
 		
 		if(criteria == SortCriteria.LATEST) {
 			sb.append("ORDER BY P.planner_id DESC ");
@@ -140,7 +147,12 @@ public class PlannerDaoImpl implements PlannerDao {
 		sb.append("LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON P.planner_id = SUB.planner_id ");
 		sb.append("LEFT JOIN planner_like AS PL ON PL.planner_id = P.planner_id ");
 		
-		sb.append("WHERE PL.account_id = ? AND P.title LIKE \"%").append(keyword).append("%\" ");
+		if(keyword != null) {
+			sb.append("WHERE p.account_id = ? AND P.title LIKE \"%").append(keyword).append("%\" ");			
+		}
+		else {
+			sb.append("WHERE p.account_id = ? ");
+		}
 		
 		if(criteria == SortCriteria.LATEST) {
 			sb.append("ORDER BY P.planner_id DESC ");
@@ -201,9 +213,4 @@ public class PlannerDaoImpl implements PlannerDao {
 		String sql = String.format(FIND_TOTAL_COUNT_KEYWORD_ACCOUNT_ID_SQL, keyword);
 		return jdbcTemplate.queryForObject(sql, Integer.class, accountId);
 	}
-
-	
-
-	
-
 }
