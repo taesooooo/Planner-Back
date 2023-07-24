@@ -55,20 +55,12 @@ public class ServletAppContext implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		RequestMethodInterceptorProxy methodProxyInterceptor = new RequestMethodInterceptorProxy(authInterceptor())
+		RequestMethodInterceptorProxy tokenAuthInterceptorProxy = new RequestMethodInterceptorProxy(authInterceptor())
 				.excludePath("/api/auth/**", null)
 				.excludePath("/api/users/find-email", null)
 				.excludePath("/api/users/find-password", null)
 				.excludePath("/api/users/change-password", null)
-				.excludePath("/api/upload/files/**", null)
-				.excludePath("/api/spots/area-codes", RequestMethod.GET)
-				.excludePath("/api/spots/lists-area", RequestMethod.GET)
-				.excludePath("/api/spots/lists-keyword", RequestMethod.GET)
-				.excludePath("/api/spots/lists/*", RequestMethod.GET)
-				.excludePath("/api/planners", RequestMethod.GET)
-				.excludePath("/api/planners/*", RequestMethod.GET)
-				.excludePath("/api/reviews", RequestMethod.GET)
-				.excludePath("/api/reviews/*", RequestMethod.GET);
+				.excludePath("/api/upload/files/**", null);
 		
 		RequestMethodInterceptorProxy reviewAuthInterpInterceptorProxy = new RequestMethodInterceptorProxy(reviewAuthInterceptor)
 				.addPath("/api/planners/**", RequestMethod.PATCH)
@@ -76,7 +68,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 				.addPath("/api/reviews/*", RequestMethod.PATCH)
 				.addPath("/api/reviews/*", RequestMethod.DELETE);
 		
-		registry.addInterceptor(methodProxyInterceptor);
+		registry.addInterceptor(tokenAuthInterceptorProxy);
 		registry.addInterceptor(reviewAuthInterpInterceptorProxy);
 	}
 
