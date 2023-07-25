@@ -29,8 +29,8 @@ public class PlannerDaoImpl implements PlannerDao {
 			+ "VALUES(?, ?, ?, ?, ?, ? ,? ,? , now(), now());";
 //	private final String FIND_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date FROM planner AS p WHERE p.planner_id = ?;";
 	// 동적 쿼리
-	private final String FIND_PLANNER_COMMON_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, SUB.like_count, P.create_date, P.update_date, "
-			+ "PL.like_id "
+	private final String FIND_PLANNER_COMMON_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, SUB.like_count, P.create_date, P.update_date, PL.like_id, "
+			+ "(SELECT location_image FROM plan_location WHERE plan_id IN (SELECT plan_id FROM plan WHERE planner_id = p.planner_id) LIMIT 1, 1) AS thumbnail "
 			+ "FROM planner AS P ";
 
 	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS P SET P.title = ?, P.plan_date_start = ?, P.plan_date_end = ?, P.expense = ?, P.member_count = ?, P.member_type_id = ?, P.update_date = NOW() WHERE P.planner_id = ?;";

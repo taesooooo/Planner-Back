@@ -10,6 +10,8 @@ import com.planner.planner.Dto.PlannerDto;
 public class PlannerRowMapper implements RowMapper<PlannerDto> {
 	@Override
 	public PlannerDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+		String thumbnail = rs.getString("thumbnail");
+		
 		return new PlannerDto.Builder()
 				.setPlannerId(rs.getInt("planner_id"))
 				.setAccountId(rs.getInt("account_id"))
@@ -22,6 +24,7 @@ public class PlannerRowMapper implements RowMapper<PlannerDto> {
 				.setMemberTypeId(rs.getInt("member_type_id"))
 				.setLikeCount(rs.getInt("like_count"))
 				.setLikeState(rs.getInt("like_id") != 0 ? true : false)
+				.setThumbnail(thumbnail == null ? "" : thumbnail)
 				.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
 				.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
 				.build();

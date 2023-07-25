@@ -46,6 +46,7 @@ public class PlannerDto {
 	private int memberTypeId;
 	private int likeCount;
 	private boolean likeState;
+	private String thumbnail;
 	
 	private List<PlanMemoDto> planMemos;
 	private List<PlanDto> plans;
@@ -83,6 +84,7 @@ public class PlannerDto {
 		private int memberTypeId;
 		private int likeCount;
 		private boolean likeState;
+		private String thumbnail;
 		private List<PlanMemoDto> planMemos;
 		private List<PlanDto> plans;
 		private LocalDateTime createDate;
@@ -158,6 +160,11 @@ public class PlannerDto {
 			return this;
 		}
 		
+		public Builder setThumbnail(String thumbnail) {
+			this.thumbnail = thumbnail;
+			return this;
+		}
+
 		public Builder setCreateDate(LocalDateTime createDate) {
 			this.createDate = createDate;
 			return this;
@@ -191,6 +198,7 @@ public class PlannerDto {
 		this.memberTypeId = builder.memberTypeId;
 		this.likeCount = builder.likeCount;
 		this.likeState = builder.likeState;
+		this.thumbnail = builder.thumbnail;
 		this.planMemos = builder.planMemos;
 		this.plans = builder.plans;
 		this.createDate = builder.createDate;
@@ -243,6 +251,10 @@ public class PlannerDto {
 	
 	public boolean isLikeState() {
 		return likeState;
+	}
+
+	public String getThumbnail() {
+		return thumbnail;
 	}
 
 	public List<PlanMemoDto> getPlanMemos() {
