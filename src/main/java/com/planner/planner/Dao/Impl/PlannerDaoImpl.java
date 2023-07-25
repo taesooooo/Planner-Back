@@ -56,7 +56,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String FIND_TOTAL_COUNT_LIKE_SQL = "SELECT count(*) AS total_count FROM planner_like WHERE account_id = ?;";
 	private final String FIND_TOTAL_COUNT_LIKE_KEYWORD_SQL = "SELECT count(*) as count FROM planner_like AS PL "
 			+ "INNER JOIN planner AS P ON P.planner_id = PL.planner_id "
-			+ "WHERE PL.account_id = ? AND P.title LIKE \"%%%s%%\";";
+			+ "WHERE P.account_id = ? AND P.title LIKE \"%%%s%%\";";
 	private final String FIND_TOTAL_COUNT_KEYWORD_SQL = "SELECT count(*) AS total_count FROM planner WHERE title LIKE \"%%%s%%\";";
 	private final String FIND_TOTAL_COUNT_KEYWORD_ACCOUNT_ID_SQL = "SELECT count(*) AS total_count FROM planner "
 			+ "WHERE account_id = ? AND title LIKE \"%%%s%%\";";
