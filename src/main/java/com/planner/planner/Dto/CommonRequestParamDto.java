@@ -6,7 +6,7 @@ import com.planner.planner.Common.SortCriteria;
 
 public class CommonRequestParamDto {
 	
-	private Integer itemCount;
+	private Integer itemCount = 10;
 	@JsonProperty("criteria")
 	private SortCriteria sortCriteria = SortCriteria.LATEST;
 	private String keyword;
@@ -14,7 +14,7 @@ public class CommonRequestParamDto {
 	private PostType postType;
 	
 	public static class Builder {
-		private Integer itemCount;
+		private Integer itemCount = 10;
 		private SortCriteria sortCriteria;
 		private String keyword;
 		private Integer pageNum;
