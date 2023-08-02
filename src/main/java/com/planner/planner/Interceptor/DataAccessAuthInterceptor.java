@@ -31,12 +31,12 @@ public class DataAccessAuthInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		int userId = UserIdUtil.getUserId(request);
+		Integer userId = UserIdUtil.getUserId(request);
 		Map<String, String> pathVariables = (Map<String,String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 		
 		if(pathVariables.get("plannerId") != null) {
 			int plannerId = Integer.parseInt(pathVariables.get("plannerId"));
-			PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
+			PlannerDto planner = plannerService.findPlannerByPlannerId(userId, plannerId);
 			
 			return accessCheck(userId, planner.getAccountId());
 		}

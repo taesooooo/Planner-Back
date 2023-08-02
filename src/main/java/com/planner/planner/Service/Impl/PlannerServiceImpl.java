@@ -57,8 +57,8 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public PlannerDto findPlannerByPlannerId(int plannerId) throws Exception {
-		PlannerDto planner = plannerDao.findPlannerByPlannerId(plannerId);
+	public PlannerDto findPlannerByPlannerId(Integer accountId, int plannerId) throws Exception {
+		PlannerDto planner = plannerDao.findPlannerByPlannerId(accountId, plannerId);
 		if (planner == null) {
 			throw new NotFoundPlanner("존재하지 않는 플래너 입니다.");
 		}
@@ -66,7 +66,7 @@ public class PlannerServiceImpl implements PlannerService {
 	}
 
 	@Override
-	public Page<PlannerDto> findPlannersByAccountId(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+	public Page<PlannerDto> findPlannersByAccountId(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		PageInfo pInfo = new PageInfo.Builder()
 				.setPageNum(commonRequestParamDto.getPageNum())
 				.setPageItemCount(commonRequestParamDto.getItemCount())
@@ -121,7 +121,7 @@ public class PlannerServiceImpl implements PlannerService {
 	@Override
 	public Page<PlannerDto> getLikePlannerList(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		PageInfo pInfo = new PageInfo.Builder().setPageNum(commonRequestParamDto.getPageNum()).setPageItemCount(commonRequestParamDto.getItemCount()).build();
-		List<PlannerDto> plannerList = plannerDao.likePlannerList(accountId, commonRequestParamDto.getSortCriteria(), commonRequestParamDto.getKeyword(), pInfo);
+		List<PlannerDto> plannerList = plannerDao.findLikePlannerList(accountId, commonRequestParamDto.getSortCriteria(), commonRequestParamDto.getKeyword(), pInfo);
 
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();

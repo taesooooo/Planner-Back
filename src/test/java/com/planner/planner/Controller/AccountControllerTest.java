@@ -346,7 +346,7 @@ public class AccountControllerTest {
 	@Test
 	public void 비밀번호_찾기_정상() throws Exception {
 		String url = "/api/users/find-password";
-		FindPasswordDto dto = new FindPasswordDto.Builder().setEmail("test@naver.com").build();
+		FindPasswordDto dto = new FindPasswordDto.Builder().setEmail("").build();
 		
 		this.mockMvc.perform(post(url)
 				.servletPath(url)

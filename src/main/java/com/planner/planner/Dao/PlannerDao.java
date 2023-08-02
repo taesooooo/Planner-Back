@@ -10,14 +10,14 @@ public interface PlannerDao {
 	// 플래너 생성, 조회, 수정, 삭제
 	public int insertPlanner(PlannerDto plannerDto);
 
-	public PlannerDto findPlannerByPlannerId(int plannerId);
+	public PlannerDto findPlannerByPlannerId(Integer accountId, int plannerId);
 
-	public List<PlannerDto> findPlannersByAccountId(int accountId, SortCriteria criteria, String keyword,
+	public List<PlannerDto> findPlannersByAccountId(Integer accountId, SortCriteria criteria, String keyword,
 			PageInfo pageInfo);
 
 	public List<PlannerDto> findPlannerAll(Integer accountId, SortCriteria criteria, String keyword, PageInfo pageInfo);
 	
-	public List<PlannerDto> likePlannerList(int accountId, SortCriteria criteria, String keyword, PageInfo pageInfo);
+	public List<PlannerDto> findLikePlannerList(Integer accountId, SortCriteria criteria, String keyword, PageInfo pageInfo);
 
 	public int updatePlanner(int plannerId, PlannerDto plannerDto);
 

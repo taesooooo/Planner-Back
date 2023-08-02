@@ -83,7 +83,8 @@ public class PlannerContorller {
 
 	@GetMapping(value="/{plannerId}")
 	public ResponseEntity<Object> findPlannerByPlannerId(HttpServletRequest req, @PathVariable int plannerId) throws Exception {
-		PlannerDto planner = plannerService.findPlannerByPlannerId(plannerId);
+		Integer userId = UserIdUtil.getUserId(req);
+		PlannerDto planner = plannerService.findPlannerByPlannerId(userId, plannerId);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "",planner));
 	}

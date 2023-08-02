@@ -93,24 +93,26 @@ public class PlannerServiceTest {
 	
 	@Test
 	public void 플래너아이디_플래너조회() throws Exception {
+		Integer accountId = 1;
 		int plannerId = 1;
 		PlannerDto planner = createPlanner(1);
 		
-		when(plannerDao.findPlannerByPlannerId(plannerId)).thenReturn(planner);
+		when(plannerDao.findPlannerByPlannerId(any(Integer.class), anyInt())).thenReturn(planner);
 		
-		PlannerDto findPlanner = plannerService.findPlannerByPlannerId(plannerId);
+		PlannerDto findPlanner = plannerService.findPlannerByPlannerId(accountId, plannerId);
 		
 		assertEquals(planner.getPlannerId(), findPlanner.getPlannerId());
 	}
 	
 	@Test(expected = NotFoundPlanner.class)
 	public void 플래너아이디_플래너조회_만약플래너가_없을때() throws Exception {
+		Integer accountId = null;
 		int plannerId = 0;
 		PlannerDto planner = createPlanner(1);
 		
-		when(plannerDao.findPlannerByPlannerId(0)).thenReturn(null);
+		when(plannerDao.findPlannerByPlannerId(any(Integer.class), anyInt())).thenReturn(null);
 		
-		PlannerDto findPlanner = plannerService.findPlannerByPlannerId(0);
+		PlannerDto findPlanner = plannerService.findPlannerByPlannerId(accountId, plannerId);
 
 	}
 	
@@ -237,12 +239,12 @@ public class PlannerServiceTest {
 		
 		int testTotalCount = planners.size();
 		
-		when(plannerDao.likePlannerList(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(planners);
+		when(plannerDao.findLikePlannerList(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(planners);
 		when(plannerDao.getTotalCountByLike(anyInt())).thenReturn(testTotalCount);
 		
 		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, paramDto);
 		
-		verify(plannerDao).likePlannerList(anyInt(), any(SortCriteria.class), any(), any(PageInfo.class));
+		verify(plannerDao).findLikePlannerList(anyInt(), any(SortCriteria.class), any(), any(PageInfo.class));
 		verify(plannerDao).getTotalCountByLike(anyInt());
 		
 		assertThat(plannerList).isNotNull();
@@ -265,12 +267,12 @@ public class PlannerServiceTest {
 		
 		int testTotalCount = planners.size();
 		
-		when(plannerDao.likePlannerList(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(planners);
+		when(plannerDao.findLikePlannerList(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(planners);
 		when(plannerDao.getTotalCountByLike(anyInt(), anyString())).thenReturn(testTotalCount);
 		
 		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, paramDto);
 		
-		verify(plannerDao).likePlannerList(anyInt(), any(SortCriteria.class), any(), any(PageInfo.class));
+		verify(plannerDao).findLikePlannerList(anyInt(), any(SortCriteria.class), any(), any(PageInfo.class));
 		verify(plannerDao).getTotalCountByLike(anyInt(), anyString());
 		
 		assertThat(plannerList).isNotNull();
