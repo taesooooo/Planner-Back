@@ -16,6 +16,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import com.planner.planner.Common.Converter.PostTypeConverter;
 import com.planner.planner.Common.Converter.SortCriteriaConverter;
 import com.planner.planner.Interceptor.AuthInterceptor;
+import com.planner.planner.Interceptor.AuthInterceptorProxy;
 import com.planner.planner.Interceptor.DataAccessAuthInterceptor;
 import com.planner.planner.Interceptor.RequestMethodInterceptorProxy;
 
@@ -55,12 +56,17 @@ public class ServletAppContext implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		RequestMethodInterceptorProxy tokenAuthInterceptorProxy = new RequestMethodInterceptorProxy(authInterceptor())
+		AuthInterceptorProxy tokenAuthInterceptorProxy = new AuthInterceptorProxy(authInterceptor())
 				.excludePath("/api/auth/**", null)
 				.excludePath("/api/users/find-email", null)
 				.excludePath("/api/users/find-password", null)
 				.excludePath("/api/users/change-password", null)
-				.excludePath("/api/upload/files/**", null);
+				.excludePath("/api/upload/files/**", null)
+				.eitherAddPath("/api/spots/lists/*", RequestMethod.GET)
+				.eitherAddPath("/api/planners", RequestMethod.GET)
+				.eitherAddPath("/api/planners/*", RequestMethod.GET)
+				.eitherAddPath("/api/reviews", RequestMethod.GET)
+				.eitherAddPath("/api/reviews/*", RequestMethod.GET);
 		
 		RequestMethodInterceptorProxy reviewAuthInterpInterceptorProxy = new RequestMethodInterceptorProxy(reviewAuthInterceptor)
 				.addPath("/api/planners/**", RequestMethod.PATCH)
