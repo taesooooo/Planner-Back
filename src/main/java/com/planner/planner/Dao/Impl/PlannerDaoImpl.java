@@ -3,6 +3,7 @@ package com.planner.planner.Dao.Impl;
 import java.sql.Date;
 import java.sql.JDBCType;
 import java.sql.PreparedStatement;
+import java.sql.Types;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -55,8 +56,8 @@ public class PlannerDaoImpl implements PlannerDao {
 			+ "LEFT JOIN account AS C ON C.account_id = B.account_id "
 			+ "LEFT JOIN plan_memo AS M ON A.planner_id = M.planner_id "
 			+ "LEFT JOIN plan AS D ON A.planner_id = D.planner_id "
-			+ "LEFT JOIN planner_like AS PL ON A.planner_id = PL.planner_id "
 			+ "LEFT JOIN plan_location AS E ON D.plan_id = E.plan_id "
+			+ "LEFT JOIN planner_like AS PL ON A.planner_id = PL.planner_id AND PL.account_id = :accountId "
 			+ "LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON A.planner_id = SUB.planner_id ";
 //			+ "WHERE A.planner_id = ? AND PL.account_id = ? "
 //			+ "ORDER BY A.planner_id, D.plan_index, E.location_index;";
@@ -101,7 +102,7 @@ public class PlannerDaoImpl implements PlannerDao {
 		sb.append("ORDER BY A.planner_id, D.plan_index, E.location_index;");
 		
 		SqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("accountId", accountId)
+				.addValue("accountId", accountId == null ? Types.NULL : accountId)
 				.addValue("plannerId", plannerId);
 		
 		return namedParameterJdbcTemplate.query(sb.toString(), parameterSource, new PlannerFullResultSetExtrator());

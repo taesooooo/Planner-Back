@@ -29,7 +29,7 @@ public class AuthInterceptorProxy implements HandlerInterceptor {
 		}
 		
 		if(!eitherPathList.isPass(path, method)) {			
-			if(request.getAttribute("Authentication") != null) {
+			if(request.getHeader("Authorization") != null) {
 				handlerInterceptor.preHandle(request, response, handler);
 			}
 			else {
