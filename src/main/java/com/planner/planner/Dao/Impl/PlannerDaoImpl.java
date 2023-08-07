@@ -144,7 +144,10 @@ public class PlannerDaoImpl implements PlannerDao {
 		sb.append("LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON P.planner_id = SUB.planner_id ");
 		sb.append("LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id ");
 		
-		if(accountId != null) {
+		if(accountId == null) {
+			sb.append("AND PL.account_id = 0 ");
+		}
+		else {
 			sb.append("AND PL.account_id = :accountId ");			
 		}
 		
