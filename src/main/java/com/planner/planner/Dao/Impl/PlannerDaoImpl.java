@@ -92,12 +92,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	public PlannerDto findPlannerByPlannerId(Integer accountId, int plannerId) {
 		StringBuilder sb = new StringBuilder(FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL);
 		
-		if(accountId != null) {
-			sb.append("WHERE A.planner_id = :plannerId AND PL.like_id = (SELECT like_id FROM planner_like WHERE planner_id = :plannerId AND account_id = :accountId) ");
-		}
-		else {
-			sb.append("WHERE A.planner_id = :plannerId ");
-		}
+		sb.append("WHERE A.planner_id = :plannerId ");
 		
 		sb.append("ORDER BY A.planner_id, D.plan_index, E.location_index;");
 		
