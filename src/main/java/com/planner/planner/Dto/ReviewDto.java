@@ -18,8 +18,6 @@ public class ReviewDto {
 	private String title;
 	
 	private String writer;
-	
-	@Min(value=1, message = "잘못된 사용자 정보입니다.", groups = {ReviewCreateGroup.class})
 	private int writerId;
 	
 	@NotBlank(message = "내용을 적어주세요.", groups = {ReviewCreateGroup.class, ReviewUpdateGroup.class})

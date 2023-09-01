@@ -81,7 +81,7 @@ public class AccountController {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(true, "계정 정보 변경을 실패했습니다."));
 	}
 
-	@PatchMapping(value = "/images/{accountId}")
+	@PatchMapping(value = "/{accountId}/images")
 	public ResponseEntity<Object> accountImageUpdate(@PathVariable int accountId, @RequestPart(value = "image") MultipartFile image) throws Exception {
 		if (accountService.accountImageUpdate(accountId, image)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "계정 이미지 변경을 성공헀습니다."));

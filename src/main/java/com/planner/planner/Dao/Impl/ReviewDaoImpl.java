@@ -54,7 +54,7 @@ public class ReviewDaoImpl implements ReviewDao {
 			ps.setObject(1, reviewDto.getPlannerId(), Types.INTEGER);
 			ps.setString(2, reviewDto.getTitle());
 			ps.setString(3, reviewDto.getContent());
-			ps.setString(4, reviewDto.getWriter());
+			ps.setString(4, accountDto.getNickname());
 			ps.setInt(5, accountDto.getAccountId());
 			return ps;
 		}, keyHolder);
