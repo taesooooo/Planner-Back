@@ -195,32 +195,35 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		int numOfRows = data.get("numOfRows").asInt();
 		int pageNo = data.get("pageNo").asInt();
 		int totalCount = data.get("totalCount").asInt();
+		JsonNode itemList = data.get("items").get("item");
 		
 		List<CommonBasedDto> keywordBasedList = new ArrayList<CommonBasedDto>();
 		
-		for(JsonNode node : data.get("items").get("item")) {
-			CommonBasedDto keywordBased = new CommonBasedDto.Builder()
-					.setSigunguCode(node.get("sigungucode").asText())
-					.setTel(node.get("tel").asText())
-					.setTitle(node.get("title").asText())
-					.setAddr1(node.get("addr1").asText())
-					.setAddr2(node.get("addr2").asText())
-					.setAreaCode(node.get("areacode").asText())
-					.setBookTour(node.get("booktour").asText())
-					.setCat1(node.get("cat1").asText())
-					.setCat2(node.get("cat2").asText())
-					.setCat3(node.get("cat3").asText())
-					.setContentId(node.get("contentid").asText())
-					.setContentTypeId(node.get("contenttypeid").asText())
-					.setCreatedTime(node.get("createdtime").asText())
-					.setFirstImage(node.get("firstimage").asText())
-					.setFirstImage2(node.get("firstimage2").asText())
-					.setMapx(node.get("mapx").asText())
-					.setMapy(node.get("mapy").asText())
-					.setMlevel(node.get("mlevel").asText())
-					.setModifiedTime(node.get("modifiedtime").asText())
-					.build();
-			keywordBasedList.add(keywordBased);
+		if(itemList != null) {
+			for(JsonNode node : itemList) {
+				CommonBasedDto keywordBased = new CommonBasedDto.Builder()
+						.setSigunguCode(node.get("sigungucode").asText())
+						.setTel(node.get("tel").asText())
+						.setTitle(node.get("title").asText())
+						.setAddr1(node.get("addr1").asText())
+						.setAddr2(node.get("addr2").asText())
+						.setAreaCode(node.get("areacode").asText())
+						.setBookTour(node.get("booktour").asText())
+						.setCat1(node.get("cat1").asText())
+						.setCat2(node.get("cat2").asText())
+						.setCat3(node.get("cat3").asText())
+						.setContentId(node.get("contentid").asText())
+						.setContentTypeId(node.get("contenttypeid").asText())
+						.setCreatedTime(node.get("createdtime").asText())
+						.setFirstImage(node.get("firstimage").asText())
+						.setFirstImage2(node.get("firstimage2").asText())
+						.setMapx(node.get("mapx").asText())
+						.setMapy(node.get("mapy").asText())
+						.setMlevel(node.get("mlevel").asText())
+						.setModifiedTime(node.get("modifiedtime").asText())
+						.build();
+				keywordBasedList.add(keywordBased);
+			}
 		}
 		
 		CommonListDto<CommonBasedDto> list = new CommonListDto<CommonBasedDto>(keywordBasedList, numOfRows, pageNo, totalCount);

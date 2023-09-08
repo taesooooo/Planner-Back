@@ -114,6 +114,10 @@ public class SpotDaoImpl implements SpotDao {
 
 	@Override
 	public List<SpotLikeCountDto> selectSpotLikeCountByContentIdList(List<Integer> contentIdList) throws Exception {
+		if(contentIdList == null || contentIdList.isEmpty()) {
+			return new ArrayList<SpotLikeCountDto>();
+		}
+		
 		String contentIds = contentIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
 		String sql = String.format(SELECT_SPOT_LIKE_COUNT_LIST_SQL, contentIds);
 		
@@ -142,9 +146,10 @@ public class SpotDaoImpl implements SpotDao {
 
 	@Override
 	public List<SpotLikeDto> selectSpotLikeByContentIdList(Integer accountId, List<Integer> contentIdList) {
-		if(accountId == null) {
+		if(accountId == null || contentIdList == null || contentIdList.isEmpty()) {
 			return new ArrayList<SpotLikeDto>();
 		}
+
 		
 		String contentIds = contentIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
 		String sql = String.format(SELECT_SPOT_LIKE_STATE_SQL, contentIds);
