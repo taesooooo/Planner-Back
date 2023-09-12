@@ -9,6 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Config.JwtContext;
@@ -97,7 +101,9 @@ public class ReviewControllerTest {
 
 	@Test
 	public void 리뷰_작성_테스트() throws Exception {
-		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setWriter("test").build();
+		List<String> fileList = new ArrayList<String>();
+		fileList.add("test.jpg");
+		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setFileNames(fileList).build();
 
 		mockMvc.perform(post("/api/reviews")
 				.characterEncoding("UTF-8")
@@ -107,7 +113,24 @@ public class ReviewControllerTest {
 				.content(mapper.writeValueAsString(testDto)))
 		.andDo(print())
 		.andExpect(status().isCreated())
-		.andExpect(jsonPath("$.state").value(is(true)));
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").value(4));
+	}
+	
+	@Test
+	public void 리뷰_작성_썸네일_없는경우() throws Exception {
+		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setFileNames(null).build();
+
+		mockMvc.perform(post("/api/reviews")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(testDto)))
+		.andDo(print())
+		.andExpect(status().isCreated())
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").value(4));
 	}
 	
 	@Test

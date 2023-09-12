@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.assertj.core.util.Arrays;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -108,6 +109,33 @@ public class ReviewServiceTest {
 		assertThat(reviewList).isNotNull();
 		assertThat(reviewList.getList()).isNotNull();
 		assertThat(reviewList.getTotalCount()).isEqualTo(testTotalCount);
+	}
+	
+	@Test
+	public void 리뷰_생성() {
+		List<String> fileList = new ArrayList<String>();
+		fileList.add("test.jpg");
+		String thumbnailName = "test";
+		
+		AccountDto user = new AccountDto.Builder()
+				.setAccountId(1)
+				.setEmail("test@naver.com")
+				.setNickname("test")
+				.setUsername("test")
+				.build();
+		ReviewDto review = new ReviewDto.Builder()
+				.setReviewId(1)
+				.setPlannerId(null)
+				.setTitle("테스트 제목")
+				.setContent("내용")
+				.setFileNames(fileList)
+				.build();
+		
+		when(reviewDao.insertReview(any(ReviewDto.class),any(AccountDto.class), anyString())).thenReturn(1);
+		
+		int reviewId = reviewDao.insertReview(review, user, thumbnailName);
+		
+		assertThat(reviewId).isEqualTo(1);
 	}
 	
 	private List<ReviewDto> createReview() {

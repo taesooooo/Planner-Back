@@ -1,9 +1,12 @@
 package com.planner.planner.Util;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +19,7 @@ public class FileStore {
 	private String baseLocation;
 	public static String accountDir = "Account";
 	public static String boardDir = "Board";
+	public static String thumbnailDir = "Thumbnail";
 	
 	private String tempDirName = "temp";
 
@@ -76,6 +80,18 @@ public class FileStore {
 		}
 
 		return infoList;
+	}
+	
+	public void saveMultiPartFile(MultipartFile multipartFile, String path) throws IllegalStateException, IOException {
+		File file = new File(path);
+		
+		multipartFile.transferTo(file);
+	}
+	
+	public void saveThumnail(BufferedImage image, String name) throws IOException {
+		String format = "jpg";
+		
+		ImageIO.write(image, format, new File(baseLocation + thumbnailDir + File.pathSeparator + name));
 	}
 
 	private Image createImage(String path, String absolutePath, String name, MultipartFile imageFile) {

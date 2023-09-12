@@ -48,6 +48,7 @@ public class ReviewResultSetExtrator implements ResultSetExtractor<ReviewDto> {
 						.setPlannerId(rs.getInt("planner_id"))
 						.setTitle(rs.getString("title"))
 						.setContent(rs.getString("content"))
+						.setThumbnail(rs.getString("thumbnail"))
 						.setWriter(rs.getString("writer"))
 						.setWriterId(rs.getInt("writer_id"))
 						.setLikeCount(rs.getInt("like_count"))

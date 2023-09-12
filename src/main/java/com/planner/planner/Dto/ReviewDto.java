@@ -22,6 +22,7 @@ public class ReviewDto {
 	
 	@NotBlank(message = "내용을 적어주세요.", groups = {ReviewCreateGroup.class, ReviewUpdateGroup.class})
 	private String content;
+	private String thumbnail;
 	private int likeCount;
 	
 	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
@@ -39,6 +40,7 @@ public class ReviewDto {
 		private String writer;
 		private int writerId;
 		private String content;
+		private String thumbnail;
 		private int likeCount;
 		private LocalDateTime createDate;
 		private LocalDateTime updateDate;
@@ -67,6 +69,10 @@ public class ReviewDto {
 		}
 		public Builder setContent(String content) {
 			this.content = content;
+			return this;
+		}
+		public Builder setThumbnail(String thumbnail) {
+			this.thumbnail = thumbnail;
 			return this;
 		}
 		public Builder setLikeCount(int likeCount) {
@@ -105,6 +111,7 @@ public class ReviewDto {
 		this.writer = builder.writer;
 		this.writerId = builder.writerId;
 		this.content = builder.content;
+		this.thumbnail = builder.thumbnail;
 		this.likeCount = builder.likeCount;
 		this.createDate = builder.createDate;
 		this.updateDate = builder.updateDate;
@@ -134,6 +141,10 @@ public class ReviewDto {
 
 	public String getContent() {
 		return content;
+	}
+
+	public String getThumbnail() {
+		return thumbnail;
 	}
 
 	public int getLikeCount() {
