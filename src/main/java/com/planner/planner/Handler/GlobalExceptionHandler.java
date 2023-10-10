@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.planner.planner.Exception.AuthCheckFail;
+import com.planner.planner.Exception.DataNotFoundException;
 import com.planner.planner.Exception.DuplicateLikeException;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Exception.NoValidArgumentException;
@@ -47,7 +48,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Object> ForbiddenUser(Exception e) {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, e.getMessage()));
 	}
-	@ExceptionHandler(value = {NotFoundUserException.class, NotFoundPlanner.class, NotFoundReviewException.class, NotFoundAuthenticationCodeException.class})
+	@ExceptionHandler(value = {DataNotFoundException.class, NotFoundUserException.class, NotFoundPlanner.class, NotFoundReviewException.class, NotFoundAuthenticationCodeException.class})
 	public ResponseEntity<Object> notFoundUser(Exception e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, e.getMessage()));
 	}

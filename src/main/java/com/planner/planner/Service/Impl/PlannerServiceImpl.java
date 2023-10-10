@@ -9,10 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.AccountDao;
+import com.planner.planner.Dao.InvitationDao;
 import com.planner.planner.Dao.PlanMemberDao;
 import com.planner.planner.Dao.PlannerDao;
+import com.planner.planner.Dao.Impl.InvitationDaoImpl;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
+import com.planner.planner.Dto.InvitationDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundUserException;
@@ -24,11 +27,13 @@ public class PlannerServiceImpl implements PlannerService {
 	private AccountDao accountDao;
 	private PlannerDao plannerDao;
 	private PlanMemberDao planMemberDao;
+	private InvitationDao invitationDao;
 
-	public PlannerServiceImpl(AccountDao accountDao, PlannerDao plannerDao, PlanMemberDao planMemberDao) {
+	public PlannerServiceImpl(AccountDao accountDao, PlannerDao plannerDao, PlanMemberDao planMemberDao, InvitationDao invitationDao) {
 		this.accountDao = accountDao;
 		this.plannerDao = plannerDao;
 		this.planMemberDao = planMemberDao;
+		this.invitationDao = invitationDao;
 	}
 
 	@Override
@@ -49,10 +54,16 @@ public class PlannerServiceImpl implements PlannerService {
 		}
 
 		for (AccountDto user : users) {
+			InvitationDto invitation = new InvitationDto.Builder()
+					.setAccountId(user.getAccountId())
+					.setPlannerId(plannerId)
+					.build();
+			
+			invitationDao.createInvitation(invitation);
 			planMemberDao.insertPlanMember(plannerId, user.getAccountId());
 		}
 
-		planMemberDao.acceptInvitation(plannerId, plannerDto.getAccountId());
+		planMemberDao.inviteAcceptState(plannerId, plannerDto.getAccountId());
 		return plannerId;
 	}
 

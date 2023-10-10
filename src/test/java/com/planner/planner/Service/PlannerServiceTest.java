@@ -69,13 +69,12 @@ public class PlannerServiceTest {
 		
 		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(creator, users.get(0));
 		when(planMemberDao.insertPlanMember(anyInt(), anyInt())).thenReturn(0);
-		when(planMemberDao.acceptInvitation(anyInt(), anyInt())).thenReturn(0);
 		
 		plannerService.newPlanner(planner);
 		
 		verify(accountDao, times(2)).findAccountIdByNickName(anyString());
 		verify(planMemberDao, times(2)).insertPlanMember(anyInt(), anyInt());
-		verify(planMemberDao, times(1)).acceptInvitation(anyInt(), anyInt());
+		verify(planMemberDao, times(1)).inviteAcceptState(anyInt(), anyInt());
 	}
 	
 	@Test(expected = NotFoundUserException.class)

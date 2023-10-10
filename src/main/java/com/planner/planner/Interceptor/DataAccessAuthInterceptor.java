@@ -9,9 +9,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
+import com.planner.planner.Dto.InvitationDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Exception.ForbiddenException;
+import com.planner.planner.Service.InvitationService;
 import com.planner.planner.Service.PlannerService;
 import com.planner.planner.Service.ReviewService;
 import com.planner.planner.Util.UserIdUtil;
@@ -21,11 +23,13 @@ public class DataAccessAuthInterceptor implements HandlerInterceptor {
 	
 	private PlannerService plannerService;
 	private ReviewService reviewService;
+	private InvitationService invitationService;
 	
 	
-	public DataAccessAuthInterceptor(PlannerService plannerService, ReviewService reviewService) {
+	public DataAccessAuthInterceptor(PlannerService plannerService, ReviewService reviewService, InvitationService invitationService) {
 		this.plannerService = plannerService;
 		this.reviewService = reviewService;
+		this.invitationService = invitationService;
 	}
 
 	@Override
@@ -45,6 +49,15 @@ public class DataAccessAuthInterceptor implements HandlerInterceptor {
 			ReviewDto review = reviewService.findReview(reviewId);
 			
 			return accessCheck(userId, review.getWriterId());
+		}
+		else if(pathVariables.get("inviteId") != null) {
+			int inviteId = Integer.parseInt(pathVariables.get("inviteId"));
+			InvitationDto invitation = invitationService.findById(inviteId);
+			if(invitation == null) {
+				throw new RuntimeException("데이터가 없습니다.");
+			}
+			
+			return accessCheck(userId, invitation.getAccountId());
 		}
 		
 		return false;

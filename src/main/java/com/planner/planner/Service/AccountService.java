@@ -19,7 +19,7 @@ public interface AccountService {
 	public boolean accountUpdate(AccountDto accountDto) throws Exception;
 	public boolean accountImageUpdate(int accountId, MultipartFile image) throws Exception;
 	public boolean passwordUpdate(int accountId, String password);
-	public void acceptInvite(int plannerId, int accountId);
+	public void acceptInvite(int plannerId, int accountId) throws Exception;
 	
 	public Page<PlannerDto> myPlanners(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 	public Page<PlannerDto> likePlanners(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
