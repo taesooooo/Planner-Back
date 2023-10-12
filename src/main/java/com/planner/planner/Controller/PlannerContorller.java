@@ -28,12 +28,14 @@ import com.planner.planner.Common.ValidationGroups.PlanLocationUpdateGroup;
 import com.planner.planner.Common.ValidationGroups.PlanUpdateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
+import com.planner.planner.Dto.AcceptInvateDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.ForbiddenException;
+import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.PlanLocationService;
 import com.planner.planner.Service.PlanMemberService;
 import com.planner.planner.Service.PlanMemoService;
@@ -48,6 +50,7 @@ import com.planner.planner.Util.UserIdUtil;
 public class PlannerContorller {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PlannerContorller.class);
 
+	private AccountService accountService;
 	private PlannerService plannerService;
 	private PlanMemberService planMemberService;
 	private PlanMemoService planMemoService;
@@ -55,9 +58,10 @@ public class PlannerContorller {
 	private PlanLocationService planLocationService;
 	private PlannerLikeService plannerLikeService;
 	
-	public PlannerContorller(PlannerService plannerService, PlanMemberService planMemberService,
+	public PlannerContorller(AccountService accountService, PlannerService plannerService, PlanMemberService planMemberService,
 			PlanMemoService planMemoService, PlanService planService, PlanLocationService planLocationService,
 			PlannerLikeService plannerLikeService) {
+		this.accountService = accountService;
 		this.plannerService = plannerService;
 		this.planMemberService = planMemberService;
 		this.planMemoService = planMemoService;
@@ -134,6 +138,15 @@ public class PlannerContorller {
 	public ResponseEntity<Object> deleteMemo(HttpServletRequest req, @PathVariable int plannerId, @PathVariable int memoId) throws Exception {
 		
 		planMemoService.deleteMemo(memoId);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
+	}
+	
+	@PostMapping(value="/accept-invite")
+	public ResponseEntity<Object> acceptInvaite(HttpServletRequest req, AcceptInvateDto acceptInvateDto) {
+		Integer userId = UserIdUtil.getUserId(req);
+		
+		accountService.acceptInvite(userId, acceptInvateDto.getPlannerId());
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}

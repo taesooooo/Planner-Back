@@ -418,4 +418,16 @@ public class AccountControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk());
 	}
+	
+	@Test
+	public void 알림_조회() throws Exception {
+		this.mockMvc.perform(get("/api/users/1/notifications")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.header("Authorization", token))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data[0].id").value(1));
+	}
 }

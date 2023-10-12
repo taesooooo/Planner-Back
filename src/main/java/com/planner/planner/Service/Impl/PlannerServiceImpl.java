@@ -8,11 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
+import com.planner.planner.Common.Notification.NotificationMessage;
 import com.planner.planner.Dao.AccountDao;
+import com.planner.planner.Dao.NotificationDao;
 import com.planner.planner.Dao.PlanMemberDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
+import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundUserException;
@@ -24,11 +27,13 @@ public class PlannerServiceImpl implements PlannerService {
 	private AccountDao accountDao;
 	private PlannerDao plannerDao;
 	private PlanMemberDao planMemberDao;
+	private NotificationDao notificationDao;
 
-	public PlannerServiceImpl(AccountDao accountDao, PlannerDao plannerDao, PlanMemberDao planMemberDao) {
+	public PlannerServiceImpl(AccountDao accountDao, PlannerDao plannerDao, PlanMemberDao planMemberDao, NotificationDao notificationDao) {
 		this.accountDao = accountDao;
 		this.plannerDao = plannerDao;
 		this.planMemberDao = planMemberDao;
+		this.notificationDao = notificationDao;
 	}
 
 	@Override
@@ -50,9 +55,19 @@ public class PlannerServiceImpl implements PlannerService {
 
 		for (AccountDto user : users) {
 			planMemberDao.insertPlanMember(plannerId, user.getAccountId());
+			
+			// 초대자들에게만 알림 생성
+			if(user.getAccountId() != plannerDto.getAccountId()) {
+				NotificationDto notificationDto = new NotificationDto.Builder()
+						.setAccountId(user.getAccountId())
+						.setContent(String.format(NotificationMessage.PLANNER_INVAITE, plannerDto.getCreator()))
+						.build();
+				notificationDao.createNotification(user.getAccountId(), notificationDto);	
+			}
 		}
 
 		planMemberDao.acceptInvitation(plannerId, plannerDto.getAccountId());
+		
 		return plannerId;
 	}
 
