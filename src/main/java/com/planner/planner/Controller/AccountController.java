@@ -28,6 +28,7 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.AuthenticationCodeDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.FindPasswordDto;
+import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PasswordDto;
 import com.planner.planner.Dto.PasswordResetkeyDto;
 import com.planner.planner.Dto.PlannerDto;
@@ -35,6 +36,7 @@ import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.AuthenticationCodeService;
 import com.planner.planner.Service.EmailService;
+import com.planner.planner.Service.NotificationService;
 import com.planner.planner.Service.PasswordResetKeyService;
 import com.planner.planner.Util.RandomCode;
 import com.planner.planner.Util.ResponseMessage;
@@ -46,14 +48,16 @@ public class AccountController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
 	private AccountService accountService;
+	private NotificationService notificationService;
 	private AuthenticationCodeService authenticationCodeService;
 	private PasswordResetKeyService passwordResetKeyService;
 	private EmailService mailService;
 	private RandomCode randomCode;
 
-	public AccountController(AccountService accountService, AuthenticationCodeService authenticationCodeService,
+	public AccountController(AccountService accountService, NotificationService notificationService, AuthenticationCodeService authenticationCodeService,
 			PasswordResetKeyService passwordResetKeyService, EmailService mailService, RandomCode randomCode) {
 		this.accountService = accountService;
+		this.notificationService = notificationService;
 		this.authenticationCodeService = authenticationCodeService;
 		this.passwordResetKeyService = passwordResetKeyService;
 		this.mailService = mailService;
@@ -114,6 +118,13 @@ public class AccountController {
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));
 	}
+	
+	@GetMapping(value = "/{accountId}/notifications")
+	public ResponseEntity<Object> notification(@PathVariable int accountId) throws Exception {
+		List<NotificationDto> list = notificationService.findAllByAccountId(accountId);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));
+	}
 
 	@GetMapping(value="/search-member")
 	public ResponseEntity<Object> searchMembers(HttpServletRequest req, @RequestParam(value="searchString") String searchString) throws Exception {
@@ -155,7 +166,7 @@ public class AccountController {
 	}
 	
 	@PostMapping(value = "/change-password")
-	public ResponseEntity<Object> changePassword(@RequestBody @Valid PasswordDto passwordDto) {
+	public ResponseEntity<Object> changePassword(@RequestBody @Valid PasswordDto passwordDto) throws Exception {
 		boolean check = passwordResetKeyService.validatePasswordResetKey(passwordDto.getKey());
 		if(check) {
 			PasswordResetkeyDto resetKey = passwordResetKeyService.findBykey(passwordDto.getKey());

@@ -12,13 +12,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Common.Image;
 import com.planner.planner.Common.Page;
+import com.planner.planner.Common.Notification.NotificationMessage;
+import com.planner.planner.Common.Notification.NotificationType;
 import com.planner.planner.Dao.AccountDao;
+import com.planner.planner.Dao.NotificationDao;
 import com.planner.planner.Dao.PlanMemberDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.FindEmailDto;
+import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PasswordDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
@@ -38,18 +42,20 @@ public class AccountServiceImpl implements AccountService {
 	private PlannerDao plannerDao;
 	private PlanMemberDao planMemberDao;
 	private SpotService spotService;
+	private NotificationDao notificationDao;
 
 	private FileStore fileStore;
 	private BCryptPasswordEncoder passwordEncoder;
 
 	public AccountServiceImpl(AccountDao accountDao, PlannerService plannerService, PlannerDao plannerDao,
-			PlanMemberDao planMemberDao, SpotService spotService, FileStore fileStore,
+			PlanMemberDao planMemberDao, SpotService spotService, NotificationDao notificationDao, FileStore fileStore,
 			BCryptPasswordEncoder passwordEncoder) {
 		this.accountDao = accountDao;
 		this.plannerService = plannerService;
 		this.plannerDao = plannerDao;
 		this.planMemberDao = planMemberDao;
 		this.spotService = spotService;
+		this.notificationDao = notificationDao;
 		this.fileStore = fileStore;
 		this.passwordEncoder = passwordEncoder;
 	}
@@ -110,8 +116,16 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public boolean passwordUpdate(int accountId, String password) {
+	public boolean passwordUpdate(int accountId, String password) throws Exception {
 		String newPassword = passwordEncoder.encode(password);
+		
+		NotificationDto notification = new NotificationDto.Builder()
+				.setAccountId(accountId)
+				.setContent(NotificationMessage.PASSWORD_UPDATE)
+				.setNotificationType(NotificationType.ACCOUNT)
+				.build();
+		
+		notificationDao.createNotification(accountId, notification);
 		
 		return accountDao.passwordUpdate(accountId, newPassword);
 	}
