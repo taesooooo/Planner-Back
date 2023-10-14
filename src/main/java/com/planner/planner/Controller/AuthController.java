@@ -116,7 +116,8 @@ public class AuthController {
 	}
 	
 	@PostMapping(value = "/authentication-code/send")
-	public ResponseEntity<Object> authenticationCode(@RequestParam(value="phone", required = false) @Pattern(regexp = "^010[0-9]{4}[0-9]{4}", message = "번호를 제대로 입력해주세요.") String phone,
+	public ResponseEntity<Object> authenticationCode(
+			@RequestParam(value="phone", required = false) @Pattern(regexp = "^010[0-9]{4}[0-9]{4}", message = "번호를 제대로 입력해주세요.") String phone,
 			@RequestParam(value="email", required=false) @Email(message = "정확한 이메일을 입력해주세요.") String email) throws Exception {
 		
 		String code = randomCode.createCode();

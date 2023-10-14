@@ -12,7 +12,7 @@ public interface AccountDao {
 	public boolean delete(AccountDto accountDto);
 	public AccountDto findById(int accountId);
 	public AccountDto findAccountIdByNickName(String nickName);
-	public AccountDto findAccount(String userName, String phone);
+	public List<AccountDto> findByNameAndPhone(String userName, String phone);
 	public List<String> findEmailByPhone(String phone);
 	public AccountDto findByEmail(String email);
 	public boolean accountImageUpdate(int accountId, String imagePath);

@@ -1,5 +1,6 @@
 package com.planner.planner.Dao.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Dto.PasswordDto;
 import com.planner.planner.RowMapper.AccountRowMapper;
 
 @Repository
@@ -25,7 +25,7 @@ public class AccountDaoImpl implements AccountDao {
 	private final String FIND_BY_NICKNAME = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE nickname = ?";
 	private final String FIND_BY_ID_SQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE account_id = ?";
 	private final String FIND_ACCOUNTID_BY_EMAIL = "SELECT account_id FROM account WHERE email = ?";
-	private final String FIND_ACCOUNT_SQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE name = ? AND phone = ?;";
+	private final String FIND_BY_NAME_AND_PHONE_SQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date FROM account WHERE name = ? AND phone = ?;";
 	private final String FIND_EMAIL_BY_PHONE_SQL = "SELECT email FROM account WHERE phone = ?";;
 	private final String updateSQL = "UPDATE ACCOUNT SET nickname = ?, phone = ?, update_date = now() WHERE account_id = ?;";
 	private final String deleteSQL = "DELETE FROM ACCOUNT WHERE email = ?;";
@@ -76,12 +76,12 @@ public class AccountDaoImpl implements AccountDao {
 	}
 	
 	@Override
-	public AccountDto findAccount(String userName, String phone) {
+	public List<AccountDto> findByNameAndPhone(String userName, String phone) {
 		try {
-			return jdbcTemplate.queryForObject(FIND_ACCOUNT_SQL, new AccountRowMapper(), userName, phone);
+			return jdbcTemplate.query(FIND_BY_NAME_AND_PHONE_SQL, new AccountRowMapper(), userName, phone);
 		}
 		catch (EmptyResultDataAccessException e) {
-			return null;
+			return new ArrayList<AccountDto>();
 		}
 	}
 

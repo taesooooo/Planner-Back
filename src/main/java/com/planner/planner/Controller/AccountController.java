@@ -27,6 +27,7 @@ import com.planner.planner.Common.ValidationGroups.AccountUpdateGroup;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.AuthenticationCodeDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
+import com.planner.planner.Dto.FindEmailDto;
 import com.planner.planner.Dto.FindPasswordDto;
 import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PasswordDto;
@@ -38,6 +39,7 @@ import com.planner.planner.Service.AuthenticationCodeService;
 import com.planner.planner.Service.EmailService;
 import com.planner.planner.Service.NotificationService;
 import com.planner.planner.Service.PasswordResetKeyService;
+import com.planner.planner.Service.SENSService;
 import com.planner.planner.Util.RandomCode;
 import com.planner.planner.Util.ResponseMessage;
 import com.planner.planner.Util.UserIdUtil;
@@ -50,15 +52,17 @@ public class AccountController {
 	private AccountService accountService;
 	private NotificationService notificationService;
 	private AuthenticationCodeService authenticationCodeService;
+	private SENSService sensService;
 	private PasswordResetKeyService passwordResetKeyService;
 	private EmailService mailService;
 	private RandomCode randomCode;
 
-	public AccountController(AccountService accountService, NotificationService notificationService, AuthenticationCodeService authenticationCodeService,
+	public AccountController(AccountService accountService, NotificationService notificationService, AuthenticationCodeService authenticationCodeService, SENSService sensService,
 			PasswordResetKeyService passwordResetKeyService, EmailService mailService, RandomCode randomCode) {
 		this.accountService = accountService;
 		this.notificationService = notificationService;
 		this.authenticationCodeService = authenticationCodeService;
+		this.sensService = sensService;
 		this.passwordResetKeyService = passwordResetKeyService;
 		this.mailService = mailService;
 		this.randomCode = randomCode;
@@ -134,17 +138,26 @@ public class AccountController {
 	}
 	
 	@PostMapping(value = "/find-email")
-	public ResponseEntity<Object> findEmail(HttpServletRequest req, @RequestBody @Valid AuthenticationCodeDto authenticationCodeDto) throws Exception {
-		if(authenticationCodeDto.getEmail() == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "", "휴대폰 번호를 입력해주세요."));
+	public ResponseEntity<Object> findEmail(HttpServletRequest req, @RequestBody @Valid FindEmailDto findEmailDto) throws Exception {		
+		if(findEmailDto.getCode() == null) {
+			AccountDto user = accountService.findByNameAndPhone(findEmailDto.getUsername(), findEmailDto.getPhone());
+			
+			String code = randomCode.createCode();
+			
+			if(authenticationCodeService.createPhoneAuthenticationCode(findEmailDto.getPhone(), code)) {
+				sensService.authenticationCodeSMSSend(findEmailDto.getPhone(), code);
+				
+				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "인증 코드를 보냈습니다."));
+			}
+		}
+		else {
+			AuthenticationCodeDto authCode = authenticationCodeService.findByPhone(findEmailDto.getPhone());
+			if(!authCode.isConfirm()) {
+				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, "", "인증되지 않았습니다. 다시 시도해 주세요."));
+			}
 		}
 		
-		AuthenticationCodeDto authCode = authenticationCodeService.findByPhone(authenticationCodeDto.getEmail());
-		if(!authCode.isConfirm()) {
-			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, "", "인증되지 않았습니다. 다시 시도해 주세요."));
-		}
-		
-		List<String> foundEmails = accountService.findEmailByPhone(authenticationCodeDto.getPhone());
+		List<String> foundEmails = accountService.findEmailByPhone(findEmailDto.getPhone());
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", foundEmails));
 	}

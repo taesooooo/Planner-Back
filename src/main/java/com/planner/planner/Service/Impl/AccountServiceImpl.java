@@ -2,6 +2,7 @@ package com.planner.planner.Service.Impl;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,6 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.FindEmailDto;
 import com.planner.planner.Dto.NotificationDto;
-import com.planner.planner.Dto.PasswordDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Exception.NotFoundUserException;
@@ -85,6 +85,16 @@ public class AccountServiceImpl implements AccountService {
 			throw new NotFoundUserException();
 		}
 		return user;
+	}
+
+	@Override
+	public AccountDto findByNameAndPhone(String name, String phone) throws Exception {
+		List<AccountDto> users = accountDao.findByNameAndPhone(name, phone);
+		if(users.isEmpty()) {
+			throw new NotFoundUserException("해당하는 정보로 가입된 아이디가 존재하지 않습니다.");
+		}
+		
+		return users.get(0);
 	}
 
 	@Override
@@ -160,13 +170,15 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public String findEmail(FindEmailDto findEmailDto) throws Exception {
-		AccountDto user = accountDao.findAccount(findEmailDto.getUsername(), findEmailDto.getPhone());
-		if(user == null) {
+	public List<String> findId(FindEmailDto findEmailDto) throws Exception {
+		List<AccountDto> users = accountDao.findByNameAndPhone(findEmailDto.getUsername(), findEmailDto.getPhone());
+		if(users.isEmpty()) {
 			throw new NotFoundUserException("해당하는 정보로 가입된 아이디가 존재하지 않습니다.");
 		}
 		
-		return user.getEmail();
+		List<String> userEmails = users.stream().map((item) -> item.getEmail()).collect(Collectors.toList());
+		
+		return userEmails;
 	}
 	
 	

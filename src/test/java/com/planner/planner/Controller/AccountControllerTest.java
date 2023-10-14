@@ -32,6 +32,7 @@ import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.AuthenticationCodeDto;
+import com.planner.planner.Dto.FindEmailDto;
 import com.planner.planner.Dto.FindPasswordDto;
 import com.planner.planner.Dto.PasswordDto;
 import com.planner.planner.Util.JwtUtil;
@@ -273,7 +274,8 @@ public class AccountControllerTest {
 	@Test
 	public void 계정_찾기_유효성검사_공백() throws Exception {
 		String url = "/api/users/find-email";
-		AuthenticationCodeDto dto = new AuthenticationCodeDto.Builder()
+		FindEmailDto dto = new FindEmailDto.Builder()
+				.setUsername("")
 				.setPhone("")
 				.setCode("")
 				.build();
@@ -286,6 +288,7 @@ public class AccountControllerTest {
 				.content(mapper.writeValueAsString(dto)))
 		.andDo(print())
 		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.message.username").exists())
 		.andExpect(jsonPath("$.message.phone").exists())
 		.andExpect(jsonPath("$.message.code").exists());
 	}
@@ -293,9 +296,10 @@ public class AccountControllerTest {
 	@Test
 	public void 계정_찾기_유효성검사_잘못된입력() throws Exception {
 		String url = "/api/users/find-email";
-		AuthenticationCodeDto dto = new AuthenticationCodeDto.Builder()
-				.setPhone("010")
-				.setCode("0")
+		FindEmailDto dto = new FindEmailDto.Builder()
+				.setUsername("테스트")
+				.setPhone("0")
+				.setCode("12")
 				.build();
 		
 		this.mockMvc.perform(post(url)
@@ -306,14 +310,34 @@ public class AccountControllerTest {
 				.content(mapper.writeValueAsString(dto)))
 		.andDo(print())
 		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.message.username").exists())
 		.andExpect(jsonPath("$.message.phone").exists())
 		.andExpect(jsonPath("$.message.code").exists());
 	}
 	
 	@Test
-	public void 계정_찾기_정상() throws Exception {
+	public void 계정_찾기_코드_요청() throws Exception {
 		String url = "/api/users/find-email";
-		AuthenticationCodeDto dto = new AuthenticationCodeDto.Builder()
+		FindEmailDto dto = new FindEmailDto.Builder()
+				.setUsername("테스트")
+				.setPhone("01012345678")
+				.build();
+		
+		this.mockMvc.perform(post(url)
+				.servletPath(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(dto)))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 계정_찾기_코드_확인_및_정상() throws Exception {
+		String url = "/api/users/find-email";
+		FindEmailDto dto = new FindEmailDto.Builder()
+				.setUsername("테스트")
 				.setPhone("01012345678")
 				.setCode("123456")
 				.build();
@@ -325,7 +349,7 @@ public class AccountControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(dto)))
 		.andDo(print())
-		.andExpect(status().isBadRequest());
+		.andExpect(status().isOk());
 	}
 	
 	@Test
