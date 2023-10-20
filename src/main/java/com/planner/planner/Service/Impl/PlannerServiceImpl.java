@@ -3,12 +3,15 @@ package com.planner.planner.Service.Impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
+import com.planner.planner.Common.Notification.NotificationLink;
 import com.planner.planner.Common.Notification.NotificationMessage;
+import com.planner.planner.Common.Notification.NotificationType;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.InvitationDao;
 import com.planner.planner.Dao.NotificationDao;
@@ -31,7 +34,7 @@ public class PlannerServiceImpl implements PlannerService {
 	private PlanMemberDao planMemberDao;
 	private InvitationDao invitationDao;
 	private NotificationDao notificationDao;
-
+	
 	public PlannerServiceImpl(AccountDao accountDao, PlannerDao plannerDao, PlanMemberDao planMemberDao, InvitationDao invitationDao, NotificationDao notificationDao) {
 		this.accountDao = accountDao;
 		this.plannerDao = plannerDao;
@@ -63,7 +66,7 @@ public class PlannerServiceImpl implements PlannerService {
 					.setPlannerId(plannerId)
 					.build();
 			
-			invitationDao.createInvitation(invitation);
+			int inviteId = invitationDao.createInvitation(invitation);
 			planMemberDao.insertPlanMember(plannerId, user.getAccountId());
 			
 			// 초대자들에게만 알림 생성
@@ -71,6 +74,8 @@ public class PlannerServiceImpl implements PlannerService {
 				NotificationDto notificationDto = new NotificationDto.Builder()
 						.setAccountId(user.getAccountId())
 						.setContent(String.format(NotificationMessage.PLANNER_INVAITE, plannerDto.getCreator()))
+						.setLink(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
+						.setNotificationType(NotificationType.PLANNER_INVITE)
 						.build();
 				notificationDao.createNotification(user.getAccountId(), notificationDto);	
 			}

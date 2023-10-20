@@ -2,6 +2,7 @@ package com.planner.planner.Service.Impl;
 
 import org.springframework.stereotype.Service;
 
+import com.planner.planner.Common.Notification.NotificationLink;
 import com.planner.planner.Common.Notification.NotificationMessage;
 import com.planner.planner.Common.Notification.NotificationType;
 import com.planner.planner.Dao.CommentDao;
@@ -36,7 +37,7 @@ public class CommentServiceImpl implements CommentService {
 			NotificationDto notification = new NotificationDto.Builder()
 					.setAccountId(parentComment.getWriterId())
 					.setContent(String.format(NotificationMessage.COMMENT, comment.getWriter()))
-					.setLink(String.format(NotificationMessage.REVIEW_LINK, reviewId))
+					.setLink(String.format(NotificationLink.REVIEW_LINK, reviewId))
 					.setNotificationType(NotificationType.COMMENT)
 					.build();
 			
@@ -51,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
 			NotificationDto notification = new NotificationDto.Builder()
 					.setAccountId(review.getWriterId())
 					.setContent(String.format(NotificationMessage.COMMENT, comment.getWriter()))
-					.setLink(String.format(NotificationMessage.REVIEW_LINK, reviewId))
+					.setLink(String.format(NotificationLink.REVIEW_LINK, reviewId))
 					.setNotificationType(NotificationType.COMMENT)
 					.build();
 			

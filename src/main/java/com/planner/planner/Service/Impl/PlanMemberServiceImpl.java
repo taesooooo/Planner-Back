@@ -5,12 +5,16 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.planner.planner.Common.Notification.NotificationLink;
 import com.planner.planner.Common.Notification.NotificationMessage;
+import com.planner.planner.Common.Notification.NotificationType;
 import com.planner.planner.Dao.AccountDao;
+import com.planner.planner.Dao.InvitationDao;
 import com.planner.planner.Dao.NotificationDao;
 import com.planner.planner.Dao.PlanMemberDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Dto.InvitationDto;
 import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PlanMemberDto;
 import com.planner.planner.Dto.PlannerDto;
@@ -24,13 +28,14 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 	private AccountDao accountDao;
 	private PlanMemberDao planMemberDao;
 	private PlannerDao plannerDao;
+	private InvitationDao invitationDao;
 	private NotificationDao notificationDao;
 	
-
-	public PlanMemberServiceImpl(AccountDao accountDao, PlanMemberDao planMemberDao, PlannerDao plannerDao, NotificationDao notificationDao) {
+	public PlanMemberServiceImpl(AccountDao accountDao, PlanMemberDao planMemberDao, PlannerDao plannerDao, InvitationDao invitationDao, NotificationDao notificationDao) {
 		this.accountDao = accountDao;
 		this.planMemberDao = planMemberDao;
 		this.plannerDao = plannerDao;
+		this.invitationDao = invitationDao;
 		this.notificationDao = notificationDao;
 	}
 
@@ -56,11 +61,19 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 		}
 		
 		for (AccountDto user : users) {
+			InvitationDto invitation = new InvitationDto.Builder()
+					.setAccountId(user.getAccountId())
+					.setPlannerId(plannerId)
+					.build();
+			
+			int inviteId = invitationDao.createInvitation(invitation);
 			planMemberDao.insertPlanMember(plannerId, user.getAccountId());
 			
 			NotificationDto notificationDto = new NotificationDto.Builder()
 					.setAccountId(user.getAccountId())
 					.setContent(String.format(NotificationMessage.PLANNER_INVAITE, planner.getCreator()))
+					.setLink(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
+					.setNotificationType(NotificationType.PLANNER_INVITE)
 					.build();
 			notificationDao.createNotification(user.getAccountId(), notificationDto);	
 		}

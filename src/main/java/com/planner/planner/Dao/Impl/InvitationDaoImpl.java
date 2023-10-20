@@ -3,6 +3,8 @@ package com.planner.planner.Dao.Impl;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.InvitationDao;
@@ -23,12 +25,15 @@ public class InvitationDaoImpl implements InvitationDao {
 	}
 
 	@Override
-	public void createInvitation(InvitationDto invitationDto) throws Exception {
+	public int createInvitation(InvitationDto invitationDto) throws Exception {
+		KeyHolder keyHolder = new GeneratedKeyHolder();
 		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
 				.addValue("accountId", invitationDto.getAccountId())
 				.addValue("plannerId", invitationDto.getPlannerId());
 		
-		namedParameterJdbcTemplate.update(INSERT_INVITATION_SQL, mapSqlParameterSource);
+		namedParameterJdbcTemplate.update(INSERT_INVITATION_SQL, mapSqlParameterSource, keyHolder, new String[] {"inviteId"});
+		
+		return keyHolder.getKey().intValue();
 	}
 
 	@Override

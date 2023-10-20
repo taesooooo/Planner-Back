@@ -4,7 +4,7 @@ import com.planner.planner.Dto.InvitationDto;
 
 public interface InvitationDao {
 
-	public void createInvitation(InvitationDto invitationDto) throws Exception;
+	public int createInvitation(InvitationDto invitationDto) throws Exception;
 
 	public InvitationDto findById(int id) throws Exception;
 

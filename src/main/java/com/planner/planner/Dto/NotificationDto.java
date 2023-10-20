@@ -99,7 +99,7 @@ public class NotificationDto {
 		return link;
 	}
 
-	public NotificationType getNotiType() {
+	public NotificationType getNotificationType() {
 		return notificationType;
 	}
 

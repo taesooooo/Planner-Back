@@ -33,7 +33,7 @@ public class NotificationDaoImpl implements NotificationDao {
 				.addValue("accountId", accountId)
 				.addValue("content", notificationDto.getContent())
 				.addValue("link", notificationDto.getLink() == null ? "" : notificationDto.getLink())
-				.addValue("notificationType", notificationDto.getNotiType() == null ? NotificationType.OTHER.getCode() : notificationDto.getNotiType().getCode());
+				.addValue("notificationType", notificationDto.getNotificationType() == null ? NotificationType.OTHER.getCode() : notificationDto.getNotificationType().getCode());
 		
 		int result = namedParameterJdbcTemplate.update(INSERT_NOTIFICATION_SQL, parameterSource, keyHolder, new String[] {"id"});
 
