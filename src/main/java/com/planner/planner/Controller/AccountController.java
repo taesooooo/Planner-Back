@@ -140,7 +140,7 @@ public class AccountController {
 	@PostMapping(value = "/find-email")
 	public ResponseEntity<Object> findEmail(HttpServletRequest req, @RequestBody @Valid FindEmailDto findEmailDto) throws Exception {		
 		if(findEmailDto.getCode() == null) {
-			AccountDto user = accountService.findByNameAndPhone(findEmailDto.getUsername(), findEmailDto.getPhone());
+			AccountDto user = accountService.findByNameAndPhone(findEmailDto.getUserName(), findEmailDto.getPhone());
 			
 			String code = randomCode.createCode();
 			
@@ -153,7 +153,7 @@ public class AccountController {
 		else {
 			AuthenticationCodeDto authCode = authenticationCodeService.findByPhone(findEmailDto.getPhone());
 			if(!authCode.isConfirm()) {
-				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, "", "인증되지 않았습니다. 다시 시도해 주세요."));
+				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, "인증되지 않았습니다. 다시 시도해 주세요."));
 			}
 		}
 		

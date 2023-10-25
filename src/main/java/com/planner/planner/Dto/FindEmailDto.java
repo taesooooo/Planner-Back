@@ -4,7 +4,7 @@ import javax.validation.constraints.Pattern;
 
 public class FindEmailDto {
 	@Pattern(regexp = "^[가-힣]*", message = "한글만 입력할 수 있습니다.")
-	private String username;
+	private String userName;
 	@Pattern(regexp = "^010[0-9]{4}[0-9]{4}", message = "번호를 제대로 입력해주세요.")
 	private String phone;
 	
@@ -13,12 +13,12 @@ public class FindEmailDto {
 	private String code;
 	
 	public static class Builder {
-		private String username;
+		private String userName;
 		private String phone;
 		private String code;
 		
-		public Builder setUsername(String username) {
-			this.username = username;
+		public Builder setUserName(String userName) {
+			this.userName = userName;
 			return this;
 		}
 		public Builder setPhone(String phone) {
@@ -39,13 +39,13 @@ public class FindEmailDto {
 	}
 
 	public FindEmailDto(Builder builder) {
-		this.username = builder.username;
+		this.userName = builder.userName;
 		this.phone = builder.phone;
 		this.code = builder.code;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getUserName() {
+		return userName;
 	}
 
 	public String getPhone() {
