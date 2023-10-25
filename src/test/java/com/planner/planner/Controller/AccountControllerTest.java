@@ -275,7 +275,7 @@ public class AccountControllerTest {
 	public void 계정_찾기_유효성검사_공백() throws Exception {
 		String url = "/api/users/find-email";
 		FindEmailDto dto = new FindEmailDto.Builder()
-				.setUsername("")
+				.setUserName("")
 				.setPhone("")
 				.setCode("")
 				.build();
@@ -297,7 +297,7 @@ public class AccountControllerTest {
 	public void 계정_찾기_유효성검사_잘못된입력() throws Exception {
 		String url = "/api/users/find-email";
 		FindEmailDto dto = new FindEmailDto.Builder()
-				.setUsername("테스트")
+				.setUserName("테스트")
 				.setPhone("0")
 				.setCode("12")
 				.build();
@@ -319,7 +319,7 @@ public class AccountControllerTest {
 	public void 계정_찾기_코드_요청() throws Exception {
 		String url = "/api/users/find-email";
 		FindEmailDto dto = new FindEmailDto.Builder()
-				.setUsername("테스트")
+				.setUserName("테스트")
 				.setPhone("01012345678")
 				.build();
 		
@@ -337,7 +337,7 @@ public class AccountControllerTest {
 	public void 계정_찾기_코드_확인_및_정상() throws Exception {
 		String url = "/api/users/find-email";
 		FindEmailDto dto = new FindEmailDto.Builder()
-				.setUsername("테스트")
+				.setUserName("테스트")
 				.setPhone("01012345678")
 				.setCode("123456")
 				.build();

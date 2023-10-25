@@ -115,7 +115,7 @@ public class AuthController {
 		return ResponseEntity.ok(new ResponseMessage(true, "로그아웃 되었습니다."));
 	}
 	
-	@PostMapping(value = "/authentication-code/send")
+	@PostMapping(value = "/authentication-code/request")
 	public ResponseEntity<Object> authenticationCode(
 			@RequestParam(value="phone", required = false) @Pattern(regexp = "^010[0-9]{4}[0-9]{4}", message = "번호를 제대로 입력해주세요.") String phone,
 			@RequestParam(value="email", required=false) @Email(message = "정확한 이메일을 입력해주세요.") String email) throws Exception {
@@ -137,7 +137,7 @@ public class AuthController {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(isSent, "인증번호 전송 실패"));
 		}
 
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(isSent, ""));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(isSent, "인증번호가 전송되었습니다."));
 	}
 	
 	@PostMapping(value = "/authentication-code/check")
@@ -148,7 +148,7 @@ public class AuthController {
 		
 		boolean isConfirmed = authenticationCodeService.codeCheck(authenticationCodeDto);
 		if(!isConfirmed) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(isConfirmed, "인증번호가 다릅니다."));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(isConfirmed, "인증번호를 정확히 입력해주세요."));
 		}
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(isConfirmed, ""));

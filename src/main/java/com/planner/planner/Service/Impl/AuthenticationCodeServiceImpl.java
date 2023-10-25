@@ -47,7 +47,8 @@ public class AuthenticationCodeServiceImpl implements AuthenticationCodeService 
 
 		if (phoneCheck) {
 			authCodeDto = this.authentcationCodeDao.findByPhone(authenticationCodeDto.getPhone());
-		} else {
+		} 
+		else {
 			authCodeDto = this.authentcationCodeDao.findByEmail(authenticationCodeDto.getEmail());
 		}
 
@@ -61,14 +62,16 @@ public class AuthenticationCodeServiceImpl implements AuthenticationCodeService 
 			throw new AuthenticationCodeExpireException("인증 코드 시간이 만료되었습니다. 다시 시도하세요.");
 		}
 
-		if (!authCodeDto.getCode().equals(authenticationCodeDto.getCode())) {
-			return false;
-		} else {
+		if (authCodeDto.getCode().equals(authenticationCodeDto.getCode())) {
 			if (phoneCheck) {
 				this.authentcationCodeDao.updateCodeConfirmByPhone(authenticationCodeDto.getPhone());
-			} else {
+			} 
+			else {
 				this.authentcationCodeDao.updateCodeConfirmByEmail(authenticationCodeDto.getEmail());
 			}
+		} 
+		else {
+			return false;
 		}
 
 		return true;

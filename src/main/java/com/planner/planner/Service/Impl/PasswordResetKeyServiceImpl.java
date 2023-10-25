@@ -11,6 +11,7 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PasswordResetkeyDto;
 import com.planner.planner.Exception.NotFoundPasswordResetKeyException;
 import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Service.EmailService;
 import com.planner.planner.Service.PasswordResetKeyService;
 
 @Service
@@ -19,20 +20,24 @@ public class PasswordResetKeyServiceImpl implements PasswordResetKeyService {
 	
 	private PasswordResetKeyDao passwordResetKeyDao;
 	private AccountDao accountDao;
+	private EmailService emailService;
 
-	public PasswordResetKeyServiceImpl(PasswordResetKeyDao passwordResetKeyDao, AccountDao accountDao) {
+	public PasswordResetKeyServiceImpl(PasswordResetKeyDao passwordResetKeyDao, AccountDao accountDao, EmailService emailService) {
 		this.passwordResetKeyDao = passwordResetKeyDao;
 		this.accountDao = accountDao;
+		this.emailService = emailService;
 	}
 
 	@Override
-	public void createPasswordResetKey(String resetKey, int accountId) throws Exception {
-		AccountDto user = this.accountDao.findById(accountId);
+	public void createPasswordResetKey(String resetKey, AccountDto account) throws Exception {
+		AccountDto user = this.accountDao.findById(account.getAccountId());
 		if(user == null) {
 			throw new NotFoundUserException();
 		}
 		
-		this.passwordResetKeyDao.createPasswordResetKey(resetKey, accountId);
+		this.passwordResetKeyDao.createPasswordResetKey(resetKey, account.getAccountId());
+		
+		emailService.sendPasswordResetEmail(account.getEmail(), resetKey);
 	}
 
 	@Override

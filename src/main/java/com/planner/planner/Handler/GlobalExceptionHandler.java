@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.planner.planner.Exception.AuthCheckFail;
+import com.planner.planner.Exception.AuthenticationCodeExpireException;
 import com.planner.planner.Exception.DataNotFoundException;
 import com.planner.planner.Exception.DuplicateLikeException;
 import com.planner.planner.Exception.ForbiddenException;
@@ -76,7 +77,9 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, e.getMessage()));
 	}
 
-	@ExceptionHandler(NoValidArgumentException.class)
+	@ExceptionHandler(value = {
+		NoValidArgumentException.class,
+		AuthenticationCodeExpireException.class })
 	public ResponseEntity<Object> noValid(Exception e) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, e.getMessage()));
 	}

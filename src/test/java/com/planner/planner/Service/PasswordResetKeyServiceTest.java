@@ -30,6 +30,8 @@ public class PasswordResetKeyServiceTest {
 	private PasswordResetKeyDao passwordResetKeyDao;
 	@Mock
 	private AccountDao accountDao;
+	@Mock
+	private EmailService emailService;
 	
 	private RandomCode randomCode = new RandomCode();
 	
@@ -47,7 +49,7 @@ public class PasswordResetKeyServiceTest {
 		int accountId = 1;
 		when(accountDao.findById(anyInt())).thenReturn(null);
 
-		assertThatThrownBy(() -> { passwordResetKeyService.createPasswordResetKey(resetkey, accountId); })
+		assertThatThrownBy(() -> { passwordResetKeyService.createPasswordResetKey(resetkey, null); })
 		.isExactlyInstanceOf(NotFoundUserException.class);
 	}
 	
@@ -55,6 +57,7 @@ public class PasswordResetKeyServiceTest {
 	public void 재설정키_생성_계정_정상() throws Exception {
 		String resetkey = randomCode.createStrCode(6, true);
 		int accountId = 1;
+		
 		AccountDto user = new AccountDto.Builder()
 				.setAccountId(1)
 				.setEmail("test@naver.com")
@@ -62,9 +65,10 @@ public class PasswordResetKeyServiceTest {
 				.setNickname("test")
 				.setPhone("01012345678")
 				.build();
+		
 		when(accountDao.findById(anyInt())).thenReturn(user);
 		
-		passwordResetKeyService.createPasswordResetKey(resetkey, accountId);
+		passwordResetKeyService.createPasswordResetKey(resetkey, user);
 	}
 	
 	@Test

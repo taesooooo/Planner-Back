@@ -152,7 +152,8 @@ public class AccountController {
 		}
 		else {
 			AuthenticationCodeDto authCode = authenticationCodeService.findByPhone(findEmailDto.getPhone());
-			if(!authCode.isConfirm()) {
+			boolean check = authenticationCodeService.codeCheck(authCode);
+			if(!check) {
 				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, "인증되지 않았습니다. 다시 시도해 주세요."));
 			}
 		}
@@ -165,15 +166,11 @@ public class AccountController {
 	
 	@PostMapping(value = "/find-password")
 	public ResponseEntity<Object> findPassword(@RequestBody @Valid FindPasswordDto findPasswordDto) throws Exception {
-		String mail = findPasswordDto.getEmail();
-		
-		AccountDto user = accountService.findByEmail(mail);
+		AccountDto user = accountService.findByEmail(findPasswordDto.getEmail());
 		
 		String resetKey = randomCode.createStrCode(6, true);
 		
-		passwordResetKeyService.createPasswordResetKey(resetKey, user.getAccountId());
-		
-		mailService.sendPasswordResetEmail(mail,resetKey);
+		passwordResetKeyService.createPasswordResetKey(resetKey, user);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "비밀번호 재설정 메일이 전송 되었습니다."));
 	}
