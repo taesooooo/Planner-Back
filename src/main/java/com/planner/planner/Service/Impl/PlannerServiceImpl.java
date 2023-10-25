@@ -48,10 +48,9 @@ public class PlannerServiceImpl implements PlannerService {
 		// 플래너 생성
 		int plannerId = plannerDao.insertPlanner(plannerDto);
 
-		// 멤버 초대(멤버 추가시 기본상태 수락 대기, 단 생성자는 바로 수락 상태로 변경해야함)
 		List<AccountDto> users = new ArrayList<AccountDto>();
 		List<String> memberNickNames = plannerDto.getPlanMembers();
-		memberNickNames.add(plannerDto.getCreator());
+
 		for (String nickName : memberNickNames) {
 			AccountDto user = accountDao.findAccountIdByNickName(nickName);
 			if (user == null) {
@@ -59,29 +58,28 @@ public class PlannerServiceImpl implements PlannerService {
 			}
 			users.add(user);
 		}
+		
+		// 생성자 바로 등록
+		planMemberDao.insertPlanMember(plannerId, plannerDto.getAccountId());
 
+		// 초대
 		for (AccountDto user : users) {
+			// 생성자를 제외한 초대자들에게만 초대 및 알림 생성
 			InvitationDto invitation = new InvitationDto.Builder()
 					.setAccountId(user.getAccountId())
-					.setPlannerId(plannerId)
-					.build();
-			
-			int inviteId = invitationDao.createInvitation(invitation);
-			planMemberDao.insertPlanMember(plannerId, user.getAccountId());
-			
-			// 초대자들에게만 알림 생성
-			if(user.getAccountId() != plannerDto.getAccountId()) {
-				NotificationDto notificationDto = new NotificationDto.Builder()
-						.setAccountId(user.getAccountId())
-						.setContent(String.format(NotificationMessage.PLANNER_INVAITE, plannerDto.getCreator()))
-						.setLink(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
-						.setNotificationType(NotificationType.PLANNER_INVITE)
-						.build();
-				notificationDao.createNotification(user.getAccountId(), notificationDto);	
-			}
-		}
+					.setPlannerId(plannerId).build();
 
-		planMemberDao.inviteAcceptState(plannerId, plannerDto.getAccountId());
+			int inviteId = invitationDao.createInvitation(invitation);
+
+			NotificationDto notificationDto = new NotificationDto.Builder()
+					.setAccountId(user.getAccountId())
+					.setContent(String.format(NotificationMessage.PLANNER_INVAITE, plannerDto.getCreator()))
+					.setLink(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
+					.setNotificationType(NotificationType.PLANNER_INVITE).build();
+			
+			notificationDao.createNotification(user.getAccountId(), notificationDto);
+
+		}
 		
 		return plannerId;
 	}

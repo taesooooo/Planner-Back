@@ -26,10 +26,14 @@ import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Dao.AccountDao;
+import com.planner.planner.Dao.InvitationDao;
+import com.planner.planner.Dao.NotificationDao;
 import com.planner.planner.Dao.PlanMemberDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
+import com.planner.planner.Dto.InvitationDto;
+import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemoDto;
@@ -50,6 +54,10 @@ public class PlannerServiceTest {
 	private PlannerDao plannerDao;
 	@Mock
 	private PlanMemberDao planMemberDao;
+	@Mock
+	private InvitationDao invitationDao;
+	@Mock
+	private NotificationDao notificationDao;
 	
 	@Mock
 	private PlannerDto plannerDto;
@@ -72,9 +80,10 @@ public class PlannerServiceTest {
 		
 		plannerService.newPlanner(planner);
 		
-		verify(accountDao, times(2)).findAccountIdByNickName(anyString());
-		verify(planMemberDao, times(2)).insertPlanMember(anyInt(), anyInt());
-		verify(planMemberDao, times(1)).inviteAcceptState(anyInt(), anyInt());
+		verify(accountDao, times(1)).findAccountIdByNickName(anyString());
+		verify(planMemberDao, times(1)).insertPlanMember(anyInt(), anyInt());
+		verify(invitationDao, times(1)).createInvitation(any(InvitationDto.class));
+		verify(notificationDao, times(1)).createNotification(anyInt(), any(NotificationDto.class));
 	}
 	
 	@Test(expected = NotFoundUserException.class)
@@ -83,7 +92,7 @@ public class PlannerServiceTest {
 		PlannerDto planner = createBasePlanner();
 		AccountDto creator = new AccountDto.Builder().setAccountId(1).build();
 		
-		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(creator).thenReturn(null);
+		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(null);
 		
 		plannerService.newPlanner(planner);
 		

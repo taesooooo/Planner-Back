@@ -141,11 +141,6 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public void acceptInvite(int plannerId, int accountId) throws Exception {
-		planMemberDao.inviteAcceptState(plannerId, accountId);
-	}
-
-	@Override
 	public Page<PlannerDto> myPlanners(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		return plannerService.findPlannersByAccountId(accountId, commonRequestParamDto); 
 	}

@@ -18,13 +18,10 @@ public class PlanMemberDaoImpl implements PlanMemberDao {
 
 	private JdbcTemplate jdbcTemplate;
 
-	private final String INSERT_PLAN_MEMBER_SQL = "INSERT INTO plan_member(planner_id, account_id, invite_state, invite_date) VALUES(?, ?, 2, NOW());";
+	private final String INSERT_PLAN_MEMBER_SQL = "INSERT INTO plan_member(planner_id, account_id) VALUES(?, ?);";
 	private final String FINDS_PLAN_MEMBER_SQL = "SELECT plan_member.plan_member_id, plan_member.planner_id, plan_member.account_id FROM plan_member WHERE planner_id = ?;";
 	private final String DELETE_PLAN_MEMBER_SQL = "DELETE FROM plan_member WHERE planner_id = ? AND account_id = ?;";
-	private final String UPDATE_PLAN_MEMBER_ACCEPT_INVITE_SQL = "UPDATE plan_member SET invite_state = 1 WHERE planner_id = ? AND account_id = ?;";
-	private final String UPDATE_PLAN_MEMBER_REJECT_INVITE_SQL = "UPDATE plan_member SET invite_state = 0 WHERE planner_id = ? AND account_id = ?;";
 	
-
 	public PlanMemberDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
@@ -50,15 +47,4 @@ public class PlanMemberDaoImpl implements PlanMemberDao {
 	public void deletePlanMember(int plannerId, int accountId) throws Exception {
 		int result = jdbcTemplate.update(DELETE_PLAN_MEMBER_SQL, plannerId, accountId);
 	}
-
-	@Override
-	public void inviteAcceptState(int plannerId, int accountId) throws Exception {
-		int result = jdbcTemplate.update(UPDATE_PLAN_MEMBER_ACCEPT_INVITE_SQL, plannerId, accountId);
-	}
-
-	@Override
-	public void inviteRejectState(int plannerId, int accountId) throws Exception {
-		int result = jdbcTemplate.update(UPDATE_PLAN_MEMBER_REJECT_INVITE_SQL, plannerId, accountId);
-	}
-
 }

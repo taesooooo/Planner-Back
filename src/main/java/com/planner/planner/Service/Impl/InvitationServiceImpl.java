@@ -41,7 +41,7 @@ public class InvitationServiceImpl implements InvitationService {
 		}
 		
 		invitationDao.deleteById(id);
-		planMemberDao.inviteAcceptState(invitation.getPlannerId(), invitation.getAccountId());
+		planMemberDao.insertPlanMember(invitation.getPlannerId(), invitation.getAccountId());
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class InvitationServiceImpl implements InvitationService {
 		}
 		
 		invitationDao.deleteById(id);
-		planMemberDao.inviteRejectState(invitation.getPlannerId(), invitation.getAccountId());
+		planMemberDao.deletePlanMember(invitation.getPlannerId(), invitation.getAccountId());
 	}
 
 }

@@ -141,16 +141,7 @@ public class PlannerContorller {
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
-	
-	@PostMapping(value="/accept-invite")
-	public ResponseEntity<Object> acceptInvaite(HttpServletRequest req, AcceptInvateDto acceptInvateDto) throws Exception {
-		Integer userId = UserIdUtil.getUserId(req);
-		
-		accountService.acceptInvite(userId, acceptInvateDto.getPlannerId());
-		
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
-	}
-	
+
 	@PostMapping(value="/{plannerId}/invite-member")
 	public ResponseEntity<Object> inviteMember(HttpServletRequest req, @PathVariable int plannerId, @RequestBody HashMap<String, List<String>> members) throws Exception {
 		

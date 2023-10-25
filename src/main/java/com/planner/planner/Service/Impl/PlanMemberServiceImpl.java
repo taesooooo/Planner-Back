@@ -59,7 +59,7 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 		if (planner == null) {
 			throw new NotFoundPlanner("존재하지 않는 플래너 입니다.");
 		}
-		
+
 		for (AccountDto user : users) {
 			InvitationDto invitation = new InvitationDto.Builder()
 					.setAccountId(user.getAccountId())
@@ -67,7 +67,6 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 					.build();
 			
 			int inviteId = invitationDao.createInvitation(invitation);
-			planMemberDao.insertPlanMember(plannerId, user.getAccountId());
 			
 			NotificationDto notificationDto = new NotificationDto.Builder()
 					.setAccountId(user.getAccountId())

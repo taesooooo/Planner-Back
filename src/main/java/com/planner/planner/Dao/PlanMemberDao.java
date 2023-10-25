@@ -11,8 +11,4 @@ public interface PlanMemberDao {
 	public List<PlanMemberDto> findMembersByPlannerId(int plannerId) throws Exception;
 
 	public void deletePlanMember(int plannerId, int accountId) throws Exception;
-
-	public void inviteAcceptState(int plannerId, int accountId) throws Exception;
-
-	public void inviteRejectState(int plannerId, int accountId) throws Exception;
 }
