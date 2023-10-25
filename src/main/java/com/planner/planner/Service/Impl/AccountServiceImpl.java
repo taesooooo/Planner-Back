@@ -171,7 +171,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public List<String> findId(FindEmailDto findEmailDto) throws Exception {
-		List<AccountDto> users = accountDao.findByNameAndPhone(findEmailDto.getUsername(), findEmailDto.getPhone());
+		List<AccountDto> users = accountDao.findByNameAndPhone(findEmailDto.getUserName(), findEmailDto.getPhone());
 		if(users.isEmpty()) {
 			throw new NotFoundUserException("해당하는 정보로 가입된 아이디가 존재하지 않습니다.");
 		}

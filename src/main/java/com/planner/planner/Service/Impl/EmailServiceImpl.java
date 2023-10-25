@@ -18,7 +18,6 @@ public class EmailServiceImpl implements EmailService {
 	private String passwordResetUrl;
 	
 	private JavaMailSender mailSender;
-	private AuthenticationCodeDao authentcationCodeDao;
 
 	public EmailServiceImpl(JavaMailSender mailSender) {
 		this.mailSender = mailSender;

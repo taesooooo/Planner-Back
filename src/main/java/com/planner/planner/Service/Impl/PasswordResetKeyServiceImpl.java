@@ -3,6 +3,7 @@ package com.planner.planner.Service.Impl;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PasswordResetKeyDao;
@@ -13,6 +14,7 @@ import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.PasswordResetKeyService;
 
 @Service
+@Transactional
 public class PasswordResetKeyServiceImpl implements PasswordResetKeyService {
 	
 	private PasswordResetKeyDao passwordResetKeyDao;
