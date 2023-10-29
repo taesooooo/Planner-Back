@@ -20,6 +20,7 @@ import com.planner.planner.Exception.AuthCheckFail;
 import com.planner.planner.Exception.AuthenticationCodeExpireException;
 import com.planner.planner.Exception.DataNotFoundException;
 import com.planner.planner.Exception.DuplicateLikeException;
+import com.planner.planner.Exception.DuplicatePlanMemberException;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Exception.NoValidArgumentException;
 import com.planner.planner.Exception.NotFoundAuthenticationCodeException;
@@ -52,10 +53,10 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(value = { 
-			DataNotFoundException.class, 
-			NotFoundUserException.class, 
+			DataNotFoundException.class,
+			NotFoundUserException.class,
 			NotFoundPlanner.class,
-			NotFoundReviewException.class, 
+			NotFoundReviewException.class,
 			NotFoundPasswordResetKeyException.class,
 			NotFoundAuthenticationCodeException.class })
 	public ResponseEntity<Object> notFoundUser(Exception e) {
@@ -72,14 +73,16 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, e.getMessage()));
 	}
 
-	@ExceptionHandler(DuplicateLikeException.class)
+	@ExceptionHandler(value = { 
+			DuplicateLikeException.class,
+			DuplicatePlanMemberException.class })
 	public ResponseEntity<Object> duplicateLike(Exception e) {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, e.getMessage()));
 	}
 
-	@ExceptionHandler(value = {
-		NoValidArgumentException.class,
-		AuthenticationCodeExpireException.class })
+	@ExceptionHandler(value = { 
+			NoValidArgumentException.class,
+			AuthenticationCodeExpireException.class })
 	public ResponseEntity<Object> noValid(Exception e) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, e.getMessage()));
 	}

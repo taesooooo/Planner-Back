@@ -18,6 +18,7 @@ import com.planner.planner.Dto.InvitationDto;
 import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PlanMemberDto;
 import com.planner.planner.Dto.PlannerDto;
+import com.planner.planner.Exception.DuplicatePlanMemberException;
 import com.planner.planner.Exception.NotFoundMemberException;
 import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundUserException;
@@ -58,6 +59,14 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 		PlannerDto planner = plannerDao.findPlannerByPlannerId(null, plannerId);
 		if (planner == null) {
 			throw new NotFoundPlanner("존재하지 않는 플래너 입니다.");
+		}
+		
+		List<PlanMemberDto> invitedUsers = planMemberDao.findMembersByPlannerId(plannerId);
+		boolean isInvited = invitedUsers.stream()
+				.anyMatch((item) -> users.stream().anyMatch((user) -> user.getAccountId() == item.getAccountId()));
+		
+		if(isInvited) {
+			throw new DuplicatePlanMemberException("초대된 유저가 있습니다. 다시 시도하세요.");
 		}
 
 		for (AccountDto user : users) {
