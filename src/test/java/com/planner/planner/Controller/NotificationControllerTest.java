@@ -66,6 +66,19 @@ public class NotificationControllerTest {
 	}
 	
 	@Test
+	public void 알림_읽음_권한_확인() throws Exception {
+		String fakeToken = token = "Bearer " + jwtUtil.createToken(2);
+		mockMvc.perform(post("/api/notifications/1/read")
+				.servletPath("/api/notifications/1/read")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.header("Authorization", token))
+		.andDo(print())
+		.andExpect(status().isForbidden());
+	}
+	
+	@Test
 	public void 알림_삭제() throws Exception {
 		mockMvc.perform(delete("/api/notifications/1")
 				.servletPath("/api/notifications/1")

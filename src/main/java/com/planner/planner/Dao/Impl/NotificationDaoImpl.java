@@ -61,11 +61,10 @@ public class NotificationDaoImpl implements NotificationDao {
 	}
 
 	@Override
-	public void updateRead(int accountId, int notificationId) throws Exception {
+	public void updateRead(int notificationId, boolean state) throws Exception {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("accountId", accountId)
 				.addValue("id", notificationId)
-				.addValue("isRead", true);
+				.addValue("isRead", state);
 		
 		int result = namedParameterJdbcTemplate.update(UPDATE_STATE_SQL, parameterSource);
 	}

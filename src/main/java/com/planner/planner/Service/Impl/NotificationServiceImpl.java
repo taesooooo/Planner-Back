@@ -44,8 +44,8 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void notificationRead(int accountId, int notificationId) throws Exception{
-		notificationDao.updateRead(accountId, notificationId);
+	public void notificationRead(int notificationId) throws Exception{
+		notificationDao.updateRead(notificationId, true);
 	}
 
 	@Override

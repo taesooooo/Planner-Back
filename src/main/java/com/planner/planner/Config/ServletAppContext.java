@@ -74,6 +74,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 				.addPath("/api/reviews/*", RequestMethod.PATCH)
 				.addPath("/api/reviews/*", RequestMethod.DELETE)
 				.addPath("/api/invitation/**", null)
+				.addPath("/api/notifications/*/read", RequestMethod.POST)
 				.addPath("/api/notifications/*", RequestMethod.DELETE);
 		
 		registry.addInterceptor(tokenAuthInterceptorProxy);
