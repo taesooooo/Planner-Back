@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.planner.planner.Dao.NotificationDao;
 import com.planner.planner.Dto.NotificationDto;
+import com.planner.planner.Exception.NotificationNotFoundException;
 import com.planner.planner.Service.NotificationService;
 
 @Service
@@ -20,6 +21,16 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public void createNotification(int accountId, NotificationDto notificationDto) throws Exception{
 		notificationDao.createNotification(accountId, notificationDto);
+	}
+
+	@Override
+	public NotificationDto findById(int notificationId) throws Exception {
+		NotificationDto notification = notificationDao.findById(notificationId);
+		if(notification == null) {
+			throw new NotificationNotFoundException("해당하는 알림을 찾을 수 없습니다.");
+		}
+		
+		return notification;
 	}
 
 	@Override
@@ -38,8 +49,8 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void deleteAllNotification(int accountId) throws Exception{
-		notificationDao.deleteNotification(accountId, accountId);
+	public void deleteNotification(int notificationId) throws Exception{
+		notificationDao.deleteNotification(notificationId);
 	}
 
 }

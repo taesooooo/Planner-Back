@@ -1,5 +1,6 @@
 package com.planner.planner.Controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -62,5 +63,28 @@ public class NotificationControllerTest {
 				.header("Authorization", token))
 		.andDo(print())
 		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 알림_삭제() throws Exception {
+		mockMvc.perform(delete("/api/notifications/1")
+				.servletPath("/api/notifications/1")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.header("Authorization", token))
+		.andDo(print())
+		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 알림_삭제_권한_확인() throws Exception {
+		String fakeToken = token = "Bearer " + jwtUtil.createToken(2);
+		mockMvc.perform(delete("/api/notifications/1")
+				.servletPath("/api/notifications/1")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.header("Authorization", fakeToken))
+		.andDo(print())
+		.andExpect(status().isForbidden());
 	}
 }
