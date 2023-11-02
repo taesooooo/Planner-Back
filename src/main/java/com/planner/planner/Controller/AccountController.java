@@ -151,10 +151,13 @@ public class AccountController {
 			}
 		}
 		else {
-			AuthenticationCodeDto authCode = authenticationCodeService.findByPhone(findEmailDto.getPhone());
+			AuthenticationCodeDto authCode = new AuthenticationCodeDto.Builder()
+					.setPhone(findEmailDto.getPhone())
+					.setCode(findEmailDto.getCode())
+					.build();
 			boolean check = authenticationCodeService.codeCheck(authCode);
 			if(!check) {
-				return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, "인증되지 않았습니다. 다시 시도해 주세요."));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "인증되지 않았습니다. 다시 시도해 주세요."));
 			}
 		}
 		

@@ -259,7 +259,7 @@ public class AccountControllerTest {
 	}
 	
 	@Test
-	public void 계정_확인_없는이메일() throws Exception {
+	public void 계정_확인_없는_이메일() throws Exception {
 		String searchEmail = "aa@naver.com";
 		this.mockMvc.perform(get("/api/users/search-member")
 				.param("searchString", searchEmail)
