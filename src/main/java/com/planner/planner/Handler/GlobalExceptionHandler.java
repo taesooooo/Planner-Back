@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
 			DuplicateLikeException.class,
 			DuplicatePlanMemberException.class })
 	public ResponseEntity<Object> duplicateLike(Exception e) {
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(false, e.getMessage()));
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(false, e.getMessage()));
 	}
 
 	@ExceptionHandler(value = { 

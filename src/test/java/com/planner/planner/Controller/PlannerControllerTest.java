@@ -30,17 +30,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
-import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
+import com.planner.planner.Dto.PlanMemberInviteDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Util.JwtUtil;
@@ -681,9 +679,9 @@ public class PlannerControllerTest {
 	@Test
 	public void 멤버_초대() throws Exception {
 		int plannerId = 1;
-		List<String> members = Arrays.asList("test2","test3");
-		HashMap<String, List<String>> invitenMembers = new HashMap<String, List<String>>();
-		invitenMembers.put("members", members);
+		List<String> members = Arrays.asList("test3");
+		PlanMemberInviteDto invitenMembers= new PlanMemberInviteDto.Builder().setMembers(members).build();
+
 		String url = String.format("/api/planners/%d/invite-member", plannerId);
 		this.mockMvc.perform(post(url)
 				.accept(MediaType.APPLICATION_JSON)
@@ -693,6 +691,40 @@ public class PlannerControllerTest {
 				.content(mapper.writeValueAsString(invitenMembers)))
 		.andDo(print())
 		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void 멤버_초대_중복() throws Exception {
+		int plannerId = 1;
+		List<String> members = Arrays.asList("test2","test3");
+		PlanMemberInviteDto invitenMembers= new PlanMemberInviteDto.Builder().setMembers(members).build();
+		
+		String url = String.format("/api/planners/%d/invite-member", plannerId);
+		this.mockMvc.perform(post(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(invitenMembers)))
+		.andDo(print())
+		.andExpect(status().isConflict());
+	}
+	
+	@Test
+	public void 멤버_초대_빈배열() throws Exception {
+		int plannerId = 1;
+		
+		PlanMemberInviteDto invitenMembers= new PlanMemberInviteDto.Builder().setMembers(new ArrayList<String>()).build();
+		
+		String url = String.format("/api/planners/%d/invite-member", plannerId);
+		this.mockMvc.perform(post(url)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.content(mapper.writeValueAsString(invitenMembers)))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
 	}
 	
 	@Test

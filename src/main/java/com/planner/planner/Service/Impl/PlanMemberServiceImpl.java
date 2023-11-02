@@ -17,6 +17,7 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.InvitationDto;
 import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PlanMemberDto;
+import com.planner.planner.Dto.PlanMemberInviteDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.DuplicatePlanMemberException;
 import com.planner.planner.Exception.NotFoundMemberException;
@@ -46,9 +47,9 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 	}
 
 	@Override
-	public void inviteMembers(int plannerId, List<String> nickNames) throws Exception {
+	public void inviteMembers(int plannerId, PlanMemberInviteDto members) throws Exception {
 		List<AccountDto> users = new ArrayList<AccountDto>();
-		for (String nickName : nickNames) {
+		for (String nickName : members.getMembers()) {
 			AccountDto user = accountDao.findAccountIdByNickName(nickName);
 			if (user == null) {
 				throw new NotFoundUserException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
@@ -83,6 +84,7 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 					.setLink(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
 					.setNotificationType(NotificationType.PLANNER_INVITE)
 					.build();
+			
 			notificationDao.createNotification(user.getAccountId(), notificationDto);	
 		}
 	}

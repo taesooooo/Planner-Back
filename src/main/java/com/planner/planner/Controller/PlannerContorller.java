@@ -1,8 +1,5 @@
 package com.planner.planner.Controller;
 
-import java.util.HashMap;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -28,13 +25,12 @@ import com.planner.planner.Common.ValidationGroups.PlanLocationUpdateGroup;
 import com.planner.planner.Common.ValidationGroups.PlanUpdateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
-import com.planner.planner.Dto.AcceptInvateDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
+import com.planner.planner.Dto.PlanMemberInviteDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.PlanLocationService;
 import com.planner.planner.Service.PlanMemberService;
@@ -143,9 +139,9 @@ public class PlannerContorller {
 	}
 
 	@PostMapping(value="/{plannerId}/invite-member")
-	public ResponseEntity<Object> inviteMember(HttpServletRequest req, @PathVariable int plannerId, @RequestBody HashMap<String, List<String>> members) throws Exception {
+	public ResponseEntity<Object> inviteMember(HttpServletRequest req, @PathVariable int plannerId, @RequestBody @Valid PlanMemberInviteDto members) throws Exception {
 		
-		planMemberService.inviteMembers(plannerId, members.get("members"));
+		planMemberService.inviteMembers(plannerId, members);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
