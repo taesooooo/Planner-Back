@@ -16,7 +16,9 @@ import com.planner.planner.Common.Page;
 import com.planner.planner.Common.Notification.NotificationMessage;
 import com.planner.planner.Common.Notification.NotificationType;
 import com.planner.planner.Dao.AccountDao;
+import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dao.NotificationDao;
+import com.planner.planner.Dao.PasswordResetKeyDao;
 import com.planner.planner.Dao.PlanMemberDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dao.Impl.AccountDaoImpl;
@@ -46,10 +48,11 @@ public class AccountServiceImpl implements AccountService {
 
 	private FileStore fileStore;
 	private BCryptPasswordEncoder passwordEncoder;
+	private PasswordResetKeyDao passwordResetKeyDao;
 
 	public AccountServiceImpl(AccountDao accountDao, PlannerService plannerService, PlannerDao plannerDao,
 			PlanMemberDao planMemberDao, SpotService spotService, NotificationDao notificationDao, FileStore fileStore,
-			BCryptPasswordEncoder passwordEncoder) {
+			BCryptPasswordEncoder passwordEncoder, PasswordResetKeyDao passwordResetKeyDao) {
 		this.accountDao = accountDao;
 		this.plannerService = plannerService;
 		this.plannerDao = plannerDao;
@@ -58,6 +61,7 @@ public class AccountServiceImpl implements AccountService {
 		this.notificationDao = notificationDao;
 		this.fileStore = fileStore;
 		this.passwordEncoder = passwordEncoder;
+		this.passwordResetKeyDao = passwordResetKeyDao;
 	}
 
 	@Override
@@ -126,8 +130,12 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public boolean passwordUpdate(int accountId, String password) throws Exception {
+	public boolean passwordUpdate(int accountId, String password, String key) throws Exception {
 		String newPassword = passwordEncoder.encode(password);
+		
+		accountDao.passwordUpdate(accountId, newPassword);
+		
+		passwordResetKeyDao.deleteByResetKey(key);
 		
 		NotificationDto notification = new NotificationDto.Builder()
 				.setAccountId(accountId)
@@ -137,7 +145,7 @@ public class AccountServiceImpl implements AccountService {
 		
 		notificationDao.createNotification(accountId, notification);
 		
-		return accountDao.passwordUpdate(accountId, newPassword);
+		return true;
 	}
 
 	@Override

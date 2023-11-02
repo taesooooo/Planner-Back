@@ -428,8 +428,8 @@ public class AccountControllerTest {
 	public void 비밀번호_변경_정상() throws Exception {
 		String url = "/api/users/change-password";
 		PasswordDto dto = new PasswordDto.Builder()
-				.setNewPassword("test")
-				.setConfirmPassword("test")
+				.setNewPassword("testtest!")
+				.setConfirmPassword("testtest!")
 				.setKey("b7d2703cc82093b67c55cf33e8c40ed46f92bd7bcebe6323ab35fcbbfb9cdf2e")
 				.build();
 		

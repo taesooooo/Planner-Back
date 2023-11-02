@@ -137,21 +137,4 @@ public class AccountServiceTest {
 	private AccountDto createAccount(int accountId, String email, String name, String nickName) {
 		return new AccountDto.Builder().setAccountId(accountId).setEmail(email).setUsername(name).setNickname(nickName).build();
 	}
-	
-	private PlannerDto createPlanner(int plannerId) {
-		return new PlannerDto.Builder()
-				.setPlannerId(plannerId)
-				.setAccountId(1)
-				.setCreator("test")
-				.setTitle("테스트여행")
-				.setPlanDateStart(LocalDate.of(2023, 1, 29))
-				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
-				.setExpense(1000)
-				.setMemberCount(1)
-				.setMemberTypeId(1)
-				.setLikeCount(0)
-				.setCreateDate(LocalDateTime.of(2023, 1, 29, 00, 00))
-				.setUpdateDate(LocalDateTime.of(2023, 1, 29, 00, 00))
-				.build();
-	}
 }

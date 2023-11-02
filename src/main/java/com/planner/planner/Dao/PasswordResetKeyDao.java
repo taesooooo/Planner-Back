@@ -5,5 +5,5 @@ import com.planner.planner.Dto.PasswordResetkeyDto;
 public interface PasswordResetKeyDao {
 	public void createPasswordResetKey(String key, int accountId);
 	public PasswordResetkeyDto findByResetKey(String key);
-	public void deleteByResetKey(String Key);
+	public void deleteByResetKey(String key);
 }

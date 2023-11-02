@@ -184,7 +184,7 @@ public class AccountController {
 		if(check) {
 			PasswordResetkeyDto resetKey = passwordResetKeyService.findBykey(passwordDto.getKey());
 			
-			accountService.passwordUpdate(resetKey.getAccountId(), passwordDto.getNewPassword());
+			accountService.passwordUpdate(resetKey.getAccountId(), passwordDto.getNewPassword(), passwordDto.getKey());
 		}
 		else {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(true, "만료되었습니다. 비밀번호 재설정을 다시 시도 하세요."));

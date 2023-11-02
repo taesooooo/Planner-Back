@@ -18,7 +18,7 @@ public interface AccountService {
 	public AccountDto findByNameAndPhone(String name, String phone) throws Exception;
 	public boolean accountUpdate(AccountDto accountDto) throws Exception;
 	public boolean accountImageUpdate(int accountId, MultipartFile image) throws Exception;
-	public boolean passwordUpdate(int accountId, String password) throws Exception;
+	public boolean passwordUpdate(int accountId, String password, String key) throws Exception;
 	
 	public Page<PlannerDto> myPlanners(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 	public Page<PlannerDto> likePlanners(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;

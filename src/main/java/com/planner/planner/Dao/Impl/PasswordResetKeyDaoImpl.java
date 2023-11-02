@@ -38,8 +38,8 @@ public class PasswordResetKeyDaoImpl implements PasswordResetKeyDao {
 	}
 
 	@Override
-	public void deleteByResetKey(String Key) {
-		this.jdbcTemplate.update(DELETE_BY_RESEY_KEY_SQL);
+	public void deleteByResetKey(String key) {
+		this.jdbcTemplate.update(DELETE_BY_RESEY_KEY_SQL, key);
 	}
 
 }

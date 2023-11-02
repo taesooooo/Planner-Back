@@ -2,11 +2,14 @@ package com.planner.planner.Dto;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 public class PasswordDto {
 	@NotBlank(message = "필수 항목입니다.")
+	@Pattern(regexp = "^(?=.*[\\w])(?=.*[~!@#$%^&*()+|=])[\\w~!@#$%^&*()+|=]{8,16}$", message = "비밀번호는 8~16글자 및 특수문자가 들어가야합니다.")
 	private String newPassword;
 	@NotBlank(message = "필수 항목입니다.")
+	@Pattern(regexp = "^(?=.*[\\w])(?=.*[~!@#$%^&*()+|=])[\\w~!@#$%^&*()+|=]{8,16}$", message = "비밀번호는 8~16글자 및 특수문자가 들어가야합니다.")
 	private String confirmPassword;
 	@NotBlank(message = "재설정 키는 필수 항목입니다." )
 	private String key;
