@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -25,6 +26,7 @@ public class AccountDto {
 	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	@NotBlank(message = "비밀번호는 필수 항목입니다.", groups = { RegisterGroup.class, LoginGroup.class })
+	@Pattern(regexp = "^(?=.*[\\w])(?=.*[~!@#$%^&*()+|=])[\\w~!@#$%^&*()+|=]{8,16}$", message = "비밀번호는 8~16글자 및 특수문자가 들어가야합니다.", groups = { RegisterGroup.class, LoginGroup.class })
 	private String password;
 	
 	@NotBlank(message = "이름은 필수 항목입니다.", groups = RegisterGroup.class)

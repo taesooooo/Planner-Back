@@ -55,7 +55,7 @@ public class AuthControllerTest {
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
 				.setEmail("")
-				.setPassword("1234")
+				.setPassword("testtest!")
 				.setUsername("test0")
 				.setNickname("test0")
 				.setPhone("01012345678")
@@ -83,7 +83,7 @@ public class AuthControllerTest {
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
 				.setEmail("test!")
-				.setPassword("1234")
+				.setPassword("testtest!")
 				.setUsername("test0")
 				.setNickname("test0")
 				.setPhone("01012345678")
@@ -135,11 +135,39 @@ public class AuthControllerTest {
 	}
 	
 	@Test
+	public void 회원가입_비밀번호_유효성검사() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("test4@naver.com")
+				.setPassword("test!")
+				.setUsername("test0")
+				.setNickname("test0")
+				.setPhone("01012345678")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.servletPath("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
 	public void 회원가입_이름_미작성_유효성검사() throws Exception{
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
 				.setEmail("test4@naver.com")
-				.setPassword("1234")
+				.setPassword("testtest!")
 				.setUsername("")
 				.setNickname("test0")
 				.setPhone("01012345678")
@@ -167,7 +195,7 @@ public class AuthControllerTest {
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
 				.setEmail("test4@naver.com")
-				.setPassword("1234")
+				.setPassword("testtest!")
 				.setUsername("test0")
 				.setNickname("")
 				.setPhone("01012345678")
@@ -195,7 +223,7 @@ public class AuthControllerTest {
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
 				.setEmail("test4@naver.com")
-				.setPassword("1234")
+				.setPassword("testtest!")
 				.setUsername("")
 				.setNickname("test0")
 				.setPhone("11111111111111")
@@ -223,7 +251,7 @@ public class AuthControllerTest {
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
 				.setEmail("testtest@naver.com")
-				.setPassword("1234")
+				.setPassword("testtest!")
 				.setUsername("test0")
 				.setNickname("test0")
 				.setPhone("01012345678")
@@ -251,7 +279,7 @@ public class AuthControllerTest {
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
 				.setEmail("test4@naver.com")
-				.setPassword("1234")
+				.setPassword("testtest!")
 				.setUsername("test0")
 				.setNickname("test0")
 				.setPhone("01012345678")
@@ -279,7 +307,7 @@ public class AuthControllerTest {
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
 				.setEmail("")
-				.setPassword("1234")
+				.setPassword("testtest!")
 				.setUsername("test0")
 				.setNickname("test0")
 				.setPhone("01012345678")
@@ -293,8 +321,8 @@ public class AuthControllerTest {
 		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
-		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
+		mockMvc.perform(post("/api/auth/login")
+				.servletPath("/api/auth/login")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -307,7 +335,7 @@ public class AuthControllerTest {
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
 				.setEmail("test!naver.com")
-				.setPassword("1234")
+				.setPassword("testtest!")
 				.setUsername("")
 				.setNickname("test0")
 				.setPhone("01012345678")
@@ -321,8 +349,8 @@ public class AuthControllerTest {
 		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
-		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
+		mockMvc.perform(post("/api/auth/login")
+				.servletPath("/api/auth/login")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -335,7 +363,7 @@ public class AuthControllerTest {
 		AccountDto testDto = new AccountDto.Builder()
 				.setAccountId(0)
 				.setEmail("test@naver.com")
-				.setPassword("1234")
+				.setPassword("")
 				.setUsername("")
 				.setNickname("test0")
 				.setPhone("01012345678")
@@ -349,8 +377,36 @@ public class AuthControllerTest {
 		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
 
-		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
+		mockMvc.perform(post("/api/auth/login")
+				.servletPath("/api/auth/login")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void 로그인_비밀번호_유효성검사() throws Exception{
+		AccountDto testDto = new AccountDto.Builder()
+				.setAccountId(0)
+				.setEmail("test@naver.com")
+				.setPassword("test!")
+				.setUsername("")
+				.setNickname("test0")
+				.setPhone("01012345678")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/login")
+				.servletPath("/api/auth/login")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -362,7 +418,7 @@ public class AuthControllerTest {
 	public void 로그인() throws Exception {
 		ObjectNode node = mapper.createObjectNode();
 		node.put("email","test@naver.com");
-		node.put("password", "1234");
+		node.put("password", "testtest!");
 
 		mockMvc.perform(post("/api/auth/login")
 				.servletPath("/api/auth/login")
