@@ -62,7 +62,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 				.excludePath("/api/users/find-password", null)
 				.excludePath("/api/users/change-password", null)
 				.excludePath("/api/upload/files/**", null)
-				.eitherAddPath("/api/spots/*", RequestMethod.GET)
+				.eitherAddPath("/api/spots/**", RequestMethod.GET)
 				.eitherAddPath("/api/planners", RequestMethod.GET)
 				.eitherAddPath("/api/planners/*", RequestMethod.GET)
 				.eitherAddPath("/api/reviews", RequestMethod.GET)
