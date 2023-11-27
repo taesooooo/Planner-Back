@@ -64,12 +64,12 @@ public class AuthController {
 	@PostMapping(value = "/register")
 	public ResponseEntity<Object> register(HttpServletRequest req, @RequestBody @Validated(RegisterGroup.class) AccountDto accountDto) {
 		if(accountDto.getEmail() == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "", "이메일을 입력해주세요."));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "이메일을 입력해주세요."));
 		}
 		
 		AuthenticationCodeDto authCode = authenticationCodeService.findByEmail(accountDto.getEmail());
 		if(authCode == null || !authCode.isConfirm()) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "", "인증되지 않았습니다. 다시 시도해 주세요."));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "인증되지 않았습니다. 다시 시도해 주세요."));
 		}
 		
 		String pwEncode = passwordEncoder.encode(accountDto.getPassword());
