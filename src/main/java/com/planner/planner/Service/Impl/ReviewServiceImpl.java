@@ -69,17 +69,11 @@ public class ReviewServiceImpl implements ReviewService {
 		PageInfo pInfo = new PageInfo.Builder().setPageNum(commonRequestParamDto.getPageNum()).setPageItemCount(10)
 				.build();
 
-		List<ReviewDto> reviewList = reviewDao.findAllReview(commonRequestParamDto.getSortCriteria(),
-				commonRequestParamDto.getKeyword(), pInfo);
+		List<ReviewDto> reviewList = reviewDao.findAllReview(commonRequestParamDto, pInfo);
 
 		int totalCount = 0;
-		String keyword = commonRequestParamDto.getKeyword();
 
-		if (keyword != null && !keyword.isEmpty()) {
-			totalCount = reviewDao.getTotalCountByKeyword(keyword);
-		} else {
-			totalCount = reviewDao.getTotalCount();
-		}
+		totalCount = reviewDao.getTotalCount(commonRequestParamDto);
 
 		Page<ReviewDto> ReviewListPage = new Page.Builder<ReviewDto>().setList(reviewList).setPageInfo(pInfo)
 				.setTotalCount(totalCount).build();

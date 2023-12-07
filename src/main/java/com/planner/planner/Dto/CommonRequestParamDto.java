@@ -10,6 +10,7 @@ public class CommonRequestParamDto {
 	@JsonProperty("criteria")
 	private SortCriteria sortCriteria = SortCriteria.LATEST;
 	private String keyword;
+	private Integer areaCode;
 	private Integer pageNum;
 	private PostType postType;
 	
@@ -17,6 +18,7 @@ public class CommonRequestParamDto {
 		private Integer itemCount = 10;
 		private SortCriteria sortCriteria;
 		private String keyword;
+		private Integer areaCode;
 		private Integer pageNum;
 		private PostType postType;
 
@@ -32,6 +34,11 @@ public class CommonRequestParamDto {
 
 		public Builder setKeyword(String keyword) {
 			this.keyword = keyword;
+			return this;
+		}
+
+		public Builder setAreaCode(Integer areaCode) {
+			this.areaCode = areaCode;
 			return this;
 		}
 
@@ -58,6 +65,7 @@ public class CommonRequestParamDto {
 		this.itemCount = builder.itemCount;
 		this.sortCriteria = builder.sortCriteria;
 		this.keyword = builder.keyword;
+		this.areaCode = builder.areaCode;
 		this.pageNum = builder.pageNum;
 		this.postType = builder.postType;
 	}
@@ -72,6 +80,10 @@ public class CommonRequestParamDto {
 
 	public String getKeyword() {
 		return keyword;
+	}
+
+	public Integer getAreaCode() {
+		return areaCode;
 	}
 
 	public Integer getPageNum() {

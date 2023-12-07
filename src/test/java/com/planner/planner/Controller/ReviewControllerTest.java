@@ -103,6 +103,24 @@ public class ReviewControllerTest {
 	public void 리뷰_작성_테스트() throws Exception {
 		List<String> fileList = new ArrayList<String>();
 		fileList.add("test.jpg");
+		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setAreaCode(1).setFileNames(fileList).build();
+
+		mockMvc.perform(post("/api/reviews")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(testDto)))
+		.andDo(print())
+		.andExpect(status().isCreated())
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").value(4));
+	}
+	
+	@Test
+	public void 리뷰_작성_지역코드_없는경우_테스트() throws Exception {
+		List<String> fileList = new ArrayList<String>();
+		fileList.add("test.jpg");
 		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setFileNames(fileList).build();
 
 		mockMvc.perform(post("/api/reviews")
@@ -169,7 +187,7 @@ public class ReviewControllerTest {
 		.andExpect(jsonPath("$.state").value(is(true)))
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
-		.andExpect(jsonPath("$.data.list[0].reviewId").value(3))
+		.andExpect(jsonPath("$.data.list[0].reviewId").value(1))
 		.andExpect(jsonPath("$.data.totalCount").value(3))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
@@ -184,6 +202,27 @@ public class ReviewControllerTest {
 				.param("itemCount", "10")
 				.param("sortCriteria", "1")
 				.param("keyword", "테스트")
+				.param("pageNum", "1"))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.totalCount").value(1))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
+	
+	@Test
+	public void 리뷰_목록_가져오기_키워드_지역_테스트() throws Exception {
+		mockMvc.perform(get("/api/reviews")
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", token)
+				.param("itemCount", "10")
+				.param("sortCriteria", "1")
+				.param("keyword", "테스트")
+				.param("areaCode", "1")
 				.param("pageNum", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())

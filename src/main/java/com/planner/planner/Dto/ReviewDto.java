@@ -22,6 +22,7 @@ public class ReviewDto {
 	
 	@NotBlank(message = "내용을 적어주세요.", groups = {ReviewCreateGroup.class, ReviewUpdateGroup.class})
 	private String content;
+	private Integer areaCode;
 	private String thumbnail;
 	private int likeCount;
 	
@@ -40,6 +41,7 @@ public class ReviewDto {
 		private String writer;
 		private int writerId;
 		private String content;
+		private Integer areaCode;
 		private String thumbnail;
 		private int likeCount;
 		private LocalDateTime createDate;
@@ -69,6 +71,10 @@ public class ReviewDto {
 		}
 		public Builder setContent(String content) {
 			this.content = content;
+			return this;
+		}
+		public Builder setAreaCode(Integer areaCode) {
+			this.areaCode = areaCode;
 			return this;
 		}
 		public Builder setThumbnail(String thumbnail) {
@@ -111,6 +117,7 @@ public class ReviewDto {
 		this.writer = builder.writer;
 		this.writerId = builder.writerId;
 		this.content = builder.content;
+		this.areaCode = builder.areaCode;
 		this.thumbnail = builder.thumbnail;
 		this.likeCount = builder.likeCount;
 		this.createDate = builder.createDate;
@@ -141,6 +148,10 @@ public class ReviewDto {
 
 	public String getContent() {
 		return content;
+	}
+
+	public Integer getAreaCode() {
+		return areaCode;
 	}
 
 	public String getThumbnail() {

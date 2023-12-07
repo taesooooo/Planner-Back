@@ -73,13 +73,13 @@ public class ReviewServiceTest {
 		
 		int testTotalCount = testList.size();
 		
-		when(reviewDao.findAllReview(any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(testList);
-		when(reviewDao.getTotalCount()).thenReturn(testTotalCount);
+		when(reviewDao.findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
+		when(reviewDao.getTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<ReviewDto> reviewList = reviewService.findAllReview(paramDto);
 		
-		verify(reviewDao).findAllReview(any(SortCriteria.class), any(), any(PageInfo.class));
-		verify(reviewDao).getTotalCount();
+		verify(reviewDao).findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(reviewDao).getTotalCount(any(CommonRequestParamDto.class));
 		
 		assertThat(reviewList).isNotNull();
 		assertThat(reviewList.getList()).isNotNull();
@@ -98,13 +98,39 @@ public class ReviewServiceTest {
 		
 		int testTotalCount = 1;
 		
-		when(reviewDao.findAllReview(any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(testList);
-		when(reviewDao.getTotalCountByKeyword(any(String.class))).thenReturn(testTotalCount);
+		when(reviewDao.findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
+		when(reviewDao.getTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<ReviewDto> reviewList = reviewService.findAllReview(paramDto);
 		
-		verify(reviewDao).findAllReview(any(SortCriteria.class), any(), any(PageInfo.class));
-		verify(reviewDao).getTotalCountByKeyword(anyString());
+		verify(reviewDao).findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(reviewDao).getTotalCount(any(CommonRequestParamDto.class));
+		
+		assertThat(reviewList).isNotNull();
+		assertThat(reviewList.getList()).isNotNull();
+		assertThat(reviewList.getTotalCount()).isEqualTo(testTotalCount);
+	}
+	
+	@Test
+	public void 리뷰_리스트_가져오기_지역코드() throws Exception {
+		List<ReviewDto> testList = createReview();
+		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
+				.setItemCount(10)
+				.setSortCriteria(SortCriteria.LATEST)
+				.setKeyword("")
+				.setAreaCode(1)
+				.setPageNum(1)
+				.build();
+		
+		int testTotalCount = 1;
+		
+		when(reviewDao.findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
+		when(reviewDao.getTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
+		
+		Page<ReviewDto> reviewList = reviewService.findAllReview(paramDto);
+		
+		verify(reviewDao).findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(reviewDao).getTotalCount(any(CommonRequestParamDto.class));
 		
 		assertThat(reviewList).isNotNull();
 		assertThat(reviewList.getList()).isNotNull();
@@ -146,6 +172,7 @@ public class ReviewServiceTest {
 					.setPlannerId(i)
 					.setTitle("테스트"+i)
 					.setContent("test"+i)
+					.setAreaCode(i)
 					.setWriter("test"+i)
 					.setWriterId(i)
 					.setLikeCount(0)
