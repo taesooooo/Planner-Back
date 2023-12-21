@@ -5,10 +5,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.PositiveOrZero;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,6 +26,9 @@ public class PlannerDto {
 	
 	@NotBlank(message = "생성자는 필수입니다.", groups = { PlannerCreateGroup.class } )
 	private String creator;
+	
+	@PositiveOrZero(message = "지역코드는 숫자이어야 합니다.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
+	private Integer areaCode;
 	
 	@NotBlank(message = "제목을 입력해주세요.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
 	private String title;
@@ -74,6 +80,7 @@ public class PlannerDto {
 	public static class Builder {
 		private int plannerId;
 		private int accountId;
+		private Integer areaCode;
 		private String creator;
 		private String title;
 		private LocalDate planDateStart;
@@ -97,6 +104,11 @@ public class PlannerDto {
 
 		public Builder setAccountId(int accountId) {
 			this.accountId = accountId;
+			return this;
+		}
+
+		public Builder setAreaCode(Integer areaCode) {
+			this.areaCode = areaCode;
 			return this;
 		}
 
@@ -188,6 +200,7 @@ public class PlannerDto {
 	public PlannerDto(Builder builder) {
 		this.plannerId = builder.plannerId;
 		this.accountId = builder.accountId;
+		this.areaCode = builder.areaCode;
 		this.creator = builder.creator;
 		this.title = builder.title;
 		this.planDateStart = builder.planDateStart;
@@ -211,6 +224,10 @@ public class PlannerDto {
 
 	public int getAccountId() {
 		return accountId;
+	}
+
+	public Integer getAreaCode() {
+		return areaCode;
 	}
 
 	public String getCreator() {

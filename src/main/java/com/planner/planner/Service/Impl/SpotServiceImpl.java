@@ -51,8 +51,8 @@ public class SpotServiceImpl implements SpotService {
 				.map(item -> Integer.parseInt(item.getContentId()))
 				.collect(Collectors.toList());
 		
-		List<SpotLikeDto> spotLikeList = spotDao.selectSpotLikeByContentIdList(accountId, contentIdList);
-		List<SpotLikeCountDto> spotLikeCountList = spotDao.selectSpotLikeCountByContentIdList(contentIdList);
+		List<SpotLikeDto> spotLikeList = spotDao.findSpotLikeStateByContentIdList(accountId, contentIdList);
+		List<SpotLikeCountDto> spotLikeCountList = spotDao.findSpotLikeCountByContentIdList(contentIdList);
 
 		List<SpotDto> spotList = apiData.getItems().stream()
 				.map(item -> {
@@ -91,8 +91,8 @@ public class SpotServiceImpl implements SpotService {
 				.map(item -> Integer.parseInt(item.getContentId()))
 				.collect(Collectors.toList());
 		
-		List<SpotLikeDto> spotLikeList = spotDao.selectSpotLikeByContentIdList(accountId, contentIdList);
-		List<SpotLikeCountDto> spotLikeCountList = spotDao.selectSpotLikeCountByContentIdList(contentIdList);
+		List<SpotLikeDto> spotLikeList = spotDao.findSpotLikeStateByContentIdList(accountId, contentIdList);
+		List<SpotLikeCountDto> spotLikeCountList = spotDao.findSpotLikeCountByContentIdList(contentIdList);
 
 		List<SpotDto> spotList = apiData.getItems().stream()
 				.map(item -> {
@@ -130,8 +130,8 @@ public class SpotServiceImpl implements SpotService {
 				.map(item -> Integer.parseInt(item.getContentId()))
 				.collect(Collectors.toList());
 		
-		List<SpotLikeDto> spotLikeList = spotDao.selectSpotLikeByContentIdList(accountId, contentIdList);
-		List<SpotLikeCountDto> spotLikeCountList = spotDao.selectSpotLikeCountByContentIdList(contentIdList);
+		List<SpotLikeDto> spotLikeList = spotDao.findSpotLikeStateByContentIdList(accountId, contentIdList);
+		List<SpotLikeCountDto> spotLikeCountList = spotDao.findSpotLikeCountByContentIdList(contentIdList);
 			
 		List<SpotDto> spotList = apiData.getItems().stream()
 				.map(item -> {
@@ -166,8 +166,8 @@ public class SpotServiceImpl implements SpotService {
 	public SpotDetailDto getDetail(Integer accountId, int contentId) throws Exception {
 		CommonDetailDto detail = apiService.getDetail(contentId);
 		
-		int likeCount = spotDao.selectSpotLikeCountByContentId(contentId);
-		boolean likeState = spotDao.selectSpotLikeByContentId(accountId, contentId);
+		int likeCount = spotDao.findSpotLikeCountByContentId(contentId);
+		boolean likeState = spotDao.findSpotLikeStateByContentId(accountId, contentId);
 
 		SpotDetailDto spotDetail = new SpotDetailDto.Builder()
 				.setDetail(detail)
@@ -195,17 +195,12 @@ public class SpotServiceImpl implements SpotService {
 				.setPageItemCount(commonRequestParamDto.getItemCount())
 				.build();
 		
-		List<SpotLikeDto> spotLikelist = spotDao.selectSpotLikeList(accountId, commonRequestParamDto.getSortCriteria(), commonRequestParamDto.getKeyword(), pageInfo);
+		List<SpotLikeDto> spotLikelist = spotDao.selectSpotLikeList(accountId, commonRequestParamDto, pageInfo);
 		
 		int totalCount = 0;
-		String keyword = commonRequestParamDto.getKeyword();
 		
-		if(keyword != null && !keyword.isEmpty()) {
-			totalCount = spotDao.getTotalCountByAccountId(accountId, keyword);
-		}
-		else {
-			totalCount = spotDao.getTotalCountByAccountId(accountId);
-		}
+		totalCount = spotDao.findListTotalCount(accountId, commonRequestParamDto);
+
 		
 		Page<SpotLikeDto> spotLikePage = new Page.Builder<SpotLikeDto>()
 				.setList(spotLikelist)

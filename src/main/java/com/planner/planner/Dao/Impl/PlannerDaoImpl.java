@@ -1,5 +1,6 @@
 package com.planner.planner.Dao.Impl;
 
+import java.io.File;
 import java.sql.Date;
 import java.sql.JDBCType;
 import java.sql.PreparedStatement;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Repository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
+import com.planner.planner.Common.SqlWhereMapper;
 import com.planner.planner.Dao.PlannerDao;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.RowMapper.PlannerFullResultSetExtrator;
 import com.planner.planner.RowMapper.PlannerRowMapper;
@@ -31,23 +34,23 @@ public class PlannerDaoImpl implements PlannerDao {
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	private final String INSERT_PLANNER_SQL = "INSERT INTO planner(account_id, creator, title, plan_date_start, plan_date_end, expense, member_count, member_type_id, create_date, update_date)"
-			+ "VALUES(:accountId, :creator, :title, :planDateStart, :planDateEnd, :expense ,:memberCount ,:memberTypeId , now(), now());";
+	private final String INSERT_PLANNER_SQL = "INSERT INTO planner(account_id, creator, area_code, title, plan_date_start, plan_date_end, expense, member_count, member_type_id, create_date, update_date)"
+			+ "VALUES(:accountId, :areaCode, :creator, :title, :planDateStart, :planDateEnd, :expense ,:memberCount ,:memberTypeId , now(), now());";
 
 //	private final String FIND_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date FROM planner AS p WHERE p.planner_id = ?;";
 	// 동적 쿼리
-	private final String FIND_PLANNER_COMMON_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, SUB.like_count, P.create_date, P.update_date, PL.like_id, "
+	private final String FIND_PLANNER_COMMON_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.area_code, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, SUB.like_count, P.create_date, P.update_date, PL.like_id, "
 			+ "plan_loc_one.location_image AS thumbnail "
 			+ "FROM planner AS P "
 			+ "LEFT JOIN (SELECT planner_id, plan_id FROM plan GROUP BY planner_id) AS plan_one ON plan_one.planner_id = P.planner_id "
 			+ "LEFT JOIN (SELECT plan_id, location_image FROM plan_location GROUP BY plan_id) AS plan_loc_one ON plan_loc_one.plan_id = plan_one.plan_id ";
 
-	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS P SET P.title = :title, P.plan_date_start = :planDateStart, P.plan_date_end = :planDateEnd, P.expense = :expense, P.member_count = :memberCount, P.member_type_id = :memberTypeId, P.update_date = NOW() "
+	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS P SET P.area_code = :areaCode, P.title = :title, P.plan_date_start = :planDateStart, P.plan_date_end = :planDateEnd, P.expense = :expense, P.member_count = :memberCount, P.member_type_id = :memberTypeId, P.update_date = NOW() "
 			+ "WHERE P.planner_id = :plannerId;";
 	private final String DELETE_PLANNER_SQL = "DELETE FROM planner WHERE planner_id = :plannerId;";
 
 	// 동적쿼리
-	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, A.title, A.plan_date_start, A.plan_date_end, A.expense, A.member_count, A.member_type_id, "
+	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, P.area_code, A.title, A.plan_date_start, A.plan_date_end, A.expense, A.member_count, A.member_type_id, "
 			+ "SUB.like_count, A.create_date, A.update_date, "
 			+ "C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_date, D.plan_index, D.plan_id,  "
 			+ "E.location_id, E.location_name, E.location_content_id, E.location_image, E.location_addr, E.location_mapx, E.location_mapy, E.location_transportation, E.location_index, E.plan_id, "
@@ -63,15 +66,18 @@ public class PlannerDaoImpl implements PlannerDao {
 //			+ "WHERE A.planner_id = ? AND PL.account_id = ? "
 //			+ "ORDER BY A.planner_id, D.plan_index, E.location_index;";
 
-	private final String FIND_TOTAL_COUNT_SQL = "SELECT count(*) AS total_count FROM planner;";
-	private final String FIND_TOTAL_COUNT_ACCOUNT_ID_SQL = "SELECT count(*) AS total_count FROM planner WHERE account_id = :accountId;";
-	private final String FIND_TOTAL_COUNT_LIKE_SQL = "SELECT count(*) AS total_count FROM planner_like WHERE account_id = :accountId;";
-	private final String FIND_TOTAL_COUNT_LIKE_KEYWORD_SQL = "SELECT count(*) as count FROM planner_like AS PL "
-			+ "INNER JOIN planner AS P ON P.planner_id = PL.planner_id "
-			+ "WHERE PL.account_id = :accountId AND P.title LIKE :keyword;";
-	private final String FIND_TOTAL_COUNT_KEYWORD_SQL = "SELECT count(*) AS total_count FROM planner WHERE title LIKE :keyword;";
-	private final String FIND_TOTAL_COUNT_KEYWORD_ACCOUNT_ID_SQL = "SELECT count(*) AS total_count FROM planner "
-			+ "WHERE account_id = :accountId AND title LIKE :keyword;";
+	// 동적쿼리
+	private final String FIND_TOTAL_COUNT_SQL = "SELECT count(*) AS total_count FROM planner ";
+//	private final String FIND_TOTAL_COUNT_ACCOUNT_ID_SQL = "SELECT count(*) AS total_count FROM planner WHERE account_id = :accountId;";
+	// 동적쿼리
+	private final String FIND_TOTAL_COUNT_LIKE_SQL = "SELECT count(*) AS total_count FROM planner_like AS PL ";
+//	private final String FIND_TOTAL_COUNT_LIKE_SQL = "SELECT count(*) AS total_count FROM planner_like WHERE account_id = :accountId;";
+//	private final String FIND_TOTAL_COUNT_LIKE_KEYWORD_SQL = "SELECT count(*) as count FROM planner_like AS PL "
+//			+ "INNER JOIN planner AS P ON P.planner_id = PL.planner_id "
+//			+ "WHERE PL.account_id = :accountId AND P.title LIKE :keyword;";
+//	private final String FIND_TOTAL_COUNT_KEYWORD_SQL = "SELECT count(*) AS total_count FROM planner WHERE title LIKE :keyword;";
+//	private final String FIND_TOTAL_COUNT_KEYWORD_ACCOUNT_ID_SQL = "SELECT count(*) AS total_count FROM planner "
+//			+ "WHERE account_id = :accountId AND title LIKE :keyword;";
 	
 	
 	
@@ -105,97 +111,112 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public List<PlannerDto> findPlannersByAccountId(Integer accountId, SortCriteria sortCriteria, String keyword, PageInfo pageInfo) {		
+	public List<PlannerDto> findPlannersByAccountId(Integer accountId, CommonRequestParamDto commonRequestParamDto, PageInfo pageInfo) {		
 		StringBuilder sb = new StringBuilder(FIND_PLANNER_COMMON_SQL);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		
 		sb.append("LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON P.planner_id = SUB.planner_id ");
 		sb.append("LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id AND PL.account_id = :accountId ");
 		sb.append("WHERE P.account_id = :accountId ");
+		parameterSource.addValue("accountId", accountId);
 		
-		if(keyword != null) {
+		if(commonRequestParamDto.getKeyword() != null) {
 			sb.append("AND P.title LIKE :keyword ");			
+			parameterSource.addValue("keyword", "%" + commonRequestParamDto.getKeyword() + "%");
 		}
 		
-		if(sortCriteria == SortCriteria.LATEST) {
+		if(commonRequestParamDto.getAreaCode() != null && !commonRequestParamDto.getAreaCode().equals(0)) {
+			sb.append("AND P.area_code = :areaCode ");
+			parameterSource.addValue("areaCode", commonRequestParamDto.getAreaCode());
+		}
+		
+		if(commonRequestParamDto.getSortCriteria() == SortCriteria.LATEST) {
 			sb.append("ORDER BY P.planner_id DESC ");
 		}
-		else if(sortCriteria == SortCriteria.LIKECOUNT) {
+		else if(commonRequestParamDto.getSortCriteria() == SortCriteria.LIKECOUNT) {
 			sb.append("ORDER BY P.like_count DESC ");
 		}
 		
 		sb.append("LIMIT :pageOffSet, :pageItemCount;");
 		
-		SqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("accountId", accountId)
-				.addValue("keyword", "%" + keyword + "%")
-				.addValue("pageOffSet", pageInfo.getPageOffSet())
-				.addValue("pageItemCount", pageInfo.getPageItemCount());
+		parameterSource.addValue("pageOffSet", pageInfo.getPageOffSet());
+		parameterSource.addValue("pageItemCount", pageInfo.getPageItemCount());
 		
 		return namedParameterJdbcTemplate.query(sb.toString(), parameterSource, new PlannerRowMapper());
 	}
 
 	@Override
-	public List<PlannerDto> findPlannerAll(Integer accountId, SortCriteria criteria, String keyword, PageInfo pageInfo) {
+	public List<PlannerDto> findPlannerAll(Integer accountId, CommonRequestParamDto commonRequestParamDto, PageInfo pageInfo) throws Exception {
 		StringBuilder sb = new StringBuilder(FIND_PLANNER_COMMON_SQL);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
 		sb.append("LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON P.planner_id = SUB.planner_id ");
 		sb.append("LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id ");
 		
-		if(accountId == null) {
-			sb.append("AND PL.account_id = 0 ");
-		}
-		else {
+		if(accountId != null) {
 			sb.append("AND PL.account_id = :accountId ");			
+			parameterSource.addValue("accountId", accountId);
 		}
 		
-		if(keyword != null) {
+		SqlWhereMapper whereMapper = new SqlWhereMapper(FIND_PLANNER_COMMON_SQL);
+		if(commonRequestParamDto.getKeyword() != null) {
+			whereMapper.addWhere("WHERE P.title LIKE :keyword");
+		
 			sb.append("WHERE P.title LIKE :keyword ");			
+			parameterSource.addValue("keyword", "%" + commonRequestParamDto.getKeyword() + "%");
 		}
 		
-		if(criteria == SortCriteria.LATEST) {
+		if(commonRequestParamDto.getAreaCode() != null && !commonRequestParamDto.getAreaCode().equals(0)) {
+			sb.append("AND P.area_code = :areaCode ");
+			parameterSource.addValue("areaCode", commonRequestParamDto.getAreaCode());
+		}
+		
+		if(commonRequestParamDto.getSortCriteria() == SortCriteria.LATEST) {
 			sb.append("ORDER BY P.planner_id DESC ");
 		}
-		else if(criteria == SortCriteria.LIKECOUNT) {
+		else if(commonRequestParamDto.getSortCriteria() == SortCriteria.LIKECOUNT) {
 			sb.append("ORDER BY P.like_count DESC ");
 		}
 		
 		sb.append("LIMIT :pageOffSet, :pageItemCount;");
 		
-		SqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("accountId", accountId)
-				.addValue("keyword", "%" + keyword + "%")
-				.addValue("pageOffSet", pageInfo.getPageOffSet())
-				.addValue("pageItemCount", pageInfo.getPageItemCount());
+		parameterSource.addValue("pageOffSet", pageInfo.getPageOffSet());
+		parameterSource.addValue("pageItemCount", pageInfo.getPageItemCount());
 		
 		return namedParameterJdbcTemplate.query(sb.toString(), parameterSource, new PlannerRowMapper());
 	}
 	
 	@Override
-	public List<PlannerDto> findLikePlannerList(Integer accountId, SortCriteria criteria, String keyword, PageInfo pageInfo) {
+	public List<PlannerDto> findLikePlannerList(Integer accountId, CommonRequestParamDto commonRequestParamDto, PageInfo pageInfo) {
 		StringBuilder sb = new StringBuilder(FIND_PLANNER_COMMON_SQL);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		
 		sb.append("LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON P.planner_id = SUB.planner_id ");
 		sb.append("LEFT JOIN planner_like AS PL ON PL.planner_id = P.planner_id ");
 		sb.append("WHERE PL.like_id IN (SELECT like_id FROM planner_like WHERE account_id = :accountId) ");
+		parameterSource.addValue("accountId", accountId);
 	
-		if(keyword != null) {
-			sb.append("AND P.title LIKE :keyword ");			
+		if(commonRequestParamDto.getKeyword() != null) {
+			sb.append("AND P.title LIKE :keyword ");
+			parameterSource.addValue("keyword", "%" + commonRequestParamDto.getKeyword() + "%");
 		}
 		
-		if(criteria == SortCriteria.LATEST) {
+		if(commonRequestParamDto.getAreaCode() != null && !commonRequestParamDto.getAreaCode().equals(0)) {
+			sb.append("AND P.area_code = :areaCode ");
+			parameterSource.addValue("areaCode", commonRequestParamDto.getAreaCode());
+		}
+		
+		if(commonRequestParamDto.getSortCriteria() == SortCriteria.LATEST) {
 			sb.append("ORDER BY P.planner_id DESC ");
 		}
-		else if(criteria == SortCriteria.LIKECOUNT) {
+		else if(commonRequestParamDto.getSortCriteria() == SortCriteria.LIKECOUNT) {
 			sb.append("ORDER BY P.like_count DESC ");
 		}
 		
 		sb.append("LIMIT :pageOffSet, :pageItemCount;");
 		
-		SqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("accountId", accountId)
-				.addValue("keyword", "%" + keyword + "%")
-				.addValue("pageOffSet", pageInfo.getPageOffSet())
-				.addValue("pageItemCount", pageInfo.getPageItemCount());
+		parameterSource.addValue("pageOffSet", pageInfo.getPageOffSet());
+		parameterSource.addValue("pageItemCount", pageInfo.getPageItemCount());
 		
 		List<PlannerDto> list = namedParameterJdbcTemplate.query(sb.toString(), parameterSource, new PlannerRowMapper());
 		return list;
@@ -204,6 +225,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	@Override
 	public int updatePlanner(int plannerId, PlannerDto plannerDto) {
 		SqlParameterSource parameterSource = new MapSqlParameterSource()
+				.addValue("areaCode", plannerDto.getAreaCode(), plannerDto.getAreaCode() != null ? Types.INTEGER : Types.NULL)
 				.addValue("title",plannerDto.getTitle())
 				.addValue("planDateStart", plannerDto.getPlanDateStart())
 				.addValue("planDateEnd", plannerDto.getPlanDateEnd())
@@ -226,51 +248,98 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public int getTotalCount() {
-		SqlParameterSource parameterSource = new MapSqlParameterSource();
+	public int getListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+		StringBuilder sb = new StringBuilder(FIND_TOTAL_COUNT_SQL);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		
-		return namedParameterJdbcTemplate.queryForObject(FIND_TOTAL_COUNT_SQL, parameterSource, Integer.class);
-	}
-
-	@Override
-	public int getTotalCount(int accountId) {
-		SqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("accountId", accountId);
+		String keyword = commonRequestParamDto.getKeyword();
+		Integer areaCode = commonRequestParamDto.getAreaCode();
 		
-		return namedParameterJdbcTemplate.queryForObject(FIND_TOTAL_COUNT_ACCOUNT_ID_SQL, parameterSource, Integer.class);
-	}
-
-	@Override
-	public int getTotalCountByLike(int accountId) {
-		SqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("accountId", accountId);
 		
-		return namedParameterJdbcTemplate.queryForObject(FIND_TOTAL_COUNT_LIKE_SQL, parameterSource, Integer.class);
-	}
-	
-	@Override
-	public int getTotalCountByLike(int accountId, String keyword) {
-		SqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("accountId", accountId)
-				.addValue("keyword", "%" + keyword + "%");
+		if(keyword != null) {
+			sb.append("WHERE title LIKE :keyword ");
+			parameterSource.addValue("keyword", "%" + keyword + "%");
+		}
 		
-		return namedParameterJdbcTemplate.queryForObject(FIND_TOTAL_COUNT_LIKE_KEYWORD_SQL, parameterSource, Integer.class);
+		if(areaCode != null) {
+			sb.append("AND area_code = :areaCode ");
+			parameterSource.addValue("areaCode", areaCode);
+		}
+		
+		if(accountId != null) {
+			sb.append("AND account_id = :accountId ");
+			parameterSource.addValue("accountId", accountId);
+		}
+		
+		return namedParameterJdbcTemplate.queryForObject(sb.toString(), parameterSource, Integer.class);
 	}
 
 	@Override
-	public int getTotalCountByKeyword(String keyword) {
-		SqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("keyword", "%" + keyword + "%");
+	public int getLikeListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		StringBuilder sb = new StringBuilder(FIND_TOTAL_COUNT_LIKE_SQL);
+		
+		String keyword = commonRequestParamDto.getKeyword();
+		Integer areaCode = commonRequestParamDto.getAreaCode();
+		
+		if(keyword != null) {
+			sb.append("INNER JOIN planner AS P ON P.planner_id = PL.planner_id ");
+			sb.append("WHERE title LIKE :keyword ");
+			parameterSource.addValue("keyword", "%" + keyword + "%");
+		}
+		
+		if(areaCode != null) {
+			sb.append("AND P.area_code = :areaCode ");
+			parameterSource.addValue("areaCode", areaCode);
+		}
+		
+		if(accountId != null) {
+			sb.append("AND PL.account_id = :accountId ");
+			parameterSource.addValue("accountId", accountId);
+		}
 
-		return namedParameterJdbcTemplate.queryForObject(FIND_TOTAL_COUNT_KEYWORD_SQL, parameterSource, Integer.class);
+		return namedParameterJdbcTemplate.queryForObject(sb.toString(), parameterSource, Integer.class);
 	}
-	
-	@Override
-	public int getTotalCountByKeyword(int accountId, String keyword) {
-		SqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("accountId", accountId)
-				.addValue("keyword", "%" + keyword + "%");
 
-		return namedParameterJdbcTemplate.queryForObject(FIND_TOTAL_COUNT_KEYWORD_ACCOUNT_ID_SQL, parameterSource, Integer.class);
-	}
+//	@Override
+//	public int getTotalCount(int accountId) {
+//		SqlParameterSource parameterSource = new MapSqlParameterSource()
+//				.addValue("accountId", accountId);
+//		
+//		return namedParameterJdbcTemplate.queryForObject(FIND_TOTAL_COUNT_ACCOUNT_ID_SQL, parameterSource, Integer.class);
+//	}
+//
+//	@Override
+//	public int getTotalCountByLike(int accountId) {
+//		SqlParameterSource parameterSource = new MapSqlParameterSource()
+//				.addValue("accountId", accountId);
+//		
+//		return namedParameterJdbcTemplate.queryForObject(FIND_TOTAL_COUNT_LIKE_SQL, parameterSource, Integer.class);
+//	}
+//	
+//	@Override
+//	public int getTotalCountByLike(int accountId, String keyword) {
+//		SqlParameterSource parameterSource = new MapSqlParameterSource()
+//				.addValue("accountId", accountId)
+//				.addValue("keyword", "%" + keyword + "%");
+//		
+//		return namedParameterJdbcTemplate.queryForObject(FIND_TOTAL_COUNT_LIKE_KEYWORD_SQL, parameterSource, Integer.class);
+//	}
+//
+//	@Override
+//	public int getTotalCountByKeyword(String keyword) {
+//		SqlParameterSource parameterSource = new MapSqlParameterSource()
+//				.addValue("keyword", "%" + keyword + "%");
+//
+//		return namedParameterJdbcTemplate.queryForObject(FIND_TOTAL_COUNT_KEYWORD_SQL, parameterSource, Integer.class);
+//	}
+//	
+//	@Override
+//	public int getTotalCountByKeyword(int accountId, String keyword) {
+//		SqlParameterSource parameterSource = new MapSqlParameterSource()
+//				.addValue("accountId", accountId)
+//				.addValue("keyword", "%" + keyword + "%");
+//
+//		return namedParameterJdbcTemplate.queryForObject(FIND_TOTAL_COUNT_KEYWORD_ACCOUNT_ID_SQL, parameterSource, Integer.class);
+//	}
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
+import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlannerDto;
 
 public interface PlannerDao {
@@ -12,26 +13,30 @@ public interface PlannerDao {
 
 	public PlannerDto findPlannerByPlannerId(Integer accountId, int plannerId);
 
-	public List<PlannerDto> findPlannersByAccountId(Integer accountId, SortCriteria criteria, String keyword,
-			PageInfo pageInfo);
+	public List<PlannerDto> findPlannersByAccountId(Integer accountId, CommonRequestParamDto commonRequestParamDto,
+			PageInfo pageInfo) throws Exception;
 
-	public List<PlannerDto> findPlannerAll(Integer accountId, SortCriteria criteria, String keyword, PageInfo pageInfo);
-	
-	public List<PlannerDto> findLikePlannerList(Integer accountId, SortCriteria criteria, String keyword, PageInfo pageInfo);
+	public List<PlannerDto> findPlannerAll(Integer accountId, CommonRequestParamDto commonRequestParamDto,
+			PageInfo pageInfo) throws Exception;
+
+	public List<PlannerDto> findLikePlannerList(Integer accountId, CommonRequestParamDto commonRequestParamDto,
+			PageInfo pageInfo) throws Exception;
 
 	public int updatePlanner(int plannerId, PlannerDto plannerDto);
 
 	public int deletePlanner(int plannerId);
 
-	public int getTotalCount();
+	public int getListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 
-	public int getTotalCount(int accountId);
+	public int getLikeListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 
-	public int getTotalCountByLike(int accountId);
-
-	public int getTotalCountByLike(int accountId, String keyword);
-
-	public int getTotalCountByKeyword(String keyword);
-
-	public int getTotalCountByKeyword(int accountId, String keyword);
+//	public int getTotalCount(int accountId);
+//
+//	public int getTotalCountByLike(int accountId);
+//
+//	public int getTotalCountByLike(int accountId, String keyword);
+//
+//	public int getTotalCountByKeyword(String keyword);
+//
+//	public int getTotalCountByKeyword(int accountId, String keyword);
 }

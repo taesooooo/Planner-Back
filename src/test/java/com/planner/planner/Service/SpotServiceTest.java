@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -38,7 +37,7 @@ import com.planner.planner.Service.Impl.OpenAPIServiceImpl;
 import com.planner.planner.Service.Impl.SpotServiceImpl;
 
 public class SpotServiceTest {
-	private static final Logger logger = LoggerFactory.getLogger(SpotServiceTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SpotServiceTest.class);
 
 	@Mock
 	private SpotDaoImpl spotDao;
@@ -110,8 +109,8 @@ public class SpotServiceTest {
 
 		//
 		when(apiSerivce.getAreaList(any(OpenApiDto.class))).thenReturn(item);
-		when(spotDao.selectSpotLikeByContentIdList(anyInt(), any())).thenReturn(spotLikeList);
-		when(spotDao.selectSpotLikeCountByContentIdList(any())).thenReturn(spotLikeCountList);
+		when(spotDao.findSpotLikeStateByContentIdList(anyInt(), any())).thenReturn(spotLikeList);
+		when(spotDao.findSpotLikeCountByContentIdList(any())).thenReturn(spotLikeCountList);
 
 		SpotListDto<SpotDto> resultList = spotService.getAreaList(accountId, param);
 
@@ -190,8 +189,8 @@ public class SpotServiceTest {
 
 		//
 		when(apiSerivce.getKeyword(any(OpenApiDto.class))).thenReturn(item);
-		when(spotDao.selectSpotLikeByContentIdList(anyInt(), any())).thenReturn(spotLikeList);
-		when(spotDao.selectSpotLikeCountByContentIdList(any())).thenReturn(spotLikeCountList);
+		when(spotDao.findSpotLikeStateByContentIdList(anyInt(), any())).thenReturn(spotLikeList);
+		when(spotDao.findSpotLikeCountByContentIdList(any())).thenReturn(spotLikeCountList);
 		
 		SpotListDto<SpotDto> resultList = spotService.getKeyword(accountId, param);
 
@@ -211,8 +210,8 @@ public class SpotServiceTest {
 		boolean spotLikeState = true;
 
 		when(apiSerivce.getDetail(anyInt())).thenReturn(testDetail);
-		when(spotDao.selectSpotLikeCountByContentId(anyInt())).thenReturn(spotLikeCount);
-		when(spotDao.selectSpotLikeByContentId(anyInt(), anyInt())).thenReturn(spotLikeState);
+		when(spotDao.findSpotLikeCountByContentId(anyInt())).thenReturn(spotLikeCount);
+		when(spotDao.findSpotLikeStateByContentId(anyInt(), anyInt())).thenReturn(spotLikeState);
 
 		SpotDetailDto resultDto = spotService.getDetail(accountId, contentId);
 		
@@ -278,8 +277,8 @@ public class SpotServiceTest {
 				.build());
 
 		//
-		when(spotDao.selectSpotLikeList(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(list);
-		when(spotDao.getTotalCountByAccountId(anyInt())).thenReturn(2);
+		when(spotDao.selectSpotLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(list);
+		when(spotDao.findListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(2);
 		
 		Page<SpotLikeDto> spotList = spotService.getSpotLikeList(1, paramDto);
 		
@@ -307,8 +306,8 @@ public class SpotServiceTest {
 				.build());
 
 		//
-		when(spotDao.selectSpotLikeList(anyInt(), any(SortCriteria.class), anyString(), any(PageInfo.class))).thenReturn(list);
-		when(spotDao.getTotalCountByAccountId(anyInt(), anyString())).thenReturn(1);
+		when(spotDao.selectSpotLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(list);
+		when(spotDao.findListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(1);
 		
 		Page<SpotLikeDto> spotList = spotService.getSpotLikeList(1, paramDto);
 		

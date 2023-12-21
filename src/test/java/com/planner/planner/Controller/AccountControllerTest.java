@@ -157,6 +157,26 @@ public class AccountControllerTest {
 	}
 	
 	@Test
+	public void 나의_플래너_지역별_가져오기() throws Exception {
+		mockMvc.perform(get("/api/users/1/planners")
+				.header("Authorization", token)
+				.param("itemCount", "10")
+				.param("areaCode", "1")
+				.param("sortCriteria", "1")
+				.param("keyword", "")
+				.param("pageNum", "1"))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list.length()").value(1))
+		.andExpect(jsonPath("$.data.totalCount").value(1))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
+	
+	@Test
 	public void 좋아요_플래너_가져오기() throws Exception {
 		mockMvc.perform(get("/api/users/1/likes")
 				.characterEncoding("UTF-8")
@@ -201,6 +221,29 @@ public class AccountControllerTest {
 	}
 	
 	@Test
+	public void 좋아요_플래너_가져오기_지역별() throws Exception {
+		mockMvc.perform(get("/api/users/1/likes")
+				.characterEncoding("UTF-8")
+				.header("Authorization", token)
+				.accept(MediaType.APPLICATION_JSON)
+				.param("itemCount", "10")
+				.param("areaCode", "1")
+				.param("sortCriteria", "1")
+				.param("keyword", "")
+				.param("postType", "1")
+				.param("pageNum", "1"))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list.length()").value(1))
+		.andExpect(jsonPath("$.data.totalCount").value(1))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
+	
+	@Test
 	public void 좋아요_여행지_가져오기() throws Exception {
 		mockMvc.perform(get("/api/users/1/likes")
 				.characterEncoding("UTF-8")
@@ -240,6 +283,29 @@ public class AccountControllerTest {
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
 		.andExpect(jsonPath("$.data.list.length()").value(2))
 		.andExpect(jsonPath("$.data.totalCount").value(2))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
+	
+	@Test
+	public void 좋아요_여행지_가져오기_지역별() throws Exception {
+		mockMvc.perform(get("/api/users/1/likes")
+				.characterEncoding("UTF-8")
+				.header("Authorization", token)
+				.accept(MediaType.APPLICATION_JSON)
+				.param("itemCount", "10")
+				.param("areaCode", "1")
+				.param("sortCriteria", "1")
+				.param("keyword", "")
+				.param("postType", "2")
+				.param("pageNum", "1"))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list.length()").value(1))
+		.andExpect(jsonPath("$.data.totalCount").value(1))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}

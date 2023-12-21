@@ -6,6 +6,7 @@ public class SpotLikeDto {
 	private int likeId;
 	private int accountId;
 	private int contentId;
+	private Integer areaCode;
 	private String title;
 	private String image;
 	private LocalDate likeDate;
@@ -14,6 +15,7 @@ public class SpotLikeDto {
 		private int likeId;
 		private int accountId;
 		private int contentId;
+		private Integer areaCode;
 		private String title;
 		private String image;
 		private LocalDate likeDate;
@@ -28,6 +30,10 @@ public class SpotLikeDto {
 		}
 		public Builder setContentId(int contentId) {
 			this.contentId = contentId;
+			return this;
+		}
+		public Builder setAreaCode(Integer areaCode) {
+			this.areaCode = areaCode;
 			return this;
 		}
 		public Builder setTitle(String title) {
@@ -55,6 +61,7 @@ public class SpotLikeDto {
 		this.likeId = builder.likeId;
 		this.accountId = builder.accountId;
 		this.contentId = builder.contentId;
+		this.areaCode = builder.areaCode;
 		this.title = builder.title;
 		this.image = builder.image;
 		this.likeDate = builder.likeDate;
@@ -70,6 +77,10 @@ public class SpotLikeDto {
 
 	public int getContentId() {
 		return contentId;
+	}
+
+	public Integer getAreaCode() {
+		return areaCode;
 	}
 
 	public String getTitle() {

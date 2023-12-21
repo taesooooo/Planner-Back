@@ -149,7 +149,7 @@ public class SpotControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(mapper.writeValueAsString(likeDto)))
 		.andDo(print())
-		.andExpect(status().isOk())
+		.andExpect(status().isConflict())
 		.andExpect(jsonPath("$.state").value(false));
 	}
 	

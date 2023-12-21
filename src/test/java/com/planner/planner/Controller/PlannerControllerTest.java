@@ -351,6 +351,29 @@ public class PlannerControllerTest {
 	}
 	
 	@Test
+	public void 플래너_리스트_조회_지역() throws Exception {
+		this.mockMvc.perform(get("/api/planners")
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.header("Authorization", token)
+				.param("itemCount", "10")
+				.param("sortCriteria", "1")
+				.param("areaCode", "1")
+				.param("keyword", "테스트")
+				.param("pageNum", "1"))
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(jsonPath("$.state").value(is(true)))
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andExpect(jsonPath("$.data.list").exists())
+		.andExpect(jsonPath("$.data.list").isNotEmpty())
+		.andExpect(jsonPath("$.data.list.length()").value(1))
+		.andExpect(jsonPath("$.data.totalCount").value(1))
+		.andExpect(jsonPath("$.data.pageIndex").value(1))
+		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
+	}
+	
+	@Test
 	public void 플래너_조회_플래너아이디() throws Exception {
 		int plannerId = 1;
 		String url = String.format("/api/planners/%d", plannerId);
@@ -378,8 +401,8 @@ public class PlannerControllerTest {
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.plans[0].planId").value(1))
 		.andExpect(jsonPath("$.data.plans[0].planLocations[0].locationId").value(1))
-		.andExpect(jsonPath("$.data.plans[0].planLocations[1].locationId").value(3))
-		.andExpect(jsonPath("$.data.plans[0].planLocations[2].locationId").value(2))
+		.andExpect(jsonPath("$.data.plans[1].planLocations[0].locationId").value(3))
+		.andExpect(jsonPath("$.data.plans[2].planLocations[0].locationId").value(2))
 		.andExpect(jsonPath("$.data.plans[1].planId").value(3))
 		.andExpect(jsonPath("$.data.plans[2].planId").value(2));
 	}
@@ -771,7 +794,7 @@ public class PlannerControllerTest {
 				.content(mapper.writeValueAsString(plan)))
 		.andDo(print())
 		.andExpect(status().isCreated())
-		.andExpect(jsonPath("$.data").value(4));
+		.andExpect(jsonPath("$.data").value(7));
 	}
 	
 	@Test
@@ -886,7 +909,7 @@ public class PlannerControllerTest {
 				.content(mapper.writeValueAsString(planLocation)))
 		.andDo(print())
 		.andExpect(status().isCreated())
-		.andExpect(jsonPath("$.data").value(4));
+		.andExpect(jsonPath("$.data").value(7));
 	}
 	
 	@Test
