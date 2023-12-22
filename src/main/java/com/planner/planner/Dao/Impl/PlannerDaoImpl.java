@@ -35,7 +35,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	private final String INSERT_PLANNER_SQL = "INSERT INTO planner(account_id, creator, area_code, title, plan_date_start, plan_date_end, expense, member_count, member_type_id, create_date, update_date)"
-			+ "VALUES(:accountId, :areaCode, :creator, :title, :planDateStart, :planDateEnd, :expense ,:memberCount ,:memberTypeId , now(), now());";
+			+ "VALUES(:accountId, :creator, :areaCode, :title, :planDateStart, :planDateEnd, :expense ,:memberCount ,:memberTypeId , now(), now());";
 
 //	private final String FIND_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, P.like_count, P.create_date, P.update_date FROM planner AS p WHERE p.planner_id = ?;";
 	// 동적 쿼리
