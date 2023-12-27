@@ -44,7 +44,7 @@ public class SpotDaoImpl implements SpotDao {
 	private final String SELECT_SPOT_LIKE_TOTAL_COUNT_SQL = "SELECT count(content_id) FROM spot_like ";
 	private final String SELECT_SPOT_LIKE_COUNT_SQL = "SELECT count(content_id) as like_count FROM spot_like WHERE content_id = :contentId;";
 	private final String SELECT_SPOT_LIKE_COUNT_LIST_SQL = "SELECT content_id, count(content_id) as like_count FROM spot_like WHERE content_id IN (:contentIdList) GROUP BY content_id;";
-	private final String SELECT_SPOT_LIKE_STATE_SQL = "SELECT like_id, account_id, content_id, title, image, like_date FROM spot_like WHERE content_id IN (:contentIdList) and account_id = :accountId;";
+	private final String SELECT_SPOT_LIKE_STATE_SQL = "SELECT like_id, account_id, content_id, area_code, title, image, like_date FROM spot_like WHERE content_id IN (:contentIdList) and account_id = :accountId;";
 
 	public SpotDaoImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
 		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;

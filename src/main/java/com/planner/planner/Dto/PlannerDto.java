@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
 
-@JsonInclude(value = Include.NON_NULL)
+//@JsonInclude(value = Include.NON_NULL)
 public class PlannerDto {
 	private int plannerId;
 	private int accountId;
