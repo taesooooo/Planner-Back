@@ -359,7 +359,7 @@ public class PlannerControllerTest {
 				.param("itemCount", "10")
 				.param("sortCriteria", "1")
 				.param("areaCode", "1")
-				.param("keyword", "테스트")
+				.param("keyword", "")
 				.param("pageNum", "1"))
 		.andDo(print())
 		.andExpect(status().isOk())
@@ -367,8 +367,8 @@ public class PlannerControllerTest {
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.list").exists())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
-		.andExpect(jsonPath("$.data.list.length()").value(1))
-		.andExpect(jsonPath("$.data.totalCount").value(1))
+		.andExpect(jsonPath("$.data.list.length()").value(3))
+		.andExpect(jsonPath("$.data.totalCount").value(3))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}

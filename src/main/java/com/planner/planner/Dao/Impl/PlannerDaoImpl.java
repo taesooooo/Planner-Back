@@ -158,10 +158,7 @@ public class PlannerDaoImpl implements PlannerDao {
 			parameterSource.addValue("accountId", accountId);
 		}
 		
-		SqlWhereMapper whereMapper = new SqlWhereMapper(FIND_PLANNER_COMMON_SQL);
 		if(commonRequestParamDto.getKeyword() != null) {
-			whereMapper.addWhere("WHERE P.title LIKE :keyword");
-		
 			sb.append("WHERE P.title LIKE :keyword ");			
 			parameterSource.addValue("keyword", "%" + commonRequestParamDto.getKeyword() + "%");
 		}
