@@ -50,7 +50,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String DELETE_PLANNER_SQL = "DELETE FROM planner WHERE planner_id = :plannerId;";
 
 	// 동적쿼리
-	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, P.area_code, A.title, A.plan_date_start, A.plan_date_end, A.expense, A.member_count, A.member_type_id, "
+	private final String FIND_PLANNER_BY_PLANNER_ID_JOIN_SQL = "SELECT A.planner_id, A.account_id, A.creator, A.area_code, A.title, A.plan_date_start, A.plan_date_end, A.expense, A.member_count, A.member_type_id, "
 			+ "SUB.like_count, A.create_date, A.update_date, "
 			+ "C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_date, D.plan_index, D.plan_id,  "
 			+ "E.location_id, E.location_name, E.location_content_id, E.location_image, E.location_addr, E.location_mapx, E.location_mapy, E.location_transportation, E.location_index, E.plan_id, "
