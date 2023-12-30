@@ -15,23 +15,25 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.planner.planner.Common.Converter.PostTypeConverter;
 import com.planner.planner.Common.Converter.SortCriteriaConverter;
-import com.planner.planner.Interceptor.AuthInterceptor;
-import com.planner.planner.Interceptor.AuthInterceptorProxy;
+import com.planner.planner.Interceptor.TokenInterceptor;
+import com.planner.planner.Interceptor.TokenInterceptorProxy;
 import com.planner.planner.Interceptor.DataAccessAuthInterceptor;
 import com.planner.planner.Interceptor.RequestMethodInterceptorProxy;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = { "com.planner.planner.Controller", "com.planner.planner.Handler",  "com.planner.planner.Interceptor"})
+@ComponentScan(basePackages = { "com.planner.planner.Controller", "com.planner.planner.Handler", "com.planner.planner.Interceptor"})
 @PropertySource("classpath:config/config.properties")
 public class ServletAppContext implements WebMvcConfigurer {
 	@Value("${upload.path}")
 	private String baseLocation;
 	
+	private TokenInterceptor tokenInterceptor;
 	private DataAccessAuthInterceptor reviewAuthInterceptor;
 	
 	
-	public ServletAppContext(DataAccessAuthInterceptor reviewAuthInterceptor) {
+	public ServletAppContext(TokenInterceptor tokenInterceptor, DataAccessAuthInterceptor reviewAuthInterceptor) {
+		this.tokenInterceptor = tokenInterceptor;
 		this.reviewAuthInterceptor = reviewAuthInterceptor;
 	}
 
@@ -43,11 +45,6 @@ public class ServletAppContext implements WebMvcConfigurer {
 		return resolver;
 	}
 
-	@Bean
-	public AuthInterceptor authInterceptor() {
-		return new AuthInterceptor();
-	}
-
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
@@ -56,12 +53,13 @@ public class ServletAppContext implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		AuthInterceptorProxy tokenAuthInterceptorProxy = new AuthInterceptorProxy(authInterceptor())
-				.excludePath("/api/auth/**", null)
+		TokenInterceptorProxy tokenAuthInterceptorProxy = new TokenInterceptorProxy(tokenInterceptor)
+//				.excludePath("/api/auth/**", null)
 				.excludePath("/api/users/find-email", null)
 				.excludePath("/api/users/find-password", null)
 				.excludePath("/api/users/change-password", null)
 				.excludePath("/api/upload/files/**", null)
+				.addPath("/api/auth/logout", RequestMethod.GET)
 				.eitherAddPath("/api/spots/**", RequestMethod.GET)
 				.eitherAddPath("/api/planners", RequestMethod.GET)
 				.eitherAddPath("/api/planners/*", RequestMethod.GET)

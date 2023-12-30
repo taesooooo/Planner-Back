@@ -16,7 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.planner.planner.Exception.AuthCheckFail;
+import com.planner.planner.Exception.TokenCheckFailException;
 import com.planner.planner.Exception.AuthenticationCodeExpireException;
 import com.planner.planner.Exception.DataNotFoundException;
 import com.planner.planner.Exception.DuplicateLikeException;
@@ -29,11 +29,12 @@ import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundReviewException;
 import com.planner.planner.Exception.NotFoundToken;
 import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.PasswordCheckFailException;
 import com.planner.planner.Util.ResponseMessage;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Object> Exception(Exception e) {
@@ -63,7 +64,7 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, e.getMessage()));
 	}
 
-	@ExceptionHandler(AuthCheckFail.class)
+	@ExceptionHandler(TokenCheckFailException.class)
 	public ResponseEntity<Object> authCheckfail(Exception e) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, e.getMessage()));
 	}
@@ -82,7 +83,8 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(value = { 
 			NoValidArgumentException.class,
-			AuthenticationCodeExpireException.class })
+			AuthenticationCodeExpireException.class,
+			PasswordCheckFailException.class })
 	public ResponseEntity<Object> noValid(Exception e) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, e.getMessage()));
 	}

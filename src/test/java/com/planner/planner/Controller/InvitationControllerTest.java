@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
@@ -28,7 +27,7 @@ import com.planner.planner.Util.JwtUtil;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
+@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityContext.class })
 @Sql(scripts = {"classpath:/PlannerData.sql"})
 @Transactional
 public class InvitationControllerTest {
@@ -44,13 +43,13 @@ public class InvitationControllerTest {
 	@Before
 	public void setup() {
 		mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		token = "Bearer " + jwtUtil.createToken(2);
+		token = "Bearer " + jwtUtil.createAccessToken(2);
 	}
 	
 	@Test
 	public void 초대_수락_접근_제한_확인() throws Exception {
 		// 플래너 생성자는 1, 수락하는 유저는 2
-		String fakeToken = "Bearer " + jwtUtil.createToken(1);
+		String fakeToken = "Bearer " + jwtUtil.createAccessToken(1);
 		
 		this.mockMvc.perform(post("/api/invitation/1/accept")
 				.servletPath("/api/invitation/1/accept")
@@ -75,7 +74,7 @@ public class InvitationControllerTest {
 	@Test
 	public void 초대_거절_접근_제한_확인() throws Exception {
 		// 플래너 생성자는 1, 수락하는 유저는 2
-		String fakeToken = "Bearer " + jwtUtil.createToken(1);
+		String fakeToken = "Bearer " + jwtUtil.createAccessToken(1);
 				
 		this.mockMvc.perform(delete("/api/invitation/1/reject")
 				.servletPath("/api/invitation/1/reject")

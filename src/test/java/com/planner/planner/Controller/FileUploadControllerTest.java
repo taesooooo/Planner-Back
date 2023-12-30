@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
@@ -37,7 +36,7 @@ import com.planner.planner.Util.JwtUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
+@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityContext.class })
 @Sql(scripts = {"classpath:/PlannerData.sql"})
 @Transactional
 public class FileUploadControllerTest {
@@ -55,7 +54,7 @@ public class FileUploadControllerTest {
 	@Before
 	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		this.token = "Bearer " + jwtUtil.createToken(1);
+		this.token = "Bearer " + jwtUtil.createAccessToken(1);
 	}
 	
 	@Test
@@ -111,7 +110,7 @@ public class FileUploadControllerTest {
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.MULTIPART_FORM_DATA)
-				.header("Authorization", "Bearer " + jwtUtil.createToken(2)))
+				.header("Authorization", "Bearer " + jwtUtil.createAccessToken(2)))
 		.andDo(print())
 		.andExpect(status().isForbidden());
 	}

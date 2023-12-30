@@ -41,8 +41,6 @@ public class CommentController {
 	
 	@PatchMapping(value = "/reviews/{reviewId}/comments/{commentId}")
 	public ResponseEntity<Object> modifyComment(HttpServletRequest req, @PathVariable int reviewId, @PathVariable int commentId, @RequestBody @Valid CommentDto comment) throws Exception {
-		checkAuth(req, commentId);
-		
 		commentService.updateComment(reviewId, comment);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
@@ -50,20 +48,8 @@ public class CommentController {
 	
 	@DeleteMapping(value = "/reviews/{reviewId}/comments/{commentId}")
 	public ResponseEntity<Object> deleteComment(HttpServletRequest req, @PathVariable int reviewId, @PathVariable int commentId) throws Exception {
-		checkAuth(req, commentId);
-		
 		commentService.deleteComment(reviewId, commentId);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
-	}
-	
-	private void checkAuth(HttpServletRequest req, int commentId) throws Exception {
-		int id = UserIdUtil.getUserId(req);
-		
-		CommentDto comment = commentService.findByCommentId(commentId);
-		
-		if(comment.getWriterId() != id) {
-			throw new ForbiddenException("접근 권한이 없습니다.");
-		}
 	}
 }
