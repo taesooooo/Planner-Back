@@ -24,8 +24,7 @@ public class WebConfigInitializer implements WebApplicationInitializer {
 		AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
 		servletAppContext.register(ServletAppContext.class);
 		servletAppContext.register(SecurityContext.class);
-		servletAppContext.register(JwtContext.class);
-
+		
 		ServletRegistration.Dynamic dynamic = servletContext.addServlet("dispatcherServlet",new DispatcherServlet(servletAppContext));
 		dynamic.setLoadOnStartup(1);
 		dynamic.addMapping("/");

@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -32,7 +31,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
@@ -45,7 +43,7 @@ import com.planner.planner.Util.JwtUtil;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
+@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityContext.class })
 @Sql(scripts = {"classpath:/PlannerData.sql"})
 @Transactional
 public class PlannerControllerTest {
@@ -62,7 +60,7 @@ public class PlannerControllerTest {
 	public void setUp() throws Exception {
 		this.mapper.registerModule(new JavaTimeModule());
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		this.token = "Bearer " + jwtUtil.createToken(1);
+		this.token = "Bearer " + jwtUtil.createAccessToken(1);
 	}
 	
 	@Test

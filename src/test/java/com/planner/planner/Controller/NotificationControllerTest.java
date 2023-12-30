@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
@@ -30,7 +29,7 @@ import com.planner.planner.Util.JwtUtil;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
+@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityContext.class })
 @Sql(scripts = {"classpath:/PlannerData.sql"})
 @Transactional
 public class NotificationControllerTest {
@@ -50,7 +49,7 @@ public class NotificationControllerTest {
 	@Before
 	public void setUp() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		token = "Bearer " + jwtUtil.createToken(1);
+		token = "Bearer " + jwtUtil.createAccessToken(1);
 	}
 	
 	@Test
@@ -67,7 +66,7 @@ public class NotificationControllerTest {
 	
 	@Test
 	public void 알림_읽음_권한_확인() throws Exception {
-		String fakeToken = token = "Bearer " + jwtUtil.createToken(2);
+		String fakeToken = token = "Bearer " + jwtUtil.createAccessToken(2);
 		mockMvc.perform(post("/api/notifications/1/read")
 				.servletPath("/api/notifications/1/read")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +90,7 @@ public class NotificationControllerTest {
 	
 	@Test
 	public void 알림_삭제_권한_확인() throws Exception {
-		String fakeToken = token = "Bearer " + jwtUtil.createToken(2);
+		String fakeToken = token = "Bearer " + jwtUtil.createAccessToken(2);
 		mockMvc.perform(delete("/api/notifications/1")
 				.servletPath("/api/notifications/1")
 				.accept(MediaType.APPLICATION_JSON)

@@ -26,12 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.planner.Config.JwtContext;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Dto.AuthenticationCodeDto;
 import com.planner.planner.Dto.FindEmailDto;
 import com.planner.planner.Dto.FindPasswordDto;
 import com.planner.planner.Dto.PasswordDto;
@@ -39,7 +37,7 @@ import com.planner.planner.Util.JwtUtil;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, JwtContext.class, SecurityContext.class })
+@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityContext.class })
 @Sql(scripts = {"classpath:/PlannerData.sql"})
 @Transactional
 public class AccountControllerTest {
@@ -59,7 +57,7 @@ public class AccountControllerTest {
 	@Before
 	public void setUp() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-		token = "Bearer " + jwtUtil.createToken(1);
+		token = "Bearer " + jwtUtil.createAccessToken(1);
 	}
 
 	@Test

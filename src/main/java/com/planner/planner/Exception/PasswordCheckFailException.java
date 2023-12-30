@@ -1,13 +1,13 @@
 package com.planner.planner.Exception;
 
-public class AuthCheckFail extends RuntimeException{
+public class PasswordCheckFailException extends RuntimeException {
 
-	public AuthCheckFail() {
+	public PasswordCheckFailException() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public AuthCheckFail(String message) {
+	public PasswordCheckFailException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
