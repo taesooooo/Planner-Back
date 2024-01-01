@@ -1,16 +1,10 @@
 package com.planner.planner.Dao.Impl;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLType;
 import java.sql.Types;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.support.DataAccessUtils;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -18,7 +12,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import com.mysql.cj.MysqlType;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Dao.ReviewDao;
@@ -32,7 +25,6 @@ import com.planner.planner.RowMapper.ReviewRowMapper;
 public class ReviewDaoImpl implements ReviewDao {
 	private static final Logger logger = LoggerFactory.getLogger(ReviewDaoImpl.class);
 	
-	private JdbcTemplate jdbcTemplate;
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	// 동적 쿼리
@@ -52,10 +44,8 @@ public class ReviewDaoImpl implements ReviewDao {
 	private final String DELETE_UPDATE_SQL = "DELETE FROM review WHERE review_id = :reviewId;";
 	// 동적 쿼리
 	private final String FIND_TOTAL_COUNT_SQL = "SELECT count(*) FROM review ";
-	private final String FIND_TOTAL_COUNT_KEYWORD_SQL = "SELECT count(*) FROM review WHERE title LIKE \"%%%s%%\";";
 	
-	public ReviewDaoImpl(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
+	public ReviewDaoImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
 		this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
 	}
 
@@ -87,7 +77,7 @@ public class ReviewDaoImpl implements ReviewDao {
 			parameterSource.addValue("keyword", "%"+requestParamDto.getKeyword()+"%");
 		}
 		
-		if(requestParamDto.getAreaCode() != null) {
+		if(requestParamDto.getAreaCode() != null && !requestParamDto.getAreaCode().equals(0)) {
 			sb.append("AND areacode = :areaCode ");
 			parameterSource.addValue("areaCode", requestParamDto.getAreaCode());
 		}
@@ -159,19 +149,12 @@ public class ReviewDaoImpl implements ReviewDao {
 			parameterSource.addValue("keyword", "%"+keyword+"%");
 		}
 		
-		if(areaCode != null) {
+		if(areaCode != null && !areaCode.equals(0)) {
 			sb.append("AND areacode = :areaCode");
 			parameterSource.addValue("areaCode", areaCode);
 		}
 				
 		int result = namedParameterJdbcTemplate.queryForObject(sb.toString(), parameterSource, Integer.class);
 		return result;
-	}
-
-	@Override
-	public int getTotalCountByKeyword(String keyword) {
-		String sql = String.format(FIND_TOTAL_COUNT_KEYWORD_SQL, keyword);
-		
-		return jdbcTemplate.queryForObject(sql, Integer.class);
 	}
 }

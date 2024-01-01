@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -101,6 +102,15 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<Object> requestParamValidFail(Exception e) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, e.getMessage()));
+	}
+	
+	@ExceptionHandler(BindException.class)
+	public ResponseEntity<Object> requestBindFail(Exception e, BindingResult result) {
+		Map<String, String> errors = new HashMap<String, String>();
+		result.getFieldErrors().forEach(error -> {
+			errors.put(error.getField(), "잘못된 형식으로 요청했습니다. 다시 확인해주세요.");
+		});
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, errors));
 	}
 
 	@ExceptionHandler(MailException.class)

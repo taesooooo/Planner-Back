@@ -151,13 +151,9 @@ public class PlannerDaoImpl implements PlannerDao {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
 		sb.append("LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON P.planner_id = SUB.planner_id ");
-		sb.append("LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id ");
-		
-		if(accountId != null) {
-			sb.append("AND PL.account_id = :accountId ");			
-			parameterSource.addValue("accountId", accountId);
-		}
-		
+		sb.append("LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id AND PL.account_id = :accountId ");
+		parameterSource.addValue("accountId", accountId, accountId != null ? Types.INTEGER : Types.NULL);
+
 		if(commonRequestParamDto.getKeyword() != null) {
 			sb.append("WHERE P.title LIKE :keyword ");			
 			parameterSource.addValue("keyword", "%" + commonRequestParamDto.getKeyword() + "%");

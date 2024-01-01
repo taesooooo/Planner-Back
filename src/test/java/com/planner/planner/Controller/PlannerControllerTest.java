@@ -356,7 +356,7 @@ public class PlannerControllerTest {
 				.header("Authorization", token)
 				.param("itemCount", "10")
 				.param("sortCriteria", "1")
-				.param("areaCode", "1")
+				.param("areaCode", "a")
 				.param("keyword", "")
 				.param("pageNum", "1"))
 		.andDo(print())
@@ -365,8 +365,8 @@ public class PlannerControllerTest {
 		.andExpect(jsonPath("$.data").isNotEmpty())
 		.andExpect(jsonPath("$.data.list").exists())
 		.andExpect(jsonPath("$.data.list").isNotEmpty())
-		.andExpect(jsonPath("$.data.list.length()").value(3))
-		.andExpect(jsonPath("$.data.totalCount").value(3))
+		.andExpect(jsonPath("$.data.list.length()").value(9))
+		.andExpect(jsonPath("$.data.totalCount").value(9))
 		.andExpect(jsonPath("$.data.pageIndex").value(1))
 		.andExpect(jsonPath("$.data.pageLastIndex").value(1));
 	}

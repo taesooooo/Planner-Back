@@ -5,8 +5,11 @@ import java.util.List;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PositiveOrZero;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
+import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
 import com.planner.planner.Common.ValidationGroups.ReviewCreateGroup;
 import com.planner.planner.Common.ValidationGroups.ReviewUpdateGroup;
 
@@ -22,6 +25,7 @@ public class ReviewDto {
 	
 	@NotBlank(message = "내용을 적어주세요.", groups = {ReviewCreateGroup.class, ReviewUpdateGroup.class})
 	private String content;
+	@PositiveOrZero(message = "지역 코드는 음수일 수 없습니다.", groups = {ReviewCreateGroup.class, ReviewUpdateGroup.class})
 	private Integer areaCode;
 	private String thumbnail;
 	private int likeCount;

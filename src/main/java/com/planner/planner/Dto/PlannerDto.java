@@ -5,17 +5,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
 
@@ -27,7 +23,7 @@ public class PlannerDto {
 	@NotBlank(message = "생성자는 필수입니다.", groups = { PlannerCreateGroup.class } )
 	private String creator;
 	
-	@PositiveOrZero(message = "지역코드는 숫자이어야 합니다.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
+	@PositiveOrZero(message = "지역 코드는 음수일 수 없습니다.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })
 	private Integer areaCode;
 	
 	@NotBlank(message = "제목을 입력해주세요.", groups = { PlannerCreateGroup.class, PlannerUpdateGroup.class })

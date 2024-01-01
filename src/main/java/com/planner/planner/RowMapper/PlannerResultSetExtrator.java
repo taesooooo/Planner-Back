@@ -71,7 +71,7 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<List<Planner
 				planner = new PlannerDto.Builder()
 						.setPlannerId(rs.getInt("planner_id"))
 						.setAccountId(rs.getInt("account_id"))
-						.setAreaCode(rs.getObject("area_code", Integer.class))
+						.setAreaCode(rs.getInt("area_code"))
 						.setCreator(rs.getString("creator"))
 						.setTitle(rs.getString("title"))
 						.setPlanDateStart(rs.getDate("plan_date_start").toLocalDate())
