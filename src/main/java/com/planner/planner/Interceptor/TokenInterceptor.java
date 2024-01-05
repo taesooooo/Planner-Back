@@ -34,7 +34,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 			throws Exception {
 		// 토큰확인
 		String bearerToken = request.getHeader("Authorization");
-		if(bearerToken == null) {
+		if(bearerToken == null || bearerToken.isEmpty()) {
 			throw new NotFoundToken("로그인이 필요합니다.");
 		}
 		

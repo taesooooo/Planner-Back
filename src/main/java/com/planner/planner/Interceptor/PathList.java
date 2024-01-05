@@ -20,10 +20,7 @@ public class PathList {
 	}
 	
 	public Boolean isPass(String path, RequestMethod pathMethod) {
-		if(addPathList.isEmpty() && excludePathList.isEmpty()) {
-			return false;
-		}
-		
+		// 제외 URL 먼저 검사		
 		boolean hasExcludePath = excludePathList.entrySet().stream()
 				.anyMatch(t -> pathMatch(t.getKey(), t.getValue(), path, pathMethod) );
 		
@@ -38,11 +35,7 @@ public class PathList {
 			return false;
 		}
 		
-		if(!hasAddPath && !addPathList.isEmpty()) {
-			return true;
-		}
-		
-		return false;
+		return true;
 	}
 	
 	private boolean pathMatch(String path,  ArrayList<RequestMethod> pathMethods, String targetPath, RequestMethod targetPathMethod) {

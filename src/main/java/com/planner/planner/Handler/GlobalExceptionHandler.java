@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.planner.planner.Exception.TokenCheckFailException;
 import com.planner.planner.Exception.AuthenticationCodeExpireException;
-import com.planner.planner.Exception.DataNotFoundException;
+import com.planner.planner.Exception.NotFoundDataException;
 import com.planner.planner.Exception.DuplicateLikeException;
 import com.planner.planner.Exception.DuplicatePlanMemberException;
 import com.planner.planner.Exception.ForbiddenException;
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(value = { 
-			DataNotFoundException.class,
+			NotFoundDataException.class,
 			NotFoundUserException.class,
 			NotFoundPlanner.class,
 			NotFoundReviewException.class,

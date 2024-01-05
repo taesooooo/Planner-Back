@@ -12,7 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import com.planner.planner.Dao.InvitationDao;
 import com.planner.planner.Dao.PlanMemberDao;
-import com.planner.planner.Exception.DataNotFoundException;
+import com.planner.planner.Exception.NotFoundDataException;
 import com.planner.planner.Service.Impl.InvitationServiceImpl;
 
 public class InvitationServiceTest {
@@ -34,7 +34,7 @@ public class InvitationServiceTest {
 		when(invitationDao.findById(anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> invitationServiceImpl.findById(anyInt()))
-				.isExactlyInstanceOf(DataNotFoundException.class);
+				.isExactlyInstanceOf(NotFoundDataException.class);
 	}
 	
 	@Test
@@ -42,7 +42,7 @@ public class InvitationServiceTest {
 		when(invitationDao.findById(anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> invitationServiceImpl.acceptInvite(anyInt()))
-				.isExactlyInstanceOf(DataNotFoundException.class);
+				.isExactlyInstanceOf(NotFoundDataException.class);
 	}
 	
 	@Test
@@ -50,6 +50,6 @@ public class InvitationServiceTest {
 		when(invitationDao.findById(anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> invitationServiceImpl.rejectInvite(anyInt()))
-				.isExactlyInstanceOf(DataNotFoundException.class);
+				.isExactlyInstanceOf(NotFoundDataException.class);
 	}
 }

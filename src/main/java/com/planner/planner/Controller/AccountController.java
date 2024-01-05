@@ -70,11 +70,6 @@ public class AccountController {
 
 	@GetMapping(value = "/{accountId}")
 	public ResponseEntity<Object> account(HttpServletRequest req, @PathVariable int accountId) throws Exception {
-		int id = Integer.parseInt(req.getAttribute("userId").toString());
-		if (id != accountId) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
-		}
-
 		AccountDto user = accountService.findById(accountId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", user));
 	}
@@ -100,8 +95,6 @@ public class AccountController {
 	
 	@GetMapping(value = "/{accountId}/planners")
 	public ResponseEntity<Object> myPlanners(HttpServletRequest req, @PathVariable int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
-		checkAuth(req, accountId);
-		
 		Page<PlannerDto> list = accountService.myPlanners(accountId, commonRequestParamDto);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", list));
@@ -109,7 +102,6 @@ public class AccountController {
 
 	@GetMapping(value = "/{accountId}/likes")
 	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
-		checkAuth(req, accountId);
 		Page<?> list = null;
 		PostType postType = commonRequestParamDto.getPostType();
 		
@@ -191,13 +183,5 @@ public class AccountController {
 		}
 		
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "비밀번호가 재설정 되었습니다."));
-	}
-	
-	private void checkAuth(HttpServletRequest req, int accountId) throws Exception {
-		int id = UserIdUtil.getUserId(req);
-		AccountDto user = accountService.findById(accountId);
-		if (id != user.getAccountId()) {
-			throw new ForbiddenException("접근 권한이 없습니다.");
-		}
 	}
 }

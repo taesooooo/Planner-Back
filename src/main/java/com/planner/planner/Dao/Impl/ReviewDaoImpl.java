@@ -32,7 +32,7 @@ public class ReviewDaoImpl implements ReviewDao {
 	// 동적 쿼리
 	private final String FIND_ALL_REVIEW_SQL = "SELECT review_id, planner_id, title, content, areacode, thumbnail, writer, writer_id, like_count, create_date, update_date "
 			+ "FROM review ";
-	private final String FIND_REVIEW_SQL = "SELECT R.review_id, R.planner_id, R.title, R.content, R.thumbnail, R.writer, R.writer_id, R.like_count, R.create_date, R.update_date, \r\n"
+	private final String FIND_REVIEW_SQL = "SELECT R.review_id, R.planner_id, R.title, R.content, R.areacode, R.thumbnail, R.writer, R.writer_id, R.like_count, R.create_date, R.update_date, \r\n"
 			+ "RC.comment_id AS RC_comment_id, RC.review_id AS RC_review_id, RC.writer_id AS RC_writer_id, RC.content AS RC_content, \r\n"
 			+ "RC.parent_id AS RC_parent_id, RC.create_date AS RC_create_date, RC.update_date AS RC_update_date, AC.nickname AS AC_nickname \r\n"
 			+ "FROM review AS R \r\n"

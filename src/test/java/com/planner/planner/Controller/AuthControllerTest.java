@@ -81,7 +81,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -109,7 +108,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -137,7 +135,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -165,7 +162,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -193,7 +189,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -221,7 +216,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -249,7 +243,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -277,7 +270,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -305,7 +297,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/register")
-				.servletPath("/api/auth/register")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -333,7 +324,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/login")
-				.servletPath("/api/auth/login")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -361,7 +351,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/login")
-				.servletPath("/api/auth/login")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -389,7 +378,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/login")
-				.servletPath("/api/auth/login")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -417,7 +405,6 @@ public class AuthControllerTest {
 		node.put("phone", testDto.getPhone());
 
 		mockMvc.perform(post("/api/auth/login")
-				.servletPath("/api/auth/login")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -432,7 +419,6 @@ public class AuthControllerTest {
 		node.put("password", "testtest!");
 
 		mockMvc.perform(post("/api/auth/login")
-				.servletPath("/api/auth/login")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(node.toString()))
@@ -448,7 +434,6 @@ public class AuthControllerTest {
 		String token = "Bearer " + jwtUtil.createAccessToken(1);
 		
 		mockMvc.perform(get("/api/auth/logout")
-				.servletPath("/api/auth/logout")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token))
@@ -460,7 +445,6 @@ public class AuthControllerTest {
 	public void 휴대폰_인증코드_전송_정상() throws Exception {
 		String phone = "";
 		this.mockMvc.perform(post("/api/auth/authentication-code/send")
-				.servletPath("/api/auth/authentication-code/send")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.param("phone", phone))
@@ -472,7 +456,6 @@ public class AuthControllerTest {
 	public void 이메일_인증코드_전송_정상() throws Exception {
 		String email = "";
 		this.mockMvc.perform(post("/api/auth/authentication-code/send")
-				.servletPath("/api/auth/authentication-code/send")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.param("email", email))
@@ -484,7 +467,6 @@ public class AuthControllerTest {
 	public void 인증코드_전송_휴대폰번호_11글자_이하_유효성검사() throws Exception {
 		String phone = "01012345";
 		this.mockMvc.perform(post("/api/auth/authentication-code/send")
-				.servletPath("/api/auth/authentication-code/send")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.param("phone", phone))
@@ -496,7 +478,6 @@ public class AuthControllerTest {
 	public void 인증코드_전송_이메일_유효성검사() throws Exception {
 		String email = "test@";
 		this.mockMvc.perform(post("/api/auth/authentication-code/send")
-				.servletPath("/api/auth/authentication-code/send")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.param("email", email))
@@ -512,7 +493,6 @@ public class AuthControllerTest {
 				.build();
 		
 		this.mockMvc.perform(post("/api/auth/authentication-code/check")
-				.servletPath("/api/auth/authentication-code/check")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -529,7 +509,6 @@ public class AuthControllerTest {
 				.build();
 		
 		this.mockMvc.perform(post("/api/auth/authentication-code/check")
-				.servletPath("/api/auth/authentication-code/check")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -546,7 +525,6 @@ public class AuthControllerTest {
 				.build();
 		
 		this.mockMvc.perform(post("/api/auth/authentication-code/check")
-				.servletPath("/api/auth/authentication-code/check")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -563,7 +541,6 @@ public class AuthControllerTest {
 				.build();
 		
 		this.mockMvc.perform(post("/api/auth/authentication-code/check")
-				.servletPath("/api/auth/authentication-code/check")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -579,7 +556,6 @@ public class AuthControllerTest {
 				.build();
 		
 		this.mockMvc.perform(post("/api/auth/authentication-code/check")
-				.servletPath("/api/auth/authentication-code/check")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -596,7 +572,6 @@ public class AuthControllerTest {
 				.build();
 		
 		this.mockMvc.perform(post("/api/auth/authentication-code/check")
-				.servletPath("/api/auth/authentication-code/check")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -613,7 +588,6 @@ public class AuthControllerTest {
 				.build();
 		
 		this.mockMvc.perform(post("/api/auth/authentication-code/check")
-				.servletPath("/api/auth/authentication-code/check")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)

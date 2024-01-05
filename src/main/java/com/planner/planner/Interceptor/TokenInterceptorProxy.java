@@ -20,7 +20,7 @@ public class TokenInterceptorProxy implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		String path = request.getRequestURI();
+		String path = request.getServletPath();
 		RequestMethod method = RequestMethod.valueOf(request.getMethod());
 		
 		// false -> 인터셉터 , true -> 통과

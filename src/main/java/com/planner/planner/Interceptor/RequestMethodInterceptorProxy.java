@@ -18,7 +18,7 @@ public class RequestMethodInterceptorProxy implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		String path = request.getRequestURI();
+		String path = request.getServletPath();
 
 		RequestMethod method = RequestMethod.valueOf(request.getMethod());
 		

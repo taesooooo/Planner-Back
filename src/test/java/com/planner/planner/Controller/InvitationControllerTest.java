@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Config.RootAppContext;
@@ -47,12 +48,15 @@ public class InvitationControllerTest {
 	}
 	
 	@Test
-	public void 초대_수락_접근_제한_확인() throws Exception {
+	public void 초대_수락_권한없음() throws Exception {
 		// 플래너 생성자는 1, 수락하는 유저는 2
 		String fakeToken = "Bearer " + jwtUtil.createAccessToken(1);
+		String uri = UriComponentsBuilder.fromUriString("/api/invitation/{inviteId}/accept")
+				.build(1)
+				.toString();
 		
-		this.mockMvc.perform(post("/api/invitation/1/accept")
-				.servletPath("/api/invitation/1/accept")
+		this.mockMvc.perform(post(uri)
+				.servletPath(uri)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", fakeToken))
@@ -62,8 +66,7 @@ public class InvitationControllerTest {
 	
 	@Test
 	public void 초대_수락() throws Exception {
-		this.mockMvc.perform(post("/api/invitation/1/accept")
-				.servletPath("/api/invitation/1/accept")
+		this.mockMvc.perform(post("/api/invitation/{inviteId}/accept", 1)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token))
@@ -72,12 +75,14 @@ public class InvitationControllerTest {
 	}
 	
 	@Test
-	public void 초대_거절_접근_제한_확인() throws Exception {
+	public void 초대_거절_권한없음() throws Exception {
 		// 플래너 생성자는 1, 수락하는 유저는 2
 		String fakeToken = "Bearer " + jwtUtil.createAccessToken(1);
-				
-		this.mockMvc.perform(delete("/api/invitation/1/reject")
-				.servletPath("/api/invitation/1/reject")
+		String uri = UriComponentsBuilder.fromUriString("/api/invitation/{inviteId}/reject")
+				.build(1)
+				.toString();
+		this.mockMvc.perform(delete(uri)
+				.servletPath(uri)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", fakeToken))
@@ -87,8 +92,7 @@ public class InvitationControllerTest {
 	
 	@Test
 	public void 초대_거절() throws Exception {
-		this.mockMvc.perform(delete("/api/invitation/1/reject")
-				.servletPath("/api/invitation/1/reject")
+		this.mockMvc.perform(delete("/api/invitation/{inviteId}/reject", 1)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token))

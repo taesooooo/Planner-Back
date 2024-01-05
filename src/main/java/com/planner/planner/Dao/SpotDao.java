@@ -12,6 +12,8 @@ public interface SpotDao {
 	public boolean insertSpotLike(int accountId, SpotLikeDto spotLikeDto) throws SQLException;
 
 	public boolean deleteSpotLike(int accountId, int contentId) throws Exception;
+	
+	public SpotLikeDto findSpotLikeByContentId(int accountId, int contentId) throws Exception;
 
 	public List<SpotLikeDto> selectSpotLikeList(int accountId, CommonRequestParamDto requestParamDto, PageInfo pageInfo)
 			throws Exception;

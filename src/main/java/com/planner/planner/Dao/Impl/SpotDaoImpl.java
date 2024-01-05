@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -77,8 +78,23 @@ public class SpotDaoImpl implements SpotDao {
 		int result = namedParameterJdbcTemplate.update(DELETE_SPOT_LIKE_SQL, parameterSource);
 		return result > 0 ? true : false;
 	}
-	
-	
+
+	@Override
+	public SpotLikeDto findSpotLikeByContentId(int accountId, int contentId) throws Exception {
+		StringBuilder sb = new StringBuilder(SELECT_SPOT_LIKE_LIST_SQL);
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+		
+		sb.append("WHERE account_id = :accountId AND content_id = :contentId");
+		parameterSource.addValue("accountId", accountId);
+		parameterSource.addValue("contentId", contentId);
+		
+		try {
+			return namedParameterJdbcTemplate.queryForObject(sb.toString(), parameterSource, new SpotLikeRowMapper());
+		}
+		catch (DataAccessException e) {
+			return null;
+		}
+	}
 
 	@Override
 	public List<SpotLikeDto> selectSpotLikeList(int accountId, CommonRequestParamDto requestParamDto, PageInfo pageInfo) throws Exception {

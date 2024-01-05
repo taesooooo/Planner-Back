@@ -107,7 +107,6 @@ public class AuthController {
 	public ResponseEntity<Object> login(HttpServletRequest req,
 			@RequestBody @Validated(LoginGroup.class) AccountDto accountDto) throws Exception {
 		LoginInfoDto loginInfo = authService.login(accountDto);
-		
 		ResponseCookie cookie = ResponseCookie.from("RefreshToken", loginInfo.getReflashToken())
 				.httpOnly(true)
 				.sameSite("Strict")

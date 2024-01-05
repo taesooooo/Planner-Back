@@ -63,8 +63,6 @@ public class ReviewController {
 	
 	@PatchMapping(value="/{reviewId}")
 	public ResponseEntity<Object> updateReivew(HttpServletRequest req, @PathVariable int reviewId, @RequestBody @Validated(ReviewUpdateGroup.class) ReviewDto reviewDto) throws Exception {
-		//checkAuth(req, reviewId);
-		
 		ReviewDto review = reviewService.findReview(reviewId);
 		if(review == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false,"게시글이 존재하지 않습니다."));
@@ -77,24 +75,13 @@ public class ReviewController {
 	
 	@DeleteMapping(value="/{reviewId}")
 	public ResponseEntity<Object> deleteReview(HttpServletRequest req, @PathVariable int reviewId) throws Exception {
-		//checkAuth(req, reviewId);
-		
 		ReviewDto review = reviewService.findReview(reviewId);
 		if(review == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false,"게시글이 존재하지 않습니다."));
 		}
-		
+
 		reviewService.deleteReview(reviewId);
 
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
-	}
-	
-	private void checkAuth(HttpServletRequest req, int reviewId) throws Exception {
-		int userId = UserIdUtil.getUserId(req);
-		ReviewDto review = reviewService.findReview(reviewId);
-		
-		if(userId != review.getWriterId()) {
-			throw new ForbiddenException("접근 권한이 없습니다.");
-		}
 	}
 }

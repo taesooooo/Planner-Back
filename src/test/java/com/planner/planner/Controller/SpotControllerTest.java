@@ -101,9 +101,7 @@ public class SpotControllerTest {
 	
 	@Test
 	public void 여행지_세부사항_가져오기() throws Exception {
-		int contentId = 2733967;
-		
-		mockMvc.perform(get("/api/spots/lists/"+Integer.toString(contentId))
+		mockMvc.perform(get("/api/spots/lists/{contentId}", 2733967)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
@@ -122,12 +120,13 @@ public class SpotControllerTest {
 				.setImage("테스트이미지주소")
 				.build();
 		
-		mockMvc.perform(post("/api/spots/likes/")
+		mockMvc.perform(post("/api/spots/likes")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(likeDto)))
+				.content(mapper.writeValueAsString(likeDto))
+				.requestAttr("userId", 1))
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(true));
@@ -141,12 +140,13 @@ public class SpotControllerTest {
 				.setImage("테스트이미지주소")
 				.build();
 		
-		mockMvc.perform(post("/api/spots/likes/")
+		mockMvc.perform(post("/api/spots/likes")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(likeDto)))
+				.content(mapper.writeValueAsString(likeDto))
+				.requestAttr("userId", 1))
 		.andDo(print())
 		.andExpect(status().isConflict())
 		.andExpect(jsonPath("$.state").value(false));
@@ -154,13 +154,12 @@ public class SpotControllerTest {
 	
 	@Test
 	public void 여행지_좋아요취소() throws Exception {
-		int contentId = 2733967;
-		
-		mockMvc.perform(delete("/api/spots/likes/"+Integer.toString(contentId))
+		mockMvc.perform(delete("/api/spots/likes/{contentId}", 2733967)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON)
+				.requestAttr("userId", 1))
 		.andDo(print())
 		.andExpect(jsonPath("$.state").value(true));
 	}
@@ -168,9 +167,8 @@ public class SpotControllerTest {
 
 	@Test
 	public void 여행지_좋아요취소_없는경우() throws Exception {
-		int contentId = 2763807; // 번호 다름
-		
-		mockMvc.perform(delete("/api/spots/likes/"+Integer.toString(contentId))
+		// 번호 다름
+		mockMvc.perform(delete("/api/spots/likes/{contentId}", 2763807)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)

@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Config.RootAppContext;
@@ -38,7 +39,6 @@ import com.planner.planner.Util.JwtUtil;
 @WebAppConfiguration
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityContext.class })
 @Sql(scripts = {"classpath:/PlannerData.sql"})
-@Transactional
 public class FileUploadControllerTest {
 	@Autowired
 	private WebApplicationContext context;
@@ -62,6 +62,7 @@ public class FileUploadControllerTest {
 		this.mockMvc.perform(multipart("/api/upload/file-upload")
 				.file(new MockMultipartFile("files", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes()))
 				.file(new MockMultipartFile("files", "b.png", MediaType.IMAGE_PNG_VALUE, "/png image/".getBytes()))
+				.servletPath("/api/upload/file-upload")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.MULTIPART_FORM_DATA)
@@ -75,7 +76,7 @@ public class FileUploadControllerTest {
 	public void 파일_가져오기() throws Exception {
 		List<String> names = fileUpladService.fileUpload(1, Arrays.asList(new MockMultipartFile("images", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes())));
 		String fileName = names.get(0);
-		this.mockMvc.perform(get("/api/upload/files/" + fileName)
+		this.mockMvc.perform(get("/api/upload/files/{fileName}", fileName)
 				.accept(MediaType.IMAGE_JPEG)
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
@@ -91,7 +92,7 @@ public class FileUploadControllerTest {
 	public void 파일_삭제() throws Exception {
 		List<String> names = fileUpladService.fileUpload(1, Arrays.asList(new MockMultipartFile("images", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes())));
 		String fileName = names.get(0);
-		this.mockMvc.perform(delete("/api/upload/files/"+ fileName)
+		this.mockMvc.perform(delete("/api/upload/files/{fileName}", fileName)
 				.accept(MediaType.IMAGE_JPEG)
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
@@ -103,14 +104,20 @@ public class FileUploadControllerTest {
 	
 	@Test
 	public void 파일_삭제_접근권한_없음() throws Exception {
+		String fakeToken = "Bearer " + jwtUtil.createAccessToken(2);
 		List<String> names = fileUpladService.fileUpload(1, Arrays.asList(new MockMultipartFile("images", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes())));
 		String fileName = names.get(0);
-		this.mockMvc.perform(delete("/api/upload/files/" + fileName)
+		String uri = UriComponentsBuilder.fromUriString("/api/upload/files/{fileName}")
+				.build(fileName)
+				.toString();
+		
+		this.mockMvc.perform(delete(uri)
+				.servletPath(uri)
 				.accept(MediaType.IMAGE_JPEG)
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.MULTIPART_FORM_DATA)
-				.header("Authorization", "Bearer " + jwtUtil.createAccessToken(2)))
+				.header("Authorization", fakeToken))
 		.andDo(print())
 		.andExpect(status().isForbidden());
 	}

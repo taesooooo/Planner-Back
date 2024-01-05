@@ -1,13 +1,13 @@
 package com.planner.planner.Exception;
 
-public class DataNotFoundException extends Exception {
+public class NotFoundDataException extends Exception {
 
-	public DataNotFoundException() {
+	public NotFoundDataException() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public DataNotFoundException(String message) {
+	public NotFoundDataException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}

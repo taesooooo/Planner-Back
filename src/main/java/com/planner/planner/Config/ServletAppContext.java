@@ -29,12 +29,12 @@ public class ServletAppContext implements WebMvcConfigurer {
 	private String baseLocation;
 	
 	private TokenInterceptor tokenInterceptor;
-	private DataAccessAuthInterceptor reviewAuthInterceptor;
+	private DataAccessAuthInterceptor dataAuthInterceptor;
 	
 	
 	public ServletAppContext(TokenInterceptor tokenInterceptor, DataAccessAuthInterceptor reviewAuthInterceptor) {
 		this.tokenInterceptor = tokenInterceptor;
-		this.reviewAuthInterceptor = reviewAuthInterceptor;
+		this.dataAuthInterceptor = reviewAuthInterceptor;
 	}
 
 	@Bean
@@ -53,30 +53,59 @@ public class ServletAppContext implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
+		// URL이 없으면 제외를 뜻함, null은 모든 requetMethod를 뜻함
+		// excludePath를 먼저 체크 진행함
+		
+		// 토큰 확인
 		TokenInterceptorProxy tokenAuthInterceptorProxy = new TokenInterceptorProxy(tokenInterceptor)
-//				.excludePath("/api/auth/**", null)
+				.addPath("/api/auth/logout", RequestMethod.GET)
+				.addPath("/api/users/**", null)
 				.excludePath("/api/users/find-email", null)
 				.excludePath("/api/users/find-password", null)
 				.excludePath("/api/users/change-password", null)
-				.excludePath("/api/upload/files/**", null)
-				.addPath("/api/auth/logout", RequestMethod.GET)
+				.addPath("/api/upload/file-upload", RequestMethod.POST)
+				.addPath("/api/upload/files/*", RequestMethod.DELETE)
+				.addPath("/api/notifications/**", null)
 				.eitherAddPath("/api/spots/**", RequestMethod.GET)
+				.addPath("/api/spots/likes", RequestMethod.POST)
+				.addPath("/api/spots/likes/*", RequestMethod.DELETE)
 				.eitherAddPath("/api/planners", RequestMethod.GET)
-				.eitherAddPath("/api/planners/*", RequestMethod.GET)
-				.eitherAddPath("/api/reviews", RequestMethod.GET)
-				.eitherAddPath("/api/reviews/*", RequestMethod.GET);
-		
-		RequestMethodInterceptorProxy reviewAuthInterpInterceptorProxy = new RequestMethodInterceptorProxy(reviewAuthInterceptor)
+				.eitherAddPath("/api/planners/**", RequestMethod.GET)
+				.addPath("/api/planners", RequestMethod.POST)
+				.addPath("/api/planners/**", RequestMethod.POST)
 				.addPath("/api/planners/**", RequestMethod.PATCH)
 				.addPath("/api/planners/**", RequestMethod.DELETE)
+				.addPath("/api/invitation/**", RequestMethod.POST)
+				.addPath("/api/invitation/**", RequestMethod.DELETE)
+				.eitherAddPath("/api/reviews", RequestMethod.GET)
+				.eitherAddPath("/api/reviews/*", RequestMethod.GET)
+				.addPath("/api/reviews", RequestMethod.POST)
 				.addPath("/api/reviews/*", RequestMethod.PATCH)
 				.addPath("/api/reviews/*", RequestMethod.DELETE)
+				.addPath("/api/reviews/*/comments/*", null);
+		
+		
+		// 토큰을 이용한 데이터 권한 확인
+		RequestMethodInterceptorProxy authInterpInterceptorProxy = new RequestMethodInterceptorProxy(dataAuthInterceptor)
+				.addPath("/api/users/**", null)
+				.excludePath("/api/users/search-member", null)
+				.excludePath("/api/users/find-email", null)
+				.excludePath("/api/users/find-password", null)
+				.excludePath("/api/users/change-password", null)
+				.addPath("/api/upload/files/*", RequestMethod.DELETE)
+				.addPath("/api/notifications/**", null)
+				.addPath("/api/planners/**", RequestMethod.POST)
+				.addPath("/api/planners/**", RequestMethod.PATCH)
+				.addPath("/api/planners/**", RequestMethod.DELETE)
+				.excludePath("/api/planners/*/like", RequestMethod.POST)
 				.addPath("/api/invitation/**", null)
-				.addPath("/api/notifications/*/read", RequestMethod.POST)
-				.addPath("/api/notifications/*", RequestMethod.DELETE);
+				.addPath("/api/reviews/*", RequestMethod.PATCH)
+				.addPath("/api/reviews/*", RequestMethod.DELETE)
+				.addPath("/api/reviews/*/comments/*", RequestMethod.PATCH)
+				.addPath("/api/reviews/*/comments/*", RequestMethod.DELETE);
 		
 		registry.addInterceptor(tokenAuthInterceptorProxy);
-		registry.addInterceptor(reviewAuthInterpInterceptorProxy);
+		registry.addInterceptor(authInterpInterceptorProxy);
 	}
 
 	@Override

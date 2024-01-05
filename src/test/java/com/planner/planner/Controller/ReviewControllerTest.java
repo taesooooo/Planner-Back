@@ -25,7 +25,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
@@ -53,7 +55,8 @@ public class ReviewControllerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+		mockMvc = MockMvcBuilders.webAppContextSetup(context)
+				.build();
 		token = "Bearer "+ jwtUtil.createAccessToken(1);	
 	}
 	
@@ -102,6 +105,7 @@ public class ReviewControllerTest {
 		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setAreaCode(1).setFileNames(fileList).build();
 
 		mockMvc.perform(post("/api/reviews")
+				.servletPath("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -120,6 +124,7 @@ public class ReviewControllerTest {
 		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setFileNames(fileList).build();
 
 		mockMvc.perform(post("/api/reviews")
+				.servletPath("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -136,6 +141,7 @@ public class ReviewControllerTest {
 		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setFileNames(null).build();
 
 		mockMvc.perform(post("/api/reviews")
+				.servletPath("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -150,6 +156,7 @@ public class ReviewControllerTest {
 	@Test
 	public void 리뷰_목록_가져오기_최신순_테스트() throws Exception {		
 		mockMvc.perform(get("/api/reviews")
+				.servletPath("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -171,6 +178,7 @@ public class ReviewControllerTest {
 	@Test
 	public void 리뷰_목록_가져오기_인기순_테스트() throws Exception {
 		mockMvc.perform(get("/api/reviews")
+				.servletPath("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -192,6 +200,7 @@ public class ReviewControllerTest {
 	@Test
 	public void 리뷰_목록_가져오기_키워드_테스트() throws Exception {
 		mockMvc.perform(get("/api/reviews")
+				.servletPath("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -212,6 +221,7 @@ public class ReviewControllerTest {
 	@Test
 	public void 리뷰_목록_가져오기_키워드_지역_테스트() throws Exception {
 		mockMvc.perform(get("/api/reviews")
+				.servletPath("/api/reviews")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -232,7 +242,7 @@ public class ReviewControllerTest {
 	
 	@Test
 	public void 리뷰_가져오기_테스트() throws Exception {
-		mockMvc.perform(get("/api/reviews/1")
+		mockMvc.perform(get("/api/reviews/{reviewId}", 1)
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -255,7 +265,7 @@ public class ReviewControllerTest {
 				.setWriter("test")
 				.build();
 
-		mockMvc.perform(patch("/api/reviews/1")
+		mockMvc.perform(patch("/api/reviews/{reviewId}", 1)
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -274,7 +284,7 @@ public class ReviewControllerTest {
 				.setWriter("test")
 				.build();
 
-		mockMvc.perform(patch("/api/reviews/1")
+		mockMvc.perform(patch("/api/reviews/{reviewId}", 1)
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -288,7 +298,7 @@ public class ReviewControllerTest {
 	public void 리뷰_수정_테스트() throws Exception {
 		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("update").setContent("수정테스트").setWriter("test").build();
 		
-		mockMvc.perform(patch("/api/reviews/1")
+		mockMvc.perform(patch("/api/reviews/{reviewId}", 1)
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -300,8 +310,28 @@ public class ReviewControllerTest {
 	}
 	
 	@Test
+	public void 리뷰_수정_권한없음() throws JsonProcessingException, Exception {
+		String fakeToken = "Bearer " + jwtUtil.createAccessToken(2);
+		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("update").setContent("수정테스트").setWriter("test").build();
+		
+		String uri = UriComponentsBuilder.fromUriString("/api/reviews/{reviewId}")
+				.build(1)
+				.toString();
+		
+		mockMvc.perform(patch(uri)
+				.servletPath(uri)
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", fakeToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(testDto)))
+		.andDo(print())
+		.andExpect(status().isForbidden());
+	}
+	
+	@Test
 	public void 리뷰_삭제_테스트() throws Exception {
-		mockMvc.perform(delete("/api/reviews/1")
+		mockMvc.perform(delete("/api/reviews/{reviewId}", 1)
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.header("Authorization", token)
@@ -311,4 +341,21 @@ public class ReviewControllerTest {
 		.andExpect(jsonPath("$.state").value(is(true)));
 	}
 
+	@Test
+	public void 리뷰_삭제_권한없음() throws Exception {
+		String fakeToken = "Bearer " + jwtUtil.createAccessToken(2);
+		
+		String uri = UriComponentsBuilder.fromUriString("/api/reviews/{reviewId}")
+				.build(1)
+				.toString();
+		
+		mockMvc.perform(delete(uri)
+				.servletPath(uri)
+				.characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.header("Authorization", fakeToken)
+				.contentType(MediaType.APPLICATION_JSON))
+		.andDo(print())
+		.andExpect(status().isForbidden());
+	}
 }

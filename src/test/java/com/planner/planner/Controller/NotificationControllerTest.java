@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Config.RootAppContext;
@@ -55,7 +56,6 @@ public class NotificationControllerTest {
 	@Test
 	public void 알림_읽음() throws Exception {
 		mockMvc.perform(post("/api/notifications/1/read")
-				.servletPath("/api/notifications/1/read")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
@@ -65,14 +65,17 @@ public class NotificationControllerTest {
 	}
 	
 	@Test
-	public void 알림_읽음_권한_확인() throws Exception {
+	public void 알림_읽음_권한없음() throws Exception {
 		String fakeToken = token = "Bearer " + jwtUtil.createAccessToken(2);
-		mockMvc.perform(post("/api/notifications/1/read")
-				.servletPath("/api/notifications/1/read")
+		String uri = UriComponentsBuilder.fromUriString("/api/notifications/{notificationId}/read")
+				.build(1)
+				.toString();
+		mockMvc.perform(post(uri)
+				.servletPath(uri)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.header("Authorization", token))
+				.header("Authorization", fakeToken))
 		.andDo(print())
 		.andExpect(status().isForbidden());
 	}
@@ -80,7 +83,6 @@ public class NotificationControllerTest {
 	@Test
 	public void 알림_삭제() throws Exception {
 		mockMvc.perform(delete("/api/notifications/1")
-				.servletPath("/api/notifications/1")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token))
@@ -89,10 +91,13 @@ public class NotificationControllerTest {
 	}
 	
 	@Test
-	public void 알림_삭제_권한_확인() throws Exception {
+	public void 알림_삭제_권한없음() throws Exception {
 		String fakeToken = token = "Bearer " + jwtUtil.createAccessToken(2);
-		mockMvc.perform(delete("/api/notifications/1")
-				.servletPath("/api/notifications/1")
+		String uri = UriComponentsBuilder.fromUriString("/api/notifications/{notificationId}")
+				.build(1)
+				.toString();
+		mockMvc.perform(delete(uri)
+				.servletPath(uri)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", fakeToken))
