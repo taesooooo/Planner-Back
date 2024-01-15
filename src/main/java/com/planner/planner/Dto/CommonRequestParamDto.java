@@ -9,7 +9,7 @@ public class CommonRequestParamDto {
 	private Integer itemCount = 10;
 	@JsonProperty("criteria")
 	private SortCriteria sortCriteria = SortCriteria.LATEST;
-	private String keyword;
+	private String keyword = "";
 	private Integer areaCode;
 	private Integer pageNum;
 	private PostType postType;
