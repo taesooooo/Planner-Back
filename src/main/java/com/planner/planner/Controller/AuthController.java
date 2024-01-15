@@ -171,10 +171,10 @@ public class AuthController {
 	}
 
 	@PostMapping(value = "/token-reissue")
-	public ResponseEntity<Object> tokenReissue(HttpServletRequest req, @CookieValue("RefreshToken") String refreshTokenCookie) throws Exception {
+	public ResponseEntity<Object> tokenReissue(HttpServletRequest req, @CookieValue(value = "RefreshToken", required = false) String refreshTokenCookie) throws Exception {
 		String refreshToken = refreshTokenCookie;
 		
-		if(refreshToken == null || refreshToken.isEmpty()) {
+		if(refreshTokenCookie == null || refreshTokenCookie.isEmpty()) {
 			// 액세스 또는 리프레시 토큰이 없는 경우 토큰이 없다고 리턴
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "필요한 토큰이 없습니다."));
 		}

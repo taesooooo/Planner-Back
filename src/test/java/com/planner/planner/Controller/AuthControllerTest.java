@@ -600,8 +600,7 @@ public class AuthControllerTest {
 	public void 토큰_재발급_토큰이_없는경우() throws Exception {
 		mockMvc.perform(post("/api/auth/token-reissue")
 				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.cookie(new Cookie("RefreshToken", "")))
+				.accept(MediaType.APPLICATION_JSON))
 		.andDo(print())
 		.andExpect(status().isBadRequest());
 	}
