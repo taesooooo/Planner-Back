@@ -40,8 +40,9 @@ public class PathList {
 	
 	private boolean pathMatch(String path,  ArrayList<RequestMethod> pathMethods, String targetPath, RequestMethod targetPathMethod) {
 		boolean match = pathMethods.stream().anyMatch(item -> item == null ? true: item.equals(targetPathMethod));
+		boolean pathMatch = pathMatcher.match(path, targetPath) && (targetPathMethod == null ? true : pathMethods.isEmpty() ? true : match);
 		
-		return pathMatcher.match(path, targetPath) && (targetPathMethod == null ? true : pathMethods.isEmpty() ? true : match);
+		return pathMatch;
 	}
 	
 	public void addPath(String path, RequestMethod pathMethod) {
