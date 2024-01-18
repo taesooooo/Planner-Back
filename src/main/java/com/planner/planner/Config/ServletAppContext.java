@@ -58,7 +58,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 		
 		// 토큰 확인
 		TokenInterceptorProxy tokenAuthInterceptorProxy = new TokenInterceptorProxy(tokenInterceptor)
-				.addPath("/api/auth/logout", RequestMethod.GET)
+				.addPath("/api/auth/logout", RequestMethod.DELETE)
 				.addPath("/api/users/**", null)
 				.excludePath("/api/users/find-email", null)
 				.excludePath("/api/users/find-password", null)

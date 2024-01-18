@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -118,13 +119,22 @@ public class AuthController {
 				.body(new ResponseMessage(true, "로그인 성공", loginInfo));
 	}
 
-	@GetMapping(value = "/logout")
+	@DeleteMapping(value = "/logout")
 	public ResponseEntity<Object> logout(HttpServletRequest req) throws Exception {
 		Integer userId = UserIdUtil.getUserId(req);
 		
 		authService.logout(userId);
 		
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "로그아웃 되었습니다."));
+		// 리프레시 토큰 쿠키 삭제
+		ResponseCookie cookie = ResponseCookie.from("RefreshToken", null)
+				.httpOnly(true)
+				.sameSite("Strict")
+				.maxAge(0)
+				.build();
+		
+		return ResponseEntity.status(HttpStatus.OK)
+				.header(HttpHeaders.SET_COOKIE, cookie.toString())
+				.body(new ResponseMessage(true, "로그아웃 되었습니다."));
 	}
 
 	@PostMapping(value = "/authentication-code/request")
