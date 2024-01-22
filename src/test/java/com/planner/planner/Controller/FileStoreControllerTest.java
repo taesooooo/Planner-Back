@@ -31,7 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Config.RootAppContext;
 import com.planner.planner.Config.SecurityContext;
 import com.planner.planner.Config.ServletAppContext;
-import com.planner.planner.Service.FileUploadService;
+import com.planner.planner.Service.FileService;
 import com.planner.planner.Util.JwtUtil;
 
 
@@ -39,7 +39,7 @@ import com.planner.planner.Util.JwtUtil;
 @WebAppConfiguration
 @ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityContext.class })
 @Sql(scripts = {"classpath:/PlannerData.sql"})
-public class FileUploadControllerTest {
+public class FileStoreControllerTest {
 	@Autowired
 	private WebApplicationContext context;
 	private MockMvc mockMvc;
@@ -49,7 +49,7 @@ public class FileUploadControllerTest {
 	private ObjectMapper om = new ObjectMapper();
 	
 	@Autowired
-	private FileUploadService fileUpladService;
+	private FileService fileUpladService;
 	
 	@Before
 	public void setup() {

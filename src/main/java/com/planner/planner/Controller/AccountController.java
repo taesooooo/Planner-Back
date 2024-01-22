@@ -8,7 +8,10 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MimeType;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,10 +36,12 @@ import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PasswordDto;
 import com.planner.planner.Dto.PasswordResetkeyDto;
 import com.planner.planner.Dto.PlannerDto;
+import com.planner.planner.Dto.UploadFileDto;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.AuthenticationCodeService;
 import com.planner.planner.Service.EmailService;
+import com.planner.planner.Service.FileService;
 import com.planner.planner.Service.NotificationService;
 import com.planner.planner.Service.PasswordResetKeyService;
 import com.planner.planner.Service.SENSService;
@@ -56,9 +61,10 @@ public class AccountController {
 	private PasswordResetKeyService passwordResetKeyService;
 	private EmailService mailService;
 	private RandomCode randomCode;
+	private FileService fileService;
 
 	public AccountController(AccountService accountService, NotificationService notificationService, AuthenticationCodeService authenticationCodeService, SENSService sensService,
-			PasswordResetKeyService passwordResetKeyService, EmailService mailService, RandomCode randomCode) {
+			PasswordResetKeyService passwordResetKeyService, EmailService mailService, RandomCode randomCode, FileService fileService) {
 		this.accountService = accountService;
 		this.notificationService = notificationService;
 		this.authenticationCodeService = authenticationCodeService;
@@ -66,6 +72,7 @@ public class AccountController {
 		this.passwordResetKeyService = passwordResetKeyService;
 		this.mailService = mailService;
 		this.randomCode = randomCode;
+		this.fileService = fileService;
 	}
 
 	@GetMapping(value = "/{accountId}")
@@ -91,6 +98,14 @@ public class AccountController {
 		} else {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ResponseMessage(false, "계정 이미지 변경을 실패헀습니다."));
 		}
+	}
+	
+	@GetMapping(value = "/{accountId}/images")
+	public ResponseEntity<byte[]> accountImage(@PathVariable int accountId) throws Exception {
+		AccountDto user = accountService.findById(accountId);
+		UploadFileDto file = fileService.loadLocalFile(user.getImage());
+
+		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.parseMediaType(file.getType())).body(file.getData());
 	}
 	
 	@GetMapping(value = "/{accountId}/planners")

@@ -19,17 +19,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.planner.planner.Dto.FileInfoDto;
 import com.planner.planner.Dto.UploadFileDto;
 import com.planner.planner.Service.AccountService;
-import com.planner.planner.Service.FileUploadService;
+import com.planner.planner.Service.FileService;
 import com.planner.planner.Util.ResponseMessage;
 import com.planner.planner.Util.UserIdUtil;
 
 @RestController
 @RequestMapping(value="/api/upload")
-public class FileUploadController {
+public class FileStoreController {
 	
-	private FileUploadService fileService;
+	private FileService fileService;
 	
-	public FileUploadController(FileUploadService fileService) {
+	public FileStoreController(FileService fileService) {
 		this.fileService = fileService;
 	}
 	

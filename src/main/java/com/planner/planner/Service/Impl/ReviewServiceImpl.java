@@ -20,7 +20,7 @@ import com.planner.planner.Dto.FileInfoDto;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Exception.NotFoundReviewException;
 import com.planner.planner.Service.AccountService;
-import com.planner.planner.Service.FileUploadService;
+import com.planner.planner.Service.FileService;
 import com.planner.planner.Service.ReviewService;
 import com.planner.planner.Util.FileStore;
 import com.planner.planner.Util.ImageUtil;
@@ -34,13 +34,13 @@ public class ReviewServiceImpl implements ReviewService {
 	private FileUploadDao fileUploadDao;
 
 	private AccountService accountService;
-	private FileUploadService fileUploadService;
+	private FileService fileUploadService;
 
 	private FileStore fileStore;
 	private ImageUtil imageUtil;
 
 	public ReviewServiceImpl(ReviewDao reviewDao, AccountService accountService, FileUploadDao fileUploadDao,
-			FileUploadService fileUploadService, FileStore fileStore, ImageUtil imageUtil) {
+			FileService fileUploadService, FileStore fileStore, ImageUtil imageUtil) {
 		this.reviewDao = reviewDao;
 		this.accountService = accountService;
 		this.fileUploadDao = fileUploadDao;

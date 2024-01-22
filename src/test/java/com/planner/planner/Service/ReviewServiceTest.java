@@ -54,7 +54,7 @@ public class ReviewServiceTest {
 	@Spy
 	private FileStore fileStore;
 	@Mock
-	private FileUploadService fileUploadService;
+	private FileService fileUploadService;
 	
 	@Before
 	public void setUp() throws Exception {

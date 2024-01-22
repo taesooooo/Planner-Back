@@ -2,10 +2,14 @@ package com.planner.planner.Service.Impl;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -14,17 +18,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.planner.planner.Dao.FileUploadDao;
 import com.planner.planner.Dto.FileInfoDto;
 import com.planner.planner.Dto.UploadFileDto;
-import com.planner.planner.Service.FileUploadService;
+import com.planner.planner.Service.FileService;
 import com.planner.planner.Util.FileStore;
 
 @Service
 @Transactional
-public class FileUploadServiceImpl implements FileUploadService {
+public class FileServiceImpl implements FileService {
 	
 	private FileStore fileStore;
 	private FileUploadDao fileUploadDao;
 	
-	public FileUploadServiceImpl(FileStore fileStore, FileUploadDao fileUploadDao) {
+	public FileServiceImpl(FileStore fileStore, FileUploadDao fileUploadDao) {
 		this.fileStore = fileStore;
 		this.fileUploadDao = fileUploadDao;
 	}
@@ -60,21 +64,24 @@ public class FileUploadServiceImpl implements FileUploadService {
 	}
 
 	@Override
+	public UploadFileDto loadLocalFile(String filePath) throws Exception {
+		byte[] buffer = getFile(fileStore.getBaseLocation() + filePath);
+		
+		String fileName = filePath;
+		String extension = FilenameUtils.getExtension(fileName);
+		
+		UploadFileDto uploadFile = new UploadFileDto(Files.probeContentType(new File(filePath).toPath()), buffer);
+		
+		return uploadFile;
+	}
+
+	@Override
 	public UploadFileDto loadImage(String imageName) throws Exception {
 		FileInfoDto fileInfo = this.findFileInfo(imageName);
-		byte[] buffer = null;
-		File file = new File(fileStore.getBaseLocation() + FileStore.boardDir + File.separator + imageName);
-		if(file.exists()) {
-			FileInputStream fis = new FileInputStream(file);
-			buffer = new byte[(int) file.length()];
-			fis.read(buffer);
-			fis.close();
-		}
-		else {
-			throw new NoSuchFileException(imageName + "를 찾지 못했습니다.");
-		}
+		byte[] buffer = getFile(fileStore.getBaseLocation() + FileStore.boardDir + File.separator + imageName);
 		
 		UploadFileDto uploadFile = new UploadFileDto(fileInfo.getFileType(), buffer);
+		
 		return uploadFile;
 	}
 
@@ -93,5 +100,22 @@ public class FileUploadServiceImpl implements FileUploadService {
 	public void updateBoardId(List<String> fileNames, int boardId) {
 		String joinStr = StringUtils.collectionToDelimitedString(fileNames, ",", "\"", "\"");
 		fileUploadDao.updateBoardId(boardId, joinStr);
+	}
+	
+	private byte[] getFile(String filePath) throws IOException {
+		byte[] buffer = null;
+		File file = new File(filePath);
+		
+		if(file.exists()) {
+			FileInputStream fis = new FileInputStream(file);
+			buffer = new byte[(int) file.length()];
+			fis.read(buffer);
+			fis.close();
+		}
+		else {
+			throw new NoSuchFileException(filePath + "를 찾지 못했습니다.");
+		}
+		
+		return buffer;
 	}
 }

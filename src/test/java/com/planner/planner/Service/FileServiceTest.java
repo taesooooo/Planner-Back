@@ -29,17 +29,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.planner.planner.Dao.FileUploadDao;
 import com.planner.planner.Dto.FileInfoDto;
 import com.planner.planner.Dto.UploadFileDto;
-import com.planner.planner.Service.Impl.FileUploadServiceImpl;
+import com.planner.planner.Service.Impl.FileServiceImpl;
 import com.planner.planner.Util.FileStore;
 
-public class FileUploadServiceTest {
+public class FileServiceTest {
 	
 	// junit 임시폴더 테스트 종료시 자동 삭제(업로드 용도로 사용)
 	@Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 	
 	@InjectMocks
-	private FileUploadServiceImpl fileUploadService;
+	private FileServiceImpl fileUploadService;
 	
 	@Mock
 	private FileUploadDao fileUploadDao;
