@@ -60,6 +60,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 		TokenInterceptorProxy tokenAuthInterceptorProxy = new TokenInterceptorProxy(tokenInterceptor)
 				.addPath("/api/auth/logout", RequestMethod.DELETE)
 				.addPath("/api/users/**", null)
+				.excludePath("/api/users/*/images", RequestMethod.GET)
 				.excludePath("/api/users/find-email", null)
 				.excludePath("/api/users/find-password", null)
 				.excludePath("/api/users/change-password", null)
@@ -88,6 +89,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 		// 토큰을 이용한 데이터 권한 확인
 		RequestMethodInterceptorProxy authInterpInterceptorProxy = new RequestMethodInterceptorProxy(dataAuthInterceptor)
 				.addPath("/api/users/**", null)
+				.excludePath("/api/users/*/images", RequestMethod.GET)
 				.excludePath("/api/users/search-member", null)
 				.excludePath("/api/users/find-email", null)
 				.excludePath("/api/users/find-password", null)
