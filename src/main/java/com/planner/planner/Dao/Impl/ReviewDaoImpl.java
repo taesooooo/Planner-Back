@@ -144,7 +144,7 @@ public class ReviewDaoImpl implements ReviewDao {
 		String keyword = requestParamDto.getKeyword();
 		Integer areaCode = requestParamDto.getAreaCode();
 		
-		if(keyword != null && !keyword.isEmpty()) {
+		if(keyword != null) {
 			sb.append("WHERE title LIKE :keyword ");
 			parameterSource.addValue("keyword", "%"+keyword+"%");
 		}
