@@ -254,7 +254,7 @@ public class PlannerDaoImpl implements PlannerDao {
 			parameterSource.addValue("keyword", "%" + keyword + "%");
 		}
 		
-		if(areaCode != null) {
+		if(areaCode != null && !commonRequestParamDto.getAreaCode().equals(0)) {
 			sb.append("AND area_code = :areaCode ");
 			parameterSource.addValue("areaCode", areaCode);
 		}
@@ -281,7 +281,7 @@ public class PlannerDaoImpl implements PlannerDao {
 			parameterSource.addValue("keyword", "%" + keyword + "%");
 		}
 		
-		if(areaCode != null) {
+		if(areaCode != null && !commonRequestParamDto.getAreaCode().equals(0)) {
 			sb.append("AND P.area_code = :areaCode ");
 			parameterSource.addValue("areaCode", areaCode);
 		}
