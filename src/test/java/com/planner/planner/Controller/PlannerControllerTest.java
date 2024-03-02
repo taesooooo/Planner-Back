@@ -565,6 +565,7 @@ public class PlannerControllerTest {
 				.setAccountId(1)
 				.setCreator("test")
 				.setTitle("테스트여행")
+				.setAreaCode(1)
 				.setPlanDateStart(LocalDate.of(2023, 1, 28))
 				.setPlanDateEnd(LocalDate.of(2023, 1, 28))
 				.setExpense(1000)
