@@ -24,17 +24,22 @@ public class TokenInterceptorProxy implements HandlerInterceptor {
 		RequestMethod method = RequestMethod.valueOf(request.getMethod());
 		
 		// false -> 인터셉터 , true -> 통과
-		if(pathList.isPass(path, method)) {
-			return true;
-		}
 		
-		if(!eitherPathList.isPass(path, method)) {			
+		boolean isPass = pathList.isPass(path, method);	
+		boolean eitherIsPass = eitherPathList.isPass(path, method);
+		
+		if(isPass && !eitherIsPass) {
 			if(request.getHeader("Authorization") != null) {
 				handlerInterceptor.preHandle(request, response, handler);
 			}
 			else {
 				return true;
 			}
+			
+		}
+		
+		if(isPass && eitherIsPass) {
+			return true;
 		}
 		
 		return handlerInterceptor.preHandle(request, response, handler);
