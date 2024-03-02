@@ -218,14 +218,14 @@ public class PlannerDaoImpl implements PlannerDao {
 	@Override
 	public int updatePlanner(int plannerId, PlannerDto plannerDto) {
 		SqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("areaCode", plannerDto.getAreaCode(), plannerDto.getAreaCode() != null ? Types.INTEGER : Types.NULL)
+				.addValue("areaCode", plannerDto.getAreaCode() == 0 ? null : plannerDto.getAreaCode())
 				.addValue("title",plannerDto.getTitle())
 				.addValue("planDateStart", plannerDto.getPlanDateStart())
 				.addValue("planDateEnd", plannerDto.getPlanDateEnd())
 				.addValue("expense", plannerDto.getExpense())
 				.addValue("memberCount", plannerDto.getMemberCount())
 				.addValue("memberTypeId", plannerDto.getMemberTypeId())
-				.addValue("plannerId", plannerDto.getPlannerId());
+				.addValue("plannerId", plannerId);
 				
 		int result = namedParameterJdbcTemplate.update(UPDATE_PLANNER_SQL, parameterSource);
 		return result;
