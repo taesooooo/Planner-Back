@@ -8,6 +8,9 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +19,8 @@ import com.planner.planner.Dto.FileInfoDto;
 
 @Component
 public class FileStore {
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	
 	private String baseLocation;
 	public static String accountDir = "Account";
 	public static String boardDir = "Board";
@@ -24,6 +29,7 @@ public class FileStore {
 	private String tempDirName = "temp";
 
 	public FileStore() {
+		
 	}
 
 	public FileStore(String baseLocation) {
@@ -88,10 +94,23 @@ public class FileStore {
 		multipartFile.transferTo(file);
 	}
 	
-	public void saveThumnail(BufferedImage image, String name) throws IOException {
-		String format = "jpg";
+	public String saveThumbnail(BufferedImage image, File file) throws IOException {
+		String fileName = file.getName();
+		String extension = FilenameUtils.getExtension(fileName);
+		String extensionSplitName = FilenameUtils.getBaseName(fileName) + "_thumb";
 		
-		ImageIO.write(image, format, new File(baseLocation + thumbnailDir + File.pathSeparator + name));
+		File newFile = new File(baseLocation + thumbnailDir + File.separator + extensionSplitName + "." + extension);
+		
+		File saveFolder = new File(baseLocation + thumbnailDir);
+		if(!saveFolder.exists())
+		{
+			logger.debug("Thumbnail 폴더가 존재하지 안아 새로 생성합니다.");
+			saveFolder.mkdir();
+		}
+		
+		ImageIO.write(image, extension, newFile);
+		
+		return newFile.getName();
 	}
 
 	private Image createImage(String path, String absolutePath, String name, MultipartFile imageFile) {

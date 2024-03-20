@@ -3,8 +3,10 @@ package com.planner.planner.Service.Impl;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -111,10 +113,8 @@ public class ReviewServiceImpl implements ReviewService {
 			if (fileInfo != null) {
 				// 이미지 리사이징
 				BufferedImage resizeImage = imageUtil.resize(new File(fileInfo.getFilePath()));
-
-				thumbnailName = fileInfo.getFileName() + "_thumb.jpg";
 				// 썸네일 저장
-				fileStore.saveThumnail(resizeImage, thumbnailName);
+				thumbnailName = fileStore.saveThumbnail(resizeImage, new File(fileInfo.getFileName()));
 			}
 
 		}

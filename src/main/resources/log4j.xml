@@ -14,7 +14,7 @@
 
 	<!-- Application Loggers -->
 	<logger name="com.planner.planner">
-		<level value="info" />
+		<level value="debug" />
 	</logger>
 
 	<!-- 3rdparty Loggers -->
