@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.planner.planner.Common.Image;
+import com.planner.planner.Common.FileInfo;
 import com.planner.planner.Dto.FileInfoDto;
 
 @Component
@@ -22,10 +22,9 @@ public class FileStore {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	private String baseLocation;
-	public static String accountDir = "Account";
-	public static String boardDir = "Board";
-	public static String thumbnailDir = "Thumbnail";
-	
+	private String accountDir = "Account";
+	private String boardDir = "Board";
+	private String thumbnailDir = "Thumbnail";
 	private String tempDirName = "temp";
 
 	public FileStore() {
@@ -44,6 +43,18 @@ public class FileStore {
 		this.baseLocation = baseLocation;
 	}
 	
+	public String getAccountDir() {
+		return baseLocation + File.separator + accountDir + File.separator;
+	}
+
+	public String getBoardDir() {
+		return baseLocation + File.separator + boardDir + File.separator;
+	}
+
+	public String getThumbnailDir() {
+		return baseLocation + File.separator + thumbnailDir + File.separator;
+	}
+
 	public String getTempDirName() {
 		return tempDirName;
 	}
@@ -58,30 +69,30 @@ public class FileStore {
 		}
 	}
 
-	public Image createFilePath(MultipartFile file, String subLocation) {
+	public FileInfo createFilePath(MultipartFile file, String path) {
 		String name = System.nanoTime() + "_" + file.getOriginalFilename();
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(subLocation).append(File.separator);
-		builder.append(name);
+//		StringBuilder builder = new StringBuilder();
+//		builder.append(subLocation).append(File.separator);
+//		builder.append(name);
 
 		//builder.append(baseLocation).append("\\");
 		//builder.append(file.getOriginalFilename());
 
-		Image image = createImage(builder.toString(), getBaseLocation() + builder.toString(), name, file);
+		FileInfo image = createImage(name, path + name, name, file);
 
 		return image;
 	}
 
-	public List<FileInfoDto> createFilePaths(List<MultipartFile> files, String subLocation) {
+	public List<FileInfoDto> createFilePaths(List<MultipartFile> files, String path) {
 		List<FileInfoDto> infoList = new ArrayList<FileInfoDto>();
 		for(MultipartFile file : files) {
 			String name = System.nanoTime() + "_" + file.getOriginalFilename();
-			StringBuilder builder = new StringBuilder();
-			builder.append(subLocation).append(File.separator);
-			builder.append(name);
+//			StringBuilder builder = new StringBuilder();
+//			builder.append(subLocation).append(File.separator);
+//			builder.append(name);
 
-			FileInfoDto fileInfo = new FileInfoDto(0, 0, 0, name, getBaseLocation() + builder.toString(), file.getContentType(), null);
+			FileInfoDto fileInfo = new FileInfoDto(0, 0, 0, name, path + name, file.getContentType(), null);
 			infoList.add(fileInfo);
 		}
 
@@ -113,8 +124,8 @@ public class FileStore {
 		return newFile.getName();
 	}
 
-	private Image createImage(String path, String absolutePath, String name, MultipartFile imageFile) {
-		Image image = new Image();
+	private FileInfo createImage(String path, String absolutePath, String name, MultipartFile imageFile) {
+		FileInfo image = new FileInfo();
 		image.setPath(path);
 		image.setAbsolutePath(absolutePath);
 		image.setName(name);

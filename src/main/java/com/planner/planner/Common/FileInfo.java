@@ -2,18 +2,18 @@ package com.planner.planner.Common;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public class Image {
+public class FileInfo {
 
 	private String path;
 	private String absolutePath;
 	private String name;
 	private MultipartFile image;
 
-	public Image() {
+	public FileInfo() {
 
 	}
 
-	public Image(String path, String absolutePath, String name, MultipartFile image) {
+	public FileInfo(String path, String absolutePath, String name, MultipartFile image) {
 		this.path = path;
 		this.absolutePath = absolutePath;
 		this.name = name;

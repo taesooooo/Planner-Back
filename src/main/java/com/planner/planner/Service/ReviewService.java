@@ -11,7 +11,7 @@ public interface ReviewService {
 
 	public ReviewDto findReview(int reviewId);
 
-	public void updateReview(int reviewId, ReviewDto review) throws Exception;
+	public void updateReview(int accountId, int reviewId, ReviewDto review) throws Exception;
 
 	public void deleteReview(int reviewId);
 }

@@ -45,9 +45,9 @@ public class FileServiceImpl implements FileService {
 	@Override
 	public List<String> fileUpload(int userId, List<MultipartFile> images) throws Exception {
 		// 이미지 저장
-		List<FileInfoDto> fileList = fileStore.createFilePaths(images, FileStore.boardDir);
+		List<FileInfoDto> fileList = fileStore.createFilePaths(images, fileStore.getBoardDir());
 		
-		File file = new File(fileStore.getBaseLocation() + FileStore.boardDir);
+		File file = new File(fileStore.getBoardDir());
 		if(!file.exists()) {
 			file.mkdirs();
 		}
@@ -78,7 +78,7 @@ public class FileServiceImpl implements FileService {
 	@Override
 	public UploadFileDto loadImage(String imageName) throws Exception {
 		FileInfoDto fileInfo = this.findFileInfo(imageName);
-		byte[] buffer = getFile(fileStore.getBaseLocation() + FileStore.boardDir + File.separator + imageName);
+		byte[] buffer = getFile(fileInfo.getFilePath());
 		
 		UploadFileDto uploadFile = new UploadFileDto(fileInfo.getFileType(), buffer);
 		
@@ -98,8 +98,7 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public void updateBoardId(List<String> fileNames, int boardId) {
-		String joinStr = StringUtils.collectionToDelimitedString(fileNames, ",", "\"", "\"");
-		fileUploadDao.updateBoardId(boardId, joinStr);
+		fileUploadDao.updateBoardId(boardId, fileNames);
 	}
 	
 	private byte[] getFile(String filePath) throws IOException {

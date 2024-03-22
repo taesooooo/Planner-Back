@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.planner.planner.Common.Image;
+import com.planner.planner.Common.FileInfo;
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.Notification.NotificationMessage;
 import com.planner.planner.Common.Notification.NotificationType;
@@ -109,7 +109,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public boolean accountImageUpdate(int accountId, MultipartFile image) throws Exception {
 		// 이미지 경로 생성
-		Image path = fileStore.createFilePath(image, "Account");
+		FileInfo path = fileStore.createFilePath(image, "Account");
 
 		// 기존 이미지 확인 후 삭제
 		File previousImage = fileStore.getFile(fileStore.getBaseLocation() + path);

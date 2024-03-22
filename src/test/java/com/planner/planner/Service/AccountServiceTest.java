@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.planner.planner.Common.Image;
+import com.planner.planner.Common.FileInfo;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PlannerDto;
@@ -100,7 +100,7 @@ public class AccountServiceTest {
 	public void 계정이미지변경() throws Exception {
 		MockMultipartFile imageFile = new MockMultipartFile("image", "test.jpg", MediaType.IMAGE_JPEG_VALUE,"<<jpeg data>>".getBytes());
 		File dir = folder.newFolder("image\\test");
-		Image image = new Image("Account\\test.jpg",dir.getAbsolutePath() + File.separator +"test.jpg","test", imageFile);
+		FileInfo image = new FileInfo("Account\\test.jpg",dir.getAbsolutePath() + File.separator +"test.jpg","test", imageFile);
 
 		when(fileStore.createFilePath(imageFile, "Account")).thenReturn(image);
 		when(accountDao.accountImageUpdate(anyInt(), anyString())).thenReturn(true);

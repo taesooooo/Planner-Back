@@ -1,10 +1,13 @@
 package com.planner.planner.Dao.Impl;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.planner.planner.Dao.FileUploadDao;
 import com.planner.planner.Dto.FileInfoDto;
@@ -19,7 +22,7 @@ public class FileUploadDaoImpl implements FileUploadDao {
 	private static final String SELECT_FILEINFO_BY_FILENAME_SQL = "SELECT file_id, file_writer_id, file_board_id, file_name, file_path, file_type, upload_date FROM upload_file_info WHERE file_name = ?;";
 	private static final String SELECT_FILEINFO_BY_FILEID_SQL = "SELECT file_id, file_writer_id, file_board_id, file_name, file_path, file_type, upload_date FROM upload_file_info WHERE file_id = ?;";
 	private static final String SELECT_FILEINFO_TEMPLIST_SQL = "SELECT file_id, file_writer_id, file_board_id, file_name, file_path, file_type, upload_date FROM upload_file_info WHERE file_board_id = 0 AND datediff(now(), upload_date) = 7;";
-	private static final String UPDATE_FILEINFO_BOARDID_SQL = "UPDATE upload_file_info SET file_board_id = ? WHERE file_name IN(?);";
+	private static final String UPDATE_FILEINFO_BOARDID_SQL = "UPDATE upload_file_info SET file_board_id = ? WHERE file_name IN(%s);";
 	private static final String DELETE_FILEINFO_BY_FILEID_SQL ="DELETE FROM upload_file_info WHERE file_id = ?;";
 	
 	public FileUploadDaoImpl(JdbcTemplate jdbcTemplate) {
@@ -49,8 +52,11 @@ public class FileUploadDaoImpl implements FileUploadDao {
 	}
 
 	@Override
-	public void updateBoardId(int boardId, String fileIds) {
-		jdbcTemplate.update(UPDATE_FILEINFO_BOARDID_SQL, boardId, fileIds);
+	public void updateBoardId(int boardId, List<String> fileNames) {
+		String joinStr = fileNames.stream().map((name) -> "\"" + name + "\"").collect(Collectors.joining(","));
+		String sql = String.format(UPDATE_FILEINFO_BOARDID_SQL, joinStr);
+		
+		jdbcTemplate.update(sql, boardId);
 	}
 
 	@Override

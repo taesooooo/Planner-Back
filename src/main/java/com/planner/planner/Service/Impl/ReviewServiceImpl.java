@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.planner.planner.Common.FileInfo;
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.FileUploadDao;
@@ -56,12 +58,15 @@ public class ReviewServiceImpl implements ReviewService {
 		AccountDto user = accountService.findById(accountId);
 
 		// 썸네일 생성
-		String thumbnailName = createThumbnail(reviewDto);
-
+		String thumbnailName = createThumbnail(user.getAccountId(), reviewDto);
+		
 		// 게시글 저장
 		int reviewId = reviewDao.insertReview(reviewDto, user, thumbnailName);
 
-		fileUploadService.updateBoardId(reviewDto.getFileNames(), reviewId);
+		List<String> newFileNames = reviewDto.getFileNames();
+		newFileNames.add(thumbnailName);
+		
+		fileUploadService.updateBoardId(newFileNames, reviewId);
 
 		return reviewId;
 	}
@@ -89,13 +94,21 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public void updateReview(int reviewId, ReviewDto reviewDto) throws Exception {
+	public void updateReview(int accountId, int reviewId, ReviewDto reviewDto) throws Exception {
+		ReviewDto review = reviewDao.findReview(reviewId);
+		if(review == null) {
+			throw new NotFoundReviewException("작성된 글을 찾을 수 없습니다.");
+		}
 		// 썸네일 생성
-		String thumbnailName = createThumbnail(reviewDto);
+		String thumbnailName = createThumbnail(accountId, reviewDto);
 
 		reviewDao.updateReview(reviewId, reviewDto);
 		
 		reviewDao.updateReviewThumbnail(reviewId, thumbnailName);
+		
+		// 기존 썸네일 연결 삭제 및 새로운 썸네일 연결
+		fileUploadDao.updateBoardId(0, Arrays.asList(review.getThumbnail()));
+		fileUploadDao.updateBoardId(reviewId, Arrays.asList(thumbnailName));
 	}
 
 	@Override
@@ -103,7 +116,7 @@ public class ReviewServiceImpl implements ReviewService {
 		reviewDao.deleteReview(reviewId);
 	}
 
-	private String createThumbnail(ReviewDto reviewDto) throws IOException {
+	private String createThumbnail(int accountId, ReviewDto reviewDto) throws IOException {
 		// 게시글 썸네일 생성
 		List<String> fileList = reviewDto.getFileNames();
 		String thumbnailName = null;
@@ -115,6 +128,17 @@ public class ReviewServiceImpl implements ReviewService {
 				BufferedImage resizeImage = imageUtil.resize(new File(fileInfo.getFilePath()));
 				// 썸네일 저장
 				thumbnailName = fileStore.saveThumbnail(resizeImage, new File(fileInfo.getFileName()));
+				
+				// 썸네일 정보 DB 저장
+				FileInfoDto thumbnailFileInfoDto = new FileInfoDto();
+				thumbnailFileInfoDto.setFileId(fileInfo.getFileId());
+				thumbnailFileInfoDto.setFileWriterId(fileInfo.getFileWriterId());
+				thumbnailFileInfoDto.setFileBoradId(fileInfo.getFileBoradId());
+				thumbnailFileInfoDto.setFileName(thumbnailName);
+				thumbnailFileInfoDto.setFilePath(fileStore.getThumbnailDir() + thumbnailName);
+				thumbnailFileInfoDto.setFileType(fileInfo.getFileType());
+				
+				fileUploadDao.createFileInfo(accountId, thumbnailFileInfoDto);
 			}
 
 		}
