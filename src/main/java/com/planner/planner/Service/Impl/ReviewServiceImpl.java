@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.planner.planner.Common.FileInfo;
 import com.planner.planner.Common.Page;
@@ -98,17 +99,33 @@ public class ReviewServiceImpl implements ReviewService {
 		ReviewDto review = reviewDao.findReview(reviewId);
 		if(review == null) {
 			throw new NotFoundReviewException("작성된 글을 찾을 수 없습니다.");
-		}
+		} 
+		
 		// 썸네일 생성
-		String thumbnailName = createThumbnail(accountId, reviewDto);
-
+		// 현재 썸네일과 다른지 확인
+		if(review.getThumbnail() == null || !review.getThumbnail().equals(reviewDto.getFileNames().get(0))) {
+			String thumbnailName = null;
+			String fileName = reviewDto.getFileNames().get(0);
+			
+			FileInfoDto thumbnail = fileUploadDao.getFileInfo(StringUtils.stripFilenameExtension(fileName) + "_thumb." + StringUtils.getFilenameExtension(fileName));
+			if(thumbnail != null) {
+				thumbnailName = thumbnail.getFileName();
+			}
+			else {
+				thumbnailName = createThumbnail(accountId, reviewDto);				
+			}
+			
+			reviewDao.updateReviewThumbnail(reviewId, thumbnailName);
+			
+			// 기존 썸네일 연결 삭제 및 새로운 썸네일 연결
+			fileUploadDao.updateBoardId(0, Arrays.asList(review.getThumbnail()));
+			fileUploadDao.updateBoardId(reviewId, Arrays.asList(thumbnailName));
+		}
+		
 		reviewDao.updateReview(reviewId, reviewDto);
 		
-		reviewDao.updateReviewThumbnail(reviewId, thumbnailName);
-		
-		// 기존 썸네일 연결 삭제 및 새로운 썸네일 연결
-		fileUploadDao.updateBoardId(0, Arrays.asList(review.getThumbnail()));
-		fileUploadDao.updateBoardId(reviewId, Arrays.asList(thumbnailName));
+		// 이미지 리스트 다시 연결
+		fileUploadDao.updateBoardId(reviewId, reviewDto.getFileNames());
 	}
 
 	@Override
