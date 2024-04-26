@@ -1,7 +1,5 @@
 package com.planner.planner.Controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.planner.planner.Service.InvitationService;
 import com.planner.planner.Util.ResponseMessage;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value = "/api/invitation")

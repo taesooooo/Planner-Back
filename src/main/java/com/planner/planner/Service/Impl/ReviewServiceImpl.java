@@ -18,7 +18,6 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.FileInfoDto;
 import com.planner.planner.Dto.ReviewDto;
-import com.planner.planner.Exception.NotFoundReviewException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.FileService;
 import com.planner.planner.Service.ReviewService;

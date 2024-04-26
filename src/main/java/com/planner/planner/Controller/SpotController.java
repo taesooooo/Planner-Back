@@ -1,16 +1,11 @@
 package com.planner.planner.Controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,11 +17,12 @@ import com.planner.planner.Dto.SpotDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Dto.SpotListDto;
 import com.planner.planner.Dto.OpenApi.AreaCodeDto;
-import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.OpenApiDto;
 import com.planner.planner.Service.SpotService;
 import com.planner.planner.Util.ResponseMessage;
 import com.planner.planner.Util.UserIdUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(value = "api/spots")

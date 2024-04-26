@@ -11,14 +11,14 @@ public class AuthenticationCodeRowMapper implements RowMapper<AuthenticationCode
 
 	@Override
 	public AuthenticationCodeDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new AuthenticationCodeDto.Builder()
-				.setId(rs.getInt("id"))
-				.setPhone(rs.getString("phone"))
-				.setEmail(rs.getString("email"))
-				.setCode(rs.getString("code"))
-				.setConfirm(rs.getBoolean("code_confirm"))
-				.setExpireDate(rs.getTimestamp("expire_date").toLocalDateTime())
-				.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
+		return AuthenticationCodeDto.builder()
+				.id(rs.getInt("id"))
+				.phone(rs.getString("phone"))
+				.email(rs.getString("email"))
+				.code(rs.getString("code"))
+				.confirm(rs.getBoolean("code_confirm"))
+				.expireDate(rs.getTimestamp("expire_date").toLocalDateTime())
+				.createDate(rs.getTimestamp("create_date").toLocalDateTime())
 				.build();
 	}
 	

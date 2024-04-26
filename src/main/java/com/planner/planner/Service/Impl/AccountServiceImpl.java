@@ -16,7 +16,6 @@ import com.planner.planner.Common.Page;
 import com.planner.planner.Common.Notification.NotificationMessage;
 import com.planner.planner.Common.Notification.NotificationType;
 import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dao.NotificationDao;
 import com.planner.planner.Dao.PasswordResetKeyDao;
 import com.planner.planner.Dao.PlanMemberDao;
@@ -102,8 +101,8 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public boolean accountUpdate(AccountDto accountDto) throws Exception {
-		return accountDao.update(accountDto);
+	public boolean accountUpdate(int accountId, String nickname, String phone) throws Exception {
+		return accountDao.update(accountId, nickname, phone);
 	}
 
 	@Override

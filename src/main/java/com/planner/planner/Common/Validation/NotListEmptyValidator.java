@@ -2,8 +2,8 @@ package com.planner.planner.Common.Validation;
 
 import java.util.List;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class NotListEmptyValidator implements ConstraintValidator<NotListEmpty, List<?>> {
 

@@ -1,11 +1,10 @@
 package com.planner.planner.Dto;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,8 +15,17 @@ import com.planner.planner.Common.ValidationGroups.AccountUpdateGroup;
 import com.planner.planner.Common.ValidationGroups.LoginGroup;
 import com.planner.planner.Common.ValidationGroups.RegisterGroup;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.Getter;
+
 @JsonInclude(value = Include.NON_NULL)
-public class AccountDto {
+@Builder
+@Getter
+public class AccountDto implements UserDetails {
 
 	private int accountId;
 	@NotBlank(message = "이메일은 필수 항목입니다.", groups = { RegisterGroup.class, LoginGroup.class })
@@ -38,123 +46,41 @@ public class AccountDto {
 	@Size(min = 11, max = 11, message = "휴대폰 번호를 다시 작성해주세요.", groups = { RegisterGroup.class, AccountUpdateGroup.class })
 	private String phone;
 	private String image;
+	private Collection<? extends GrantedAuthority> authorities;
 	
 	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
 	private LocalDateTime createDate;
 	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
 	private LocalDateTime updateDate;
 
-	public static class Builder {
-		private int accountId;
-		private String email;
-		private String password;
-		private String username;
-		private String nickname;
-		private String phone;
-		private String image;
-		private LocalDateTime createDate;
-		private LocalDateTime updateDate;
-
-		public Builder setAccountId(int accountId) {
-			this.accountId = accountId;
-			return this;
-		}
-
-		public Builder setEmail(String email) {
-			this.email = email;
-			return this;
-		}
-
-		public Builder setPassword(String password) {
-			this.password = password;
-			return this;
-		}
-
-		public Builder setUsername(String username) {
-			this.username = username;
-			return this;
-		}
-
-		public Builder setNickname(String username) {
-			this.nickname = username;
-			return this;
-		}
-
-		public Builder setImage(String image) {
-			this.image = image;
-			return this;
-		}
-
-		public Builder setPhone(String phone) {
-			this.phone = phone;
-			return this;
-		}
-
-		public Builder setCreateDate(LocalDateTime createDate) {
-			this.createDate = createDate;
-			return this;
-		}
-
-		public Builder setUpdateDate(LocalDateTime updateDate) {
-			this.updateDate = updateDate;
-			return this;
-		}
-
-		public AccountDto build() {
-			return new AccountDto(this);
-		}
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public AccountDto() {
-
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
-	public AccountDto(Builder builder) {
-		this.accountId = builder.accountId;
-		this.email = builder.email;
-		this.password = builder.password;
-		this.username = builder.username;
-		this.nickname = builder.nickname;
-		this.phone = builder.phone;
-		this.image = builder.image;
-		this.createDate = builder.createDate;
-		this.updateDate = builder.updateDate;
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
-	public int getAccountId() {
-		return accountId;
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public String getImage() {
-		return image;
-	}
-
-	public LocalDateTime getCreateDate() {
-		return createDate;
-	}
-
-	public LocalDateTime getUpdateDate() {
-		return updateDate;
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 	@Override

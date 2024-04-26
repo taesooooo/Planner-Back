@@ -16,7 +16,7 @@ public interface AccountService {
 	public List<String> findEmailByPhone(String phone) throws Exception;
 	public AccountDto findByEmail(String email) throws Exception;
 	public AccountDto findByNameAndPhone(String name, String phone) throws Exception;
-	public boolean accountUpdate(AccountDto accountDto) throws Exception;
+	public boolean accountUpdate(int accountId, String nickname, String phone) throws Exception;
 	public boolean accountImageUpdate(int accountId, MultipartFile image) throws Exception;
 	public boolean passwordUpdate(int accountId, String password, String key) throws Exception;
 	

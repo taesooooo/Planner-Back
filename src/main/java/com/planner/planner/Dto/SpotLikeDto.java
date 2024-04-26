@@ -2,7 +2,7 @@ package com.planner.planner.Dto;
 
 import java.time.LocalDate;
 
-import javax.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public class SpotLikeDto {
 	private int likeId;

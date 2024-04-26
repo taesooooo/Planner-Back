@@ -2,9 +2,9 @@ package com.planner.planner.Dto;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.NotBlank;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.validation.constraints.NotBlank;
 
 public class PlanMemoDto {
 	private int memoId;

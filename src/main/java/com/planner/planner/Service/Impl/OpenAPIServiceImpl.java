@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.planner.planner.Config.Properites.CommonProperties;
 import com.planner.planner.Dto.OpenApi.AreaCodeDto;
 import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
@@ -22,22 +24,21 @@ import com.planner.planner.Exception.EmptyData;
 import com.planner.planner.Exception.NoValidArgumentException;
 import com.planner.planner.Service.OpenAPIService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class OpenAPIServiceImpl implements OpenAPIService {
 
-	private String baseUrl = "http://apis.data.go.kr/B551011/KorService1";
+	private final CommonProperties commonProperties;
 
-	@Value("${openAPI.serviceKey}")
-	private String serviceKey;
-	private String mobileOS = "ETC";
-	private String mobileApp = "planner";
 	// private int numOfRows = 10; 요청으로 받는 값으로 변경
 
 	@Override
 	public CommonListDto<AreaCodeDto> getAreaNum() throws Exception{
-		String apiUrl = baseUrl+"/areaCode1?ServiceKey="+serviceKey
-				+"&MobileOS="+mobileOS
-				+"&MobileApp="+mobileApp
+		String apiUrl = commonProperties.getOpenApi().getBaseUrl()+"/areaCode1?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
+				+"&MobileOS="+commonProperties.getOpenApi().getMobileOS()
+				+"&MobileApp="+commonProperties.getOpenApi().getMobileAPP()
 				+"&numOfRows=17"
 				+"&pageNo=1"
 				+"&_type=json";
@@ -65,9 +66,9 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 	@Override
 	public CommonListDto<CommonBasedDto> getAreaList(OpenApiDto openApiDto) throws Exception {
-		String apiUrl = baseUrl+"/areaBasedList1?ServiceKey="+serviceKey
-				+"&MobileOS="+mobileOS
-				+"&MobileApp="+mobileApp
+		String apiUrl = commonProperties.getOpenApi().getBaseUrl()+"/areaBasedList1?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
+				+"&MobileOS="+commonProperties.getOpenApi().getMobileOS()
+				+"&MobileApp="+commonProperties.getOpenApi().getMobileAPP()
 				+"&numOfRows="+openApiDto.getNumOfRows()
 				+"&pageNo="+openApiDto.getPageNo()
 				+"&contentTypeId="+openApiDto.getContentTypeId()
@@ -118,9 +119,9 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 	@Override
 	public CommonListDto<CommonBasedDto> getLocationBasedList(OpenApiDto openApiDto) throws Exception {
-		String apiUrl = baseUrl+"/areaBasedList1?ServiceKey="+serviceKey
-				+"&MobileOS="+mobileOS
-				+"&MobileApp="+mobileApp
+		String apiUrl = commonProperties.getOpenApi().getBaseUrl()+"/areaBasedList1?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
+				+"&MobileOS="+commonProperties.getOpenApi().getMobileOS()
+				+"&MobileApp="+commonProperties.getOpenApi().getMobileAPP()
 				+"&numOfRows="+openApiDto.getNumOfRows()
 				+"&pageNo="+openApiDto.getPageNo()
 				+"&mapX="+openApiDto.getMapX()
@@ -177,9 +178,9 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 			throw new NoValidArgumentException("키워드는 공백이거나 빈칸일 수 었습니다.");
 		}
 		
-		String apiUrl = baseUrl+"/searchKeyword1?ServiceKey="+serviceKey
-				+"&MobileOS="+mobileOS
-				+"&MobileApp="+mobileApp
+		String apiUrl = commonProperties.getOpenApi().getBaseUrl()+"/searchKeyword1?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
+				+"&MobileOS="+commonProperties.getOpenApi().getMobileOS()
+				+"&MobileApp="+commonProperties.getOpenApi().getMobileAPP()
 				+"&numOfRows="+openApiDto.getNumOfRows()
 				+"&pageNo="+openApiDto.getPageNo()
 				+"&contentTypeId="+openApiDto.getContentTypeId()
@@ -236,9 +237,9 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	{
 		JsonNode data = null;
 
-		String apiUrl = baseUrl+"/detailCommon1?ServiceKey="+serviceKey
-				+"&MobileOS="+mobileOS
-				+"&MobileApp="+mobileApp
+		String apiUrl = commonProperties.getOpenApi().getBaseUrl()+"/detailCommon1?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
+				+"&MobileOS="+commonProperties.getOpenApi().getMobileOS()
+				+"&MobileApp="+commonProperties.getOpenApi().getMobileAPP()
 				+"&contentId="+contentId
 				+"&defaultYN=Y"
 				+"&firstImageYN=Y"

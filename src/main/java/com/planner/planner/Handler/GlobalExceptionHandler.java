@@ -3,35 +3,36 @@ package com.planner.planner.Handler;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.validation.ConstraintViolationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.planner.planner.Exception.TokenCheckFailException;
 import com.planner.planner.Exception.AuthenticationCodeExpireException;
-import com.planner.planner.Exception.NotFoundDataException;
 import com.planner.planner.Exception.DuplicateLikeException;
 import com.planner.planner.Exception.DuplicatePlanMemberException;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Exception.NoValidArgumentException;
 import com.planner.planner.Exception.NotFoundAuthenticationCodeException;
+import com.planner.planner.Exception.NotFoundDataException;
 import com.planner.planner.Exception.NotFoundPasswordResetKeyException;
 import com.planner.planner.Exception.NotFoundPlanner;
 import com.planner.planner.Exception.NotFoundReviewException;
 import com.planner.planner.Exception.NotFoundToken;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Exception.PasswordCheckFailException;
+import com.planner.planner.Exception.TokenCheckFailException;
 import com.planner.planner.Util.ResponseMessage;
+
+import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -49,9 +50,9 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "데이터를 찾지 못헀습니다"));
 	}
 
-	@ExceptionHandler(ForbiddenException.class)
+	@ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
 	public ResponseEntity<Object> ForbiddenUser(Exception e) {
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, e.getMessage()));
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
 	}
 
 	@ExceptionHandler(value = { 

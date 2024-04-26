@@ -1,27 +1,22 @@
 package com.planner.planner.Service.Impl;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Service.EmailService;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 	
-	@Value("${front.passwordResetUrl}")
 	private String passwordResetUrl;
 	
-	private JavaMailSender mailSender;
-
-	public EmailServiceImpl(JavaMailSender mailSender) {
-		this.mailSender = mailSender;
-	}
+	private final JavaMailSender mailSender;
 
 	@Override
 	public boolean sendAuthenticationCode(String to, String code) throws MessagingException {

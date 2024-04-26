@@ -9,7 +9,6 @@ import java.util.Base64;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,39 +17,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.planner.planner.Config.Properites.CommonProperties;
 import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dto.SENS.Messages;
 import com.planner.planner.Dto.SENS.SMSRequestDto;
 import com.planner.planner.Dto.SENS.SMSResponesDto;
 import com.planner.planner.Service.SENSService;
-import com.planner.planner.Util.RandomCode;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class SENSServiceImpl implements SENSService {
 	
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 	
-	private AuthenticationCodeDao authentcationCodeDao;
-		
-	@Value("${SENS.smsURL}")
-	private String smsURL;
-	@Value("${SENS.smsSignatureURL}")
-	private String signatureURL;
-	@Value("${SENS.serviceId}")
-	private String serviceId;
-	@Value("${SENS.accessKey}")
-	private String accessKey;
-	@Value("${SENS.secretKey}")
-	private String secretKey;
-	@Value("${SENS.fromPhone}")
-	private String fromPhone;
+	private final AuthenticationCodeDao authentcationCodeDao;
+	private final CommonProperties commonProperties;
 	
-	private ObjectMapper objectMapper;
-	
-	public SENSServiceImpl(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
-		this.objectMapper = new ObjectMapper();
-	}
+	private ObjectMapper objectMapper = new ObjectMapper();
+
 
 	@Override
 	public boolean authenticationCodeSMSSend(String phone, String code) throws Exception {
@@ -59,14 +45,14 @@ public class SENSServiceImpl implements SENSService {
 		HttpHeaders header = new HttpHeaders();
 		header.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
 		header.add("x-ncp-apigw-timestamp", currentTimeMillis);
-		header.add("x-ncp-iam-access-key", accessKey);
-		header.add("x-ncp-apigw-signature-v2", makeSignature(RequestMethod.POST.toString(), signatureURL, currentTimeMillis));
+		header.add("x-ncp-iam-access-key", commonProperties.getSens().getAccessKey());
+		header.add("x-ncp-apigw-signature-v2", makeSignature(RequestMethod.POST.toString(), commonProperties.getSens().getSignatureURL(), currentTimeMillis));
 		
 		SMSRequestDto request = new SMSRequestDto.Builder()
 				.setType("SMS")
 				.setContentType("COMM")
 				.setCountryCode("82")
-				.setFrom(fromPhone)
+				.setFrom(commonProperties.getSens().getFromPhone())
 				.setContent("한국다봄 인증코드:" + code)
 				.setMessages(Arrays.asList(new Messages.Builder().setTo(phone).build()))
 				.build();
@@ -75,7 +61,7 @@ public class SENSServiceImpl implements SENSService {
 		
 		HttpEntity<String> httpEntity = new HttpEntity<String>(body, header);
 
-		SMSResponesDto response = this.restTemplate.postForObject(smsURL, httpEntity, SMSResponesDto.class);
+		SMSResponesDto response = this.restTemplate.postForObject(commonProperties.getSens().getSmsURL(), httpEntity, SMSResponesDto.class);
 		
 		int statusCode = Integer.parseInt(response.getStatusCode());
 		
@@ -97,10 +83,10 @@ public class SENSServiceImpl implements SENSService {
 			.append(newLine)
 			.append(currentTimeMillis)
 			.append(newLine)
-			.append(accessKey)
+			.append(commonProperties.getSens().getAccessKey())
 			.toString();
 
-		SecretKeySpec signingKey = new SecretKeySpec(secretKey.getBytes("UTF-8"), "HmacSHA256");
+		SecretKeySpec signingKey = new SecretKeySpec(commonProperties.getSens().getSecretKey().getBytes("UTF-8"), "HmacSHA256");
 		Mac mac = Mac.getInstance("HmacSHA256");
 		mac.init(signingKey);
 

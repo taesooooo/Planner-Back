@@ -3,12 +3,12 @@ package com.planner.planner.Dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.planner.planner.Common.ValidationGroups.PlanCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlanUpdateGroup;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 public class PlanDto {
 	private int planId;

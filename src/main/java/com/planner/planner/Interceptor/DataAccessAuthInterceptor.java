@@ -2,9 +2,6 @@ package com.planner.planner.Interceptor;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
@@ -26,8 +23,10 @@ import com.planner.planner.Service.InvitationService;
 import com.planner.planner.Service.NotificationService;
 import com.planner.planner.Service.PlannerService;
 import com.planner.planner.Service.ReviewService;
-import com.planner.planner.Service.SpotService;
 import com.planner.planner.Util.UserIdUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class DataAccessAuthInterceptor implements HandlerInterceptor {

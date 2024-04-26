@@ -1,9 +1,9 @@
 package com.planner.planner.Dto;
 
-import javax.validation.constraints.Min;
-
 import com.planner.planner.Common.ValidationGroups.PlanLocationCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlanLocationUpdateGroup;
+
+import jakarta.validation.constraints.Min;
 
 public class PlanLocationDto {
 	private int locationId;

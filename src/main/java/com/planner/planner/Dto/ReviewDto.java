@@ -3,15 +3,12 @@ package com.planner.planner.Dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
-import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
 import com.planner.planner.Common.ValidationGroups.ReviewCreateGroup;
 import com.planner.planner.Common.ValidationGroups.ReviewUpdateGroup;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public class ReviewDto {
 	private int reviewId;

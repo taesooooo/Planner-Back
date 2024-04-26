@@ -1,15 +1,10 @@
 package com.planner.planner.Dao.Impl;
 
-import java.io.File;
-import java.sql.Date;
-import java.sql.JDBCType;
-import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,10 +13,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
-import com.planner.planner.Common.SqlWhereMapper;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlannerDto;
@@ -42,8 +35,8 @@ public class PlannerDaoImpl implements PlannerDao {
 	private final String FIND_PLANNER_COMMON_SQL = "SELECT P.planner_id, P.account_id, P.creator, P.area_code, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, SUB.like_count, P.create_date, P.update_date, PL.like_id, "
 			+ "plan_loc_one.location_image AS thumbnail "
 			+ "FROM planner AS P "
-			+ "LEFT JOIN (SELECT planner_id, plan_id FROM plan GROUP BY planner_id) AS plan_one ON plan_one.planner_id = P.planner_id "
-			+ "LEFT JOIN (SELECT plan_id, location_image FROM plan_location GROUP BY plan_id) AS plan_loc_one ON plan_loc_one.plan_id = plan_one.plan_id ";
+			+ "LEFT JOIN (SELECT planner_id, MIN(plan_id) as plan_id FROM plan GROUP BY planner_id) AS plan_one ON plan_one.planner_id = P.planner_id "
+			+ "LEFT JOIN (SELECT plan_id, location_image FROM plan_location) AS plan_loc_one ON plan_loc_one.plan_id = plan_one.plan_id ";
 
 	private final String UPDATE_PLANNER_SQL = "UPDATE planner AS P SET P.area_code = :areaCode, P.title = :title, P.plan_date_start = :planDateStart, P.plan_date_end = :planDateEnd, P.expense = :expense, P.member_count = :memberCount, P.member_type_id = :memberTypeId, P.update_date = NOW() "
 			+ "WHERE P.planner_id = :plannerId;";
