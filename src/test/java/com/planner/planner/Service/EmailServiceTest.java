@@ -1,9 +1,7 @@
 package com.planner.planner.Service;
 
-import javax.mail.MessagingException;
-
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,6 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.planner.planner.Config.MailSenderConfig;
 import com.planner.planner.Service.Impl.EmailServiceImpl;
 import com.planner.planner.Util.RandomCode;
+
+import jakarta.mail.MessagingException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { MailSenderConfig.class, RandomCode.class })

@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +25,14 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Config.RootAppContext;
-import com.planner.planner.Config.SecurityContext;
+import com.planner.planner.Config.SecurityConfiguration;
 import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Util.JwtUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityContext.class })
+@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityConfiguration.class })
 @Sql(scripts = {"classpath:/PlannerData.sql"})
 @Transactional
 public class SpotControllerTest {

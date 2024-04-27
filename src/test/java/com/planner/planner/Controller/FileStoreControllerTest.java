@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,13 +23,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Config.RootAppContext;
-import com.planner.planner.Config.SecurityContext;
+import com.planner.planner.Config.SecurityConfiguration;
 import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Service.FileService;
 import com.planner.planner.Util.JwtUtil;
@@ -37,7 +36,7 @@ import com.planner.planner.Util.JwtUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityContext.class })
+@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityConfiguration.class })
 @Sql(scripts = {"classpath:/PlannerData.sql"})
 public class FileStoreControllerTest {
 	@Autowired

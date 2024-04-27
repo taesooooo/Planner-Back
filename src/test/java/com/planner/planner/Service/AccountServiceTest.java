@@ -9,12 +9,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,7 +25,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import com.planner.planner.Common.Image;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.Impl.AccountServiceImpl;
 import com.planner.planner.Service.Impl.PlannerServiceImpl;

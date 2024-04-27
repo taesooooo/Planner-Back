@@ -21,7 +21,7 @@ public class AccountDaoImpl implements AccountDao {
 
 	private JdbcTemplate jdbcTemplate;
 
-	private final String INSERT_ACCOUNT_SQL = "INSERT INTO ACCOUNT(email, password, name, nickname, phone, image, create_date, update_date) VALUES(?,?,?,?,?,?, now(), now());";
+	private final String INSERT_ACCOUNT_SQL = "INSERT INTO account(email, password, name, nickname, phone, image, create_date, update_date) VALUES(?,?,?,?,?,?, now(), now());";
 	private final String FIND_BY_EMAIL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date, user_role.role_id, role.authority "
 			+ "FROM account "
 			+ "INNER JOIN user_role ON user_role.user_id = account_id "

@@ -1,22 +1,12 @@
 package com.planner.planner.Interceptor;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.*;
 
 import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.planner.planner.Config.RootAppContext;
-import com.planner.planner.Config.SecurityContext;
-import com.planner.planner.Config.ServletAppContext;
-import com.planner.planner.Config.ValidationConfig;
 import com.planner.planner.Exception.NotFoundToken;
 import com.planner.planner.Exception.TokenCheckFailException;
 import com.planner.planner.Util.JwtUtil;

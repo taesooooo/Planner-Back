@@ -3,7 +3,8 @@ package com.planner.planner;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,14 +15,9 @@ public class JwtTest {
 
 	private JwtUtil jwtUtil;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		this.jwtUtil = new JwtUtil("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-	}
-
-	@Test
-	public void jwtCreateTest() {
-		logger.info(jwtUtil.createAccessToken(1000));
 	}
 
 	@Test
@@ -29,5 +25,10 @@ public class JwtTest {
 		String token = jwtUtil.createAccessToken(1);
 		
 		assertThat(jwtUtil.verifyToken(token)).isTrue();
+	}
+	
+	@Test
+	public void jwtFilterTest() {
+		
 	}
 }
