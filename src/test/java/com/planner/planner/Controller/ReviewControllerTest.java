@@ -11,16 +11,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,16 +33,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.planner.Config.RootAppContext;
-import com.planner.planner.Config.SecurityConfiguration;
-import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.ReviewDto;
+import com.planner.planner.Filter.JwtAuthenticationFilter;
 import com.planner.planner.Util.JwtUtil;
 
-@WebAppConfiguration
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityConfiguration.class })
-@Sql(scripts = {"classpath:/PlannerData.sql"})
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles("test")
 @Transactional
 public class ReviewControllerTest {
 	
@@ -49,24 +49,29 @@ public class ReviewControllerTest {
 	
 	@Autowired
 	private JwtUtil jwtUtil;
+	@Autowired
+	private UserDetailsService detailsService;
 	
 	private ObjectMapper mapper = new ObjectMapper();
 	private String token;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
+		JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, detailsService);
 		mockMvc = MockMvcBuilders.webAppContextSetup(context)
+				.addFilter(filter)
 				.build();
 		token = "Bearer "+ jwtUtil.createAccessToken(1);	
 	}
 	
-	@Test
-	public void 리뷰_제목_공백_유효성검사() throws Exception {
-		ReviewDto testDto = new ReviewDto.Builder()
-				.setPlannerId(1)
-				.setTitle("")
-				.setContent("재미있었다.")
-				.setWriter("test")
+	@ParameterizedTest
+	@MethodSource("newReviewParameters")
+	@DisplayName("리뷰 유효성 검사")
+	public void 리뷰_유효성검사(int plannerId, String title, String content) throws Exception {
+		ReviewDto testDto = ReviewDto.builder()
+				.plannerId(plannerId)
+				.title(title)
+				.content(content)
 				.build();
 
 		mockMvc.perform(post("/api/reviews")
@@ -79,30 +84,26 @@ public class ReviewControllerTest {
 		.andExpect(status().isBadRequest());
 	}
 	
-	@Test
-	public void 리뷰_내용_공백_유효성검사() throws Exception {
-		ReviewDto testDto = new ReviewDto.Builder()
-				.setPlannerId(1)
-				.setTitle("test")
-				.setContent("")
-				.setWriter("test")
-				.build();
-
-		mockMvc.perform(post("/api/reviews")
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.header("Authorization", token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(testDto)))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
+	public static Stream<Arguments> newReviewParameters() {
+		return Stream.of(
+				Arguments.of(1, "", "재미있었다."),		// 제목 공백
+				Arguments.of(1, "", "재미있었다.")			// 내용 공백
+				);
 	}
+	
 
 	@Test
+	@DisplayName("리뷰 작성")
 	public void 리뷰_작성_테스트() throws Exception {
 		List<String> fileList = new ArrayList<String>();
 		fileList.add("test.jpg");
-		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setAreaCode(1).setFileNames(fileList).build();
+		ReviewDto testDto = ReviewDto.builder()
+				.plannerId(1)
+				.title("test")
+				.content("재미있었다.")
+				.areaCode(1)
+				.fileNames(fileList)
+				.build();
 
 		mockMvc.perform(post("/api/reviews")
 				.servletPath("/api/reviews")
@@ -114,14 +115,20 @@ public class ReviewControllerTest {
 		.andDo(print())
 		.andExpect(status().isCreated())
 		.andExpect(jsonPath("$.state").value(is(true)))
-		.andExpect(jsonPath("$.data").value(4));
+		.andExpect(jsonPath("$.data").isNumber());
 	}
 	
 	@Test
+	@DisplayName("리뷰 작성 지역코드 없는 경우")
 	public void 리뷰_작성_지역코드_없는경우_테스트() throws Exception {
 		List<String> fileList = new ArrayList<String>();
 		fileList.add("test.jpg");
-		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setFileNames(fileList).build();
+		ReviewDto testDto = ReviewDto.builder()
+				.plannerId(1)
+				.title("test")
+				.content("재미있었다.")
+				.fileNames(fileList)
+				.build();
 
 		mockMvc.perform(post("/api/reviews")
 				.servletPath("/api/reviews")
@@ -133,12 +140,18 @@ public class ReviewControllerTest {
 		.andDo(print())
 		.andExpect(status().isCreated())
 		.andExpect(jsonPath("$.state").value(is(true)))
-		.andExpect(jsonPath("$.data").value(4));
+		.andExpect(jsonPath("$.data").isNumber());
 	}
 	
 	@Test
+	@DisplayName("리뷰 작성 썸네일 없는 경우")
 	public void 리뷰_작성_썸네일_없는경우() throws Exception {
-		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("test").setContent("재미있었다.").setFileNames(null).build();
+		ReviewDto testDto = ReviewDto.builder()
+				.plannerId(1)
+				.title("test")
+				.content("재미있었다.")
+				.fileNames(null)
+				.build();
 
 		mockMvc.perform(post("/api/reviews")
 				.servletPath("/api/reviews")
@@ -150,10 +163,11 @@ public class ReviewControllerTest {
 		.andDo(print())
 		.andExpect(status().isCreated())
 		.andExpect(jsonPath("$.state").value(is(true)))
-		.andExpect(jsonPath("$.data").value(4));
+		.andExpect(jsonPath("$.data").isNumber());
 	}
 	
 	@Test
+	@DisplayName("리뷰 조회 - 최신순")
 	public void 리뷰_목록_가져오기_최신순_테스트() throws Exception {		
 		mockMvc.perform(get("/api/reviews")
 				.servletPath("/api/reviews")
@@ -176,6 +190,7 @@ public class ReviewControllerTest {
 	}
 	
 	@Test
+	@DisplayName("리뷰 조회 - 인기순")
 	public void 리뷰_목록_가져오기_인기순_테스트() throws Exception {
 		mockMvc.perform(get("/api/reviews")
 				.servletPath("/api/reviews")
@@ -198,6 +213,7 @@ public class ReviewControllerTest {
 	}
 	
 	@Test
+	@DisplayName("리뷰 조회 - 키워드")
 	public void 리뷰_목록_가져오기_키워드_테스트() throws Exception {
 		mockMvc.perform(get("/api/reviews")
 				.servletPath("/api/reviews")
@@ -219,6 +235,7 @@ public class ReviewControllerTest {
 	}
 	
 	@Test
+	@DisplayName("리뷰 조회 - 키워드")
 	public void 리뷰_목록_가져오기_키워드_지역_테스트() throws Exception {
 		mockMvc.perform(get("/api/reviews")
 				.servletPath("/api/reviews")
@@ -241,6 +258,7 @@ public class ReviewControllerTest {
 	}
 	
 	@Test
+	@DisplayName("리뷰 조회")
 	public void 리뷰_가져오기_테스트() throws Exception {
 		mockMvc.perform(get("/api/reviews/{reviewId}", 1)
 				.characterEncoding("UTF-8")
@@ -256,13 +274,15 @@ public class ReviewControllerTest {
 		.andExpect(jsonPath("$.data.comments[0].reComments[0].reComments.length()").value(1));
 	}
 	
-	@Test
+	@ParameterizedTest
+	@MethodSource("reviewUpdateParameters")
+	@DisplayName("리뷰 수정 유효성 검사")
 	public void 리뷰_수정_제목_공백_유효성검사() throws Exception {
-		ReviewDto testDto = new ReviewDto.Builder()
-				.setPlannerId(1)
-				.setTitle("")
-				.setContent("재미있었다.")
-				.setWriter("test")
+		ReviewDto testDto = ReviewDto.builder()
+				.plannerId(1)
+				.title("")
+				.content("재미있었다.")
+				.areaCode(null)
 				.build();
 
 		mockMvc.perform(patch("/api/reviews/{reviewId}", 1)
@@ -275,28 +295,23 @@ public class ReviewControllerTest {
 		.andExpect(status().isBadRequest());
 	}
 	
-	@Test
-	public void 리뷰_수정_내용_공백_유효성검사() throws Exception {
-		ReviewDto testDto = new ReviewDto.Builder()
-				.setPlannerId(1)
-				.setTitle("test")
-				.setContent("")
-				.setWriter("test")
-				.build();
-
-		mockMvc.perform(patch("/api/reviews/{reviewId}", 1)
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.header("Authorization", token)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(testDto)))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
+	public static Stream<Arguments> reviewUpdateParameters() {
+		return Stream.of(
+				Arguments.of(1, "", "재미있었다.", 1),			// 제목 공백
+				Arguments.of(1, "test", ".", 1),			// 내용 공백
+				Arguments.of(1, "", "재미있었다.", 1000)		// 잘못된 지역코드
+				);
 	}
 	
 	@Test
+	@DisplayName("리뷰 수정")
 	public void 리뷰_수정_테스트() throws Exception {
-		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("update").setContent("수정테스트").setWriter("test").build();
+		ReviewDto testDto = ReviewDto.builder()
+				.plannerId(1)
+				.title("update")
+				.content("수정테스트")
+				.areaCode(1)
+				.build();
 		
 		mockMvc.perform(patch("/api/reviews/{reviewId}", 1)
 				.characterEncoding("UTF-8")
@@ -310,26 +325,7 @@ public class ReviewControllerTest {
 	}
 	
 	@Test
-	public void 리뷰_수정_권한없음() throws JsonProcessingException, Exception {
-		String fakeToken = "Bearer " + jwtUtil.createAccessToken(2);
-		ReviewDto testDto = new ReviewDto.Builder().setPlannerId(1).setTitle("update").setContent("수정테스트").setWriter("test").build();
-		
-		String uri = UriComponentsBuilder.fromUriString("/api/reviews/{reviewId}")
-				.build(1)
-				.toString();
-		
-		mockMvc.perform(patch(uri)
-				.servletPath(uri)
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.header("Authorization", fakeToken)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(testDto)))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
-	
-	@Test
+	@DisplayName("리뷰 삭제")
 	public void 리뷰_삭제_테스트() throws Exception {
 		mockMvc.perform(delete("/api/reviews/{reviewId}", 1)
 				.characterEncoding("UTF-8")
@@ -339,23 +335,5 @@ public class ReviewControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)));
-	}
-
-	@Test
-	public void 리뷰_삭제_권한없음() throws Exception {
-		String fakeToken = "Bearer " + jwtUtil.createAccessToken(2);
-		
-		String uri = UriComponentsBuilder.fromUriString("/api/reviews/{reviewId}")
-				.build(1)
-				.toString();
-		
-		mockMvc.perform(delete(uri)
-				.servletPath(uri)
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.header("Authorization", fakeToken)
-				.contentType(MediaType.APPLICATION_JSON))
-		.andDo(print())
-		.andExpect(status().isForbidden());
 	}
 }

@@ -11,16 +11,16 @@ public class PlanLocationRowMapper implements RowMapper<PlanLocationDto> {
 
 	@Override
 	public PlanLocationDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new PlanLocationDto.Builder()
-				.setLocationId(rs.getInt("location_id"))
-				.setLocationContentId(rs.getInt("location_content_id"))
-				.setLocationImage(rs.getString("location_image"))
-				.setLocationAddr(rs.getString("location_addr"))
-				.setLocationMapx(rs.getDouble("location_mapx"))
-				.setLocationMapy(rs.getDouble("location_mapy"))
-				.setLocationTransportation(rs.getInt("location_transportation"))
-				.setIndex(rs.getInt("location_index"))
-				.setPlanId(rs.getInt("plan_id"))
+		return PlanLocationDto.builder()
+				.locationId(rs.getInt("location_id"))
+				.locationContentId(rs.getInt("location_content_id"))
+				.locationImage(rs.getString("location_image"))
+				.locationAddr(rs.getString("location_addr"))
+				.locationMapx(rs.getDouble("location_mapx"))
+				.locationMapy(rs.getDouble("location_mapy"))
+				.locationTransportation(rs.getInt("location_transportation"))
+				.index(rs.getInt("location_index"))
+				.planId(rs.getInt("plan_id"))
 				.build();
 	}
 }

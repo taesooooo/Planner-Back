@@ -24,18 +24,18 @@ public class AccountDaoImpl implements AccountDao {
 	private final String INSERT_ACCOUNT_SQL = "INSERT INTO account(email, password, name, nickname, phone, image, create_date, update_date) VALUES(?,?,?,?,?,?, now(), now());";
 	private final String FIND_BY_EMAIL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date, user_role.role_id, role.authority "
 			+ "FROM account "
-			+ "INNER JOIN user_role ON user_role.user_id = account_id "
-			+ "INNER JOIN role ON user_role.role_id = id "
+			+ "LEFT JOIN user_role ON user_role.user_id = account_id "
+			+ "LEFT JOIN role ON user_role.role_id = id "
 			+ "WHERE email = ?";
 	private final String FIND_BY_NICKNAME = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date, user_role.role_id, role.authority "
 			+ "FROM account "
-			+ "INNER JOIN user_role ON user_role.user_id = account_id "
-			+ "INNER JOIN role ON user_role.role_id = id "
-			+ " WHERE nickname = ?";
+			+ "LEFT JOIN user_role ON user_role.user_id = account_id "
+			+ "LEFT JOIN role ON user_role.role_id = id "
+			+ "WHERE nickname = ?";
 	private final String FIND_BY_ID_SQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date, user_role.role_id, role.authority "
 			+ "FROM account "
-			+ "INNER JOIN user_role ON user_role.user_id = account_id "
-			+ "INNER JOIN role ON user_role.role_id = id "
+			+ "LEFT JOIN user_role ON user_role.user_id = account_id "
+			+ "LEFT JOIN role ON user_role.role_id = id "
 			+ "WHERE account_id = ?";
 	private final String FIND_BY_NAME_AND_PHONE_SQL = "SELECT account_id, email, password, name, nickname, phone, image, create_date, update_date "
 			+ "FROM account "

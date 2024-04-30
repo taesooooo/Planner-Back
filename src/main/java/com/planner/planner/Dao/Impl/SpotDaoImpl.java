@@ -184,7 +184,7 @@ public class SpotDaoImpl implements SpotDao {
 		
 		String contentIds = contentIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
 		
-		parameterSource.addValue("contentIdList", contentIds);
+		parameterSource.addValue("contentIdList", contentIdList);
 		
 		List<SpotLikeCountDto> list = namedParameterJdbcTemplate.query(SELECT_SPOT_LIKE_COUNT_LIST_SQL, parameterSource, new SpotLikeCountMapper());
 		
@@ -220,7 +220,7 @@ public class SpotDaoImpl implements SpotDao {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		
 		String contentIds = contentIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
-		parameterSource.addValue("contentIdList", contentIds);
+		parameterSource.addValue("contentIdList", contentIdList);
 		parameterSource.addValue("accountId", accountId);
 		List<SpotLikeDto> states = namedParameterJdbcTemplate.query(SELECT_SPOT_LIKE_STATE_SQL, parameterSource, new SpotLikeRowMapper());
 

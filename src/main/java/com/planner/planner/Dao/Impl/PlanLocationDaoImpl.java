@@ -19,8 +19,7 @@ public class PlanLocationDaoImpl implements PlanLocationDao {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PlanLocationDaoImpl.class);
 	
 	private JdbcTemplate jdbcTemplate;
-	private KeyHolder keyHolder;
-	
+
 	private final String INSERT_PLANLOCATION_SQL = "INSERT INTO plan_location(location_name, location_content_id, location_image, location_addr, location_mapx, location_mapy, location_transportation, location_index, plan_id) VALUES"
 			+ "(?, ?, ?, ?, ?, ?, ?, (SELECT ifnull(MAX(pl.location_index), 0) + 1024 FROM plan_location AS pl WHERE pl.plan_id = ?), ?);";
 	private final String FINDS_PLANLOCATION_SQL = "SELECT plan_location.location_id, plan_location.location_name, plan_location.location_content_id, plan_location.location_image, plan_location.location_addr, plan_location.location_mapx, plan_location.location_mapy, plan_location.location_transportation, plan_location.location_index, plan_location.plan_id "
@@ -33,13 +32,13 @@ public class PlanLocationDaoImpl implements PlanLocationDao {
 
 	public PlanLocationDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
-		this.keyHolder = new GeneratedKeyHolder();
 	}
 
 	@Override
 	public int insertPlanLocation(int planId, PlanLocationDto planLocationDto) {
+		KeyHolder keyHolder = new GeneratedKeyHolder();
 		int result = jdbcTemplate.update(conn -> {
-			PreparedStatement ps = conn.prepareStatement(INSERT_PLANLOCATION_SQL, new String[] { "plan_location_id" });
+			PreparedStatement ps = conn.prepareStatement(INSERT_PLANLOCATION_SQL, new String[] { "location_id" });
 			ps.setString(1, planLocationDto.getLocationName());
 			ps.setInt(2, planLocationDto.getLocationContentId());
 			ps.setString(3, planLocationDto.getLocationImage());

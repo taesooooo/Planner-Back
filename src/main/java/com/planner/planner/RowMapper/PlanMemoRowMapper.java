@@ -11,12 +11,12 @@ public class PlanMemoRowMapper implements RowMapper<PlanMemoDto> {
 
 	@Override
 	public PlanMemoDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new PlanMemoDto.Builder()
-				.setMemoId(rs.getInt("memo_id"))
-				.setTitle(rs.getString("title"))
-				.setContent(rs.getString("content"))
-				.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
-				.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
+		return PlanMemoDto.builder()
+				.memoId(rs.getInt("memo_id"))
+				.title(rs.getString("title"))
+				.content(rs.getString("content"))
+				.createDate(rs.getTimestamp("create_date").toLocalDateTime())
+				.updateDate(rs.getTimestamp("update_date").toLocalDateTime())
 				.build();
 	}
 

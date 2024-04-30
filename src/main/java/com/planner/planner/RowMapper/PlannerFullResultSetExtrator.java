@@ -38,12 +38,12 @@ public class PlannerFullResultSetExtrator implements ResultSetExtractor<PlannerD
 				boolean isFound = memos.stream().anyMatch(item -> item.getMemoId() == memoId);
 	
 				if (!isFound) {
-					PlanMemoDto memo = new PlanMemoDto.Builder()
-							.setMemoId(memoId)
-							.setTitle(rs.getString("memo_title"))
-							.setContent(rs.getString("memo_content"))
-							.setCreateDate(rs.getTimestamp("memo_create_date").toLocalDateTime())
-							.setUpdateDate(rs.getTimestamp("memo_update_date").toLocalDateTime())
+					PlanMemoDto memo = PlanMemoDto.builder()
+							.memoId(memoId)
+							.title(rs.getString("memo_title"))
+							.content(rs.getString("memo_content"))
+							.createDate(rs.getTimestamp("memo_create_date").toLocalDateTime())
+							.updateDate(rs.getTimestamp("memo_update_date").toLocalDateTime())
 							.build();
 					memos.add(memo);
 				}
@@ -55,12 +55,12 @@ public class PlannerFullResultSetExtrator implements ResultSetExtractor<PlannerD
 				if(plan == null) {
 					List<PlanLocationDto> planLocations = new ArrayList<PlanLocationDto>();
 					
-					PlanDto newPlan = new PlanDto.Builder()
-							.setPlanId(planId)
-							.setPlanDate(rs.getDate("plan_date").toLocalDate())
-							.setIndex(rs.getInt("plan_index"))
-							.setPlannerId(rs.getInt("planner_id"))
-							.setPlanLocations(planLocations)
+					PlanDto newPlan = PlanDto.builder()
+							.planId(planId)
+							.planDate(rs.getDate("plan_date").toLocalDate())
+							.index(rs.getInt("plan_index"))
+							.plannerId(rs.getInt("planner_id"))
+							.planLocations(planLocations)
 							.build();
 					plans.put(planId, newPlan);
 				}
@@ -73,17 +73,17 @@ public class PlannerFullResultSetExtrator implements ResultSetExtractor<PlannerD
 					boolean hasLocation = planLocations.stream().anyMatch(item -> item.getLocationId() == locationId);
 					
 					if(!hasLocation) {
-						PlanLocationDto pl = new PlanLocationDto.Builder()
-								.setLocationId(rs.getInt("location_id"))
-								.setLocationContentId(rs.getInt("location_content_id"))
-								.setLocationName(rs.getString("location_name"))
-								.setLocationImage(rs.getString("location_image"))
-								.setLocationAddr(rs.getString("location_addr"))
-								.setLocationMapx(rs.getDouble("location_mapx"))
-								.setLocationMapy(rs.getDouble("location_mapy"))
-								.setLocationTransportation(rs.getInt("location_transportation"))
-								.setIndex(rs.getInt("location_index"))
-								.setPlanId(rs.getInt("plan_id"))
+						PlanLocationDto pl = PlanLocationDto.builder()
+								.locationId(rs.getInt("location_id"))
+								.locationContentId(rs.getInt("location_content_id"))
+								.locationName(rs.getString("location_name"))
+								.locationImage(rs.getString("location_image"))
+								.locationAddr(rs.getString("location_addr"))
+								.locationMapx(rs.getDouble("location_mapx"))
+								.locationMapy(rs.getDouble("location_mapy"))
+								.locationTransportation(rs.getInt("location_transportation"))
+								.index(rs.getInt("location_index"))
+								.planId(rs.getInt("plan_id"))
 								.build();
 						planLocations.add(pl);				
 					}
@@ -93,24 +93,24 @@ public class PlannerFullResultSetExtrator implements ResultSetExtractor<PlannerD
 			
 			if(rs.isLast() && plannerDto == null) {
 				List<PlanDto> planList = plans.values().stream().collect(Collectors.toList());
-				plannerDto = new PlannerDto.Builder()
-						.setPlannerId(rs.getInt("planner_id"))
-						.setAccountId(rs.getInt("account_id"))
-						.setAreaCode(rs.getInt("area_code"))
-						.setCreator(rs.getString("creator"))
-						.setTitle(rs.getString("title"))
-						.setPlanDateStart(rs.getDate("plan_date_start").toLocalDate())
-						.setPlanDateEnd(rs.getDate("plan_date_end").toLocalDate())
-						.setExpense(rs.getInt("expense"))
-						.setMemberCount(rs.getInt("member_count"))
-						.setMemberTypeId(rs.getInt("member_type_id"))
-						.setLikeCount(rs.getInt("like_count"))
-						.setLikeState(rs.getInt("like_id") > 0 ? true : false)
-						.setPlanMembers(members)
-						.setPlanMemos(memos)
-						.setPlans(planList)
-						.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
-						.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
+				plannerDto = PlannerDto.builder()
+						.plannerId(rs.getInt("planner_id"))
+						.accountId(rs.getInt("account_id"))
+						.areaCode(rs.getInt("area_code"))
+						.creator(rs.getString("creator"))
+						.title(rs.getString("title"))
+						.planDateStart(rs.getDate("plan_date_start").toLocalDate())
+						.planDateEnd(rs.getDate("plan_date_end").toLocalDate())
+						.expense(rs.getInt("expense"))
+						.memberCount(rs.getInt("member_count"))
+						.memberTypeId(rs.getInt("member_type_id"))
+						.likeCount(rs.getInt("like_count"))
+						.likeState(rs.getInt("like_id") > 0 ? true : false)
+						.planMembers(members)
+						.planMemos(memos)
+						.plans(planList)
+						.createDate(rs.getTimestamp("create_date").toLocalDateTime())
+						.updateDate(rs.getTimestamp("update_date").toLocalDateTime())
 						.build();
 			}
 		}

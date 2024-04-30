@@ -34,9 +34,12 @@ public class AccountResultSetExtrator implements ResultSetExtractor<AccountDto>{
 						.createDate(rs.getTimestamp(8).toLocalDateTime())
 						.updateDate(rs.getTimestamp(9).toLocalDateTime()).build();
 			}
-
-			GrantedAuthority authority = new SimpleGrantedAuthority(rs.getString("authority"));
-			authorities.add(authority);
+			
+			String auth = rs.getString("authority");
+			if(auth != null) {
+				GrantedAuthority authority = new SimpleGrantedAuthority(auth);
+				authorities.add(authority);				
+			}
 		}
 		
 		
