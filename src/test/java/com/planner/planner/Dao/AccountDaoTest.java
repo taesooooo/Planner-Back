@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.planner.planner.Dto.AccountDto;
 
+@SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-@SpringBootTest
 class AccountDaoTest {
 
 	@Autowired
@@ -148,19 +148,7 @@ class AccountDaoTest {
 	@DisplayName("유저 정보 변경")
 	@Test
 	public void update() {
-		AccountDto testUser = AccountDto.builder()
-				.accountId(1)
-				.email("test@naver.com")
-				.username("테스트")
-				.password(null)
-				.nickname("변경 테스트")
-				.phone("01056781234")
-				.image("")
-				.createDate(null)
-				.updateDate(null)
-				.build();
-		
-		boolean result = accountDao.update(testUser);
+		boolean result = accountDao.update(1, "변경 테스트", "01056781234");
 		
 		assertThat(result).isTrue();
 	}
