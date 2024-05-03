@@ -55,7 +55,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		List<AreaCodeDto> areaList = new ArrayList<AreaCodeDto>();
 		
 		for(JsonNode node : data.get("items").get("item")) {
-			AreaCodeDto area = new AreaCodeDto.Builder().setRnum(node.get("rnum").asText()).setCode(node.get("code").asText()).setName(node.get("name").asText()).build();
+			AreaCodeDto area = AreaCodeDto.builder().rnum(node.get("rnum").asText()).code(node.get("code").asText()).name(node.get("name").asText()).build();
 			areaList.add(area);
 		}
 		
@@ -87,27 +87,27 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		List<CommonBasedDto> areaBasedList = new ArrayList<CommonBasedDto>();
 		
 		for(JsonNode node : data.get("items").get("item")) {
-			CommonBasedDto areaBased = new CommonBasedDto.Builder()
-					.setSigunguCode(node.get("sigungucode").asText())
-					.setTel(node.get("tel").asText())
-					.setTitle(node.get("title").asText())
-					.setAddr1(node.get("addr1").asText())
-					.setAddr2(node.get("addr2").asText())
-					.setAreaCode(node.get("areacode").asText())
-					.setBookTour(node.get("booktour").asText())
-					.setCat1(node.get("cat1").asText())
-					.setCat2(node.get("cat2").asText())
-					.setCat3(node.get("cat3").asText())
-					.setContentId(node.get("contentid").asText())
-					.setContentTypeId(node.get("contenttypeid").asText())
-					.setCreatedTime(node.get("createdtime").asText())
-					.setFirstImage(node.get("firstimage").asText())
-					.setFirstImage2(node.get("firstimage2").asText())
-					.setMapx(node.get("mapx").asText())
-					.setMapy(node.get("mapy").asText())
-					.setMlevel(node.get("mlevel").asText())
-					.setModifiedTime(node.get("modifiedtime").asText())
-					.setZipcode(node.get("zipcode").asText())
+			CommonBasedDto areaBased = CommonBasedDto.builder()
+					.sigunguCode(node.get("sigungucode").asText())
+					.tel(node.get("tel").asText())
+					.title(node.get("title").asText())
+					.addr1(node.get("addr1").asText())
+					.addr2(node.get("addr2").asText())
+					.areaCode(node.get("areacode").asText())
+					.bookTour(node.get("booktour").asText())
+					.cat1(node.get("cat1").asText())
+					.cat2(node.get("cat2").asText())
+					.cat3(node.get("cat3").asText())
+					.contentId(node.get("contentid").asText())
+					.contentTypeId(node.get("contenttypeid").asText())
+					.createdTime(node.get("createdtime").asText())
+					.firstImage(node.get("firstimage").asText())
+					.firstImage2(node.get("firstimage2").asText())
+					.mapx(node.get("mapx").asText())
+					.mapy(node.get("mapy").asText())
+					.mlevel(node.get("mlevel").asText())
+					.modifiedTime(node.get("modifiedtime").asText())
+					.zipcode(node.get("zipcode").asText())
 					.build();
 			areaBasedList.add(areaBased);
 		}
@@ -141,27 +141,27 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		List<CommonBasedDto> locationBasedList = new ArrayList<CommonBasedDto>();
 		
 		for(JsonNode node : data.get("items").get("item")) {
-			CommonBasedDto locationBased = new CommonBasedDto.Builder()
-					.setSigunguCode(node.get("sigungucode").asText())
-					.setTel(node.get("tel").asText())
-					.setTitle(node.get("title").asText())
-					.setAddr1(node.get("addr1").asText())
-					.setAddr2(node.get("addr2").asText())
-					.setAreaCode(node.get("areacode").asText())
-					.setBookTour(node.get("booktour").asText())
-					.setCat1(node.get("cat1").asText())
-					.setCat2(node.get("cat2").asText())
-					.setCat3(node.get("cat3").asText())
-					.setContentId(node.get("contentid").asText())
-					.setContentTypeId(node.get("contenttypeid").asText())
-					.setCreatedTime(node.get("createdtime").asText())
-					.setFirstImage(node.get("firstimage").asText())
-					.setFirstImage2(node.get("firstimage2").asText())
-					.setMapx(node.get("mapx").asText())
-					.setMapy(node.get("mapy").asText())
-					.setMlevel(node.get("mlevel").asText())
-					.setModifiedTime(node.get("modifiedtime").asText())
-					.setZipcode(node.get("zipcode").asText())
+			CommonBasedDto locationBased = CommonBasedDto.builder()
+					.sigunguCode(node.get("sigungucode").asText())
+					.tel(node.get("tel").asText())
+					.title(node.get("title").asText())
+					.addr1(node.get("addr1").asText())
+					.addr2(node.get("addr2").asText())
+					.areaCode(node.get("areacode").asText())
+					.bookTour(node.get("booktour").asText())
+					.cat1(node.get("cat1").asText())
+					.cat2(node.get("cat2").asText())
+					.cat3(node.get("cat3").asText())
+					.contentId(node.get("contentid").asText())
+					.contentTypeId(node.get("contenttypeid").asText())
+					.createdTime(node.get("createdtime").asText())
+					.firstImage(node.get("firstimage").asText())
+					.firstImage2(node.get("firstimage2").asText())
+					.mapx(node.get("mapx").asText())
+					.mapy(node.get("mapy").asText())
+					.mlevel(node.get("mlevel").asText())
+					.modifiedTime(node.get("modifiedtime").asText())
+					.zipcode(node.get("zipcode").asText())
 					.build();
 			locationBasedList.add(locationBased);
 		}
@@ -202,26 +202,26 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		
 		if(itemList != null) {
 			for(JsonNode node : itemList) {
-				CommonBasedDto keywordBased = new CommonBasedDto.Builder()
-						.setSigunguCode(node.get("sigungucode").asText())
-						.setTel(node.get("tel").asText())
-						.setTitle(node.get("title").asText())
-						.setAddr1(node.get("addr1").asText())
-						.setAddr2(node.get("addr2").asText())
-						.setAreaCode(node.get("areacode").asText())
-						.setBookTour(node.get("booktour").asText())
-						.setCat1(node.get("cat1").asText())
-						.setCat2(node.get("cat2").asText())
-						.setCat3(node.get("cat3").asText())
-						.setContentId(node.get("contentid").asText())
-						.setContentTypeId(node.get("contenttypeid").asText())
-						.setCreatedTime(node.get("createdtime").asText())
-						.setFirstImage(node.get("firstimage").asText())
-						.setFirstImage2(node.get("firstimage2").asText())
-						.setMapx(node.get("mapx").asText())
-						.setMapy(node.get("mapy").asText())
-						.setMlevel(node.get("mlevel").asText())
-						.setModifiedTime(node.get("modifiedtime").asText())
+				CommonBasedDto keywordBased = CommonBasedDto.builder()
+						.sigunguCode(node.get("sigungucode").asText())
+						.tel(node.get("tel").asText())
+						.title(node.get("title").asText())
+						.addr1(node.get("addr1").asText())
+						.addr2(node.get("addr2").asText())
+						.areaCode(node.get("areacode").asText())
+						.bookTour(node.get("booktour").asText())
+						.cat1(node.get("cat1").asText())
+						.cat2(node.get("cat2").asText())
+						.cat3(node.get("cat3").asText())
+						.contentId(node.get("contentid").asText())
+						.contentTypeId(node.get("contenttypeid").asText())
+						.createdTime(node.get("createdtime").asText())
+						.firstImage(node.get("firstimage").asText())
+						.firstImage2(node.get("firstimage2").asText())
+						.mapx(node.get("mapx").asText())
+						.mapy(node.get("mapy").asText())
+						.mlevel(node.get("mlevel").asText())
+						.modifiedTime(node.get("modifiedtime").asText())
 						.build();
 				keywordBasedList.add(keywordBased);
 			}
@@ -255,18 +255,18 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		
 		JsonNode node = data.get("items").get("item").get(0);
 		
-		CommonDetailDto keywordBased = new CommonDetailDto.Builder()
-				.setTitle(node.get("title").asText())
-				.setAddr1(node.get("addr1").asText())
-				.setAddr2(node.get("addr2").asText())
-				.setFirstImage(node.get("firstimage").asText())
-				.setFirstImage2(node.get("firstimage2").asText())
-				.setMapx(node.get("mapx").asText())
-				.setMapy(node.get("mapy").asText())
-				.setHomepage(node.get("homepage").asText())
-				.setTelname(node.get("telname").asText())
-				.setZipcode(node.get("zipcode").asText())
-				.setOverview(node.get("overview").asText())
+		CommonDetailDto keywordBased = CommonDetailDto.builder()
+				.title(node.get("title").asText())
+				.addr1(node.get("addr1").asText())
+				.addr2(node.get("addr2").asText())
+				.firstImage(node.get("firstimage").asText())
+				.firstImage2(node.get("firstimage2").asText())
+				.mapx(node.get("mapx").asText())
+				.mapy(node.get("mapy").asText())
+				.homepage(node.get("homepage").asText())
+				.telname(node.get("telname").asText())
+				.zipcode(node.get("zipcode").asText())
+				.overview(node.get("overview").asText())
 				.build();
 
 		return keywordBased;

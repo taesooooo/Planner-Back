@@ -120,10 +120,10 @@ public class SpotControllerTest {
 	@Test
 	@DisplayName("여행지 좋아요")
 	public void 여행지_좋아요() throws Exception {
-		SpotLikeDto likeDto = new SpotLikeDto.Builder()
-				.setContentId(2763807)
-				.setTitle("테스트")
-				.setImage("테스트이미지주소")
+		SpotLikeDto likeDto = SpotLikeDto.builder()
+				.contentId(2763807)
+				.title("테스트")
+				.image("테스트이미지주소")
 				.build();
 		
 		mockMvc.perform(post("/api/spots/likes")
@@ -141,10 +141,10 @@ public class SpotControllerTest {
 	@Test
 	@DisplayName("여행지 좋아요 중복")
 	public void 여행지_좋아요_중복인경우() throws Exception {
-		SpotLikeDto likeDto = new SpotLikeDto.Builder()
-				.setContentId(2733967)
-				.setTitle("테스트")
-				.setImage("테스트이미지주소")
+		SpotLikeDto likeDto = SpotLikeDto.builder()
+				.contentId(2733967)
+				.title("테스트")
+				.image("테스트이미지주소")
 				.build();
 		
 		mockMvc.perform(post("/api/spots/likes")

@@ -11,14 +11,14 @@ public class SpotLikeRowMapper implements RowMapper<SpotLikeDto> {
 
 	@Override
 	public SpotLikeDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		SpotLikeDto spotLike = new SpotLikeDto.Builder()
-				.setLikeId(rs.getInt("like_id"))
-				.setAccountId(rs.getInt("account_id"))
-				.setAreaCode(rs.getInt("area_code"))
-				.setTitle(rs.getString("title"))
-				.setImage(rs.getString("image"))
-				.setContentId(rs.getInt("content_id"))
-				.setLikeDate(rs.getDate("like_date").toLocalDate())
+		SpotLikeDto spotLike = SpotLikeDto.builder()
+				.likeId(rs.getInt("like_id"))
+				.accountId(rs.getInt("account_id"))
+				.areaCode(rs.getInt("area_code"))
+				.title(rs.getString("title"))
+				.image(rs.getString("image"))
+				.contentId(rs.getInt("content_id"))
+				.likeDate(rs.getDate("like_date").toLocalDate())
 				.build();
 		return spotLike;
 	}

@@ -3,12 +3,12 @@ package com.planner.planner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class RegularExpressionTest {
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 

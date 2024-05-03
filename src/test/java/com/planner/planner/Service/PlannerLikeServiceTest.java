@@ -3,15 +3,17 @@ package com.planner.planner.Service;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.planner.planner.Dao.PlannerLikeDao;
 import com.planner.planner.Service.Impl.PlannerLikeServiceImpl;
 
+@ExtendWith(MockitoExtension.class)
 public class PlannerLikeServiceTest {
 	@InjectMocks
 	private PlannerLikeServiceImpl plannerLikeService;
@@ -20,9 +22,9 @@ public class PlannerLikeServiceTest {
 	private PlannerLikeDao plannerLikeDao;
 	
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
-		MockitoAnnotations.openMocks(this);
+//		MockitoAnnotations.openMocks(this);
 	}
 
 	@Test

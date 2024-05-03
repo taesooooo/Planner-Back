@@ -6,16 +6,19 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.planner.planner.Dao.NotificationDao;
 import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Service.Impl.NotificationServiceImpl;
 
+@ExtendWith(MockitoExtension.class)
 public class NotificationServiceTest {
 	@Mock
 	private NotificationDao notificationDao;
@@ -23,9 +26,9 @@ public class NotificationServiceTest {
 	@InjectMocks
 	private NotificationServiceImpl notificationServiceImpl;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+//		MockitoAnnotations.openMocks(this);
 	}
 	
 	@Test

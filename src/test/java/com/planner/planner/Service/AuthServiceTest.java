@@ -2,7 +2,6 @@ package com.planner.planner.Service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -11,11 +10,12 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.planner.planner.Dao.AccountDao;
@@ -30,6 +30,7 @@ import com.planner.planner.Exception.PasswordCheckFailException;
 import com.planner.planner.Service.Impl.AuthServiceImpl;
 import com.planner.planner.Util.JwtUtil;
 
+@ExtendWith(MockitoExtension.class)
 public class AuthServiceTest {
 	@Mock
 	private AccountDao accountDao;
@@ -42,9 +43,9 @@ public class AuthServiceTest {
 	@InjectMocks
 	private AuthServiceImpl authService;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		 MockitoAnnotations.openMocks(this);
+//		 MockitoAnnotations.openMocks(this);
 	}
 	
 	@Test
@@ -55,7 +56,7 @@ public class AuthServiceTest {
 		
 		boolean user = authService.register(newTestUser);
 		
-		assertTrue(user);
+		assertThat(user).isTrue();
 	}
 	
 	@Test
@@ -63,10 +64,10 @@ public class AuthServiceTest {
 		AccountDto newTestUser = createUser(1);
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
-		RefreshTokenDto refreshTokenDto = new RefreshTokenDto.Builder()
-				.setEmail("test@naver.com")
-				.setId(1)
-				.setToken("testRefershToken")
+		RefreshTokenDto refreshTokenDto = RefreshTokenDto.builder()
+				.email("test@naver.com")
+				.id(1)
+				.token("testRefershToken")
 				.build();
 		
 		LoginInfoDto testLoginInfo = new LoginInfoDto.Builder()
@@ -104,7 +105,7 @@ public class AuthServiceTest {
 	public void 로그인_아이디_없는경우() throws Exception {
 		AccountDto newTestUser = createUser(1);
 		
-		when(accountDao.read(any())).thenReturn(null);
+		when(accountDao.findByEmail(anyString())).thenReturn(null);
 
 		assertThatThrownBy(() -> authService.login(newTestUser))
 			.isInstanceOf(NotFoundUserException.class);
@@ -142,10 +143,10 @@ public class AuthServiceTest {
 		AccountDto newTestUser = createUser(1);
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
-		RefreshTokenDto refreshTokenDto = new RefreshTokenDto.Builder()
-				.setEmail("test@naver.com")
-				.setId(1)
-				.setToken("testRefershToken")
+		RefreshTokenDto refreshTokenDto = RefreshTokenDto.builder()
+				.email("test@naver.com")
+				.id(1)
+				.token("testRefershToken")
 				.build();
 		
 		LoginInfoDto testLoginInfo = new LoginInfoDto.Builder()
@@ -173,10 +174,10 @@ public class AuthServiceTest {
 	public void 토큰_재발급() throws Exception {
 		AccountDto newTestUser = createUser(1);
 		String testRefreshToken = "testRefreshToken";
-		RefreshTokenDto refreshTokenDto = new RefreshTokenDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setToken("testRefreshToken")
+		RefreshTokenDto refreshTokenDto = RefreshTokenDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.token("testRefreshToken")
 				.build();
 		String newAccessToken = "newAccessToken";
 		String newRefreshToken = "newRefreshToken";
@@ -202,10 +203,10 @@ public class AuthServiceTest {
 	@Test
 	public void 토큰_재발급_토큰정보_없는경우() throws Exception {
 		String testRefreshToken = "testRefreshToken";
-		RefreshTokenDto refreshTokenDto = new RefreshTokenDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setToken("testRefreshToken")
+		RefreshTokenDto refreshTokenDto = RefreshTokenDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.token("testRefreshToken")
 				.build();
 		
 		
@@ -219,10 +220,10 @@ public class AuthServiceTest {
 	@Test
 	public void 토큰_재발급_유저_없는경우() throws Exception {
 		String testRefreshToken = "testRefreshToken";
-		RefreshTokenDto refreshTokenDto = new RefreshTokenDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setToken("testRefreshToken")
+		RefreshTokenDto refreshTokenDto = RefreshTokenDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.token("testRefreshToken")
 				.build();
 		
 		
@@ -235,16 +236,16 @@ public class AuthServiceTest {
 	}
 	
 	private AccountDto createUser(int accountId) {
-		return new AccountDto.Builder()
-				.setAccountId(accountId)
-				.setEmail("test@naver.com")
-				.setPassword("")
-				.setUsername("test")
-				.setNickname("test")
-				.setPhone("010-1234-1234")
-				.setImage("")
-				.setCreateDate(LocalDateTime.now())
-				.setUpdateDate(LocalDateTime.now())
+		return AccountDto.builder()
+				.accountId(accountId)
+				.email("test@naver.com")
+				.password("")
+				.username("test")
+				.nickname("test")
+				.phone("010-1234-1234")
+				.image("")
+				.createDate(LocalDateTime.now())
+				.updateDate(LocalDateTime.now())
 				.build();
 	}
 }

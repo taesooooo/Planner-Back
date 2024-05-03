@@ -8,11 +8,12 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PasswordResetKeyDao;
@@ -23,6 +24,7 @@ import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.Impl.PasswordResetKeyServiceImpl;
 import com.planner.planner.Util.RandomCode;
 
+@ExtendWith(MockitoExtension.class)
 public class PasswordResetKeyServiceTest {
 	
 	@Mock
@@ -37,32 +39,33 @@ public class PasswordResetKeyServiceTest {
 	@InjectMocks
 	private PasswordResetKeyServiceImpl passwordResetKeyService;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
-		MockitoAnnotations.openMocks(this);
+//		MockitoAnnotations.openMocks(this);
 	}
 	
 	@Test
 	public void 재설정키_생성_계정_없는경우() {
 		String resetkey = randomCode.createStrCode(6, true);
-		int accountId = 1;
+		AccountDto user = AccountDto.builder()
+				.accountId(1)
+				.build();
 		when(accountDao.findById(anyInt())).thenReturn(null);
 
-		assertThatThrownBy(() -> { passwordResetKeyService.createPasswordResetKey(resetkey, null); })
+		assertThatThrownBy(() -> { passwordResetKeyService.createPasswordResetKey(resetkey, user); })
 		.isExactlyInstanceOf(NotFoundUserException.class);
 	}
 	
 	@Test
 	public void 재설정키_생성_계정_정상() throws Exception {
 		String resetkey = randomCode.createStrCode(6, true);
-		int accountId = 1;
 		
-		AccountDto user = new AccountDto.Builder()
-				.setAccountId(1)
-				.setEmail("test@naver.com")
-				.setUsername("test")
-				.setNickname("test")
-				.setPhone("01012345678")
+		AccountDto user = AccountDto.builder()
+				.accountId(1)
+				.email("test@naver.com")
+				.username("test")
+				.nickname("test")
+				.phone("01012345678")
 				.build();
 		
 		when(accountDao.findById(anyInt())).thenReturn(user);
@@ -82,12 +85,12 @@ public class PasswordResetKeyServiceTest {
 	@Test
 	public void 재설정키_가져오기_정상() {
 		String resetKey = randomCode.createStrCode(6, true);
-		PasswordResetkeyDto testResetKeyDto = new PasswordResetkeyDto.Builder()
-				.setId(1)
-				.setResetKey("")
-				.setExpireDate(LocalDateTime.now())
-				.setAccountId(1)
-				.setCreateDate(LocalDateTime.now())
+		PasswordResetkeyDto testResetKeyDto = PasswordResetkeyDto.builder()
+				.id(1)
+				.resetKey("")
+				.expireDate(LocalDateTime.now())
+				.accountId(1)
+				.createDate(LocalDateTime.now())
 				.build();
 		
 		when(passwordResetKeyDao.findByResetKey(anyString())).thenReturn(testResetKeyDto);
@@ -111,12 +114,12 @@ public class PasswordResetKeyServiceTest {
 	@Test
 	public void 재설정키_유효성검사_키_기간만료() {
 		String resetKey = randomCode.createStrCode(6, true);
-		PasswordResetkeyDto testResetKeyDto = new PasswordResetkeyDto.Builder()
-				.setId(1)
-				.setResetKey("")
-				.setExpireDate(LocalDateTime.now().minusDays(1))
-				.setAccountId(1)
-				.setCreateDate(LocalDateTime.now())
+		PasswordResetkeyDto testResetKeyDto = PasswordResetkeyDto.builder()
+				.id(1)
+				.resetKey("")
+				.expireDate(LocalDateTime.now().minusDays(1))
+				.accountId(1)
+				.createDate(LocalDateTime.now())
 				.build();
 		
 		when(passwordResetKeyDao.findByResetKey(anyString())).thenReturn(testResetKeyDto);
@@ -129,12 +132,12 @@ public class PasswordResetKeyServiceTest {
 	@Test
 	public void 재설정키_유효성검사_정상() {
 		String resetKey = randomCode.createStrCode(6, true);
-		PasswordResetkeyDto testResetKeyDto = new PasswordResetkeyDto.Builder()
-				.setId(1)
-				.setResetKey("")
-				.setExpireDate(LocalDateTime.now().plusDays(1))
-				.setAccountId(1)
-				.setCreateDate(LocalDateTime.now())
+		PasswordResetkeyDto testResetKeyDto = PasswordResetkeyDto.builder()
+				.id(1)
+				.resetKey("")
+				.expireDate(LocalDateTime.now().plusDays(1))
+				.accountId(1)
+				.createDate(LocalDateTime.now())
 				.build();
 		
 		when(passwordResetKeyDao.findByResetKey(anyString())).thenReturn(testResetKeyDto);

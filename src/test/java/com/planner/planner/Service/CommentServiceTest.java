@@ -1,19 +1,21 @@
 package com.planner.planner.Service;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.planner.planner.Dao.CommentDao;
-import com.planner.planner.Dto.CommentDto;
 import com.planner.planner.Exception.NotFoundCommentException;
 import com.planner.planner.Service.Impl.CommentServiceImpl;
 
+@ExtendWith(MockitoExtension.class)
 public class CommentServiceTest {
 	
 	@InjectMocks
@@ -22,17 +24,17 @@ public class CommentServiceTest {
 	@Mock
 	private CommentDao commentDao;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
-		MockitoAnnotations.openMocks(this);
+//		MockitoAnnotations.openMocks(this);
 	}
 	
-	@Test(expected = NotFoundCommentException.class)
+	@Test
 	public void 댓글_가져오기_없는경우() throws Exception {
-		int commentId = 1;
-		
 		when(commentDao.selectCommentByCommentId(anyInt())).thenReturn(null);
 		
-		CommentDto comment = commentService.findByCommentId(anyInt());
+		 
+		assertThatThrownBy(() -> commentService.findByCommentId(1))
+				.isExactlyInstanceOf(NotFoundCommentException.class);
 	}
 }

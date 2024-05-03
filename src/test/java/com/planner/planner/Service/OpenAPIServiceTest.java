@@ -1,61 +1,63 @@
 package com.planner.planner.Service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import com.planner.planner.Config.RootAppContext;
+import com.planner.planner.Config.Properites.CommonProperties;
+import com.planner.planner.Dto.OpenApi.AreaCodeDto;
+import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
 import com.planner.planner.Dto.OpenApi.OpenApiDto;
 import com.planner.planner.Service.Impl.OpenAPIServiceImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { RootAppContext.class })
-@TestPropertySource("classpath:/config/config.properties")
+@SpringBootTest(classes = { OpenAPIServiceImpl.class, CommonProperties.class })
+@EnableConfigurationProperties
 public class OpenAPIServiceTest {
 	private static final Logger logger = LoggerFactory.getLogger(OpenAPIServiceTest.class);
 	
 	@Autowired
-	private OpenAPIServiceImpl apiServiceImpl;
+	private OpenAPIService apiServiceImpl;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		MockitoAnnotations.openMocks(this);
 	}
 	
 	@Test
 	public void OpenAPI_지역코드리스트_가져오기() throws Exception {
-		CommonListDto list = apiServiceImpl.getAreaNum();
+		CommonListDto<AreaCodeDto> list = apiServiceImpl.getAreaNum();
 		
-		assertNotNull(list.getItems());
-		assertFalse(list.getItems().isEmpty());
+		assertThat(list.getItems()).isNotNull();
+		assertThat(list.getItems()).isNotEmpty();
 	}
 	
 	@Test
 	public void OpenAPI_지역기반리스트_가져오기() throws Exception {
-		OpenApiDto param = new OpenApiDto.Builder()
-				.setAreaCode(1)
-				.setContentTypeId(12)
-				.setPageNo(1)
+		OpenApiDto param = OpenApiDto.builder()
+				.areaCode(1)
+				.contentTypeId(12)
+				.pageNo(1)
 				.build();
 		
-		CommonListDto list = apiServiceImpl.getAreaList(param);
+		CommonListDto<CommonBasedDto> list = apiServiceImpl.getAreaList(param);
 			
-		assertNotNull(list.getItems());
-		assertFalse(list.getItems().isEmpty());
-		assertTrue(list.getNumOfRows() > 0);
-		assertTrue(list.getPageNo() > 0);
-		assertTrue(list.getTotalCount() > 0);
+		assertThat(list.getItems())
+				.isNotNull()
+				.isNotEmpty();
+		
+		assertThat(list.getNumOfRows())
+				.isGreaterThan(0);
+		assertThat(list.getPageNo())
+				.isGreaterThan(0);
+		assertThat(list.getTotalCount())
+				.isGreaterThan(0);
 	}
 }

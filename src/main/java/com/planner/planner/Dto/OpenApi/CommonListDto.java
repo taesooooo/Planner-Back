@@ -2,6 +2,10 @@ package com.planner.planner.Dto.OpenApi;
 
 import java.util.List;
 
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
 public class CommonListDto<T> {
 	private List<T> items; // 아이템 리스트;
 	private int numOfRows; // 페이지 결과 개수

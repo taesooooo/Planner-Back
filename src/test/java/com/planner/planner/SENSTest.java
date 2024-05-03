@@ -2,30 +2,28 @@ package com.planner.planner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import com.planner.planner.Config.RootAppContext;
+import com.planner.planner.Config.Properites.CommonProperties;
+import com.planner.planner.Service.SENSService;
 import com.planner.planner.Service.Impl.SENSServiceImpl;
 import com.planner.planner.Util.RandomCode;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { RootAppContext.class})
-@TestPropertySource("classpath:/config/config.properties")
+@SpringBootTest(classes = {SENSServiceImpl.class, CommonProperties.class})
+@EnableConfigurationProperties
 public class SENSTest {
 	
 	@Autowired
-	private SENSServiceImpl sensService;
+	private SENSService sensService;
 	
 	@Autowired
 	private RandomCode randomCode;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 
