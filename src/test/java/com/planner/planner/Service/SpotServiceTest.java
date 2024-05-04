@@ -117,8 +117,9 @@ public class SpotServiceTest {
 		SpotListDto<SpotDto> resultList = spotService.getAreaList(accountId, param);
 
 		assertThat(resultList).isNotNull();
-		assertThat(resultList.getItems()).isNotNull()
-				.extracting(SpotDto::getBasedSpot, SpotDto::getLikeCount, SpotDto::getLikeState)
+		assertThat(resultList.getItems())
+				.isNotNull()
+				.extracting("basedSpot", "likeCount", "likeState")
 				.containsExactly(tuple(item.getItems().get(0), 1, true), tuple(item.getItems().get(1), 1, true));
 		
 	}
@@ -198,7 +199,7 @@ public class SpotServiceTest {
 
 		assertThat(resultList).isNotNull();
 		assertThat(resultList.getItems()).isNotNull()
-		.extracting(SpotDto::getBasedSpot, SpotDto::getLikeCount, SpotDto::getLikeState)
+		.extracting("basedSpot", "likeCount", "likeState")
 		.containsExactly(tuple(item.getItems().get(0), 1, true), tuple(item.getItems().get(1), 1, true));
 		
 	}

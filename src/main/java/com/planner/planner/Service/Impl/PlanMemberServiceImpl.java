@@ -71,18 +71,18 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 		}
 
 		for (AccountDto user : users) {
-			InvitationDto invitation = new InvitationDto.Builder()
-					.setAccountId(user.getAccountId())
-					.setPlannerId(plannerId)
+			InvitationDto invitation = InvitationDto.builder()
+					.accountId(user.getAccountId())
+					.plannerId(plannerId)
 					.build();
 			
 			int inviteId = invitationDao.createInvitation(invitation);
 			
-			NotificationDto notificationDto = new NotificationDto.Builder()
-					.setAccountId(user.getAccountId())
-					.setContent(String.format(NotificationMessage.PLANNER_INVAITE, planner.getCreator()))
-					.setLink(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
-					.setNotificationType(NotificationType.PLANNER_INVITE)
+			NotificationDto notificationDto = NotificationDto.builder()
+					.accountId(user.getAccountId())
+					.content(String.format(NotificationMessage.PLANNER_INVAITE, planner.getCreator()))
+					.link(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
+					.notificationType(NotificationType.PLANNER_INVITE)
 					.build();
 			
 			notificationDao.createNotification(user.getAccountId(), notificationDto);	

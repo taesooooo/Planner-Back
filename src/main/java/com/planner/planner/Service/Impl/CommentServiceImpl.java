@@ -34,11 +34,11 @@ public class CommentServiceImpl implements CommentService {
 		if(comment.getParentId() != null) {
 			CommentDto parentComment = commentDao.selectCommentByCommentId(comment.getParentId());
 			
-			NotificationDto notification = new NotificationDto.Builder()
-					.setAccountId(parentComment.getWriterId())
-					.setContent(String.format(NotificationMessage.COMMENT, comment.getWriter()))
-					.setLink(String.format(NotificationLink.REVIEW_LINK, reviewId))
-					.setNotificationType(NotificationType.COMMENT)
+			NotificationDto notification = NotificationDto.builder()
+					.accountId(parentComment.getWriterId())
+					.content(String.format(NotificationMessage.COMMENT, comment.getWriter()))
+					.link(String.format(NotificationLink.REVIEW_LINK, reviewId))
+					.notificationType(NotificationType.COMMENT)
 					.build();
 			
 			notificationDao.createNotification(parentComment.getWriterId(), notification);
@@ -49,11 +49,11 @@ public class CommentServiceImpl implements CommentService {
 				throw new NotFoundReviewException("게시글이 존재하지 않습니다.");
 			}
 			
-			NotificationDto notification = new NotificationDto.Builder()
-					.setAccountId(review.getWriterId())
-					.setContent(String.format(NotificationMessage.COMMENT, comment.getWriter()))
-					.setLink(String.format(NotificationLink.REVIEW_LINK, reviewId))
-					.setNotificationType(NotificationType.COMMENT)
+			NotificationDto notification = NotificationDto.builder()
+					.accountId(review.getWriterId())
+					.content(String.format(NotificationMessage.COMMENT, comment.getWriter()))
+					.link(String.format(NotificationLink.REVIEW_LINK, reviewId))
+					.notificationType(NotificationType.COMMENT)
 					.build();
 			
 			notificationDao.createNotification(review.getWriterId(), notification);

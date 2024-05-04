@@ -51,20 +51,20 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		String accessToken = jwtUtil.createAccessToken(user.getAccountId());
-		String reflashToken = jwtUtil.createReflashToken();
+		String refreshToken = jwtUtil.createRefreshToken();
 
 		RefreshTokenDto refreshTokenDto = refreshTokenDao.findByEmail(user.getEmail());
 		if (refreshTokenDto == null) {
-			refreshTokenDao.create(user.getEmail(), reflashToken);
+			refreshTokenDao.create(user.getEmail(), refreshToken);
 		}
 		else {
-			refreshTokenDao.update(user.getEmail(), reflashToken);
+			refreshTokenDao.update(user.getEmail(), refreshToken);
 		}
 
-		LoginInfoDto loginDto = new LoginInfoDto.Builder()
-				.setUser(user)
-				.setAccessToken(accessToken)
-				.setReflashToken(reflashToken)
+		LoginInfoDto loginDto = LoginInfoDto.builder()
+				.user(user)
+				.accessToken(accessToken)
+				.refreshToken(refreshToken)
 				.build();
 
 		return loginDto;
@@ -101,13 +101,13 @@ public class AuthServiceImpl implements AuthService {
 		
 		// 계정 정보를 이용해 토큰 재발급
 		String newAccessToken = jwtUtil.createAccessToken(user.getAccountId());
-		String newRefreshToken = jwtUtil.createReflashToken();
+		String newRefreshToken = jwtUtil.createRefreshToken();
 
 		refreshTokenDao.update(user.getEmail(), newRefreshToken);
 		
-		ReissueTokenDto reissueTokenDto = new ReissueTokenDto.Builder()
-				.setAccessToken(newAccessToken)
-				.setRefreshToken(newRefreshToken)
+		ReissueTokenDto reissueTokenDto = ReissueTokenDto.builder()
+				.accessToken(newAccessToken)
+				.refreshToken(newRefreshToken)
 				.build();
 		
 		return reissueTokenDto;

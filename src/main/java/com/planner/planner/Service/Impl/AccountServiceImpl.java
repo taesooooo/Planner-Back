@@ -136,10 +136,10 @@ public class AccountServiceImpl implements AccountService {
 		
 		passwordResetKeyDao.deleteByResetKey(key);
 		
-		NotificationDto notification = new NotificationDto.Builder()
-				.setAccountId(accountId)
-				.setContent(NotificationMessage.PASSWORD_UPDATE)
-				.setNotificationType(NotificationType.ACCOUNT)
+		NotificationDto notification = NotificationDto.builder()
+				.accountId(accountId)
+				.content(NotificationMessage.PASSWORD_UPDATE)
+				.notificationType(NotificationType.ACCOUNT)
 				.build();
 		
 		notificationDao.createNotification(accountId, notification);

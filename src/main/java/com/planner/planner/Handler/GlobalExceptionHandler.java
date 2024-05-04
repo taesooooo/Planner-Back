@@ -93,6 +93,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<Object> requestBodyValidFail(Exception e, BindingResult result) {
+		e.printStackTrace();
 		Map<String, String> errors = new HashMap<String, String>();
 		result.getFieldErrors().forEach(error -> {
 			errors.put(error.getField(), error.getDefaultMessage());

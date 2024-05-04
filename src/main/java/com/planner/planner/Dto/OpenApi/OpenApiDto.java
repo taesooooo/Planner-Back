@@ -6,13 +6,13 @@ import lombok.Getter;
 @Builder
 @Getter
 public class OpenApiDto {
-	private int areaCode;
-	private int contentTypeId; 
-	private int numOfRows; 
-	private double mapX; 
-	private double mapY; 
-	private int radius;
+	private Integer areaCode;
+	private Integer contentTypeId; 
+	private Integer numOfRows; 
+	private Double mapX;
+	private Double mapY; 
+	private Integer radius;
 	private String keyword;
-	private int contentId;
-	private int pageNo;
+	private Integer contentId;
+	private Integer pageNo;
 }

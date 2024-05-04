@@ -64,7 +64,7 @@ public class JwtUtil {
 		return token;
 	}
 	
-	public String createReflashToken() {
+	public String createRefreshToken() {
 		Date date = new Date();
 		String token = Jwts.builder()
 				.setIssuer("planner")

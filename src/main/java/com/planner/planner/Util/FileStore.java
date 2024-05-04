@@ -75,7 +75,16 @@ public class FileStore {
 			builder.append(subLocation).append(File.separator);
 			builder.append(name);
 
-			FileInfoDto fileInfo = new FileInfoDto(0, 0, 0, name, getBaseLocation() + builder.toString(), file.getContentType(), null);
+			FileInfoDto fileInfo = FileInfoDto.builder()
+					.fileId(0)
+					.fileWriterId(0)
+					.fileBoradId(0)
+					.fileName(name)
+					.filePath(getBaseLocation() + builder.toString())
+					.fileType(file.getContentType())
+					.uploadDate(null)
+					.build();
+			
 			infoList.add(fileInfo);
 		}
 

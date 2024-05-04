@@ -61,7 +61,15 @@ public class FileServiceTest {
 	public void 파일_정보_가져오기() throws Exception {
 		String fileName = "a.jpg";
 		String filePath = fileStore.getBaseLocation() + FileStore.boardDir + File.separator + fileName;
-		FileInfoDto fileInfo = new FileInfoDto(1, 1, 1, fileName, filePath, MediaType.IMAGE_JPEG_VALUE, LocalDateTime.now());
+		FileInfoDto fileInfo = FileInfoDto.builder()
+				.fileId(1)
+				.fileWriterId(1)
+				.fileBoradId(1)
+				.fileName(fileName)
+				.filePath(filePath)
+				.fileType(MediaType.IMAGE_JPEG_VALUE)
+				.uploadDate(LocalDateTime.now())
+				.build();
 		
 		when(fileUploadDao.getFileInfo(fileName)).thenReturn(fileInfo);
 		
@@ -98,7 +106,16 @@ public class FileServiceTest {
 	@Test
 	public void 이미지_가져오기() throws Exception {
 		MockMultipartFile file = new MockMultipartFile("images", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes());
-		FileInfoDto fileInfo = new FileInfoDto(1, 1, 1, "a.jpg", "\\a.jpg", MediaType.IMAGE_JPEG_VALUE, LocalDateTime.now());
+		FileInfoDto fileInfo = FileInfoDto.builder()
+				.fileId(1)
+				.fileWriterId(1)
+				.fileBoradId(1)
+				.fileName("a.jpg")
+				.filePath("\\a.jpg")
+				.fileType(MediaType.IMAGE_JPEG_VALUE)
+				.uploadDate(LocalDateTime.now())
+				.build(); 
+		
 		//System.out.println(fileStore.getBaseLocation() + FileStore.boardDir + File.separator + file.getOriginalFilename());
 		File f = new File(fileStore.getBaseLocation() + FileStore.boardDir + File.separator + file.getOriginalFilename());
 		f.getParentFile().mkdirs();
@@ -113,7 +130,15 @@ public class FileServiceTest {
 	@Test
 	public void 이미지_가져오기_파일_없는경우() throws Exception {
 		MockMultipartFile file = new MockMultipartFile("images", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes());
-		FileInfoDto fileInfo = new FileInfoDto(1, 1, 1, "a.jpg", "\\a.jpg", MediaType.IMAGE_JPEG_VALUE, LocalDateTime.now());
+		FileInfoDto fileInfo = FileInfoDto.builder()
+				.fileId(1)
+				.fileWriterId(1)
+				.fileBoradId(1)
+				.fileName("a.jpg")
+				.filePath("\\a.jpg")
+				.fileType(MediaType.IMAGE_JPEG_VALUE)
+				.uploadDate(LocalDateTime.now())
+				.build(); 
 		File f = new File(fileStore.getBaseLocation() + FileStore.boardDir + File.separator + file.getOriginalFilename());
 		f.getParentFile().mkdirs();
 		//file.transferTo(f);
@@ -136,7 +161,16 @@ public class FileServiceTest {
 	public void 업로드_파일_삭제() throws Exception {
 		String fileName = "a.jpg";
 		String filePath = fileStore.getBaseLocation() + FileStore.boardDir + File.separator + fileName;
-		FileInfoDto fileInfo = new FileInfoDto(1, 1, 1, "a.jpg", filePath, MediaType.IMAGE_JPEG_VALUE, LocalDateTime.now()); 
+		FileInfoDto fileInfo = FileInfoDto.builder()
+				.fileId(1)
+				.fileWriterId(1)
+				.fileBoradId(1)
+				.fileName("a.jpg")
+				.filePath(filePath)
+				.fileType(MediaType.IMAGE_JPEG_VALUE)
+				.uploadDate(LocalDateTime.now())
+				.build(); 
+		
 		File f = new File(filePath);
 		f.getParentFile().mkdirs();
 		Files.write(f.toPath(), "/jpg image/".getBytes());
@@ -148,7 +182,15 @@ public class FileServiceTest {
 	public void 업로드_파일_삭제_파일_없는경우() throws Exception {
 		String fileName = "a.jpg";
 		String filePath = fileStore.getBaseLocation() + FileStore.boardDir + File.separator + fileName;
-		FileInfoDto fileInfo = new FileInfoDto(1, 1, 1, "a.jpg", filePath, MediaType.IMAGE_JPEG_VALUE, LocalDateTime.now()); 
+		FileInfoDto fileInfo = FileInfoDto.builder()
+				.fileId(1)
+				.fileWriterId(1)
+				.fileBoradId(1)
+				.fileName("a.jpg")
+				.filePath(filePath)
+				.fileType(MediaType.IMAGE_JPEG_VALUE)
+				.uploadDate(LocalDateTime.now())
+				.build(); 
 		
 		assertThatThrownBy(() -> fileUploadService.deleteUploadFile(fileInfo))
 				.isExactlyInstanceOf(NoSuchFileException.class);

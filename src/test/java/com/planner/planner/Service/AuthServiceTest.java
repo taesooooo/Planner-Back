@@ -70,16 +70,16 @@ public class AuthServiceTest {
 				.token("testRefershToken")
 				.build();
 		
-		LoginInfoDto testLoginInfo = new LoginInfoDto.Builder()
-				.setUser(newTestUser)
-				.setAccessToken(accessToken)
-				.setReflashToken(refreshToken)
+		LoginInfoDto testLoginInfo = LoginInfoDto.builder()
+				.user(newTestUser)
+				.accessToken(accessToken)
+				.refreshToken(refreshToken)
 				.build();
 		
 		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(accessToken);
-		when(jwtUtil.createReflashToken()).thenReturn(refreshToken);
+		when(jwtUtil.createRefreshToken()).thenReturn(refreshToken);
 		when(refreshTokenDao.findByEmail(anyString())).thenReturn(refreshTokenDto);
 		
 		LoginInfoDto user = authService.login(newTestUser);
@@ -117,16 +117,16 @@ public class AuthServiceTest {
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
 		
-		LoginInfoDto testLoginInfo = new LoginInfoDto.Builder()
-				.setUser(newTestUser)
-				.setAccessToken(accessToken)
-				.setReflashToken(refreshToken)
+		LoginInfoDto testLoginInfo = LoginInfoDto.builder()
+				.user(newTestUser)
+				.accessToken(accessToken)
+				.refreshToken(refreshToken)
 				.build();
 		
 		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(accessToken);
-		when(jwtUtil.createReflashToken()).thenReturn(refreshToken);
+		when(jwtUtil.createRefreshToken()).thenReturn(refreshToken);
 		when(refreshTokenDao.findByEmail(anyString())).thenReturn(null);
 		
 		LoginInfoDto user = authService.login(newTestUser);
@@ -149,16 +149,16 @@ public class AuthServiceTest {
 				.token("testRefershToken")
 				.build();
 		
-		LoginInfoDto testLoginInfo = new LoginInfoDto.Builder()
-				.setUser(newTestUser)
-				.setAccessToken(accessToken)
-				.setReflashToken(refreshToken)
+		LoginInfoDto testLoginInfo = LoginInfoDto.builder()
+				.user(newTestUser)
+				.accessToken(accessToken)
+				.refreshToken(refreshToken)
 				.build();
 		
 		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(accessToken);
-		when(jwtUtil.createReflashToken()).thenReturn(refreshToken);
+		when(jwtUtil.createRefreshToken()).thenReturn(refreshToken);
 		when(refreshTokenDao.findByEmail(anyString())).thenReturn(refreshTokenDto);
 		
 		LoginInfoDto user = authService.login(newTestUser);
@@ -181,16 +181,16 @@ public class AuthServiceTest {
 				.build();
 		String newAccessToken = "newAccessToken";
 		String newRefreshToken = "newRefreshToken";
-		ReissueTokenDto tokenDto = new ReissueTokenDto.Builder()
-				.setAccessToken(newAccessToken)
-				.setRefreshToken(newRefreshToken)
+		ReissueTokenDto tokenDto = ReissueTokenDto.builder()
+				.accessToken(newAccessToken)
+				.refreshToken(newRefreshToken)
 				.build();
 		
 		
 		when(refreshTokenDao.findByToken(anyString())).thenReturn(refreshTokenDto);
 		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(newAccessToken);
-		when(jwtUtil.createReflashToken()).thenReturn(newRefreshToken);
+		when(jwtUtil.createRefreshToken()).thenReturn(newRefreshToken);
 		when(refreshTokenDao.update(anyString(), anyString())).thenReturn(true);
 		
 		ReissueTokenDto newTokenDto = authService.reissueToken(testRefreshToken);

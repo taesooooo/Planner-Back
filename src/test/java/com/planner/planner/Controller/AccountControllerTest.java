@@ -72,6 +72,7 @@ public class AccountControllerTest {
 	@Test
 //	@WithUserDetails(value = "1")
 	public void 계정_가져오기() throws Exception {
+		logger.info("thread:" + Thread.currentThread());
 		mockMvc.perform(get("/api/users/{userId}", 1)
 				.header("Authorization", token)
 				.accept(MediaType.APPLICATION_JSON))

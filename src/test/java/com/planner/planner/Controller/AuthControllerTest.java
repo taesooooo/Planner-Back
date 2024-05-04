@@ -40,7 +40,7 @@ import jakarta.servlet.http.Cookie;
 
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
-@Transactional
+//@Transactional
 public class AuthControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(AuthControllerTest.class);
 

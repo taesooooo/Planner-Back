@@ -69,7 +69,10 @@ public class FileServiceImpl implements FileService {
 		String fileName = filePath;
 		String extension = FilenameUtils.getExtension(fileName);
 		
-		UploadFileDto uploadFile = new UploadFileDto(Files.probeContentType(new File(filePath).toPath()), buffer);
+		UploadFileDto uploadFile = UploadFileDto.builder()
+				.type(Files.probeContentType(new File(filePath).toPath()))
+				.data(buffer)
+				.build();
 		
 		return uploadFile;
 	}
@@ -79,7 +82,10 @@ public class FileServiceImpl implements FileService {
 		FileInfoDto fileInfo = this.findFileInfo(imageName);
 		byte[] buffer = getFile(fileStore.getBaseLocation() + FileStore.boardDir + File.separator + imageName);
 		
-		UploadFileDto uploadFile = new UploadFileDto(fileInfo.getFileType(), buffer);
+		UploadFileDto uploadFile = UploadFileDto.builder()
+				.type(fileInfo.getFileType())
+				.data(buffer)
+				.build();
 		
 		return uploadFile;
 	}

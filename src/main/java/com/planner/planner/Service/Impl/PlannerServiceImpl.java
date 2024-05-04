@@ -64,17 +64,17 @@ public class PlannerServiceImpl implements PlannerService {
 		// 초대
 		for (AccountDto user : users) {
 			// 생성자를 제외한 초대자들에게만 초대 및 알림 생성
-			InvitationDto invitation = new InvitationDto.Builder()
-					.setAccountId(user.getAccountId())
-					.setPlannerId(plannerId).build();
+			InvitationDto invitation = InvitationDto.builder()
+					.accountId(user.getAccountId())
+					.plannerId(plannerId).build();
 
 			int inviteId = invitationDao.createInvitation(invitation);
 
-			NotificationDto notificationDto = new NotificationDto.Builder()
-					.setAccountId(user.getAccountId())
-					.setContent(String.format(NotificationMessage.PLANNER_INVAITE, plannerDto.getCreator()))
-					.setLink(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
-					.setNotificationType(NotificationType.PLANNER_INVITE).build();
+			NotificationDto notificationDto = NotificationDto.builder()
+					.accountId(user.getAccountId())
+					.content(String.format(NotificationMessage.PLANNER_INVAITE, plannerDto.getCreator()))
+					.link(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
+					.notificationType(NotificationType.PLANNER_INVITE).build();
 			
 			notificationDao.createNotification(user.getAccountId(), notificationDto);
 

@@ -39,7 +39,10 @@ public class SpotServiceImpl implements SpotService {
 	@Override
 	public SpotListDto<AreaCodeDto> getAreaNum() throws Exception {
 		CommonListDto<AreaCodeDto> apiData = apiService.getAreaNum();
-		SpotListDto<AreaCodeDto> list = new SpotListDto<AreaCodeDto>(apiData.getItems(),apiData.getTotalCount());
+		SpotListDto<AreaCodeDto> list = SpotListDto.<AreaCodeDto>builder()
+				.items(apiData.getItems())
+				.totalCount(apiData.getTotalCount())
+				.build();
 		return list;
 	}
 
@@ -68,17 +71,20 @@ public class SpotServiceImpl implements SpotService {
 						likeCount = likeCountDto.get().getCount();
 					}
 
-					SpotDto spot = new SpotDto.Builder()
-							.setBasedSpot(item)
-							.setLikeCount(likeCount)
-							.setLikeState(likeState)
+					SpotDto spot = SpotDto.builder()
+							.basedSpot(item)
+							.likeCount(likeCount)
+							.likeState(likeState)
 							.build();
 
 					return spot;
 		})
 		.collect(Collectors.toList());
 		
-		SpotListDto<SpotDto> list = new SpotListDto<SpotDto>(spotList, apiData.getTotalCount());
+		SpotListDto<SpotDto> list = SpotListDto.<SpotDto>builder()
+				.items(spotList)
+				.totalCount(apiData.getTotalCount())
+				.build();
 				
 		return list;
 	}
@@ -108,16 +114,19 @@ public class SpotServiceImpl implements SpotService {
 					likeCount = likeCountDto.get().getCount();
 				}
 	
-				SpotDto spot = new SpotDto.Builder()
-						.setBasedSpot(item)
-						.setLikeCount(likeCount)
-						.setLikeState(likeState)
+				SpotDto spot = SpotDto.builder()
+						.basedSpot(item)
+						.likeCount(likeCount)
+						.likeState(likeState)
 						.build();
 	
 				return spot;
 		}).collect(Collectors.toList());
 		
-		SpotListDto<SpotDto> list = new SpotListDto<SpotDto>(spotList, apiData.getTotalCount());
+		SpotListDto<SpotDto> list = SpotListDto.<SpotDto>builder()
+				.items(spotList)
+				.totalCount(apiData.getTotalCount())
+				.build();
 				
 		return list;
 	}
@@ -147,17 +156,20 @@ public class SpotServiceImpl implements SpotService {
 						likeCount = likeCountDto.get().getCount();
 					}
 
-					SpotDto spot = new SpotDto.Builder()
-							.setBasedSpot(item)
-							.setLikeCount(likeCount)
-							.setLikeState(likeState)
+					SpotDto spot = SpotDto.builder()
+							.basedSpot(item)
+							.likeCount(likeCount)
+							.likeState(likeState)
 							.build();
 
 					return spot;
 		})
 		.collect(Collectors.toList());
 		
-		SpotListDto<SpotDto> list = new SpotListDto<SpotDto>(spotList, apiData.getTotalCount());
+		SpotListDto<SpotDto> list = SpotListDto.<SpotDto>builder()
+				.items(spotList)
+				.totalCount(apiData.getTotalCount())
+				.build();
 				
 		return list;
 	}
@@ -169,10 +181,10 @@ public class SpotServiceImpl implements SpotService {
 		int likeCount = spotDao.findSpotLikeCountByContentId(contentId);
 		boolean likeState = spotDao.findSpotLikeStateByContentId(accountId, contentId);
 
-		SpotDetailDto spotDetail = new SpotDetailDto.Builder()
-				.setDetail(detail)
-				.setLikeCount(likeCount)
-				.setLikeState(likeState)
+		SpotDetailDto spotDetail = SpotDetailDto.builder()
+				.detail(detail)
+				.likeCount(likeCount)
+				.likeState(likeState)
 				.build();
 			
 		return spotDetail;
