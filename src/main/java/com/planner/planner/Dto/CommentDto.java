@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.planner.planner.Common.Security.UserIdentifier;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +14,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class CommentDto {
+public class CommentDto implements UserIdentifier {
 	private int commentId;
 	
 	@Min(value = 1, message = "잘못된 리뷰 정보입니다.")
@@ -37,4 +38,9 @@ public class CommentDto {
 	
 	@Builder.Default
 	private List<CommentDto> reComments = new ArrayList<CommentDto>();
+
+	@Override
+	public int getAccountId() {
+		return writerId;
+	}
 }

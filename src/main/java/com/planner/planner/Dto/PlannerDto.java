@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.planner.planner.Common.ValidationGroups.PlannerCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlannerUpdateGroup;
+import com.planner.planner.Common.Security.UserIdentifier;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Max;
@@ -20,7 +21,7 @@ import lombok.Getter;
 //@JsonInclude(value = Include.NON_NULL)
 @Builder
 @Getter
-public class PlannerDto {
+public class PlannerDto implements UserIdentifier {
 	private int plannerId;
 	private int accountId;
 	

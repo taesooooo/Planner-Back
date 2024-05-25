@@ -32,7 +32,7 @@ public class InvitationServiceImpl implements InvitationService {
 		
 		return invitation;
 	}
-
+	
 	@Override
 	public void acceptInvite(int id) throws Exception {
 		InvitationDto invitation = invitationDao.findById(id);

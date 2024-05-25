@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.planner.planner.Common.ValidationGroups.AccountUpdateGroup;
 import com.planner.planner.Common.ValidationGroups.LoginGroup;
 import com.planner.planner.Common.ValidationGroups.RegisterGroup;
+import com.planner.planner.Common.Security.UserIdentifier;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +26,7 @@ import lombok.Getter;
 @JsonInclude(value = Include.NON_NULL)
 @Builder
 @Getter
-public class AccountDto implements UserDetails {
+public class AccountDto implements UserDetails, UserIdentifier {
 
 	private int accountId;
 	@NotBlank(message = "이메일은 필수 항목입니다.", groups = { RegisterGroup.class, LoginGroup.class })

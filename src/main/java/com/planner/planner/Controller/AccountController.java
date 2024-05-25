@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -73,14 +72,12 @@ public class AccountController {
 	}
 
 	@GetMapping(value = "/{accountId}")
-	@PreAuthorize("#accountId == authentication.principal.accountId")
 	public ResponseEntity<Object> account(HttpServletRequest req, @PathVariable int accountId) throws Exception {
 		AccountDto user = accountService.findById(accountId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", user));
 	}
 
 	@PatchMapping(value = "/{accountId}")
-	@PreAuthorize("#accountId == authentication.principal.accountId")
 	public ResponseEntity<Object> accountUpdate(@PathVariable int accountId, @RequestBody @Validated(AccountUpdateGroup.class) AccountDto accountDto)
 			throws Exception {
 		if (accountService.accountUpdate(accountId, accountDto.getNickname(), accountDto.getPhone())) {
@@ -91,7 +88,6 @@ public class AccountController {
 	}
 
 	@PatchMapping(value = "/{accountId}/images")
-	@PreAuthorize("#accountId == authentication.principal.accountId")
 	public ResponseEntity<Object> accountImageUpdate(@PathVariable int accountId, @RequestPart(value = "image") MultipartFile image) throws Exception {
 		if (accountService.accountImageUpdate(accountId, image)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "계정 이미지 변경을 성공헀습니다."));
@@ -101,7 +97,6 @@ public class AccountController {
 	}
 	
 	@GetMapping(value = "/{accountId}/images")
-	@PreAuthorize("#accountId == authentication.principal.accountId")
 	public ResponseEntity<byte[]> accountImage(@PathVariable int accountId) throws Exception {
 		AccountDto user = accountService.findById(accountId);
 		UploadFileDto file = fileService.loadLocalFile(user.getImage());
@@ -110,7 +105,6 @@ public class AccountController {
 	}
 	
 	@GetMapping(value = "/{accountId}/planners")
-	@PreAuthorize("#accountId == authentication.principal.accountId")
 	public ResponseEntity<Object> myPlanners(HttpServletRequest req, @PathVariable int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		Page<PlannerDto> list = accountService.myPlanners(accountId, commonRequestParamDto);
 		
@@ -118,7 +112,6 @@ public class AccountController {
 	}
 
 	@GetMapping(value = "/{accountId}/likes")
-	@PreAuthorize("#accountId == authentication.principal.accountId")
 	public ResponseEntity<Object> likes(HttpServletRequest req, @PathVariable int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		Page<?> list = null;
 		PostType postType = commonRequestParamDto.getPostType();
@@ -134,7 +127,6 @@ public class AccountController {
 	}
 	
 	@GetMapping(value = "/{accountId}/notifications")
-	@PreAuthorize("#accountId == authentication.principal.accountId")
 	public ResponseEntity<Object> notification(@PathVariable int accountId) throws Exception {
 		List<NotificationDto> list = notificationService.findAllByAccountId(accountId);
 		

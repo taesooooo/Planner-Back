@@ -31,7 +31,7 @@ public class CommentServiceTest {
 	
 	@Test
 	public void 댓글_가져오기_없는경우() throws Exception {
-		when(commentDao.selectCommentByCommentId(anyInt())).thenReturn(null);
+		when(commentDao.findById(anyInt())).thenReturn(null);
 		
 		 
 		assertThatThrownBy(() -> commentService.findByCommentId(1))

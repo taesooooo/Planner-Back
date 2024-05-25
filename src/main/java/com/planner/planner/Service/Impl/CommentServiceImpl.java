@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
 		int newCommentId = commentDao.insertComment(reviewId, comment);
 		
 		if(comment.getParentId() != null) {
-			CommentDto parentComment = commentDao.selectCommentByCommentId(comment.getParentId());
+			CommentDto parentComment = commentDao.findById(comment.getParentId());
 			
 			NotificationDto notification = NotificationDto.builder()
 					.accountId(parentComment.getWriterId())
@@ -44,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
 			notificationDao.createNotification(parentComment.getWriterId(), notification);
 		}
 		else {
-			ReviewDto review = reviewDao.findReview(reviewId);
+			ReviewDto review = reviewDao.findById(reviewId);
 			if(review == null) {
 				throw new NotFoundReviewException("게시글이 존재하지 않습니다.");
 			}
@@ -64,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public CommentDto findByCommentId(int commentId) throws Exception {
-		CommentDto comment = commentDao.selectCommentByCommentId(commentId);
+		CommentDto comment = commentDao.findById(commentId);
 		if(comment == null) {
 			throw new NotFoundCommentException();
 		}

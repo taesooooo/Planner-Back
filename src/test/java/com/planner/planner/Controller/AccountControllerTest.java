@@ -1,5 +1,6 @@
 package com.planner.planner.Controller;
 
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -65,6 +66,7 @@ public class AccountControllerTest {
 		JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtUtil, userDetailsService);
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
 				.addFilter(jwtFilter)
+				.apply(springSecurity())
 				.build();
 		token = "Bearer " + jwtUtil.createAccessToken(1);
 	}

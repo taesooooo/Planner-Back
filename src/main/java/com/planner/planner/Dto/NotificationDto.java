@@ -4,13 +4,14 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.planner.planner.Common.Notification.NotificationType;
+import com.planner.planner.Common.Security.UserIdentifier;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
-public class NotificationDto {
+public class NotificationDto implements UserIdentifier {
 	private int id;
 	private int accountId;
 	private String content;

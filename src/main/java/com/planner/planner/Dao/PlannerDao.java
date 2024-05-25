@@ -3,10 +3,11 @@ package com.planner.planner.Dao;
 import java.util.List;
 
 import com.planner.planner.Common.PageInfo;
+import com.planner.planner.Common.Security.UserIdentifierDao;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlannerDto;
 
-public interface PlannerDao {
+public interface PlannerDao extends UserIdentifierDao {
 	// 플래너 생성, 조회, 수정, 삭제
 	public int insertPlanner(PlannerDto plannerDto);
 

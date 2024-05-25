@@ -2,9 +2,10 @@ package com.planner.planner.Dao;
 
 import java.util.List;
 
+import com.planner.planner.Common.Security.UserIdentifierDao;
 import com.planner.planner.Dto.AccountDto;
 
-public interface AccountDao {
+public interface AccountDao extends UserIdentifierDao {
 	public boolean create(AccountDto accountDto);
 	public AccountDto read(AccountDto accountDto);
 	public boolean update(int accountId, String nickname, String phone);

@@ -68,7 +68,8 @@ public class PlannerContorller {
 
 	@PostMapping
 	public ResponseEntity<Object> newPlanner(HttpServletRequest req, @RequestBody @Validated(PlannerCreateGroup.class) PlannerDto plannerDto) throws Exception {
-		int newPlannerId = plannerService.newPlanner(plannerDto);
+		Integer userId = UserIdUtil.getUserId(req);
+		int newPlannerId = plannerService.newPlanner(userId, plannerDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", newPlannerId));
 	}
 

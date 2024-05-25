@@ -104,7 +104,7 @@ public class AccountServiceImpl implements AccountService {
 	public boolean accountUpdate(int accountId, String nickname, String phone) throws Exception {
 		return accountDao.update(accountId, nickname, phone);
 	}
-
+	
 	@Override
 	public boolean accountImageUpdate(int accountId, MultipartFile image) throws Exception {
 		// 이미지 경로 생성
@@ -149,7 +149,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public Page<PlannerDto> myPlanners(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
-		return plannerService.findPlannersByAccountId(accountId, commonRequestParamDto); 
+		return plannerService.findPlannersByAccountId(accountId, commonRequestParamDto);
 	}
 
 	@Override

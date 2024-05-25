@@ -41,9 +41,9 @@ public class PlannerServiceImpl implements PlannerService {
 		this.invitationDao = invitationDao;
 		this.notificationDao = notificationDao;
 	}
-
+	
 	@Override
-	public int newPlanner(PlannerDto plannerDto) throws Exception {
+	public int newPlanner(int accountId, PlannerDto plannerDto) throws Exception {
 		// 플래너 생성
 		int plannerId = plannerDao.insertPlanner(plannerDto);
 
@@ -141,7 +141,6 @@ public class PlannerServiceImpl implements PlannerService {
 		return plannerListPage;
 	}
 	
-
 	@Override
 	public Page<PlannerDto> getLikePlannerList(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		PageInfo pInfo = new PageInfo.Builder()

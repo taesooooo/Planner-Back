@@ -56,7 +56,7 @@ public class CommentDaoImpl implements CommentDao {
 	}
 
 	@Override
-	public CommentDto selectCommentByCommentId(int commentId) throws Exception {
+	public CommentDto findById(int commentId) throws Exception {
 		CommentDto comment = jdbcTemplate.queryForObject(SELECT_COMMENT_BY_COMMENT_ID_SQL, new CommentRowMapper(), commentId);
 		return comment;
 	}

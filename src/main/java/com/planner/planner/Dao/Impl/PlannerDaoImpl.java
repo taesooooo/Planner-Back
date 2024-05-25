@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
+import com.planner.planner.Common.Security.UserIdentifier;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlannerDto;
@@ -86,6 +87,11 @@ public class PlannerDaoImpl implements PlannerDao {
 		int result = namedParameterJdbcTemplate.update(INSERT_PLANNER_SQL, parameterSource, keyHolder, new String[] { "planner_id" } );
 		
 		return keyHolder.getKey().intValue();
+	}
+	
+	@Override
+	public PlannerDto findById(int dataId) {
+		return findPlannerByPlannerId(null, dataId);
 	}
 
 	@Override

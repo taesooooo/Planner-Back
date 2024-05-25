@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.planner.planner.Common.PageInfo;
+import com.planner.planner.Common.Security.UserIdentifierDao;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.SpotLikeCountDto;
 import com.planner.planner.Dto.SpotLikeDto;

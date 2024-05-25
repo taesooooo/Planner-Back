@@ -81,7 +81,7 @@ public class PlannerServiceTest {
 		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(creator, users.get(0));
 		when(planMemberDao.insertPlanMember(anyInt(), anyInt())).thenReturn(0);
 		
-		plannerService.newPlanner(planner);
+		plannerService.newPlanner(1, planner);
 		
 		verify(accountDao, times(1)).findAccountIdByNickName(anyString());
 		verify(planMemberDao, times(1)).insertPlanMember(anyInt(), anyInt());
@@ -97,7 +97,7 @@ public class PlannerServiceTest {
 		
 		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(null);
 		
-		assertThatThrownBy(() -> plannerService.newPlanner(planner))
+		assertThatThrownBy(() -> plannerService.newPlanner(1, planner))
 				.isExactlyInstanceOf(NotFoundUserException.class);
 		
 		verify(accountDao).findAccountIdByNickName(anyString());

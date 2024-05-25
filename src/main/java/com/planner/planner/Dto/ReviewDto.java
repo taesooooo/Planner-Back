@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.planner.planner.Common.ValidationGroups.ReviewCreateGroup;
 import com.planner.planner.Common.ValidationGroups.ReviewUpdateGroup;
+import com.planner.planner.Common.Security.UserIdentifier;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -14,7 +15,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class ReviewDto {
+public class ReviewDto implements UserIdentifier {
 	private int reviewId;
 	private Integer plannerId;
 	
@@ -38,4 +39,9 @@ public class ReviewDto {
 	
 	private List<String> fileNames;
 	private List<CommentDto> comments;
+	
+	@Override
+	public int getAccountId() {
+		return writerId;
+	}
 }
