@@ -1,6 +1,6 @@
 package com.planner.planner.Exception;
 
-public class NotFoundUserException extends Exception {
+public class NotFoundUserException extends RuntimeException {
 
 	public NotFoundUserException() {
 		super("계정을 찾을 수 없습니다.");

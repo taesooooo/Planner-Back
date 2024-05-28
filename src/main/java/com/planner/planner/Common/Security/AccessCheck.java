@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.common.ExpressionUtils;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.security.authorization.AuthorizationDecision;
@@ -14,6 +13,7 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Exception.NotFoundDataException;
+import com.planner.planner.Exception.NotFoundUserException;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -35,18 +35,26 @@ public class AccessCheck implements AuthorizationManager<RequestAuthorizationCon
 		ExpressionParser parser = new SpelExpressionParser();
 		object.getVariables().forEach((key, value) -> context.setVariable(key, value));
 		
-		int userId = ((AccountDto)authentication.get().getPrincipal()).getAccountId();
-		int identifierUserId = getUserAccountId(parser.parseExpression(expression).getValue(context, Integer.class));
+		int userId = getAccountId(authentication.get());
+		int ownerId = getOwnership(parser.parseExpression(expression).getValue(context, Integer.class));
 		
-		if(userId == identifierUserId) {
+		if(userId == ownerId) {
 			return new AuthorizationDecision(true);
 		}
 		
 		return new AuthorizationDecision(false);
 	}
-
 	
-	private int getUserAccountId(int dataId) {
+	private int getAccountId(Authentication authentication) {
+		Object principal = authentication.getPrincipal();
+		if((principal instanceof String) && ((String)principal).equals("anonymousUser")) {
+			throw new NotFoundUserException("로그인이 필요합니다.");
+		}
+		
+		return ((AccountDto)principal).getAccountId();
+	}
+	
+	private int getOwnership(int dataId) {
 		UserIdentifier user;
 		
 		try {
@@ -56,9 +64,6 @@ public class AccessCheck implements AuthorizationManager<RequestAuthorizationCon
 			}
 			
 			return user.getAccountId();
-		}
-		catch(NotFoundDataException e) {
-			return 0;
 		}
 		catch (Exception e) {
 			e.printStackTrace();

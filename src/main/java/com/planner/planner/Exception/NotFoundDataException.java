@@ -1,6 +1,6 @@
 package com.planner.planner.Exception;
 
-public class NotFoundDataException extends Exception {
+public class NotFoundDataException extends RuntimeException {
 
 	public NotFoundDataException() {
 		super();

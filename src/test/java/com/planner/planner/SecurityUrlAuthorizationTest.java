@@ -32,7 +32,6 @@ import com.planner.planner.Util.JwtUtil;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-@WithUserDetails(value = "1")
 @DisplayName("URI 접근 제한 테스트")
 public class SecurityUrlAuthorizationTest {
 	@Autowired
@@ -67,7 +66,8 @@ public class SecurityUrlAuthorizationTest {
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", token))
+				.header("Authorization", token)
+				)
 		.andDo(print())
 		.andExpect(status().isForbidden());
 
