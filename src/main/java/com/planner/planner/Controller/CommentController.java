@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.planner.planner.Dto.CommentDto;
 import com.planner.planner.Service.CommentService;
 import com.planner.planner.Util.ResponseMessage;
+import com.planner.planner.Util.UserIdUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -33,7 +33,8 @@ public class CommentController {
 	
 	@PostMapping(value = "/reviews/{reviewId}/comments")
 	public ResponseEntity<Object> newComment(HttpServletRequest req, @PathVariable int reviewId, @RequestBody @Valid CommentDto comment) throws Exception {
-		int newCommentId = commentService.newComment(reviewId, comment);
+		int userId = UserIdUtil.getUserId(req);
+		int newCommentId = commentService.newComment(userId, reviewId, comment);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", newCommentId));
 	}

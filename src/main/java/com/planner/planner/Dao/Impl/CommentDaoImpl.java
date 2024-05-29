@@ -36,11 +36,11 @@ public class CommentDaoImpl implements CommentDao {
 	}
 
 	@Override
-	public int insertComment(int reviewId, CommentDto comment) throws Exception {
+	public int insertComment(int accountId, int reviewId, CommentDto comment) throws Exception {
 		int result = jdbcTemplate.update(conn -> {
 			PreparedStatement ps = conn.prepareStatement(INSERT_COMMENT_SQL, new String[] {"comment_id"});
 			ps.setInt(1, reviewId);
-			ps.setInt(2, comment.getWriterId());
+			ps.setInt(2, accountId);
 			ps.setString(3, comment.getContent());
 			ps.setObject(4, comment.getParentId(), Types.INTEGER);
 			return ps;
