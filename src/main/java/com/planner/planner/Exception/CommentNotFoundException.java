@@ -1,13 +1,13 @@
 package com.planner.planner.Exception;
 
-public class NotFoundCommentException extends Exception {
+public class CommentNotFoundException extends RuntimeException {
 
-	public NotFoundCommentException() {
+	public CommentNotFoundException() {
 		super("댓글을 찾을 수 없습니다.");
 		// TODO Auto-generated constructor stub
 	}
 
-	public NotFoundCommentException(String message) {
+	public CommentNotFoundException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}

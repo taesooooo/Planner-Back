@@ -14,9 +14,9 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommentDto;
 import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.ReviewDto;
-import com.planner.planner.Exception.NotFoundCommentException;
-import com.planner.planner.Exception.NotFoundReviewException;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.CommentNotFoundException;
+import com.planner.planner.Exception.ReviewNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.CommentService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
 	public int newComment(int userId, int reviewId, CommentDto comment) throws Exception {
 		AccountDto user = accountDao.findById(userId);
 		if(user == null) {
-			throw new NotFoundUserException("사용자 정보를 찾을 수 없습니다.");
+			throw new UserNotFoundException("사용자 정보를 찾을 수 없습니다.");
 		}
 	
 		int newCommentId = commentDao.insertComment(userId, reviewId, comment);
@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
 		else {
 			ReviewDto review = reviewDao.findById(reviewId);
 			if(review == null) {
-				throw new NotFoundReviewException("게시글이 존재하지 않습니다.");
+				throw new ReviewNotFoundException("게시글이 존재하지 않습니다.");
 			}
 			
 			notificationUserId = review.getWriterId();
@@ -74,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
 	public CommentDto findByCommentId(int commentId) throws Exception {
 		CommentDto comment = commentDao.findById(commentId);
 		if(comment == null) {
-			throw new NotFoundCommentException();
+			throw new CommentNotFoundException();
 		}
 		
 		return comment;

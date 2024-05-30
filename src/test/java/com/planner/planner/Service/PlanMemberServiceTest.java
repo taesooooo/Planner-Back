@@ -32,8 +32,8 @@ import com.planner.planner.Dto.PlanMemberDto;
 import com.planner.planner.Dto.PlanMemberInviteDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.DuplicatePlanMemberException;
-import com.planner.planner.Exception.NotFoundMemberException;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.MemberNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.Impl.PlanMemberServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -131,7 +131,7 @@ public class PlanMemberServiceTest {
 		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> planMemberService.inviteMembers(plannerId, invitenMembers))
-				.isExactlyInstanceOf(NotFoundUserException.class);
+				.isExactlyInstanceOf(UserNotFoundException.class);
 		
 		verify(accountDao, times(1)).findAccountIdByNickName(anyString());
 	}
@@ -167,7 +167,7 @@ public class PlanMemberServiceTest {
 		when(accountDao.findAccountIdByNickName(testNickName)).thenReturn(null);
 		
 		assertThatThrownBy(() -> planMemberService.deleteMember(plannerId, testNickName))
-				.isExactlyInstanceOf(NotFoundUserException.class);
+				.isExactlyInstanceOf(UserNotFoundException.class);
 		
 		verify(planMemberDao).findMembersByPlannerId(anyInt());
 		verify(accountDao).findAccountIdByNickName(anyString());
@@ -186,7 +186,7 @@ public class PlanMemberServiceTest {
 		when(accountDao.findAccountIdByNickName(testNickName)).thenReturn(user);
 		
 		assertThatThrownBy(() -> planMemberService.deleteMember(plannerId, testNickName))
-				.isExactlyInstanceOf(NotFoundMemberException.class);
+				.isExactlyInstanceOf(MemberNotFoundException.class);
 
 		verify(planMemberDao).findMembersByPlannerId(anyInt());
 		verify(accountDao).findAccountIdByNickName(anyString());

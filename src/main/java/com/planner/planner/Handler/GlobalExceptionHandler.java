@@ -21,13 +21,13 @@ import com.planner.planner.Exception.DuplicateLikeException;
 import com.planner.planner.Exception.DuplicatePlanMemberException;
 import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Exception.NoValidArgumentException;
-import com.planner.planner.Exception.NotFoundAuthenticationCodeException;
-import com.planner.planner.Exception.NotFoundDataException;
-import com.planner.planner.Exception.NotFoundPasswordResetKeyException;
-import com.planner.planner.Exception.NotFoundPlanner;
-import com.planner.planner.Exception.NotFoundReviewException;
-import com.planner.planner.Exception.NotFoundToken;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.AuthenticationCodeNotFoundException;
+import com.planner.planner.Exception.DataNotFoundException;
+import com.planner.planner.Exception.PasswordResetKeyNotFoundException;
+import com.planner.planner.Exception.PlannerNotFoundException;
+import com.planner.planner.Exception.ReviewNotFoundException;
+import com.planner.planner.Exception.TokenNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Exception.PasswordCheckFailException;
 import com.planner.planner.Exception.TokenCheckFailException;
 import com.planner.planner.Util.ResponseMessage;
@@ -56,12 +56,12 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(value = { 
-			NotFoundDataException.class,
-			NotFoundUserException.class,
-			NotFoundPlanner.class,
-			NotFoundReviewException.class,
-			NotFoundPasswordResetKeyException.class,
-			NotFoundAuthenticationCodeException.class })
+			DataNotFoundException.class,
+			UserNotFoundException.class,
+			PlannerNotFoundException.class,
+			ReviewNotFoundException.class,
+			PasswordResetKeyNotFoundException.class,
+			AuthenticationCodeNotFoundException.class })
 	public ResponseEntity<Object> notFoundUser(Exception e) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, e.getMessage()));
 	}
@@ -71,7 +71,7 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, e.getMessage()));
 	}
 
-	@ExceptionHandler(NotFoundToken.class)
+	@ExceptionHandler(TokenNotFoundException.class)
 	public ResponseEntity<Object> notFoundTokenEx(Exception e) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, e.getMessage()));
 	}

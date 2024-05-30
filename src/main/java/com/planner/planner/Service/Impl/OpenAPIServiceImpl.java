@@ -8,8 +8,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,7 +18,7 @@ import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
 import com.planner.planner.Dto.OpenApi.OpenApiDto;
-import com.planner.planner.Exception.EmptyData;
+import com.planner.planner.Exception.NoDataException;
 import com.planner.planner.Exception.NoValidArgumentException;
 import com.planner.planner.Service.OpenAPIService;
 
@@ -45,7 +43,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 		JsonNode data = getApiData(apiUrl);
 		if(data == null) {
-			throw new EmptyData();
+			throw new NoDataException();
 		}
 		
 		int numOfRows = data.get("numOfRows").asInt();
@@ -77,7 +75,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 		JsonNode data = getApiData(apiUrl);
 		if(data == null) {
-			throw new EmptyData();
+			throw new NoDataException();
 		}
 		
 		int numOfRows = data.get("numOfRows").asInt();
@@ -131,7 +129,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 		JsonNode data = getApiData(apiUrl);
 		if(data == null) {
-			throw new EmptyData();
+			throw new NoDataException();
 		}
 		
 		int numOfRows = data.get("numOfRows").asInt();
@@ -190,7 +188,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 		
 		JsonNode data = getApiData(apiUrl);
 		if(data == null) {
-			throw new EmptyData();
+			throw new NoDataException();
 		}
 		
 		int numOfRows = data.get("numOfRows").asInt();
@@ -250,7 +248,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 		data = getApiData(apiUrl);
 		if(data == null) {
-			throw new EmptyData();
+			throw new NoDataException();
 		}
 		
 		JsonNode node = data.get("items").get("item").get(0);

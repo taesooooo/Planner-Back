@@ -21,8 +21,8 @@ import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.InvitationDto;
 import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Exception.NotFoundPlanner;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.PlannerNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.PlannerService;
 
 @Service
@@ -53,7 +53,7 @@ public class PlannerServiceImpl implements PlannerService {
 		for (String nickName : memberNickNames) {
 			AccountDto user = accountDao.findAccountIdByNickName(nickName);
 			if (user == null) {
-				throw new NotFoundUserException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
+				throw new UserNotFoundException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
 			}
 			users.add(user);
 		}
@@ -87,7 +87,7 @@ public class PlannerServiceImpl implements PlannerService {
 	public PlannerDto findPlannerByPlannerId(Integer accountId, int plannerId) throws Exception {
 		PlannerDto planner = plannerDao.findPlannerByPlannerId(accountId, plannerId);
 		if (planner == null) {
-			throw new NotFoundPlanner("존재하지 않는 플래너 입니다.");
+			throw new PlannerNotFoundException("존재하지 않는 플래너 입니다.");
 		}
 		return planner;
 	}

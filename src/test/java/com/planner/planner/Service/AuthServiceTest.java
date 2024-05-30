@@ -24,8 +24,8 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.LoginInfoDto;
 import com.planner.planner.Dto.RefreshTokenDto;
 import com.planner.planner.Dto.ReissueTokenDto;
-import com.planner.planner.Exception.NotFoundToken;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.TokenNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Exception.PasswordCheckFailException;
 import com.planner.planner.Service.Impl.AuthServiceImpl;
 import com.planner.planner.Util.JwtUtil;
@@ -108,7 +108,7 @@ public class AuthServiceTest {
 		when(accountDao.findByEmail(anyString())).thenReturn(null);
 
 		assertThatThrownBy(() -> authService.login(newTestUser))
-			.isInstanceOf(NotFoundUserException.class);
+			.isInstanceOf(UserNotFoundException.class);
 	}
 	
 	@Test
@@ -214,7 +214,7 @@ public class AuthServiceTest {
 
 
 		assertThatThrownBy(() -> authService.reissueToken(testRefreshToken))
-			.isInstanceOf(NotFoundToken.class);
+			.isInstanceOf(TokenNotFoundException.class);
 	}
 	
 	@Test
@@ -232,7 +232,7 @@ public class AuthServiceTest {
 
 		
 		assertThatThrownBy(() -> authService.reissueToken(testRefreshToken))
-			.isInstanceOf(NotFoundUserException.class);
+			.isInstanceOf(UserNotFoundException.class);
 	}
 	
 	private AccountDto createUser(int accountId) {

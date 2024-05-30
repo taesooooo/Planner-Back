@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.GenericFilterBean;
 
-import com.planner.planner.Exception.NotFoundToken;
+import com.planner.planner.Exception.TokenNotFoundException;
 import com.planner.planner.Util.JwtUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dto.AuthenticationCodeDto;
 import com.planner.planner.Exception.AuthenticationCodeExpireException;
-import com.planner.planner.Exception.NotFoundAuthenticationCodeException;
+import com.planner.planner.Exception.AuthenticationCodeNotFoundException;
 import com.planner.planner.Service.AuthenticationCodeService;
 
 @Service
@@ -53,7 +53,7 @@ public class AuthenticationCodeServiceImpl implements AuthenticationCodeService 
 		}
 
 		if (authCodeDto == null) {
-			throw new NotFoundAuthenticationCodeException("인증 코드가 전송되지 않았습니다. 다시 시도해 주세요.");
+			throw new AuthenticationCodeNotFoundException("인증 코드가 전송되지 않았습니다. 다시 시도해 주세요.");
 		}
 		
 		LocalDateTime nowDateTime = LocalDateTime.now();

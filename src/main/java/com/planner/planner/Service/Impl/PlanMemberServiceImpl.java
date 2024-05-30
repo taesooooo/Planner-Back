@@ -20,9 +20,9 @@ import com.planner.planner.Dto.PlanMemberDto;
 import com.planner.planner.Dto.PlanMemberInviteDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.DuplicatePlanMemberException;
-import com.planner.planner.Exception.NotFoundMemberException;
-import com.planner.planner.Exception.NotFoundPlanner;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.MemberNotFoundException;
+import com.planner.planner.Exception.PlannerNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.PlanMemberService;
 
 @Service
@@ -52,14 +52,14 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 		for (String nickName : members.getMembers()) {
 			AccountDto user = accountDao.findAccountIdByNickName(nickName);
 			if (user == null) {
-				throw new NotFoundUserException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
+				throw new UserNotFoundException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
 			}
 			users.add(user);
 		}
 		
 		PlannerDto planner = plannerDao.findPlannerByPlannerId(null, plannerId);
 		if (planner == null) {
-			throw new NotFoundPlanner("존재하지 않는 플래너 입니다.");
+			throw new PlannerNotFoundException("존재하지 않는 플래너 입니다.");
 		}
 		
 		List<PlanMemberDto> invitedUsers = planMemberDao.findMembersByPlannerId(plannerId);
@@ -94,11 +94,11 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 		List<PlanMemberDto> members = planMemberDao.findMembersByPlannerId(plannerId);
 		AccountDto user = accountDao.findAccountIdByNickName(nickName);
 		if (user == null) {
-			throw new NotFoundUserException("사용자를 찾을 수 없습니다.");
+			throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
 		}
 		boolean isMatch = members.stream().anyMatch(m -> m.getAccountId() == user.getAccountId());
 		if (!isMatch) {
-			throw new NotFoundMemberException("멤버를 찾을 수 없습니다.");
+			throw new MemberNotFoundException("멤버를 찾을 수 없습니다.");
 		}
 		planMemberDao.deletePlanMember(plannerId, user.getAccountId());
 	}

@@ -1,13 +1,13 @@
 package com.planner.planner.Exception;
 
-public class NotFoundReviewException extends RuntimeException {
+public class ReviewNotFoundException extends RuntimeException {
 
-	public NotFoundReviewException() {
+	public ReviewNotFoundException() {
 		super("생성된 리뷰가 없습니다.");
 		// TODO Auto-generated constructor stub
 	}
 
-	public NotFoundReviewException(String message) {
+	public ReviewNotFoundException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}

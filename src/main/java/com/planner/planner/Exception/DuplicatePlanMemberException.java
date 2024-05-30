@@ -1,6 +1,6 @@
 package com.planner.planner.Exception;
 
-public class DuplicatePlanMemberException extends Exception{
+public class DuplicatePlanMemberException extends RuntimeException {
 
 	public DuplicatePlanMemberException() {
 		super();

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.planner.planner.Exception.NotFoundToken;
+import com.planner.planner.Exception.TokenNotFoundException;
 import com.planner.planner.Exception.TokenCheckFailException;
 import com.planner.planner.Util.JwtUtil;
 
@@ -29,7 +29,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 		// 토큰확인
 		String bearerToken = request.getHeader("Authorization");
 		if(bearerToken == null || bearerToken.isEmpty()) {
-			throw new NotFoundToken("로그인이 필요합니다.");
+			throw new TokenNotFoundException("로그인이 필요합니다.");
 		}
 		
 		String token = jwtUtil.seperateToken(bearerToken);
@@ -48,7 +48,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 			}
 		}
 		else {
-			throw new NotFoundToken("로그인이 필요합니다.");
+			throw new TokenNotFoundException("로그인이 필요합니다.");
 		}
 	}
 

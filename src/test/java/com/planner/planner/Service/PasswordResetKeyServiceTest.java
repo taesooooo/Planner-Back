@@ -19,8 +19,8 @@ import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PasswordResetKeyDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PasswordResetkeyDto;
-import com.planner.planner.Exception.NotFoundPasswordResetKeyException;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.PasswordResetKeyNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.Impl.PasswordResetKeyServiceImpl;
 import com.planner.planner.Util.RandomCode;
 
@@ -53,7 +53,7 @@ public class PasswordResetKeyServiceTest {
 		when(accountDao.findById(anyInt())).thenReturn(null);
 
 		assertThatThrownBy(() -> { passwordResetKeyService.createPasswordResetKey(resetkey, user); })
-		.isExactlyInstanceOf(NotFoundUserException.class);
+		.isExactlyInstanceOf(UserNotFoundException.class);
 	}
 	
 	@Test
@@ -79,7 +79,7 @@ public class PasswordResetKeyServiceTest {
 		when(passwordResetKeyDao.findByResetKey(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> passwordResetKeyService.findBykey(resetKey))
-		.isExactlyInstanceOf(NotFoundPasswordResetKeyException.class);
+		.isExactlyInstanceOf(PasswordResetKeyNotFoundException.class);
 	}
 	
 	@Test
@@ -108,7 +108,7 @@ public class PasswordResetKeyServiceTest {
 		when(passwordResetKeyDao.findByResetKey(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> passwordResetKeyService.validatePasswordResetKey(resetKey))
-		.isExactlyInstanceOf(NotFoundPasswordResetKeyException.class);
+		.isExactlyInstanceOf(PasswordResetKeyNotFoundException.class);
 	}
 	
 	@Test

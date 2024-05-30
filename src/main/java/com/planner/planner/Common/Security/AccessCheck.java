@@ -12,8 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Exception.NotFoundDataException;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.DataNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -48,7 +48,7 @@ public class AccessCheck implements AuthorizationManager<RequestAuthorizationCon
 	private int getAccountId(Authentication authentication) {
 		Object principal = authentication.getPrincipal();
 		if((principal instanceof String) && ((String)principal).equals("anonymousUser")) {
-			throw new NotFoundUserException("로그인이 필요합니다.");
+			throw new UserNotFoundException("로그인이 필요합니다.");
 		}
 		
 		return ((AccountDto)principal).getAccountId();
@@ -60,7 +60,7 @@ public class AccessCheck implements AuthorizationManager<RequestAuthorizationCon
 		try {
 			user = repository.findById(dataId);
 			if(user == null) {
-				throw new NotFoundDataException("해당하는 데이터를 찾을 수 없습니다.");
+				throw new DataNotFoundException("해당하는 데이터를 찾을 수 없습니다.");
 			}
 			
 			return user.getAccountId();

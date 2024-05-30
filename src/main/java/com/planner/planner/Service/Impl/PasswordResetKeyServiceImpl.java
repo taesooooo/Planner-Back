@@ -9,8 +9,8 @@ import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dao.PasswordResetKeyDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PasswordResetkeyDto;
-import com.planner.planner.Exception.NotFoundPasswordResetKeyException;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.PasswordResetKeyNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.EmailService;
 import com.planner.planner.Service.PasswordResetKeyService;
 
@@ -32,7 +32,7 @@ public class PasswordResetKeyServiceImpl implements PasswordResetKeyService {
 	public void createPasswordResetKey(String resetKey, AccountDto account) throws Exception {
 		AccountDto user = this.accountDao.findById(account.getAccountId());
 		if(user == null) {
-			throw new NotFoundUserException();
+			throw new UserNotFoundException();
 		}
 		
 		this.passwordResetKeyDao.createPasswordResetKey(resetKey, account.getAccountId());
@@ -44,7 +44,7 @@ public class PasswordResetKeyServiceImpl implements PasswordResetKeyService {
 	public PasswordResetkeyDto findBykey(String key) {
 		PasswordResetkeyDto pwResetKey = this.passwordResetKeyDao.findByResetKey(key);
 		if(pwResetKey == null) {
-			throw new NotFoundPasswordResetKeyException("존재 하지 않는 재설정 요청입니다.");
+			throw new PasswordResetKeyNotFoundException("존재 하지 않는 재설정 요청입니다.");
 		}
 		
 		return pwResetKey;
@@ -59,7 +59,7 @@ public class PasswordResetKeyServiceImpl implements PasswordResetKeyService {
 	public boolean validatePasswordResetKey(String key) {
 		PasswordResetkeyDto resetKey = this.passwordResetKeyDao.findByResetKey(key);
 		if(resetKey == null) {
-			throw new NotFoundPasswordResetKeyException("존재 하지 않는 재설정 요청입니다.");
+			throw new PasswordResetKeyNotFoundException("존재 하지 않는 재설정 요청입니다.");
 		}
 		
 		LocalDateTime expireDate = resetKey.getExpireDate();

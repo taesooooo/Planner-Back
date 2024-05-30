@@ -40,8 +40,8 @@ import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Exception.NotFoundPlanner;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.PlannerNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.Impl.PlannerServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -98,7 +98,7 @@ public class PlannerServiceTest {
 		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> plannerService.newPlanner(1, planner))
-				.isExactlyInstanceOf(NotFoundUserException.class);
+				.isExactlyInstanceOf(UserNotFoundException.class);
 		
 		verify(accountDao).findAccountIdByNickName(anyString());
 	}
@@ -125,7 +125,7 @@ public class PlannerServiceTest {
 		when(plannerDao.findPlannerByPlannerId(any(Integer.	class), anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> plannerService.findPlannerByPlannerId(accountId, plannerId))
-				.isExactlyInstanceOf(NotFoundPlanner.class);
+				.isExactlyInstanceOf(PlannerNotFoundException.class);
 
 	}
 	

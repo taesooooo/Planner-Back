@@ -1,13 +1,13 @@
 package com.planner.planner.Exception;
 
-public class NotFoundMemberException extends Exception {
+public class DataNotFoundException extends RuntimeException {
 
-	public NotFoundMemberException() {
+	public DataNotFoundException() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public NotFoundMemberException(String message) {
+	public DataNotFoundException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}

@@ -27,7 +27,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import com.planner.planner.Common.Image;
 import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.Impl.AccountServiceImpl;
 import com.planner.planner.Service.Impl.PlannerServiceImpl;
 import com.planner.planner.Util.FileStore;
@@ -86,7 +86,7 @@ public class AccountServiceTest {
 		when(accountDao.findById(anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> accountService.findById(accountId))
-				.isExactlyInstanceOf(NotFoundUserException.class);
+				.isExactlyInstanceOf(UserNotFoundException.class);
 		
 		verify(accountDao).findById(accountId);
 	}
@@ -141,7 +141,7 @@ public class AccountServiceTest {
 		when(accountDao.searchEmail(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> accountService.searchEmail(""))
-				.isExactlyInstanceOf(NotFoundUserException.class);
+				.isExactlyInstanceOf(UserNotFoundException.class);
 	}
 	
 	private AccountDto createAccount(int accountId, String email, String name, String nickName) {

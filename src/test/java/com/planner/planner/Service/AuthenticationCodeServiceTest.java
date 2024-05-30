@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dto.AuthenticationCodeDto;
 import com.planner.planner.Exception.AuthenticationCodeExpireException;
-import com.planner.planner.Exception.NotFoundAuthenticationCodeException;
+import com.planner.planner.Exception.AuthenticationCodeNotFoundException;
 import com.planner.planner.Service.Impl.AuthenticationCodeServiceImpl;
 import com.planner.planner.Util.RandomCode;
 
@@ -51,7 +51,7 @@ public class AuthenticationCodeServiceTest {
 		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
-		.isInstanceOf(NotFoundAuthenticationCodeException.class);
+		.isInstanceOf(AuthenticationCodeNotFoundException.class);
 	}
 	
 	@Test
@@ -66,7 +66,7 @@ public class AuthenticationCodeServiceTest {
 		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
-		.isInstanceOf(NotFoundAuthenticationCodeException.class);
+		.isInstanceOf(AuthenticationCodeNotFoundException.class);
 	}
 	
 	@Test

@@ -24,7 +24,7 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 import com.planner.planner.Common.Security.AccessCheck;
 import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.UserNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class AccessCheckTest {
@@ -69,7 +69,7 @@ class AccessCheckTest {
 		AccessCheck accessCheck = new AccessCheck(testDao, "#accountId");
 		
 		assertThatThrownBy(() -> accessCheck.check(authentication, context))
-				.isExactlyInstanceOf(NotFoundUserException.class);
+				.isExactlyInstanceOf(UserNotFoundException.class);
 	}
 
 }

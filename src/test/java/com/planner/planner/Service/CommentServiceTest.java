@@ -21,9 +21,9 @@ import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommentDto;
 import com.planner.planner.Dto.ReviewDto;
-import com.planner.planner.Exception.NotFoundCommentException;
-import com.planner.planner.Exception.NotFoundReviewException;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.CommentNotFoundException;
+import com.planner.planner.Exception.ReviewNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.Impl.CommentServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -82,7 +82,7 @@ public class CommentServiceTest {
 				.build();
 		
 		assertThatThrownBy(() -> commentService.newComment(1, 1, newComment))
-				.isExactlyInstanceOf(NotFoundUserException.class);
+				.isExactlyInstanceOf(UserNotFoundException.class);
 	}
 	
 	@DisplayName("댓글 작성시 게시글이 없는 경우")
@@ -100,7 +100,7 @@ public class CommentServiceTest {
 				.build();
 		
 		assertThatThrownBy(() -> commentService.newComment(1, 1, newComment))
-				.isExactlyInstanceOf(NotFoundReviewException.class);
+				.isExactlyInstanceOf(ReviewNotFoundException.class);
 	}
 	
 	@DisplayName("댓글 가져오기 - 댓글이 없는 경우")
@@ -110,6 +110,6 @@ public class CommentServiceTest {
 		
 		 
 		assertThatThrownBy(() -> commentService.findByCommentId(1))
-				.isExactlyInstanceOf(NotFoundCommentException.class);
+				.isExactlyInstanceOf(CommentNotFoundException.class);
 	}
 }
