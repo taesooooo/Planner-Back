@@ -2,8 +2,7 @@ package com.planner.planner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
-import org.springframework.util.AntPathMatcher;
+import org.junit.jupiter.api.Test;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.planner.planner.Interceptor.PathList;

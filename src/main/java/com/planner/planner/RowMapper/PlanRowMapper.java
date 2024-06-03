@@ -13,12 +13,12 @@ public class PlanRowMapper implements RowMapper<PlanDto>{
 
 	@Override
 	public PlanDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new PlanDto.Builder()
-				.setPlanId(rs.getInt("plan_id"))
-				.setPlanDate(rs.getDate("plan_date").toLocalDate())
-				.setIndex(rs.getInt("plan_index"))
-				.setPlannerId(rs.getInt("planner_id"))
-				.setPlanLocations(new ArrayList<PlanLocationDto>())
+		return PlanDto.builder()
+				.planId(rs.getInt("plan_id"))
+				.planDate(rs.getDate("plan_date").toLocalDate())
+				.index(rs.getInt("plan_index"))
+				.plannerId(rs.getInt("planner_id"))
+				.planLocations(new ArrayList<PlanLocationDto>())
 				.build();
 	}
 }

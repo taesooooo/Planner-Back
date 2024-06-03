@@ -1,12 +1,5 @@
 package com.planner.planner.Controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -18,25 +11,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Common.ValidationGroups.LoginGroup;
 import com.planner.planner.Common.ValidationGroups.RegisterGroup;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.AuthenticationCodeDto;
 import com.planner.planner.Dto.LoginInfoDto;
 import com.planner.planner.Dto.ReissueTokenDto;
-import com.planner.planner.Exception.NotFoundUserException;
 import com.planner.planner.Service.AuthService;
 import com.planner.planner.Service.AuthenticationCodeService;
 import com.planner.planner.Service.EmailService;
-import com.planner.planner.Service.PasswordResetKeyService;
 import com.planner.planner.Service.SENSService;
 import com.planner.planner.Util.JwtUtil;
 import com.planner.planner.Util.RandomCode;
@@ -44,6 +33,10 @@ import com.planner.planner.Util.ResponseMessage;
 import com.planner.planner.Util.UserIdUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 
 @RestController
 @Validated
@@ -86,9 +79,14 @@ public class AuthController {
 		}
 
 		String pwEncode = passwordEncoder.encode(accountDto.getPassword());
-		AccountDto userDto = new AccountDto.Builder().setEmail(accountDto.getEmail()).setPassword(pwEncode)
-				.setUsername(accountDto.getUsername()).setNickname(accountDto.getNickname())
-				.setImage(accountDto.getImage()).setPhone(accountDto.getPhone()).build();
+		AccountDto userDto = AccountDto.builder()
+				.email(accountDto.getEmail())
+				.password(pwEncode)
+				.username(accountDto.getUsername())
+				.nickname(accountDto.getNickname())
+				.image(accountDto.getImage())
+				.phone(accountDto.getPhone())
+				.build();
 
 		try {
 			boolean result = authService.register(userDto);
@@ -108,7 +106,7 @@ public class AuthController {
 	public ResponseEntity<Object> login(HttpServletRequest req,
 			@RequestBody @Validated(LoginGroup.class) AccountDto accountDto) throws Exception {
 		LoginInfoDto loginInfo = authService.login(accountDto);
-		ResponseCookie cookie = ResponseCookie.from("RefreshToken", loginInfo.getReflashToken())
+		ResponseCookie cookie = ResponseCookie.from("RefreshToken", loginInfo.getRefreshToken())
 				.httpOnly(true)
 				.sameSite("Strict")
 				.maxAge(jwtUtil.getRefreshExpirationTime())

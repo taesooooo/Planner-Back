@@ -7,19 +7,21 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dto.AuthenticationCodeDto;
 import com.planner.planner.Exception.AuthenticationCodeExpireException;
-import com.planner.planner.Exception.NotFoundAuthenticationCodeException;
+import com.planner.planner.Exception.AuthenticationCodeNotFoundException;
 import com.planner.planner.Service.Impl.AuthenticationCodeServiceImpl;
 import com.planner.planner.Util.RandomCode;
 
+@ExtendWith(MockitoExtension.class)
 public class AuthenticationCodeServiceTest {
 	
 	@Mock
@@ -32,58 +34,58 @@ public class AuthenticationCodeServiceTest {
 	@InjectMocks
 	private AuthenticationCodeServiceImpl codeService;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+//		MockitoAnnotations.openMocks(this);
 	}
 	
 	@Test
 	public void 휴대폰_인증코드_확인_인증_코드_전송_안된경우() {
-		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setPhone("01012345678")
-				.setCode("123456")
-				.setCreateDate(LocalDateTime.now())
+		AuthenticationCodeDto requestDto = AuthenticationCodeDto.builder()
+				.id(1)
+				.phone("01012345678")
+				.code("123456")
+				.createDate(LocalDateTime.now())
 				.build();
 		
 		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
-		.isInstanceOf(NotFoundAuthenticationCodeException.class);
+		.isInstanceOf(AuthenticationCodeNotFoundException.class);
 	}
 	
 	@Test
 	public void 이메일_인증코드_확인_인증_코드_전송_안된경우() {
-		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setCode("123456")
-				.setCreateDate(LocalDateTime.now())
+		AuthenticationCodeDto requestDto = AuthenticationCodeDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.code("123456")
+				.createDate(LocalDateTime.now())
 				.build();
 		
 		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
-		.isInstanceOf(NotFoundAuthenticationCodeException.class);
+		.isInstanceOf(AuthenticationCodeNotFoundException.class);
 	}
 	
 	@Test
 	public void 휴대폰_인증코드_확인_인증_코드_시간_만료() {
 		LocalDateTime dateTime = LocalDateTime.now();
-		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setPhone("01012345678")
-				.setCode("123456")
-				.setExpireDate(dateTime)
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto requestDto = AuthenticationCodeDto.builder()
+				.id(1)
+				.phone("01012345678")
+				.code("123456")
+				.expireDate(dateTime)
+				.createDate(dateTime)
 				.build();
 		
-		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setPhone("01012345678")
-				.setCode("123456")
-				.setExpireDate(dateTime.minusMinutes(3))
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto findCode = AuthenticationCodeDto.builder()
+				.id(1)
+				.phone("01012345678")
+				.code("123456")
+				.expireDate(dateTime.minusMinutes(3))
+				.createDate(dateTime)
 				.build();
 		
 		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(findCode);
@@ -95,20 +97,20 @@ public class AuthenticationCodeServiceTest {
 	@Test
 	public void 이메일_인증코드_확인_인증_코드_시간_만료() {
 		LocalDateTime dateTime = LocalDateTime.now();
-		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setCode("123456")
-				.setExpireDate(dateTime)
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto requestDto = AuthenticationCodeDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.code("123456")
+				.expireDate(dateTime)
+				.createDate(dateTime)
 				.build();
 		
-		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setCode("123456")
-				.setExpireDate(dateTime.minusMinutes(3))
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto findCode = AuthenticationCodeDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.code("123456")
+				.expireDate(dateTime.minusMinutes(3))
+				.createDate(dateTime)
 				.build();
 		
 		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(findCode);
@@ -120,20 +122,20 @@ public class AuthenticationCodeServiceTest {
 	@Test
 	public void 휴대폰_인증코드_확인_인증_코드_불일치() {
 		LocalDateTime dateTime = LocalDateTime.now();
-		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setPhone("01012345678")
-				.setCode("123456")
-				.setExpireDate(dateTime)
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto requestDto = AuthenticationCodeDto.builder()
+				.id(1)
+				.phone("01012345678")
+				.code("123456")
+				.expireDate(dateTime)
+				.createDate(dateTime)
 				.build();
 		
-		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setPhone("01012345678")
-				.setCode("789101")
-				.setExpireDate(dateTime.plusMinutes(3))
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto findCode = AuthenticationCodeDto.builder()
+				.id(1)
+				.phone("01012345678")
+				.code("789101")
+				.expireDate(dateTime.plusMinutes(3))
+				.createDate(dateTime)
 				.build();
 		
 		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(findCode);
@@ -146,20 +148,20 @@ public class AuthenticationCodeServiceTest {
 	@Test
 	public void 이메일_인증코드_확인_인증_코드_불일치() {
 		LocalDateTime dateTime = LocalDateTime.now();
-		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setCode("123456")
-				.setExpireDate(dateTime)
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto requestDto = AuthenticationCodeDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.code("123456")
+				.expireDate(dateTime)
+				.createDate(dateTime)
 				.build();
 		
-		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setCode("789101")
-				.setExpireDate(dateTime.plusMinutes(3))
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto findCode = AuthenticationCodeDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.code("789101")
+				.expireDate(dateTime.plusMinutes(3))
+				.createDate(dateTime)
 				.build();
 		
 		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(findCode);
@@ -172,20 +174,20 @@ public class AuthenticationCodeServiceTest {
 	@Test
 	public void 휴대폰_인증코드_확인_정상() {
 		LocalDateTime dateTime = LocalDateTime.now();
-		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setPhone("01012345678")
-				.setCode("123456")
-				.setExpireDate(dateTime)
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto requestDto = AuthenticationCodeDto.builder()
+				.id(1)
+				.phone("01012345678")
+				.code("123456")
+				.expireDate(dateTime)
+				.createDate(dateTime)
 				.build();
 		
-		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setPhone("01012345678")
-				.setCode("123456")
-				.setExpireDate(dateTime.plusMinutes(3))
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto findCode = AuthenticationCodeDto.builder()
+				.id(1)
+				.phone("01012345678")
+				.code("123456")
+				.expireDate(dateTime.plusMinutes(3))
+				.createDate(dateTime)
 				.build();
 		
 		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(findCode);
@@ -198,20 +200,20 @@ public class AuthenticationCodeServiceTest {
 	@Test
 	public void 이메일_인증코드_확인_정상() {
 		LocalDateTime dateTime = LocalDateTime.now();
-		AuthenticationCodeDto requestDto = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setCode("123456")
-				.setExpireDate(dateTime)
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto requestDto = AuthenticationCodeDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.code("123456")
+				.expireDate(dateTime)
+				.createDate(dateTime)
 				.build();
 		
-		AuthenticationCodeDto findCode = new AuthenticationCodeDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setCode("123456")
-				.setExpireDate(dateTime.plusMinutes(3))
-				.setCreateDate(dateTime)
+		AuthenticationCodeDto findCode = AuthenticationCodeDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.code("123456")
+				.expireDate(dateTime.plusMinutes(3))
+				.createDate(dateTime)
 				.build();
 		
 		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(findCode);

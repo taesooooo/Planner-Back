@@ -11,13 +11,15 @@ public class FileInfoRowMapper implements RowMapper<FileInfoDto> {
 
 	@Override
 	public FileInfoDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new FileInfoDto(rs.getInt("file_id"),
-				rs.getInt("file_writer_id"),
-				rs.getInt("file_board_id"), 
-				rs.getString("file_name"), 
-				rs.getString("file_path"), 
-				rs.getString("file_type"), 
-				rs.getTimestamp("upload_date").toLocalDateTime());
+		return FileInfoDto.builder()
+				.fileId(rs.getInt("file_id"))
+				.fileWriterId(rs.getInt("file_writer_id"))
+				.fileBoradId(rs.getInt("file_board_id"))
+				.fileName(rs.getString("file_name"))
+				.filePath(rs.getString("file_path"))
+				.fileType(rs.getString("file_type"))
+				.uploadDate(rs.getTimestamp("upload_date").toLocalDateTime())
+				.build();
 	}
 
 }

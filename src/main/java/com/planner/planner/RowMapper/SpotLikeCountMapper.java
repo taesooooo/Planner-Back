@@ -11,9 +11,9 @@ public class SpotLikeCountMapper implements RowMapper<SpotLikeCountDto> {
 
 	@Override
 	public SpotLikeCountDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new SpotLikeCountDto.Builder()
-				.setContentId(rs.getInt("content_id"))
-				.setCount(rs.getInt("like_count"))
+		return SpotLikeCountDto.builder()
+				.contentId(rs.getInt("content_id"))
+				.count(rs.getInt("like_count"))
 				.build();
 	}
 }

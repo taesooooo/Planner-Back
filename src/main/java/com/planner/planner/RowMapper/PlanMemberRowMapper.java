@@ -11,10 +11,10 @@ public class PlanMemberRowMapper implements RowMapper<PlanMemberDto> {
 
 	@Override
 	public PlanMemberDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new PlanMemberDto.Builder()
-				.setPlanMemberId(rs.getInt("plan_member_id"))
-				.setPlannerId(rs.getInt("planner_id"))
-				.setAccountId(rs.getInt("account_id"))
+		return PlanMemberDto.builder()
+				.planMemberId(rs.getInt("plan_member_id"))
+				.plannerId(rs.getInt("planner_id"))
+				.accountId(rs.getInt("account_id"))
 				.build();
 	}
 }

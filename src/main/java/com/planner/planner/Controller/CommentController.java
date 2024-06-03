@@ -1,8 +1,5 @@
 package com.planner.planner.Controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.planner.planner.Dto.CommentDto;
-import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.CommentService;
 import com.planner.planner.Util.ResponseMessage;
 import com.planner.planner.Util.UserIdUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/api")
@@ -34,7 +33,8 @@ public class CommentController {
 	
 	@PostMapping(value = "/reviews/{reviewId}/comments")
 	public ResponseEntity<Object> newComment(HttpServletRequest req, @PathVariable int reviewId, @RequestBody @Valid CommentDto comment) throws Exception {
-		int newCommentId = commentService.newComment(reviewId, comment);
+		int userId = UserIdUtil.getUserId(req);
+		int newCommentId = commentService.newComment(userId, reviewId, comment);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(true, "", newCommentId));
 	}

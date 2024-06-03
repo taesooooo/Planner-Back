@@ -28,34 +28,34 @@ public class ReviewResultSetExtrator implements ResultSetExtractor<ReviewDto> {
 			if(latestCommentId != commentId) {
 				latestCommentId = commentId;
 
-				CommentDto comment = new CommentDto.Builder()
-				.setCommentId(rs.getInt("RC_comment_id"))
-				.setReviewId(rs.getInt("RC_review_id"))
-				.setWriterId(rs.getInt("RC_writer_id"))
-				.setWriter(rs.getString("AC_nickname"))
-				.setContent(rs.getString("RC_content"))
-				.setParentId(rs.getObject("RC_parent_id", Integer.class))
-				.setCreateDate(rs.getTimestamp("RC_create_date").toLocalDateTime())
-				.setUpdateDate(rs.getTimestamp("RC_update_date").toLocalDateTime())
+				CommentDto comment = CommentDto.builder()
+				.commentId(rs.getInt("RC_comment_id"))
+				.reviewId(rs.getInt("RC_review_id"))
+				.writerId(rs.getInt("RC_writer_id"))
+				.writer(rs.getString("AC_nickname"))
+				.content(rs.getString("RC_content"))
+				.parentId(rs.getObject("RC_parent_id", Integer.class))
+				.createDate(rs.getTimestamp("RC_create_date").toLocalDateTime())
+				.updateDate(rs.getTimestamp("RC_update_date").toLocalDateTime())
 				.build();
 				
 				comments.add(comment);
 			}
 			
 			if(review == null) {
-				review = new ReviewDto.Builder()
-						.setReviewId(rs.getInt("review_id"))
-						.setPlannerId(rs.getInt("planner_id"))
-						.setTitle(rs.getString("title"))
-						.setContent(rs.getString("content"))
-						.setAreaCode(rs.getInt("areacode"))
-						.setThumbnail(rs.getString("thumbnail"))
-						.setWriter(rs.getString("writer"))
-						.setWriterId(rs.getInt("writer_id"))
-						.setLikeCount(rs.getInt("like_count"))
-						.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
-						.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
-						.setComments(commentList)
+				review = ReviewDto.builder()
+						.reviewId(rs.getInt("review_id"))
+						.plannerId(rs.getInt("planner_id"))
+						.title(rs.getString("title"))
+						.content(rs.getString("content"))
+						.areaCode(rs.getInt("areacode"))
+						.thumbnail(rs.getString("thumbnail"))
+						.writer(rs.getString("writer"))
+						.writerId(rs.getInt("writer_id"))
+						.likeCount(rs.getInt("like_count"))
+						.createDate(rs.getTimestamp("create_date").toLocalDateTime())
+						.updateDate(rs.getTimestamp("update_date").toLocalDateTime())
+						.comments(commentList)
 						.build();
 			}
 		}

@@ -29,12 +29,12 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<List<Planner
 				if(plan == null) {
 					List<PlanLocationDto> planLocations = new ArrayList<PlanLocationDto>();
 					
-					PlanDto newPlan = new PlanDto.Builder()
-							.setPlanId(planId)
-							.setPlanDate(rs.getDate("plan_date").toLocalDate())
-							.setIndex(rs.getInt("plan_index"))
-							.setPlannerId(rs.getInt("planner_id"))
-							.setPlanLocations(planLocations)
+					PlanDto newPlan = PlanDto.builder()
+							.planId(planId)
+							.planDate(rs.getDate("plan_date").toLocalDate())
+							.index(rs.getInt("plan_index"))
+							.plannerId(rs.getInt("planner_id"))
+							.planLocations(planLocations)
 							.build();
 					plans.put(planId, newPlan);
 				}
@@ -47,17 +47,17 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<List<Planner
 					boolean hasLocation = planLocations.stream().anyMatch(item -> item.getLocationId() == locationId);
 					
 					if(!hasLocation) {
-						PlanLocationDto pl = new PlanLocationDto.Builder()
-								.setLocationId(rs.getInt("location_id"))
-								.setLocationContentId(rs.getInt("location_content_id"))
-								.setLocationName(rs.getString("location_name"))
-								.setLocationImage(rs.getString("location_image"))
-								.setLocationAddr(rs.getString("location_addr"))
-								.setLocationMapx(rs.getDouble("location_mapx"))
-								.setLocationMapy(rs.getDouble("location_mapy"))
-								.setLocationTransportation(rs.getInt("location_transportation"))
-								.setIndex(rs.getInt("location_index"))
-								.setPlanId(rs.getInt("plan_id"))
+						PlanLocationDto pl = PlanLocationDto.builder()
+								.locationId(rs.getInt("location_id"))
+								.locationContentId(rs.getInt("location_content_id"))
+								.locationName(rs.getString("location_name"))
+								.locationImage(rs.getString("location_image"))
+								.locationAddr(rs.getString("location_addr"))
+								.locationMapx(rs.getDouble("location_mapx"))
+								.locationMapy(rs.getDouble("location_mapy"))
+								.locationTransportation(rs.getInt("location_transportation"))
+								.index(rs.getInt("location_index"))
+								.planId(rs.getInt("plan_id"))
 								.build();
 						planLocations.add(pl);				
 					}
@@ -68,22 +68,22 @@ public class PlannerResultSetExtrator implements ResultSetExtractor<List<Planner
 			PlannerDto planner = planners.get(plannerId);
 			if(planner == null) {
 				List<PlanDto> planList = plans.values().stream().collect(Collectors.toList());
-				planner = new PlannerDto.Builder()
-						.setPlannerId(rs.getInt("planner_id"))
-						.setAccountId(rs.getInt("account_id"))
-						.setAreaCode(rs.getInt("area_code"))
-						.setCreator(rs.getString("creator"))
-						.setTitle(rs.getString("title"))
-						.setPlanDateStart(rs.getDate("plan_date_start").toLocalDate())
-						.setPlanDateEnd(rs.getDate("plan_date_end").toLocalDate())
-						.setExpense(rs.getInt("expense"))
-						.setMemberCount(rs.getInt("member_count"))
-						.setMemberTypeId(rs.getInt("member_type_id"))
-						.setLikeCount(rs.getInt("like_count"))
-						.setLikeState(rs.getInt("like_id") > 0 ? true : false)
-						.setPlans(planList)
-						.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
-						.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
+				planner = PlannerDto.builder()
+						.plannerId(rs.getInt("planner_id"))
+						.accountId(rs.getInt("account_id"))
+						.areaCode(rs.getInt("area_code"))
+						.creator(rs.getString("creator"))
+						.title(rs.getString("title"))
+						.planDateStart(rs.getDate("plan_date_start").toLocalDate())
+						.planDateEnd(rs.getDate("plan_date_end").toLocalDate())
+						.expense(rs.getInt("expense"))
+						.memberCount(rs.getInt("member_count"))
+						.memberTypeId(rs.getInt("member_type_id"))
+						.likeCount(rs.getInt("like_count"))
+						.likeState(rs.getInt("like_id") > 0 ? true : false)
+						.plans(planList)
+						.createDate(rs.getTimestamp("create_date").toLocalDateTime())
+						.updateDate(rs.getTimestamp("update_date").toLocalDateTime())
 						.build();
 				
 				planners.put(plannerId, planner);

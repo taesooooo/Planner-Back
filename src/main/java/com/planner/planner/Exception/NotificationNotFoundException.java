@@ -1,6 +1,6 @@
 package com.planner.planner.Exception;
 
-public class NotificationNotFoundException extends Exception {
+public class NotificationNotFoundException extends RuntimeException {
 
 	public NotificationNotFoundException() {
 		super();

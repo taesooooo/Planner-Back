@@ -2,16 +2,11 @@ package com.planner.planner.Controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MimeType;
-import org.springframework.util.MimeTypeUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,7 +32,6 @@ import com.planner.planner.Dto.PasswordDto;
 import com.planner.planner.Dto.PasswordResetkeyDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.UploadFileDto;
-import com.planner.planner.Exception.ForbiddenException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.AuthenticationCodeService;
 import com.planner.planner.Service.EmailService;
@@ -47,7 +41,9 @@ import com.planner.planner.Service.PasswordResetKeyService;
 import com.planner.planner.Service.SENSService;
 import com.planner.planner.Util.RandomCode;
 import com.planner.planner.Util.ResponseMessage;
-import com.planner.planner.Util.UserIdUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/api/users")
@@ -84,7 +80,7 @@ public class AccountController {
 	@PatchMapping(value = "/{accountId}")
 	public ResponseEntity<Object> accountUpdate(@PathVariable int accountId, @RequestBody @Validated(AccountUpdateGroup.class) AccountDto accountDto)
 			throws Exception {
-		if (accountService.accountUpdate(accountDto)) {
+		if (accountService.accountUpdate(accountId, accountDto.getNickname(), accountDto.getPhone())) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "계정 정보 변경을 성공헀습니다."));
 		}
 
@@ -158,9 +154,9 @@ public class AccountController {
 			}
 		}
 		else {
-			AuthenticationCodeDto authCode = new AuthenticationCodeDto.Builder()
-					.setPhone(findEmailDto.getPhone())
-					.setCode(findEmailDto.getCode())
+			AuthenticationCodeDto authCode = AuthenticationCodeDto.builder()
+					.phone(findEmailDto.getPhone())
+					.code(findEmailDto.getCode())
 					.build();
 			boolean check = authenticationCodeService.codeCheck(authCode);
 			if(!check) {

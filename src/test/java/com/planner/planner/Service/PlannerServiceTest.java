@@ -1,7 +1,7 @@
 package com.planner.planner.Service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -15,11 +15,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,10 +40,11 @@ import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Exception.NotFoundPlanner;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.PlannerNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.Impl.PlannerServiceImpl;
 
+@ExtendWith(MockitoExtension.class)
 public class PlannerServiceTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PlannerServiceTest.class);
 	
@@ -63,23 +65,23 @@ public class PlannerServiceTest {
 	@Mock
 	private PlannerDto plannerDto;
 	
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
-		MockitoAnnotations.openMocks(this);
+//		MockitoAnnotations.openMocks(this);
 	}
 
 	@Test
 	public void 새플래너_생성() throws Exception {
 		String testCreator = "test";
 		PlannerDto planner = createBasePlanner();
-		AccountDto creator = new AccountDto.Builder().setAccountId(1).build();
+		AccountDto creator = AccountDto.builder().accountId(1).build();
 		List<AccountDto> users = new ArrayList<AccountDto>();
-		users.add(new AccountDto.Builder().setAccountId(2).build());
+		users.add(AccountDto.builder().accountId(2).build());
 		
 		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(creator, users.get(0));
 		when(planMemberDao.insertPlanMember(anyInt(), anyInt())).thenReturn(0);
 		
-		plannerService.newPlanner(planner);
+		plannerService.newPlanner(1, planner);
 		
 		verify(accountDao, times(1)).findAccountIdByNickName(anyString());
 		verify(planMemberDao, times(1)).insertPlanMember(anyInt(), anyInt());
@@ -87,15 +89,16 @@ public class PlannerServiceTest {
 		verify(notificationDao, times(1)).createNotification(anyInt(), any(NotificationDto.class));
 	}
 	
-	@Test(expected = NotFoundUserException.class)
+	@Test
 	public void 새플래너_생성_추가한멤버중사용자가없을때() throws Exception {
 		String testCreatorEmail = "test@naver.com";
 		PlannerDto planner = createBasePlanner();
-		AccountDto creator = new AccountDto.Builder().setAccountId(1).build();
+		AccountDto creator = AccountDto.builder().accountId(1).build();
 		
 		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(null);
 		
-		plannerService.newPlanner(planner);
+		assertThatThrownBy(() -> plannerService.newPlanner(1, planner))
+				.isExactlyInstanceOf(UserNotFoundException.class);
 		
 		verify(accountDao).findAccountIdByNickName(anyString());
 	}
@@ -110,27 +113,28 @@ public class PlannerServiceTest {
 		
 		PlannerDto findPlanner = plannerService.findPlannerByPlannerId(accountId, plannerId);
 		
-		assertEquals(planner.getPlannerId(), findPlanner.getPlannerId());
+		assertThat(findPlanner.getPlannerId()).isEqualTo(planner.getPlannerId());
 	}
 	
-	@Test(expected = NotFoundPlanner.class)
+	@Test
 	public void 플래너아이디_플래너조회_만약플래너가_없을때() throws Exception {
-		Integer accountId = null;
-		int plannerId = 0;
+		Integer accountId = 1;
+		int plannerId = 1;
 		PlannerDto planner = createPlanner(1);
 		
-		when(plannerDao.findPlannerByPlannerId(any(Integer.class), anyInt())).thenReturn(null);
+		when(plannerDao.findPlannerByPlannerId(any(Integer.	class), anyInt())).thenReturn(null);
 		
-		PlannerDto findPlanner = plannerService.findPlannerByPlannerId(accountId, plannerId);
+		assertThatThrownBy(() -> plannerService.findPlannerByPlannerId(accountId, plannerId))
+				.isExactlyInstanceOf(PlannerNotFoundException.class);
 
 	}
 	
 	@Test
 	public void 계정_모든_플래너_가져오기() throws Exception {
-		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setSortCriteria(SortCriteria.LATEST)
-				.setPageNum(1)
+		CommonRequestParamDto paramDto = CommonRequestParamDto.builder()
+				.itemCount(10)
+				.sortCriteria(SortCriteria.LATEST)
+				.pageNum(1)
 				.build();
 		
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
@@ -154,11 +158,11 @@ public class PlannerServiceTest {
 	
 	@Test
 	public void 계정_모든_플래너_가져오기_키워드() throws Exception {
-		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setSortCriteria(SortCriteria.LATEST)
-				.setKeyword("테스트")
-				.setPageNum(1)
+		CommonRequestParamDto paramDto = CommonRequestParamDto.builder()
+				.itemCount(10)
+				.sortCriteria(SortCriteria.LATEST)
+				.keyword("테스트")
+				.pageNum(1)
 				.build();
 		
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
@@ -182,10 +186,10 @@ public class PlannerServiceTest {
 	
 	@Test
 	public void 모든플래너조회() throws Exception {
-		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setSortCriteria(SortCriteria.LATEST)
-				.setPageNum(1)
+		CommonRequestParamDto paramDto = CommonRequestParamDto.builder()
+				.itemCount(10)
+				.sortCriteria(SortCriteria.LATEST)
+				.pageNum(1)
 				.build();
 		
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
@@ -209,11 +213,11 @@ public class PlannerServiceTest {
 	
 	@Test
 	public void 모든플래너조회_키워드() throws Exception {
-		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setSortCriteria(SortCriteria.LATEST)
-				.setKeyword("테스트")
-				.setPageNum(1)
+		CommonRequestParamDto paramDto = CommonRequestParamDto.builder()
+				.itemCount(10)
+				.sortCriteria(SortCriteria.LATEST)
+				.keyword("테스트")
+				.pageNum(1)
 				.build();
 		
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
@@ -236,10 +240,10 @@ public class PlannerServiceTest {
 	
 	@Test
 	public void 좋아요_플래너_모두_조회() throws Exception {
-		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setSortCriteria(SortCriteria.LATEST)
-				.setPageNum(1)
+		CommonRequestParamDto paramDto = CommonRequestParamDto.builder()
+				.itemCount(10)
+				.sortCriteria(SortCriteria.LATEST)
+				.pageNum(1)
 				.build();
 		
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
@@ -263,11 +267,11 @@ public class PlannerServiceTest {
 	
 	@Test
 	public void 좋아요_플래너_모두_조회_키워드() throws Exception {
-		CommonRequestParamDto paramDto = new CommonRequestParamDto.Builder()
-				.setItemCount(10)
-				.setSortCriteria(SortCriteria.LATEST)
-				.setKeyword("테스트")
-				.setPageNum(1)
+		CommonRequestParamDto paramDto = CommonRequestParamDto.builder()
+				.itemCount(10)
+				.sortCriteria(SortCriteria.LATEST)
+				.keyword("테스트")
+				.pageNum(1)
 				.build();
 		
 		List<PlannerDto> planners = new ArrayList<PlannerDto>();
@@ -291,51 +295,51 @@ public class PlannerServiceTest {
 	
 	
 	private PlanMemoDto createPlanMemo(int memoId, String title, String content, int plannerId, LocalDateTime create, LocalDateTime update) {
-		return new PlanMemoDto.Builder()
-				.setMemoId(memoId)
-				.setTitle(title)
-				.setContent(content)
-				.setCreateDate(create)
-				.setUpdateDate(update)
+		return PlanMemoDto.builder()
+				.memoId(memoId)
+				.title(title)
+				.content(content)
+				.createDate(create)
+				.updateDate(update)
 				.build();
 	}
 	
 	private PlanLocationDto createPlanLocation() {
-		return new PlanLocationDto.Builder()
-				.setLocationId(1)
-				.setLocationContentId(1000)
-				.setLocationName("바다")
-				.setLocationImage("바다사진")
-				.setLocationAddr("바다주소")
-				.setLocationMapx(111.111f)
-				.setLocationMapy(111.111f)
-				.setLocationTransportation(1)
-				.setPlanId(1)
+		return PlanLocationDto.builder()
+				.locationId(1)
+				.locationContentId(1000)
+				.locationName("바다")
+				.locationImage("바다사진")
+				.locationAddr("바다주소")
+				.locationMapx(111.111f)
+				.locationMapy(111.111f)
+				.locationTransportation(1)
+				.planId(1)
 				.build();
 	}
 	
 	private PlanDto createPlan(int planId, LocalDate planDate ,List<PlanLocationDto> locations, int plannerId ) {
-		return new PlanDto.Builder()
-				.setPlanId(planId)
-				.setPlanDate(planDate)
-				.setPlanLocations(locations)
-				.setPlannerId(plannerId)
+		return PlanDto.builder()
+				.planId(planId)
+				.planDate(planDate)
+				.planLocations(locations)
+				.plannerId(plannerId)
 				.build();
 	}
 	
 	private PlannerDto createBasePlanner() {
 		List<String> memberEmails = new ArrayList<String>();
 		memberEmails.add("test2@naver.com");
-		PlannerDto planner = new PlannerDto.Builder()
-				.setAccountId(1)
-				.setCreator("test")
-				.setTitle("테스트여행")
-				.setPlanDateStart(LocalDate.of(2023, 1, 29))
-				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
-				.setExpense(1000)
-				.setMemberCount(1)
-				.setMemberTypeId(1)
-				.setPlanMembers(memberEmails)
+		PlannerDto planner = PlannerDto.builder()
+				.accountId(1)
+				.creator("test")
+				.title("테스트여행")
+				.planDateStart(LocalDate.of(2023, 1, 29))
+				.planDateEnd(LocalDate.of(2023, 1, 31))
+				.expense(1000)
+				.memberCount(1)
+				.memberTypeId(1)
+				.planMembers(memberEmails)
 				.build();
 		return planner;
 	}
@@ -345,29 +349,29 @@ public class PlannerServiceTest {
 		List<String> memberEmails = new ArrayList<String>();
 		memberEmails.add("test2@naver.com");
 		List<PlanLocationDto> planLocations = new ArrayList<PlanLocationDto>();
-		//planLocations.add(new PlanLocationDto.Builder().setLocationId(1).setLocationContentId(1000).setLocationName("바다").setLocationImage("").setLocationTransportation(1).setPlanId(1).build());
+		//planLocations.add(PlanLocationDto.builder().locationId(1).locationContentId(1000).locationName("바다").locationImage("").locationTransportation(1).planId(1).build());
 		planLocations.add(createPlanLocation());
 		planLocations.add(createPlanLocation());
 		planLocations.add(createPlanLocation());
 		
 		List<PlanDto> plans = new ArrayList<PlanDto>();
-		plans.add(new PlanDto.Builder().setPlanId(1).setPlanLocations(planLocations).setPlannerId(plannerId).build());
+		plans.add(PlanDto.builder().planId(1).planLocations(planLocations).plannerId(plannerId).build());
 		
-		PlannerDto planner = new PlannerDto.Builder()
-				.setPlannerId(plannerId)
-				.setAccountId(1)
-				.setCreator("test")
-				.setTitle("테스트여행")
-				.setPlanDateStart(LocalDate.of(2023, 1, 29))
-				.setPlanDateEnd(LocalDate.of(2023, 1, 31))
-				.setExpense(1000)
-				.setMemberCount(1)
-				.setMemberTypeId(1)
-				.setPlanMembers(memberEmails)
-				.setPlans(plans)
-				.setLikeCount(0)
-				.setCreateDate(LocalDateTime.of(2023, 1, 29, 00, 00))
-				.setUpdateDate(LocalDateTime.of(2023, 1, 29, 00, 00))
+		PlannerDto planner = PlannerDto.builder()
+				.plannerId(plannerId)
+				.accountId(1)
+				.creator("test")
+				.title("테스트여행")
+				.planDateStart(LocalDate.of(2023, 1, 29))
+				.planDateEnd(LocalDate.of(2023, 1, 31))
+				.expense(1000)
+				.memberCount(1)
+				.memberTypeId(1)
+				.planMembers(memberEmails)
+				.plans(plans)
+				.likeCount(0)
+				.createDate(LocalDateTime.of(2023, 1, 29, 00, 00))
+				.updateDate(LocalDateTime.of(2023, 1, 29, 00, 00))
 				.build();
 		
 		return planner;

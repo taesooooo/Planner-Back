@@ -2,6 +2,7 @@ package com.planner.planner.Dao;
 
 import java.util.List;
 
+import com.planner.planner.Common.Security.UserIdentifierDao;
 import com.planner.planner.Dto.PlanMemoDto;
 
 public interface PlanMemoDao {

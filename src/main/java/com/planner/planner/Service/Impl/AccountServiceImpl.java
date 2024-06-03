@@ -16,7 +16,6 @@ import com.planner.planner.Common.Page;
 import com.planner.planner.Common.Notification.NotificationMessage;
 import com.planner.planner.Common.Notification.NotificationType;
 import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dao.NotificationDao;
 import com.planner.planner.Dao.PasswordResetKeyDao;
 import com.planner.planner.Dao.PlanMemberDao;
@@ -28,7 +27,7 @@ import com.planner.planner.Dto.FindEmailDto;
 import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.PlannerService;
 import com.planner.planner.Service.SpotService;
@@ -68,7 +67,7 @@ public class AccountServiceImpl implements AccountService {
 	public AccountDto findById(int accountId) throws Exception {
 		AccountDto user = accountDao.findById(accountId);
 		if(user == null) {
-			throw new NotFoundUserException();
+			throw new UserNotFoundException();
 		}
 		return user;
 	}
@@ -77,7 +76,7 @@ public class AccountServiceImpl implements AccountService {
 	public List<String> findEmailByPhone(String phone) throws Exception {
 		List<String> emails = accountDao.findEmailByPhone(phone);
 		if(emails.isEmpty()) {
-			throw new NotFoundUserException("해당 정보로 가입된 계정이 없습니다.");
+			throw new UserNotFoundException("해당 정보로 가입된 계정이 없습니다.");
 		}
 		return emails;
 	}
@@ -86,7 +85,7 @@ public class AccountServiceImpl implements AccountService {
 	public AccountDto findByEmail(String email) throws Exception {
 		AccountDto user = accountDao.findByEmail(email);
 		if(user == null) {
-			throw new NotFoundUserException();
+			throw new UserNotFoundException();
 		}
 		return user;
 	}
@@ -95,17 +94,17 @@ public class AccountServiceImpl implements AccountService {
 	public AccountDto findByNameAndPhone(String name, String phone) throws Exception {
 		List<AccountDto> users = accountDao.findByNameAndPhone(name, phone);
 		if(users.isEmpty()) {
-			throw new NotFoundUserException("해당하는 정보로 가입된 아이디가 존재하지 않습니다.");
+			throw new UserNotFoundException("해당하는 정보로 가입된 아이디가 존재하지 않습니다.");
 		}
 		
 		return users.get(0);
 	}
 
 	@Override
-	public boolean accountUpdate(AccountDto accountDto) throws Exception {
-		return accountDao.update(accountDto);
+	public boolean accountUpdate(int accountId, String nickname, String phone) throws Exception {
+		return accountDao.update(accountId, nickname, phone);
 	}
-
+	
 	@Override
 	public boolean accountImageUpdate(int accountId, MultipartFile image) throws Exception {
 		// 이미지 경로 생성
@@ -137,10 +136,10 @@ public class AccountServiceImpl implements AccountService {
 		
 		passwordResetKeyDao.deleteByResetKey(key);
 		
-		NotificationDto notification = new NotificationDto.Builder()
-				.setAccountId(accountId)
-				.setContent(NotificationMessage.PASSWORD_UPDATE)
-				.setNotificationType(NotificationType.ACCOUNT)
+		NotificationDto notification = NotificationDto.builder()
+				.accountId(accountId)
+				.content(NotificationMessage.PASSWORD_UPDATE)
+				.notificationType(NotificationType.ACCOUNT)
 				.build();
 		
 		notificationDao.createNotification(accountId, notification);
@@ -150,7 +149,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public Page<PlannerDto> myPlanners(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
-		return plannerService.findPlannersByAccountId(accountId, commonRequestParamDto); 
+		return plannerService.findPlannersByAccountId(accountId, commonRequestParamDto);
 	}
 
 	@Override
@@ -167,7 +166,7 @@ public class AccountServiceImpl implements AccountService {
 	public boolean searchEmail(String searchEmail) throws Exception {
 		AccountDto user = accountDao.searchEmail(searchEmail);
 		if(user == null) {
-			throw new NotFoundUserException(searchEmail + "는 존재하지 않습니다. 확인 후 다시 시도하세요.");
+			throw new UserNotFoundException(searchEmail + "는 존재하지 않습니다. 확인 후 다시 시도하세요.");
 		}
 		return true;
 	}
@@ -176,7 +175,7 @@ public class AccountServiceImpl implements AccountService {
 	public List<String> findId(FindEmailDto findEmailDto) throws Exception {
 		List<AccountDto> users = accountDao.findByNameAndPhone(findEmailDto.getUserName(), findEmailDto.getPhone());
 		if(users.isEmpty()) {
-			throw new NotFoundUserException("해당하는 정보로 가입된 아이디가 존재하지 않습니다.");
+			throw new UserNotFoundException("해당하는 정보로 가입된 아이디가 존재하지 않습니다.");
 		}
 		
 		List<String> userEmails = users.stream().map((item) -> item.getEmail()).collect(Collectors.toList());

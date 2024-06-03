@@ -11,14 +11,14 @@ public class CommentRowMapper implements RowMapper<CommentDto> {
 
 	@Override
 	public CommentDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new CommentDto.Builder()
-				.setCommentId(rs.getInt("comment_id"))
-				.setReviewId(rs.getInt("review_id"))
-				.setWriterId(rs.getInt("writer_id"))
-				.setWriter(rs.getString("writer"))
-				.setContent(rs.getString("content"))
-				.setCreateDate(rs.getTimestamp("create_date").toLocalDateTime())
-				.setUpdateDate(rs.getTimestamp("update_date").toLocalDateTime())
+		return CommentDto.builder()
+				.commentId(rs.getInt("comment_id"))
+				.reviewId(rs.getInt("review_id"))
+				.writerId(rs.getInt("writer_id"))
+				.writer(rs.getString("writer"))
+				.content(rs.getString("content"))
+				.createDate(rs.getTimestamp("create_date").toLocalDateTime())
+				.updateDate(rs.getTimestamp("update_date").toLocalDateTime())
 				.build();
 	}
 

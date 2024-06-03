@@ -1,21 +1,14 @@
 package com.planner.planner;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.planner.planner.Common.Page;
-import com.planner.planner.Common.PageInfo;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class RegularExpressionTest {
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 	}
 

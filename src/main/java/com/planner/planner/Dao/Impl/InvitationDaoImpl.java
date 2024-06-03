@@ -16,7 +16,7 @@ public class InvitationDaoImpl implements InvitationDao {
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	
 	private static final String INSERT_INVITATION_SQL = "INSERT INTO invitation(account_id, planner_id, invite_date, expire_date) VALUES "
-			+ "(:accountId, :plannerId, NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY));";
+			+ "(:accountId, :plannerId, NOW(), TIMESTAMPADD(DAY, 7, NOW()));";
 	private static final String SELECT_BY_ID_INVITATION_SQL = "SELECT id, account_id, planner_id, invite_date, expire_date FROM invitation WHERE id = :id;";
 	private static final String DELETE_BY_ID_INVITATION_SQL = "DELETE FROM invitation WHERE id = :id;";
 	
@@ -31,7 +31,7 @@ public class InvitationDaoImpl implements InvitationDao {
 				.addValue("accountId", invitationDto.getAccountId())
 				.addValue("plannerId", invitationDto.getPlannerId());
 		
-		namedParameterJdbcTemplate.update(INSERT_INVITATION_SQL, mapSqlParameterSource, keyHolder, new String[] {"inviteId"});
+		namedParameterJdbcTemplate.update(INSERT_INVITATION_SQL, mapSqlParameterSource, keyHolder, new String[] {"id"});
 		
 		return keyHolder.getKey().intValue();
 	}

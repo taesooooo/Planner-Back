@@ -1,6 +1,6 @@
 package com.planner.planner.Service;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 public interface EmailService {
 	public boolean sendAuthenticationCode(String to, String code) throws Exception;

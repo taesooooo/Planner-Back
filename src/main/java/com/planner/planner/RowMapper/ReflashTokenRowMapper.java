@@ -11,10 +11,10 @@ public class ReflashTokenRowMapper implements RowMapper<RefreshTokenDto>{
 
 	@Override
 	public RefreshTokenDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new RefreshTokenDto.Builder()
-				.setId(rs.getInt("id"))
-				.setEmail(rs.getString("email"))
-				.setToken(rs.getString("token"))
+		return RefreshTokenDto.builder()
+				.id(rs.getInt("id"))
+				.email(rs.getString("email"))
+				.token(rs.getString("token"))
 				.build();
 	}
 

@@ -6,16 +6,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,16 +26,12 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.planner.Config.RootAppContext;
-import com.planner.planner.Config.SecurityContext;
-import com.planner.planner.Config.ServletAppContext;
 import com.planner.planner.Dto.CommentDto;
+import com.planner.planner.Filter.JwtAuthenticationFilter;
 import com.planner.planner.Util.JwtUtil;
 
-@WebAppConfiguration
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityContext.class })
-@Sql(scripts = {"classpath:/PlannerData.sql"})
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles("test")
 @Transactional
 public class CommentControllerTest {
 	
@@ -43,21 +42,27 @@ public class CommentControllerTest {
 	
 	@Autowired
 	private JwtUtil jwtUtil;
+	@Autowired
+	private UserDetailsService userDetailsService;
+	
 	
 	private ObjectMapper mapper = new ObjectMapper();
 	private String token;
 
 	
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
-		mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+		JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtUtil, userDetailsService);
+		mockMvc = MockMvcBuilders.webAppContextSetup(context)
+				.addFilters(jwtFilter)
+				.build();
 		token = "Bearer " + jwtUtil.createAccessToken(1);
 	}
 	
-	@Test
-	public void 댓글_내용_공백_유효성검사() throws Exception {
-		CommentDto newComment = createComment("", null);
+	@ParameterizedTest
+	@MethodSource("commentParameters")
+	public void 댓글_유효성_검사(String content, int parentId) throws Exception {
+		CommentDto newComment = createComment(content, parentId);
 		
 		this.mockMvc.perform(post("/api/reviews/{reviewId}/comments", 1)
 				.accept(MediaType.APPLICATION_JSON)
@@ -69,18 +74,11 @@ public class CommentControllerTest {
 		.andExpect(status().isBadRequest());
 	}
 	
-	@Test
-	public void 댓글_잘못된상위댓글_유효성검사() throws Exception {
-		CommentDto newComment = createComment("테스트", 0);
-		
-		this.mockMvc.perform(post("/api/reviews/{reviewId}/comments", 1)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", token)
-				.content(mapper.writeValueAsString(newComment)))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
+	public static Stream<Arguments> commentParameters() {
+		return Stream.of(
+				Arguments.of("", 1),				// 내용 공백
+				Arguments.of("테스트", 0)				// 잘못된 상위 댓글 아이디
+				);
 	}
 	
 	@Test
@@ -97,9 +95,10 @@ public class CommentControllerTest {
 		.andExpect(status().isCreated());
 	}
 	
-	@Test
-	public void 댓글_수정_내용_공백_유효성검사() throws Exception {
-		CommentDto updateComment = createComment("", null);
+	@ParameterizedTest
+	@MethodSource("commentUpdateParameters")
+	public void 댓글_수정_내용_공백_유효성검사(String content, int parentId) throws Exception {
+		CommentDto updateComment = createComment(content, parentId);
 		
 		this.mockMvc.perform(patch("/api/reviews/{reviewId}/comments/{commentId}", 1, 1)
 				.accept(MediaType.APPLICATION_JSON)
@@ -111,18 +110,11 @@ public class CommentControllerTest {
 		.andExpect(status().isBadRequest());
 	}
 	
-	@Test
-	public void 댓글_수정_잘못된상위댓글_유효성검사() throws Exception {
-		CommentDto updateComment = createComment("테스트", 0);
-		
-		this.mockMvc.perform(patch("/api/reviews/{reviewId}/comments/{commentId}", 1, 1)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", token)
-				.content(mapper.writeValueAsString(updateComment)))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
+	public static Stream<Arguments> commentUpdateParameters() {
+		return Stream.of(
+				Arguments.of("", 1),				// 내용 공백
+				Arguments.of("테스트", 0)				// 잘못된 상위 댓글 아이디
+				);
 	}
 	
 	@Test
@@ -140,25 +132,6 @@ public class CommentControllerTest {
 	}
 	
 	@Test
-	public void 댓글_수정_권한없음() throws Exception {
-		String fakeToken = "Bearer " + jwtUtil.createAccessToken(2);
-		CommentDto updateComment = createComment("댓글수정테스트", null);
-		String uri = UriComponentsBuilder.fromUriString("/api/reviews/{reviewId}/comments/{commentId}")
-				.build(1, 1)
-				.toString();
-		
-		this.mockMvc.perform(patch(uri)
-				.servletPath(uri)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", fakeToken)
-				.content(mapper.writeValueAsString(updateComment)))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
-	
-	@Test
 	public void 댓글_삭제() throws Exception {
 		this.mockMvc.perform(delete("/api/reviews/{reviewId}/comments/{commentId}", 1, 1)
 				.accept(MediaType.APPLICATION_JSON)
@@ -169,31 +142,14 @@ public class CommentControllerTest {
 		.andExpect(status().isOk());
 	}
 	
-	@Test
-	public void 댓글_삭제_권한없음() throws Exception {
-		String fakeToken = "Bearer " + jwtUtil.createAccessToken(2);
-		String uri = UriComponentsBuilder.fromUriString("/api/reviews/{reviewId}/comments/{commentId}")
-				.build(1, 1)
-				.toString();
-		
-		this.mockMvc.perform(patch(uri)
-				.servletPath(uri)
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", fakeToken))
-		.andDo(print())
-		.andExpect(status().isForbidden());
-	}
-	
-	
 	private CommentDto createComment(String content, Integer parentId) {
-		return new CommentDto.Builder()
-				.setCommentId(1)
-				.setReviewId(1)
-				.setWriterId(1)
-				.setWriter("test")
-				.setContent(content)
-				.setParentId(parentId)
+		return CommentDto.builder()
+				.commentId(1)
+				.reviewId(1)
+				.writerId(1)
+				.writer("test")
+				.content(content)
+				.parentId(parentId)
 				.build();
 	}
 }

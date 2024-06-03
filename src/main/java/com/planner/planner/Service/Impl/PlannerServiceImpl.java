@@ -3,7 +3,6 @@ package com.planner.planner.Service.Impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +21,8 @@ import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.InvitationDto;
 import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.Exception.NotFoundPlanner;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.PlannerNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Service.PlannerService;
 
 @Service
@@ -42,9 +41,9 @@ public class PlannerServiceImpl implements PlannerService {
 		this.invitationDao = invitationDao;
 		this.notificationDao = notificationDao;
 	}
-
+	
 	@Override
-	public int newPlanner(PlannerDto plannerDto) throws Exception {
+	public int newPlanner(int accountId, PlannerDto plannerDto) throws Exception {
 		// 플래너 생성
 		int plannerId = plannerDao.insertPlanner(plannerDto);
 
@@ -54,7 +53,7 @@ public class PlannerServiceImpl implements PlannerService {
 		for (String nickName : memberNickNames) {
 			AccountDto user = accountDao.findAccountIdByNickName(nickName);
 			if (user == null) {
-				throw new NotFoundUserException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
+				throw new UserNotFoundException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
 			}
 			users.add(user);
 		}
@@ -65,17 +64,17 @@ public class PlannerServiceImpl implements PlannerService {
 		// 초대
 		for (AccountDto user : users) {
 			// 생성자를 제외한 초대자들에게만 초대 및 알림 생성
-			InvitationDto invitation = new InvitationDto.Builder()
-					.setAccountId(user.getAccountId())
-					.setPlannerId(plannerId).build();
+			InvitationDto invitation = InvitationDto.builder()
+					.accountId(user.getAccountId())
+					.plannerId(plannerId).build();
 
 			int inviteId = invitationDao.createInvitation(invitation);
 
-			NotificationDto notificationDto = new NotificationDto.Builder()
-					.setAccountId(user.getAccountId())
-					.setContent(String.format(NotificationMessage.PLANNER_INVAITE, plannerDto.getCreator()))
-					.setLink(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
-					.setNotificationType(NotificationType.PLANNER_INVITE).build();
+			NotificationDto notificationDto = NotificationDto.builder()
+					.accountId(user.getAccountId())
+					.content(String.format(NotificationMessage.PLANNER_INVAITE, plannerDto.getCreator()))
+					.link(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
+					.notificationType(NotificationType.PLANNER_INVITE).build();
 			
 			notificationDao.createNotification(user.getAccountId(), notificationDto);
 
@@ -88,7 +87,7 @@ public class PlannerServiceImpl implements PlannerService {
 	public PlannerDto findPlannerByPlannerId(Integer accountId, int plannerId) throws Exception {
 		PlannerDto planner = plannerDao.findPlannerByPlannerId(accountId, plannerId);
 		if (planner == null) {
-			throw new NotFoundPlanner("존재하지 않는 플래너 입니다.");
+			throw new PlannerNotFoundException("존재하지 않는 플래너 입니다.");
 		}
 		return planner;
 	}
@@ -142,7 +141,6 @@ public class PlannerServiceImpl implements PlannerService {
 		return plannerListPage;
 	}
 	
-
 	@Override
 	public Page<PlannerDto> getLikePlannerList(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		PageInfo pInfo = new PageInfo.Builder()

@@ -2,8 +2,6 @@ package com.planner.planner.Service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -12,11 +10,12 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.planner.planner.Dao.AccountDao;
@@ -25,12 +24,13 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.LoginInfoDto;
 import com.planner.planner.Dto.RefreshTokenDto;
 import com.planner.planner.Dto.ReissueTokenDto;
-import com.planner.planner.Exception.NotFoundToken;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.TokenNotFoundException;
+import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Exception.PasswordCheckFailException;
 import com.planner.planner.Service.Impl.AuthServiceImpl;
 import com.planner.planner.Util.JwtUtil;
 
+@ExtendWith(MockitoExtension.class)
 public class AuthServiceTest {
 	@Mock
 	private AccountDao accountDao;
@@ -43,9 +43,9 @@ public class AuthServiceTest {
 	@InjectMocks
 	private AuthServiceImpl authService;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		 MockitoAnnotations.openMocks(this);
+//		 MockitoAnnotations.openMocks(this);
 	}
 	
 	@Test
@@ -56,7 +56,7 @@ public class AuthServiceTest {
 		
 		boolean user = authService.register(newTestUser);
 		
-		assertTrue(user);
+		assertThat(user).isTrue();
 	}
 	
 	@Test
@@ -64,22 +64,22 @@ public class AuthServiceTest {
 		AccountDto newTestUser = createUser(1);
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
-		RefreshTokenDto refreshTokenDto = new RefreshTokenDto.Builder()
-				.setEmail("test@naver.com")
-				.setId(1)
-				.setToken("testRefershToken")
+		RefreshTokenDto refreshTokenDto = RefreshTokenDto.builder()
+				.email("test@naver.com")
+				.id(1)
+				.token("testRefershToken")
 				.build();
 		
-		LoginInfoDto testLoginInfo = new LoginInfoDto.Builder()
-				.setUser(newTestUser)
-				.setAccessToken(accessToken)
-				.setReflashToken(refreshToken)
+		LoginInfoDto testLoginInfo = LoginInfoDto.builder()
+				.user(newTestUser)
+				.accessToken(accessToken)
+				.refreshToken(refreshToken)
 				.build();
 		
 		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(accessToken);
-		when(jwtUtil.createReflashToken()).thenReturn(refreshToken);
+		when(jwtUtil.createRefreshToken()).thenReturn(refreshToken);
 		when(refreshTokenDao.findByEmail(anyString())).thenReturn(refreshTokenDto);
 		
 		LoginInfoDto user = authService.login(newTestUser);
@@ -105,10 +105,10 @@ public class AuthServiceTest {
 	public void 로그인_아이디_없는경우() throws Exception {
 		AccountDto newTestUser = createUser(1);
 		
-		when(accountDao.read(any())).thenReturn(null);
+		when(accountDao.findByEmail(anyString())).thenReturn(null);
 
 		assertThatThrownBy(() -> authService.login(newTestUser))
-			.isInstanceOf(NotFoundUserException.class);
+			.isInstanceOf(UserNotFoundException.class);
 	}
 	
 	@Test
@@ -117,16 +117,16 @@ public class AuthServiceTest {
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
 		
-		LoginInfoDto testLoginInfo = new LoginInfoDto.Builder()
-				.setUser(newTestUser)
-				.setAccessToken(accessToken)
-				.setReflashToken(refreshToken)
+		LoginInfoDto testLoginInfo = LoginInfoDto.builder()
+				.user(newTestUser)
+				.accessToken(accessToken)
+				.refreshToken(refreshToken)
 				.build();
 		
 		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(accessToken);
-		when(jwtUtil.createReflashToken()).thenReturn(refreshToken);
+		when(jwtUtil.createRefreshToken()).thenReturn(refreshToken);
 		when(refreshTokenDao.findByEmail(anyString())).thenReturn(null);
 		
 		LoginInfoDto user = authService.login(newTestUser);
@@ -143,22 +143,22 @@ public class AuthServiceTest {
 		AccountDto newTestUser = createUser(1);
 		String accessToken = "accessToken";
 		String refreshToken = "refreshToken";
-		RefreshTokenDto refreshTokenDto = new RefreshTokenDto.Builder()
-				.setEmail("test@naver.com")
-				.setId(1)
-				.setToken("testRefershToken")
+		RefreshTokenDto refreshTokenDto = RefreshTokenDto.builder()
+				.email("test@naver.com")
+				.id(1)
+				.token("testRefershToken")
 				.build();
 		
-		LoginInfoDto testLoginInfo = new LoginInfoDto.Builder()
-				.setUser(newTestUser)
-				.setAccessToken(accessToken)
-				.setReflashToken(refreshToken)
+		LoginInfoDto testLoginInfo = LoginInfoDto.builder()
+				.user(newTestUser)
+				.accessToken(accessToken)
+				.refreshToken(refreshToken)
 				.build();
 		
 		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(accessToken);
-		when(jwtUtil.createReflashToken()).thenReturn(refreshToken);
+		when(jwtUtil.createRefreshToken()).thenReturn(refreshToken);
 		when(refreshTokenDao.findByEmail(anyString())).thenReturn(refreshTokenDto);
 		
 		LoginInfoDto user = authService.login(newTestUser);
@@ -174,23 +174,23 @@ public class AuthServiceTest {
 	public void 토큰_재발급() throws Exception {
 		AccountDto newTestUser = createUser(1);
 		String testRefreshToken = "testRefreshToken";
-		RefreshTokenDto refreshTokenDto = new RefreshTokenDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setToken("testRefreshToken")
+		RefreshTokenDto refreshTokenDto = RefreshTokenDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.token("testRefreshToken")
 				.build();
 		String newAccessToken = "newAccessToken";
 		String newRefreshToken = "newRefreshToken";
-		ReissueTokenDto tokenDto = new ReissueTokenDto.Builder()
-				.setAccessToken(newAccessToken)
-				.setRefreshToken(newRefreshToken)
+		ReissueTokenDto tokenDto = ReissueTokenDto.builder()
+				.accessToken(newAccessToken)
+				.refreshToken(newRefreshToken)
 				.build();
 		
 		
 		when(refreshTokenDao.findByToken(anyString())).thenReturn(refreshTokenDto);
 		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(newAccessToken);
-		when(jwtUtil.createReflashToken()).thenReturn(newRefreshToken);
+		when(jwtUtil.createRefreshToken()).thenReturn(newRefreshToken);
 		when(refreshTokenDao.update(anyString(), anyString())).thenReturn(true);
 		
 		ReissueTokenDto newTokenDto = authService.reissueToken(testRefreshToken);
@@ -203,10 +203,10 @@ public class AuthServiceTest {
 	@Test
 	public void 토큰_재발급_토큰정보_없는경우() throws Exception {
 		String testRefreshToken = "testRefreshToken";
-		RefreshTokenDto refreshTokenDto = new RefreshTokenDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setToken("testRefreshToken")
+		RefreshTokenDto refreshTokenDto = RefreshTokenDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.token("testRefreshToken")
 				.build();
 		
 		
@@ -214,16 +214,16 @@ public class AuthServiceTest {
 
 
 		assertThatThrownBy(() -> authService.reissueToken(testRefreshToken))
-			.isInstanceOf(NotFoundToken.class);
+			.isInstanceOf(TokenNotFoundException.class);
 	}
 	
 	@Test
 	public void 토큰_재발급_유저_없는경우() throws Exception {
 		String testRefreshToken = "testRefreshToken";
-		RefreshTokenDto refreshTokenDto = new RefreshTokenDto.Builder()
-				.setId(1)
-				.setEmail("test@naver.com")
-				.setToken("testRefreshToken")
+		RefreshTokenDto refreshTokenDto = RefreshTokenDto.builder()
+				.id(1)
+				.email("test@naver.com")
+				.token("testRefreshToken")
 				.build();
 		
 		
@@ -232,20 +232,20 @@ public class AuthServiceTest {
 
 		
 		assertThatThrownBy(() -> authService.reissueToken(testRefreshToken))
-			.isInstanceOf(NotFoundUserException.class);
+			.isInstanceOf(UserNotFoundException.class);
 	}
 	
 	private AccountDto createUser(int accountId) {
-		return new AccountDto.Builder()
-				.setAccountId(accountId)
-				.setEmail("test@naver.com")
-				.setPassword("")
-				.setUsername("test")
-				.setNickname("test")
-				.setPhone("010-1234-1234")
-				.setImage("")
-				.setCreateDate(LocalDateTime.now())
-				.setUpdateDate(LocalDateTime.now())
+		return AccountDto.builder()
+				.accountId(accountId)
+				.email("test@naver.com")
+				.password("")
+				.username("test")
+				.nickname("test")
+				.phone("010-1234-1234")
+				.image("")
+				.createDate(LocalDateTime.now())
+				.updateDate(LocalDateTime.now())
 				.build();
 	}
 }

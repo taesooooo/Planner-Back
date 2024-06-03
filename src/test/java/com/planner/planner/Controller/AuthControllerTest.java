@@ -1,7 +1,6 @@
 package com.planner.planner.Controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -9,41 +8,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import javax.servlet.http.Cookie;
+import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.jayway.jsonpath.JsonPath;
-import com.planner.planner.Config.RootAppContext;
-import com.planner.planner.Config.SecurityContext;
-import com.planner.planner.Config.ServletAppContext;
-import com.planner.planner.Config.ValidationConfig;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.AuthenticationCodeDto;
+import com.planner.planner.Filter.JwtAuthenticationFilter;
 import com.planner.planner.Util.JwtUtil;
 
-@WebAppConfiguration
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { ValidationConfig.class, RootAppContext.class, ServletAppContext.class, SecurityContext.class })
-@Sql(scripts = {"classpath:/PlannerData.sql"})
-@Transactional
+import jakarta.servlet.http.Cookie;
+
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles("test")
+//@Transactional
 public class AuthControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(AuthControllerTest.class);
 
@@ -51,241 +48,31 @@ public class AuthControllerTest {
 	private WebApplicationContext context;
 	@Autowired
 	private JwtUtil jwtUtil;
+	@Autowired
+	private UserDetailsService userDetailsService;
 	
 	private MockMvc mockMvc;
 
 	private ObjectMapper mapper = new ObjectMapper();
 
-	@Before
+	@BeforeEach
 	public void setUp() {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+		JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtUtil, userDetailsService);
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+				.addFilter(jwtFilter)
+				.build();
 	}
 	
 	@Test
-	public void 회원가입_이메일_미작성_유효성검사() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("")
-				.setPassword("testtest!")
-				.setUsername("test0")
-				.setNickname("test0")
-				.setPhone("01012345678")
-				.build();
-		
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUsername());
-		node.put("nickname", testDto.getNickname());
-		node.put("phone", testDto.getPhone());
-
-		mockMvc.perform(post("/api/auth/register")
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 회원가입_이메일_잘못된형식_유효성검사() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("test!")
-				.setPassword("testtest!")
-				.setUsername("test0")
-				.setNickname("test0")
-				.setPhone("01012345678")
-				.build();
-		
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUsername());
-		node.put("nickname", testDto.getNickname());
-		node.put("phone", testDto.getPhone());
-
-		mockMvc.perform(post("/api/auth/register")
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 회원가입_비밀번호_미작성_유효성검사() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("test4@naver.com")
-				.setPassword("")
-				.setUsername("test0")
-				.setNickname("test0")
-				.setPhone("01012345678")
-				.build();
-		
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUsername());
-		node.put("nickname", testDto.getNickname());
-		node.put("phone", testDto.getPhone());
-
-		mockMvc.perform(post("/api/auth/register")
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 회원가입_비밀번호_유효성검사() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("test4@naver.com")
-				.setPassword("test!")
-				.setUsername("test0")
-				.setNickname("test0")
-				.setPhone("01012345678")
-				.build();
-		
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUsername());
-		node.put("nickname", testDto.getNickname());
-		node.put("phone", testDto.getPhone());
-
-		mockMvc.perform(post("/api/auth/register")
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 회원가입_이름_미작성_유효성검사() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("test4@naver.com")
-				.setPassword("testtest!")
-				.setUsername("")
-				.setNickname("test0")
-				.setPhone("01012345678")
-				.build();
-		
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUsername());
-		node.put("nickname", testDto.getNickname());
-		node.put("phone", testDto.getPhone());
-
-		mockMvc.perform(post("/api/auth/register")
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 회원가입_닉네임_미작성_유효성검사() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("test4@naver.com")
-				.setPassword("testtest!")
-				.setUsername("test0")
-				.setNickname("")
-				.setPhone("01012345678")
-				.build();
-		
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUsername());
-		node.put("nickname", testDto.getNickname());
-		node.put("phone", testDto.getPhone());
-
-		mockMvc.perform(post("/api/auth/register")
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 회원가입_휴대폰번호_번호수_초과_유효성검사() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("test4@naver.com")
-				.setPassword("testtest!")
-				.setUsername("")
-				.setNickname("test0")
-				.setPhone("11111111111111")
-				.build();
-		
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUsername());
-		node.put("nickname", testDto.getNickname());
-		node.put("phone", testDto.getPhone());
-
-		mockMvc.perform(post("/api/auth/register")
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 회원가입_이메일_인증_안된경우() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("testtest@naver.com")
-				.setPassword("testtest!")
-				.setUsername("test0")
-				.setNickname("test0")
-				.setPhone("01012345678")
-				.build();
-		
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUsername());
-		node.put("nickname", testDto.getNickname());
-		node.put("phone", testDto.getPhone());
-
-		mockMvc.perform(post("/api/auth/register")
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-
-	@Test
+	@DisplayName("회원가입 성공")
 	public void 회원가입() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("test4@naver.com")
-				.setPassword("testtest!")
-				.setUsername("test0")
-				.setNickname("test0")
-				.setPhone("01012345678")
+		AccountDto testDto = AccountDto.builder()
+				.accountId(0)
+				.email("test4@naver.com")
+				.password("testtest!")
+				.username("test0")
+				.nickname("test0")
+				.phone("01012345678")
 				.build();
 		
 		ObjectNode node = mapper.createObjectNode();
@@ -304,15 +91,17 @@ public class AuthControllerTest {
 		.andExpect(status().isCreated());
 	}
 	
-	@Test
-	public void 로그인_이메일_미작성_유효성검사() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("")
-				.setPassword("testtest!")
-				.setUsername("test0")
-				.setNickname("test0")
-				.setPhone("01012345678")
+	@ParameterizedTest
+	@MethodSource("registerParameters")
+	@DisplayName("회원가입 유효성 검사")
+	public void 회원가입_유효성_검사(String email, String pw, String username, String nickname, String phone) throws Exception{
+		AccountDto testDto = AccountDto.builder()
+				.accountId(0)
+				.email(email)
+				.password(pw)
+				.username(username)
+				.nickname(nickname)
+				.phone(phone)
 				.build();
 		
 		ObjectNode node = mapper.createObjectNode();
@@ -322,6 +111,63 @@ public class AuthControllerTest {
 		node.put("username",testDto.getUsername());
 		node.put("nickname", testDto.getNickname());
 		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	// 회원가임 유효성 검사 데이터
+	public static Stream<Arguments> registerParameters() {
+		return Stream.of(
+				Arguments.of("", "testtest!", "test0", "test0", "01012345678"), 		// 이메일 미작성
+				Arguments.of("test12", "testtest!", "test0", "test0", "01012345678"), 	// 이메일 잘못된 형식
+				Arguments.of("test12", "", "test0", "test0", "01012345678"),			// 비밀번호 미작성
+				Arguments.of("test12", "test!", "test0", "test0", "01012345678"),		// 비밀번호 잘못된 형식
+				Arguments.of("test12", "test!", "", "test0", "01012345678"),			// 이름 미작성
+				Arguments.of("test12", "test!", "test0", "", "01012345678"),			// 닉네임 미작성
+				Arguments.of("test12", "test!", "test0", "test0", "01012345678910")		// 휴대폰 번호 개수 초과
+				);
+	}
+	
+	@Test
+	@DisplayName("회원가입 이메일 인증 안된경우")
+	public void 회원가입_이메일_인증_안된경우() throws Exception{
+		AccountDto testDto = AccountDto.builder()
+				.accountId(0)
+				.email("testtest@naver.com")
+				.password("testtest!")
+				.username("test0")
+				.nickname("test0")
+				.phone("01012345678")
+				.build();
+		
+		ObjectNode node = mapper.createObjectNode();
+		node.put("accountId", testDto.getAccountId());
+		node.put("email", testDto.getEmail());
+		node.put("password", testDto.getPassword());
+		node.put("username",testDto.getUsername());
+		node.put("nickname", testDto.getNickname());
+		node.put("phone", testDto.getPhone());
+
+		mockMvc.perform(post("/api/auth/register")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(node.toString()))
+		.andDo(print())
+		.andExpect(status().isBadRequest());
+	}
+	
+	@ParameterizedTest
+	@MethodSource("loginParameters")
+	@DisplayName("로그인 유효성 검사")
+	public void 로그인_이메일_미작성_유효성검사(String email, String pw) throws Exception{	
+		ObjectNode node = mapper.createObjectNode();
+		node.put("email", email);
+		node.put("password", pw);
 
 		mockMvc.perform(post("/api/auth/login")
 				.characterEncoding("UTF-8")
@@ -331,88 +177,17 @@ public class AuthControllerTest {
 		.andExpect(status().isBadRequest());
 	}
 	
-	@Test
-	public void 로그인_이메일_잘못된형식_유효성검사() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("test!naver.com")
-				.setPassword("testtest!")
-				.setUsername("")
-				.setNickname("test0")
-				.setPhone("01012345678")
-				.build();
-		
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUsername());
-		node.put("nickname", testDto.getNickname());
-		node.put("phone", testDto.getPhone());
-
-		mockMvc.perform(post("/api/auth/login")
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 로그인_비밀번호_미작성_유효성검사() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("test@naver.com")
-				.setPassword("")
-				.setUsername("")
-				.setNickname("test0")
-				.setPhone("01012345678")
-				.build();
-		
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUsername());
-		node.put("nickname", testDto.getNickname());
-		node.put("phone", testDto.getPhone());
-
-		mockMvc.perform(post("/api/auth/login")
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 로그인_비밀번호_유효성검사() throws Exception{
-		AccountDto testDto = new AccountDto.Builder()
-				.setAccountId(0)
-				.setEmail("test@naver.com")
-				.setPassword("test!")
-				.setUsername("")
-				.setNickname("test0")
-				.setPhone("01012345678")
-				.build();
-		
-		ObjectNode node = mapper.createObjectNode();
-		node.put("accountId", testDto.getAccountId());
-		node.put("email", testDto.getEmail());
-		node.put("password", testDto.getPassword());
-		node.put("username",testDto.getUsername());
-		node.put("nickname", testDto.getNickname());
-		node.put("phone", testDto.getPhone());
-
-		mockMvc.perform(post("/api/auth/login")
-				.characterEncoding("UTF-8")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(node.toString()))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
+	public static Stream<Arguments> loginParameters() {
+		return Stream.of(
+				Arguments.of("", "testtest!"), 						// 이메일 미작성
+				Arguments.of("test!naver.com", "testtest!"),		// 이메일 작못된 형식
+				Arguments.of("test@naver.com", ""),					// 비밀번호 미작성
+				Arguments.of("test@naver.com", "test")				// 비밀번호 잘못된 형식
+				);
 	}
 
 	@Test
+	@DisplayName("로그인 성공")
 	public void 로그인() throws Exception {
 		ObjectNode node = mapper.createObjectNode();
 		node.put("email","test@naver.com");
@@ -430,10 +205,11 @@ public class AuthControllerTest {
 	}
 	
 	@Test
+	@DisplayName("로그아웃")
 	public void 로그아웃() throws Exception {
 		String token = "Bearer " + jwtUtil.createAccessToken(1);
 		
-		mockMvc.perform(get("/api/auth/logout")
+		mockMvc.perform(delete("/api/auth/logout")
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token))
@@ -441,21 +217,22 @@ public class AuthControllerTest {
 		.andExpect(status().isOk());
 	}
 	
-	@Test
-	public void 휴대폰_인증코드_전송_정상() throws Exception {
-		String phone = "";
-		this.mockMvc.perform(post("/api/auth/authentication-code/send")
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.param("phone", phone))
-		.andDo(print())
-		.andExpect(status().isOk());
-	}
+//	@Test
+//	public void 휴대폰_인증코드_전송_정상() throws Exception {
+//		String phone = "";
+//		this.mockMvc.perform(post("/api/auth/authentication-code/send")
+//				.characterEncoding("UTF-8")
+//				.accept(MediaType.APPLICATION_JSON)
+//				.param("phone", phone))
+//		.andDo(print())
+//		.andExpect(status().isOk());
+//	}
 	
 	@Test
+	@DisplayName("이메일 인증코드 전송 정상(이메일 입력 필요)")
 	public void 이메일_인증코드_전송_정상() throws Exception {
 		String email = "";
-		this.mockMvc.perform(post("/api/auth/authentication-code/send")
+		this.mockMvc.perform(post("/api/auth/authentication-code/request")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.param("email", email))
@@ -463,21 +240,22 @@ public class AuthControllerTest {
 		.andExpect(status().isOk());
 	}
 	
-	@Test
-	public void 인증코드_전송_휴대폰번호_11글자_이하_유효성검사() throws Exception {
-		String phone = "01012345";
-		this.mockMvc.perform(post("/api/auth/authentication-code/send")
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.param("phone", phone))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
+//	@Test
+//	public void 인증코드_전송_휴대폰번호_11글자_이하_유효성검사() throws Exception {
+//		String phone = "01012345";
+//		this.mockMvc.perform(post("/api/auth/authentication-code/send")
+//				.characterEncoding("UTF-8")
+//				.accept(MediaType.APPLICATION_JSON)
+//				.param("phone", phone))
+//		.andDo(print())
+//		.andExpect(status().isBadRequest());
+//	}
 	
 	@Test
+	@DisplayName("인증코드 전송 이메일 유효성 검사")
 	public void 인증코드_전송_이메일_유효성검사() throws Exception {
 		String email = "test@";
-		this.mockMvc.perform(post("/api/auth/authentication-code/send")
+		this.mockMvc.perform(post("/api/auth/authentication-code/request")
 				.characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.param("email", email))
@@ -486,10 +264,11 @@ public class AuthControllerTest {
 	}
 	
 	@Test
+	@DisplayName("휴대폰 인증코드 확인 정상")
 	public void 휴대폰_인증코드_확인_정상() throws Exception {
-		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
-				.setPhone("")
-				.setCode("123456")
+		AuthenticationCodeDto authenticationCodeDto = AuthenticationCodeDto.builder()
+				.phone("01012345678")
+				.code("123456")
 				.build();
 		
 		this.mockMvc.perform(post("/api/auth/authentication-code/check")
@@ -502,10 +281,11 @@ public class AuthControllerTest {
 	}
 	
 	@Test
+	@DisplayName("이메일 인증 코드 확인 정상")
 	public void 이메일_인증코드_확인_정상() throws Exception {
-		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
-				.setEmail("")
-				.setCode("123456")
+		AuthenticationCodeDto authenticationCodeDto = AuthenticationCodeDto.builder()
+				.email("test@naver.com")
+				.code("123456")
 				.build();
 		
 		this.mockMvc.perform(post("/api/auth/authentication-code/check")
@@ -517,11 +297,14 @@ public class AuthControllerTest {
 		.andExpect(status().isOk());
 	}
 	
-	@Test
-	public void 인증코드_확인_휴대폰번호_유효성검사() throws Exception {
-		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
-				.setPhone("010")
-				.setCode("123456")
+	@ParameterizedTest
+	@MethodSource("authenticationCodeCheckParameters")
+	@DisplayName("인증코드 휴효성 검사")
+	public void 인증코드_확인_휴대폰번호_유효성검사(String email, String phone, String code) throws Exception {
+		AuthenticationCodeDto authenticationCodeDto = AuthenticationCodeDto.builder()
+				.email(email)
+				.phone(phone)
+				.code(code)
 				.build();
 		
 		this.mockMvc.perform(post("/api/auth/authentication-code/check")
@@ -533,67 +316,14 @@ public class AuthControllerTest {
 		.andExpect(status().isBadRequest());
 	}
 	
-	@Test
-	public void 인증코드_확인_이메일_유효성검사() throws Exception {
-		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
-				.setEmail("test@")
-				.setCode("123456")
-				.build();
-		
-		this.mockMvc.perform(post("/api/auth/authentication-code/check")
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(authenticationCodeDto)))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 인증코드_확인_휴대폰번호_이메일_모두_없는경우() throws Exception {
-		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
-				.setCode("123456")
-				.build();
-		
-		this.mockMvc.perform(post("/api/auth/authentication-code/check")
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(authenticationCodeDto)))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 인증코드_확인_인증코드_미작성_유효성검사() throws Exception {
-		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
-				.setPhone("01012345678")
-				.setCode("")
-				.build();
-		
-		this.mockMvc.perform(post("/api/auth/authentication-code/check")
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(authenticationCodeDto)))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
-	}
-	
-	@Test
-	public void 인증코드_확인_인증코드_6글자_유효성검사() throws Exception {
-		AuthenticationCodeDto authenticationCodeDto = new AuthenticationCodeDto.Builder()
-				.setPhone("01012345678")
-				.setCode("1234")
-				.build();
-		
-		this.mockMvc.perform(post("/api/auth/authentication-code/check")
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(mapper.writeValueAsString(authenticationCodeDto)))
-		.andDo(print())
-		.andExpect(status().isBadRequest());
+	public static Stream<Arguments> authenticationCodeCheckParameters() {
+		return Stream.of(
+				Arguments.of("010", null, "123456"),			// 잘못된 휴대폰 번호
+				Arguments.of(null, "test@", "123456"),			// 잘못된 이메일 번호
+				Arguments.of(null, null, "123456"),				// 이메일, 휴대폰 모두 없는 경우
+				Arguments.of("01012345678", null, ""),			// 코드 미작성
+				Arguments.of("01012345678", null, "1234")		// 코드 잘못된 형식(6글자)
+				);
 	}
 	
 	@Test

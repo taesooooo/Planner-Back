@@ -11,16 +11,16 @@ public class AccountRowMapper implements RowMapper<AccountDto> {
 
 	@Override
 	public AccountDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		AccountDto account = new AccountDto.Builder()
-				.setAccountId(rs.getInt(1))
-				.setEmail(rs.getString(2))
-				.setPassword(rs.getString(3))
-				.setUsername(rs.getString(4))
-				.setNickname(rs.getString(5))
-				.setPhone(rs.getString(6))
-				.setImage(rs.getString(7))
-				.setCreateDate(rs.getTimestamp(8).toLocalDateTime())
-				.setUpdateDate(rs.getTimestamp(9).toLocalDateTime())
+		AccountDto account = AccountDto.builder()
+				.accountId(rs.getInt(1))
+				.email(rs.getString(2))
+				.password(rs.getString(3))
+				.username(rs.getString(4))
+				.nickname(rs.getString(5))
+				.phone(rs.getString(6))
+				.image(rs.getString(7))
+				.createDate(rs.getTimestamp(8).toLocalDateTime())
+				.updateDate(rs.getTimestamp(9).toLocalDateTime())
 				.build();
 		return account;
 

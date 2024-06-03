@@ -4,17 +4,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.planner.planner.Dao.InvitationDao;
 import com.planner.planner.Dao.PlanMemberDao;
-import com.planner.planner.Exception.NotFoundDataException;
+import com.planner.planner.Exception.DataNotFoundException;
 import com.planner.planner.Service.Impl.InvitationServiceImpl;
 
+@ExtendWith(MockitoExtension.class)
 public class InvitationServiceTest {
 	@Mock
 	private InvitationDao invitationDao;
@@ -24,9 +26,9 @@ public class InvitationServiceTest {
 	@InjectMocks
 	private InvitationServiceImpl invitationServiceImpl;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+//		MockitoAnnotations.openMocks(this);
 	}
 	
 	@Test
@@ -34,7 +36,7 @@ public class InvitationServiceTest {
 		when(invitationDao.findById(anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> invitationServiceImpl.findById(anyInt()))
-				.isExactlyInstanceOf(NotFoundDataException.class);
+				.isExactlyInstanceOf(DataNotFoundException.class);
 	}
 	
 	@Test
@@ -42,7 +44,7 @@ public class InvitationServiceTest {
 		when(invitationDao.findById(anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> invitationServiceImpl.acceptInvite(anyInt()))
-				.isExactlyInstanceOf(NotFoundDataException.class);
+				.isExactlyInstanceOf(DataNotFoundException.class);
 	}
 	
 	@Test
@@ -50,6 +52,6 @@ public class InvitationServiceTest {
 		when(invitationDao.findById(anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> invitationServiceImpl.rejectInvite(anyInt()))
-				.isExactlyInstanceOf(NotFoundDataException.class);
+				.isExactlyInstanceOf(DataNotFoundException.class);
 	}
 }

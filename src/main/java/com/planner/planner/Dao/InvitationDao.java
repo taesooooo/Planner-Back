@@ -1,8 +1,9 @@
 package com.planner.planner.Dao;
 
+import com.planner.planner.Common.Security.UserIdentifierDao;
 import com.planner.planner.Dto.InvitationDto;
 
-public interface InvitationDao {
+public interface InvitationDao extends UserIdentifierDao{
 
 	public int createInvitation(InvitationDto invitationDto) throws Exception;
 

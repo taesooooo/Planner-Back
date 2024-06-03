@@ -9,11 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.planner.planner.Common.PageInfo;
-import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Dao.PlannerLikeDao;
-import com.planner.planner.Dto.PlannerDto;
-import com.planner.planner.RowMapper.PlannerRowMapper;
 
 @Repository
 public class PlannerLikeDaoImpl implements PlannerLikeDao {

@@ -2,9 +2,6 @@ package com.planner.planner.Interceptor;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
@@ -19,15 +16,17 @@ import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Exception.ForbiddenException;
-import com.planner.planner.Exception.NotFoundDataException;
+import com.planner.planner.Exception.DataNotFoundException;
 import com.planner.planner.Exception.NotificationNotFoundException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.InvitationService;
 import com.planner.planner.Service.NotificationService;
 import com.planner.planner.Service.PlannerService;
 import com.planner.planner.Service.ReviewService;
-import com.planner.planner.Service.SpotService;
 import com.planner.planner.Util.UserIdUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class DataAccessAuthInterceptor implements HandlerInterceptor {
@@ -61,7 +60,7 @@ public class DataAccessAuthInterceptor implements HandlerInterceptor {
 			AccountDto account = accountService.findById(accountId);
 			
 			if(account == null) {
-				throw new NotFoundDataException("해당하는 계정 정보를 찾지 못했습니다.");
+				throw new DataNotFoundException("해당하는 계정 정보를 찾지 못했습니다.");
 			}
 			
 			return accessCheck(userId, account.getAccountId());
@@ -71,7 +70,7 @@ public class DataAccessAuthInterceptor implements HandlerInterceptor {
 			SpotLikeDto likeDto = spotDao.findSpotLikeByContentId(userId, contentId);
 			
 			if(likeDto == null) {
-				throw new NotFoundDataException("해당하는 좋아요 정보를 찾지 못했습니다.");
+				throw new DataNotFoundException("해당하는 좋아요 정보를 찾지 못했습니다.");
 			}
 			
 			return accessCheck(userId, likeDto.getAccountId());
@@ -81,7 +80,7 @@ public class DataAccessAuthInterceptor implements HandlerInterceptor {
 			PlannerDto planner = plannerService.findPlannerByPlannerId(userId, plannerId);
 			
 			if(planner == null) {
-				throw new NotFoundDataException("해당하는 플래너를 찾지 못했습니다.");
+				throw new DataNotFoundException("해당하는 플래너를 찾지 못했습니다.");
 			}
 			
 			return accessCheck(userId, planner.getAccountId());
@@ -91,7 +90,7 @@ public class DataAccessAuthInterceptor implements HandlerInterceptor {
 			ReviewDto review = reviewService.findReview(reviewId);
 			
 			if(review == null) {
-				throw new NotFoundDataException("해당하는 리뷰를 찾지 못했습니다.");
+				throw new DataNotFoundException("해당하는 리뷰를 찾지 못했습니다.");
 			}
 			
 			return accessCheck(userId, review.getWriterId());
@@ -100,7 +99,7 @@ public class DataAccessAuthInterceptor implements HandlerInterceptor {
 			int inviteId = Integer.parseInt(pathVariables.get("inviteId"));
 			InvitationDto invitation = invitationService.findById(inviteId);
 			if(invitation == null) {
-				throw new NotFoundDataException("초대 정보를 찾지 못했습니다.");
+				throw new DataNotFoundException("초대 정보를 찾지 못했습니다.");
 			}
 			
 			return accessCheck(userId, invitation.getAccountId());
@@ -120,7 +119,7 @@ public class DataAccessAuthInterceptor implements HandlerInterceptor {
 			FileInfoDto fileInfoDto = fileUploadDao.getFileInfo(fileName);
 			
 			if(fileInfoDto == null) {
-				throw new NotFoundDataException("해당하는 파일 정보를 찾지 못했습니다.");
+				throw new DataNotFoundException("해당하는 파일 정보를 찾지 못했습니다.");
 			}
 			
 			return accessCheck(userId, fileInfoDto.getFileWriterId());

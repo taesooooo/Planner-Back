@@ -1,23 +1,17 @@
 package com.planner.planner.Interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.RefreshTokenDao;
-import com.planner.planner.Dto.AccountDto;
-import com.planner.planner.Exception.NotFoundToken;
-import com.planner.planner.Exception.NotFoundUserException;
+import com.planner.planner.Exception.TokenNotFoundException;
 import com.planner.planner.Exception.TokenCheckFailException;
 import com.planner.planner.Util.JwtUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class TokenInterceptor implements HandlerInterceptor {
@@ -35,7 +29,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 		// 토큰확인
 		String bearerToken = request.getHeader("Authorization");
 		if(bearerToken == null || bearerToken.isEmpty()) {
-			throw new NotFoundToken("로그인이 필요합니다.");
+			throw new TokenNotFoundException("로그인이 필요합니다.");
 		}
 		
 		String token = jwtUtil.seperateToken(bearerToken);
@@ -54,7 +48,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 			}
 		}
 		else {
-			throw new NotFoundToken("로그인이 필요합니다.");
+			throw new TokenNotFoundException("로그인이 필요합니다.");
 		}
 	}
 

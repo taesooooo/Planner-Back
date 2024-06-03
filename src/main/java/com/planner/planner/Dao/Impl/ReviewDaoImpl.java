@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
+import com.planner.planner.Common.Security.UserIdentifier;
 import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
@@ -100,7 +101,7 @@ public class ReviewDaoImpl implements ReviewDao {
 	}
 
 	@Override
-	public ReviewDto findReview(int reviewId) {
+	public ReviewDto findById(int reviewId) {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource()
 				.addValue("reviewId", reviewId);
 		

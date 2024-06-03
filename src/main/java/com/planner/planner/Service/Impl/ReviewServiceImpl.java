@@ -3,18 +3,15 @@ package com.planner.planner.Service.Impl;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.planner.planner.Common.FileInfo;
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Dao.FileUploadDao;
@@ -23,7 +20,7 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.FileInfoDto;
 import com.planner.planner.Dto.ReviewDto;
-import com.planner.planner.Exception.NotFoundReviewException;
+import com.planner.planner.Exception.ReviewNotFoundException;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.FileService;
 import com.planner.planner.Service.ReviewService;
@@ -91,14 +88,14 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	public ReviewDto findReview(int reviewId) {
-		return reviewDao.findReview(reviewId);
+		return reviewDao.findById(reviewId);
 	}
 
 	@Override
 	public void updateReview(int accountId, int reviewId, ReviewDto reviewDto) throws Exception {
-		ReviewDto review = reviewDao.findReview(reviewId);
+		ReviewDto review = reviewDao.findById(reviewId);
 		if(review == null) {
-			throw new NotFoundReviewException("작성된 글을 찾을 수 없습니다.");
+			throw new ReviewNotFoundException("작성된 글을 찾을 수 없습니다.");
 		} 
 		
 		// 썸네일 생성
@@ -147,13 +144,14 @@ public class ReviewServiceImpl implements ReviewService {
 				thumbnailName = fileStore.saveThumbnail(resizeImage, new File(fileInfo.getFileName()));
 				
 				// 썸네일 정보 DB 저장
-				FileInfoDto thumbnailFileInfoDto = new FileInfoDto();
-				thumbnailFileInfoDto.setFileId(fileInfo.getFileId());
-				thumbnailFileInfoDto.setFileWriterId(fileInfo.getFileWriterId());
-				thumbnailFileInfoDto.setFileBoradId(fileInfo.getFileBoradId());
-				thumbnailFileInfoDto.setFileName(thumbnailName);
-				thumbnailFileInfoDto.setFilePath(fileStore.getThumbnailDir() + thumbnailName);
-				thumbnailFileInfoDto.setFileType(fileInfo.getFileType());
+				FileInfoDto thumbnailFileInfoDto = FileInfoDto.builder()
+						.fileId(fileInfo.getFileId())
+						.fileWriterId(fileInfo.getFileWriterId())
+						.fileBoradId(fileInfo.getFileBoradId())
+						.fileName(thumbnailName)
+						.filePath(fileStore.getThumbnailDir() + thumbnailName)
+						.fileType(fileInfo.getFileType())
+						.build();
 				
 				fileUploadDao.createFileInfo(accountId, thumbnailFileInfoDto);
 			}

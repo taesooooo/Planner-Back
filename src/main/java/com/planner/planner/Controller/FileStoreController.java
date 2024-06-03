@@ -2,8 +2,6 @@ package com.planner.planner.Controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.planner.planner.Dto.FileInfoDto;
 import com.planner.planner.Dto.UploadFileDto;
-import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.FileService;
 import com.planner.planner.Util.ResponseMessage;
 import com.planner.planner.Util.UserIdUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(value="/api/upload")

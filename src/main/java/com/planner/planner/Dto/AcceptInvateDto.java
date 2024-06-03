@@ -1,31 +1,14 @@
 package com.planner.planner.Dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class AcceptInvateDto {
 	private int plannerId;
-	
-	public static class Builder {
-		private int plannerId;
-
-		public Builder setPlannerId(int plannerId) {
-			this.plannerId = plannerId;
-			return this;
-		}
-		
-		public AcceptInvateDto build() {
-			return new AcceptInvateDto(this);
-		}
-	}
-	
-	public AcceptInvateDto() {
-		
-	}
-	
-	public AcceptInvateDto(Builder builder) {
-		this.plannerId = builder.plannerId;
-	}
-
-	public int getPlannerId() {
-		return plannerId;
-	}
-	
 }

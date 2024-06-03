@@ -92,7 +92,16 @@ public class FileStore {
 //			builder.append(subLocation).append(File.separator);
 //			builder.append(name);
 
-			FileInfoDto fileInfo = new FileInfoDto(0, 0, 0, name, path + name, file.getContentType(), null);
+			FileInfoDto fileInfo = FileInfoDto.builder()
+					.fileId(0)
+					.fileWriterId(0)
+					.fileBoradId(0)
+					.fileName(name)
+					.filePath(path + name)
+					.fileType(file.getContentType())
+					.uploadDate(null)
+					.build();
+
 			infoList.add(fileInfo);
 		}
 

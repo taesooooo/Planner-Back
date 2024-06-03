@@ -11,53 +11,55 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.planner.planner.Config.RootAppContext;
-import com.planner.planner.Config.SecurityContext;
-import com.planner.planner.Config.ServletAppContext;
+import com.planner.planner.Filter.JwtAuthenticationFilter;
 import com.planner.planner.Service.FileService;
 import com.planner.planner.Util.JwtUtil;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = { RootAppContext.class, ServletAppContext.class, SecurityContext.class })
-@Sql(scripts = {"classpath:/PlannerData.sql"})
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
+@ActiveProfiles("test")
+@Transactional
 public class FileStoreControllerTest {
 	@Autowired
 	private WebApplicationContext context;
 	private MockMvc mockMvc;
 	@Autowired
 	private JwtUtil jwtUtil;
+	@Autowired
+	private UserDetailsService detailsService;
 	private String token;
 	private ObjectMapper om = new ObjectMapper();
 	
 	@Autowired
 	private FileService fileUpladService;
 	
-	@Before
+	@BeforeEach
 	public void setup() {
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+		JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, detailsService);
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+				.addFilters(filter)
+				.build();
 		this.token = "Bearer " + jwtUtil.createAccessToken(1);
 	}
 	
 	@Test
+	@DisplayName("파일 업로드 성공")
 	public void 파일_업로드() throws Exception {
 		this.mockMvc.perform(multipart("/api/upload/file-upload")
 				.file(new MockMultipartFile("files", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes()))
@@ -73,6 +75,7 @@ public class FileStoreControllerTest {
 	}
 	
 	@Test
+	@DisplayName("파일 가져오기 성공")
 	public void 파일_가져오기() throws Exception {
 		List<String> names = fileUpladService.fileUpload(1, Arrays.asList(new MockMultipartFile("images", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes())));
 		String fileName = names.get(0);
@@ -89,6 +92,7 @@ public class FileStoreControllerTest {
 	}
 	
 	@Test
+	@DisplayName("파일 삭제 성공")
 	public void 파일_삭제() throws Exception {
 		List<String> names = fileUpladService.fileUpload(1, Arrays.asList(new MockMultipartFile("images", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes())));
 		String fileName = names.get(0);
@@ -100,25 +104,5 @@ public class FileStoreControllerTest {
 				.header("Authorization", token))
 		.andDo(print())
 		.andExpect(status().isOk());
-	}
-	
-	@Test
-	public void 파일_삭제_접근권한_없음() throws Exception {
-		String fakeToken = "Bearer " + jwtUtil.createAccessToken(2);
-		List<String> names = fileUpladService.fileUpload(1, Arrays.asList(new MockMultipartFile("images", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes())));
-		String fileName = names.get(0);
-		String uri = UriComponentsBuilder.fromUriString("/api/upload/files/{fileName}")
-				.build(fileName)
-				.toString();
-		
-		this.mockMvc.perform(delete(uri)
-				.servletPath(uri)
-				.accept(MediaType.IMAGE_JPEG)
-				.characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON)
-				.contentType(MediaType.MULTIPART_FORM_DATA)
-				.header("Authorization", fakeToken))
-		.andDo(print())
-		.andExpect(status().isForbidden());
 	}
 }

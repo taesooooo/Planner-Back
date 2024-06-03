@@ -1,34 +1,31 @@
 package com.planner.planner.Interceptor;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.*;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.planner.planner.Config.RootAppContext;
-import com.planner.planner.Config.SecurityContext;
-import com.planner.planner.Config.ServletAppContext;
-import com.planner.planner.Config.ValidationConfig;
-import com.planner.planner.Exception.NotFoundToken;
+import com.planner.planner.Config.Properites.CommonProperties;
+import com.planner.planner.Exception.TokenNotFoundException;
 import com.planner.planner.Exception.TokenCheckFailException;
 import com.planner.planner.Util.JwtUtil;
 
+@SpringBootTest(classes = {JwtUtil.class, CommonProperties.class})
+@EnableConfigurationProperties
 public class TokenInterceptorTest {
 	
 	private TokenInterceptor tokenInterceptor;
+	@Autowired
 	private JwtUtil jwtUtil;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
-		this.jwtUtil = new JwtUtil("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+//		this.jwtUtil = new JwtUtil("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 		this.tokenInterceptor = new TokenInterceptor(jwtUtil);
 	}
 	
@@ -40,7 +37,7 @@ public class TokenInterceptorTest {
 		assertThatThrownBy(() -> {
 			tokenInterceptor.preHandle(req, res, null);			
 		})
-		.isInstanceOf(NotFoundToken.class)
+		.isInstanceOf(TokenNotFoundException.class)
 		.hasMessage("로그인이 필요합니다.");
 	}
 	

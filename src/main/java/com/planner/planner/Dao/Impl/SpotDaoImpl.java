@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
+import com.planner.planner.Common.Security.UserIdentifier;
 import com.planner.planner.Dao.SpotDao;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.SpotLikeCountDto;
@@ -32,6 +33,9 @@ public class SpotDaoImpl implements SpotDao {
 
 	private final String INSERT_SPOT_LIKE_SQL = "INSERT INTO spot_like (account_id, content_id, area_code, title, image, like_date) VALUES (:accountId, :contentId, :areaCode, :title, :image, now());";
 	private final String DELETE_SPOT_LIKE_SQL = "DELETE FROM spot_like WHERE account_id = :accountId and content_id = :contentId;";
+	private final String SELECT_SPOT_BY_ID_SQL = "SELECT SL.like_id, SL.account_id, SL.content_id, SL.area_code, SL.title, SL.image, SL.like_date"
+			+ " FROM spot_like AS SL"
+			+ " WHERE SL.like_id = :likeId";
 	// 동적 쿼리
 	private final String SELECT_SPOT_LIKE_LIST_SQL = "SELECT SL.like_id, SL.account_id, SL.content_id, SL.area_code, SL.title, SL.image, SL.like_date, SUB.like_count "
 			+ "FROM spot_like AS SL "
@@ -184,7 +188,7 @@ public class SpotDaoImpl implements SpotDao {
 		
 		String contentIds = contentIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
 		
-		parameterSource.addValue("contentIdList", contentIds);
+		parameterSource.addValue("contentIdList", contentIdList);
 		
 		List<SpotLikeCountDto> list = namedParameterJdbcTemplate.query(SELECT_SPOT_LIKE_COUNT_LIST_SQL, parameterSource, new SpotLikeCountMapper());
 		
@@ -220,7 +224,7 @@ public class SpotDaoImpl implements SpotDao {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		
 		String contentIds = contentIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
-		parameterSource.addValue("contentIdList", contentIds);
+		parameterSource.addValue("contentIdList", contentIdList);
 		parameterSource.addValue("accountId", accountId);
 		List<SpotLikeDto> states = namedParameterJdbcTemplate.query(SELECT_SPOT_LIKE_STATE_SQL, parameterSource, new SpotLikeRowMapper());
 

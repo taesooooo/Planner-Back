@@ -2,7 +2,6 @@ package com.planner.planner.Service.Impl;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -70,7 +69,10 @@ public class FileServiceImpl implements FileService {
 		String fileName = filePath;
 		String extension = FilenameUtils.getExtension(fileName);
 		
-		UploadFileDto uploadFile = new UploadFileDto(Files.probeContentType(new File(filePath).toPath()), buffer);
+		UploadFileDto uploadFile = UploadFileDto.builder()
+				.type(Files.probeContentType(new File(filePath).toPath()))
+				.data(buffer)
+				.build();
 		
 		return uploadFile;
 	}
@@ -80,7 +82,10 @@ public class FileServiceImpl implements FileService {
 		FileInfoDto fileInfo = this.findFileInfo(imageName);
 		byte[] buffer = getFile(fileInfo.getFilePath());
 		
-		UploadFileDto uploadFile = new UploadFileDto(fileInfo.getFileType(), buffer);
+		UploadFileDto uploadFile = UploadFileDto.builder()
+				.type(fileInfo.getFileType())
+				.data(buffer)
+				.build();
 		
 		return uploadFile;
 	}

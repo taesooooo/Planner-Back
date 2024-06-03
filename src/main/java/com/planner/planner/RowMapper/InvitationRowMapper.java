@@ -11,12 +11,12 @@ public class InvitationRowMapper implements RowMapper<InvitationDto>{
 
 	@Override
 	public InvitationDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-		return new InvitationDto.Builder()
-				.setId(rs.getInt("id"))
-				.setAccountId(rs.getInt("account_id"))
-				.setPlannerId(rs.getInt("planner_id"))
-				.setInviteDate(rs.getTimestamp("invite_date").toLocalDateTime())
-				.setExpireDate(rs.getTimestamp("expire_date").toLocalDateTime())
+		return InvitationDto.builder()
+				.id(rs.getInt("id"))
+				.accountId(rs.getInt("account_id"))
+				.plannerId(rs.getInt("planner_id"))
+				.inviteDate(rs.getTimestamp("invite_date").toLocalDateTime())
+				.expireDate(rs.getTimestamp("expire_date").toLocalDateTime())
 				.build();
 	}
 
