@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.planner.planner.Common.PostType;
 import com.planner.planner.Common.SortCriteria;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Getter
 public class CommonRequestParamDto {

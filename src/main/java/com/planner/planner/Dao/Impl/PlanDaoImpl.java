@@ -47,13 +47,13 @@ public class PlanDaoImpl implements PlanDao {
 	}
 
 	@Override
-	public List<PlanDto> findPlansByPlannerId(int plannerId) {
+	public List<PlanDto> findPlanListByPlannerId(int plannerId) {
 		return jdbcTemplate.query(FINDS_PLAN_SQL, new PlanRowMapper(), plannerId);
 	}
 
 	@Override
 	public int updatePlan(int planId, PlanDto planDto) {
-		int result = jdbcTemplate.update(UPDATE_PLAN_SQL, planDto.getPlanDate(), planDto.getIndex(), planId);
+		int result = jdbcTemplate.update(UPDATE_PLAN_SQL, planDto.getPlanDate(), planDto.getPlanIndex(), planId);
 		return result;
 	}
 

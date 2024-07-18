@@ -59,7 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
 		String thumbnailName = createThumbnail(user.getAccountId(), reviewDto);
 		
 		// 게시글 저장
-		int reviewId = reviewDao.insertReview(reviewDto, user, thumbnailName);
+		int reviewId = reviewDao.createReview(reviewDto, user, thumbnailName);
 
 		List<String> newFileNames = reviewDto.getFileNames();
 		newFileNames.add(thumbnailName);
@@ -71,10 +71,10 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	public Page<ReviewDto> findAllReview(CommonRequestParamDto commonRequestParamDto) throws Exception {
-		PageInfo pInfo = new PageInfo.Builder().setPageNum(commonRequestParamDto.getPageNum()).setPageItemCount(10)
+		PageInfo pInfo = PageInfo.builder().pageNum(commonRequestParamDto.getPageNum()).pageItemCount(10)
 				.build();
 
-		List<ReviewDto> reviewList = reviewDao.findAllReview(commonRequestParamDto, pInfo);
+		List<ReviewDto> reviewList = reviewDao.findAll(commonRequestParamDto, pInfo);
 
 		int totalCount = 0;
 

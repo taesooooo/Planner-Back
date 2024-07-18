@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.PlannerMapper">
+	<resultMap id="plannerMap" type="PlannerDto">
+		<id property="plannerId" column="planner_id" />
+		<result property="accountId" column="account_id" />
+		<result property="creator" column="creator" />
+		<result property="areaCode" column="area_code" />
+		<result property="title" column="title" />
+		<result property="planDateStart" column="plan_date_start" />
+		<result property="planDateEnd" column="plan_date_end" />
+		<result property="expense" column="expense" />
+		<result property="memberCount" column="member_count"/>
+		<result property="memberTypeId" column="member_type_id" />
+		<result property="likeCount" column="like_count" />
+		<result property="likeState" column="like_state" />
+		<result property="thumbnail" column="thumbnail" />
+		<result property="createDate" column="create_date" />
+		<result property="updateDate" column="update_date" />
+	</resultMap>
+	<resultMap id="plannerDetailMap" type="PlannerDto" extends="plannerMap">
+		<collection property="planMembers" ofType="java.lang.String">
+			<result column="nickname"/>
+		</collection>
+		<collection property="planMemos" ofType="PlanMemoDto">
+			<id property="memoId" column="memo_id" />
+			<result property="title" column="memo_title" />
+			<result property="content" column="memo_content" />
+			<result property="createDate" column="memo_create_date" />
+			<result property="updateDate" column="memo_update_date" />
+		</collection>
+		<collection property="plans" ofType="PlanDto">
+			<id property="planId" column="plan_id" />
+			<result property="planDate" column="plan_date" />
+			<result property="plannerId" column="planner_id"/>
+			<result property="index" column="plan_index" />
+			<collection property="planLocations" ofType="PlanLocationDto">
+				<id property="locationId" column="location_id" />
+				<result property="locationContentId" column="location_content_id" />
+				<result property="locationName" column="location_name" />
+				<result property="locationImage" column="location_image" />
+				<result property="locationAddr" column="location_addr" />
+				<result property="locationMapx" column="location_mapx" />
+				<result property="locationMapy" column="location_mapy" />
+				<result property="locationTransportation" column="location_transportation" />
+				<result property="index" column="location_index" />
+				<result property="planId" column="plan_id" />
+			</collection>
+		</collection>
+	</resultMap>
+
+	<insert id="createPlanner" useGeneratedKeys="true" keyColumn="planner_id">
+		INSERT INTO planner(account_id, creator, area_code, title, plan_date_start, plan_date_end, expense, member_count, member_type_id, create_date, update_date) 
+		VALUES(#{user.accountId}, #{user.nickname}, #{plannerDto.areaCode}, #{plannerDto.title}, #{plannerDto.planDateStart}, #{plannerDto.planDateEnd}, #{plannerDto.expense}, #{plannerDto.memberCount}, #{plannerDto.memberTypeId} , now(), now())
+	</insert>
+	
+	<sql id="commonPlanner">
+		SELECT P.planner_id, P.account_id, P.creator, P.area_code, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, SUB.like_count, P.create_date, P.update_date,  
+		plan_loc_one.location_image AS thumbnail, 
+		<!-- 좋아요 체크 -->
+		<if test="accountId != null">CASE WHEN PL.like_id > 0 THEN 'TRUE' ELSE 'FALSE' END as like_state </if>
+		FROM planner AS P 
+		LEFT JOIN (SELECT planner_id, MIN(plan_id) as plan_id FROM plan GROUP BY planner_id) AS plan_one ON plan_one.planner_id = P.planner_id 
+		LEFT JOIN (SELECT plan_id, location_image FROM plan_location) AS plan_loc_one ON plan_loc_one.plan_id = plan_one.plan_id 
+		LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON P.planner_id = SUB.planner_id
+		<!-- 좋아요 확인하기 위한 조인 --> 
+		<if test="accountId != null">LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id AND PL.account_id = #{accountId} </if>
+	</sql>
+	
+	<sql id="commonPlannerDetail">
+		SELECT A.planner_id, A.account_id, A.creator, A.area_code, A.title, A.plan_date_start, A.plan_date_end, A.expense, A.member_count, A.member_type_id, 
+		SUB.like_count, A.create_date, A.update_date, plan_loc_one.location_image AS thumbnail, 
+		C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_date, D.plan_index, D.plan_id, 
+		E.location_id, E.location_name, E.location_content_id, E.location_image, E.location_addr, E.location_mapx, E.location_mapy, E.location_transportation, E.location_index, E.plan_id, 
+		CASE WHEN PL.like_id > 0 THEN 'TRUE' ELSE 'FALSE' END as like_state
+		FROM planner AS A 
+		LEFT JOIN (SELECT planner_id, MIN(plan_id) as plan_id FROM plan GROUP BY planner_id) AS plan_one ON plan_one.planner_id = A.planner_id 
+		LEFT JOIN (SELECT plan_id, location_image FROM plan_location) AS plan_loc_one ON plan_loc_one.plan_id = plan_one.plan_id 
+		LEFT JOIN plan_member AS B ON A.planner_id = B.planner_id 
+		LEFT JOIN account AS C ON C.account_id = B.account_id 
+		LEFT JOIN plan_memo AS M ON A.planner_id = M.planner_id 
+		LEFT JOIN plan AS D ON A.planner_id = D.planner_id 
+		LEFT JOIN plan_location AS E ON D.plan_id = E.plan_id 
+		LEFT JOIN planner_like AS PL ON A.planner_id = PL.planner_id <if test="accountId != null">AND PL.account_id = #{accountId} </if>
+		LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON A.planner_id = SUB.planner_id 
+<!-- 		WHERE A.planner_id = #{plannerId} 
+		ORDER BY A.planner_id, D.plan_index, E.location_index -->
+	</sql>
+	
+	<sql id="commonListWhereSql">
+		<if test="commonRequestParamDto.keyword != null and commonRequestParamDto.keyword != ''">
+			<bind name="str" value="'%' + commonRequestParamDto.keyword + '%'" />
+			AND P.title LIKE #{str} 
+		</if>
+		<if test="commonRequestParamDto.areaCode != null and commonRequestParamDto.areaCode != 0">
+			AND P.area_code = #{commonRequestParamDto.areaCode} 
+		</if>
+	</sql>
+	<sql id="commonListRestSql">
+		<if test="commonRequestParamDto.sortCriteria.name() == 'LATEST'">
+			ORDER BY P.planner_id DESC 
+		</if>
+		<if test="commonRequestParamDto.sortCriteria.name() == 'LIKECOUNT'">
+			ORDER BY P.like_count DESC 
+		</if>
+		LIMIT #{pageInfo.pageOffSet}, #{pageInfo.pageItemCount}
+	</sql>
+	
+	<select id="findById" resultMap="plannerDetailMap">
+		<include refid="commonPlanner" />
+		WHERE A.planner_id = ${plannerId}
+	</select>
+	
+	<select id="findByPlannerId" resultMap="plannerDetailMap" >
+		<include refid="commonPlannerDetail" />
+		WHERE A.planner_id = #{plannerId} 
+		ORDER BY A.planner_id, D.plan_index, E.location_index
+	</select>
+	
+	<select id="findListByAccountId" resultMap="plannerMap">
+		<include refid="commonPlanner" />
+		<where>
+			P.account_id = #{accountId} 
+			<include refid="commonListWhereSql" />
+		</where>
+		<include refid="commonListRestSql" />
+	</select>
+	
+	<select id="findAll" resultMap="plannerMap">
+		<include refid="commonPlanner" />
+		<where>
+			<include refid="commonListWhereSql" />
+		</where>
+		<include refid="commonListRestSql" />
+	</select>
+	
+	<select id="findLikeList" resultMap="plannerMap">
+		<include refid="commonPlanner" />
+		<where>
+			PL.like_id 
+			IN 
+				(SELECT like_id FROM planner_like WHERE account_id = #{accountId})
+			<include refid="commonListWhereSql" /> 
+		</where>
+		<include refid="commonListRestSql" /> 
+	</select>
+	
+	<update id="updatePlanner">
+		UPDATE planner AS P 
+		SET P.area_code = #{plannerDto.areaCode}, 
+			P.title = #{plannerDto.title}, 
+			P.plan_date_start = #{plannerDto.planDateStart}, 
+			P.plan_date_end = #{plannerDto.planDateEnd}, 
+			P.expense = #{plannerDto.expense}, 
+			P.member_count = #{plannerDto.memberCount}, 
+			P.member_type_id = #{plannerDto.memberTypeId}, 
+			P.update_date = NOW() 
+		WHERE P.planner_id = #{plannerId}
+	</update>
+	
+	<delete id="deletePlanner" parameterType="int">
+		DELETE FROM planner WHERE planner_id = #{plannerId}
+	</delete>
+	
+</mapper>

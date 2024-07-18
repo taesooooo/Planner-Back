@@ -82,7 +82,7 @@ class AccountDaoTest {
 				.updateDate(null)
 				.build();
 		
-		AccountDto user = accountDao.findAccountIdByNickName("test");
+		AccountDto user = accountDao.findByNickName("test");
 		
 		assertThat(user).usingRecursiveComparison()
 				.ignoringFields("password","createDate","updateDate")
@@ -168,7 +168,7 @@ class AccountDaoTest {
 				.updateDate(null)
 				.build();
 		
-		boolean result = accountDao.delete(testUser);
+		boolean result = accountDao.deleteByEmail("test@naver.com");
 		
 		assertThat(result).isTrue();
 	}

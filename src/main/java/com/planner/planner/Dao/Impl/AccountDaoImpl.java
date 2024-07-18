@@ -80,7 +80,7 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public AccountDto findAccountIdByNickName(String nickName) {
+	public AccountDto findByNickName(String nickName) {
 		try {
 			return jdbcTemplate.query(FIND_BY_NICKNAME, new AccountResultSetExtrator(), nickName);
 		}
@@ -127,8 +127,8 @@ public class AccountDaoImpl implements AccountDao {
 	}
 
 	@Override
-	public boolean delete(AccountDto accountDto) {
-		int result = jdbcTemplate.update(deleteSQL, accountDto.getEmail());
+	public boolean deleteByEmail(String email) {
+		int result = jdbcTemplate.update(deleteSQL, email);
 		return result > 0 ? true : false;
 	}
 

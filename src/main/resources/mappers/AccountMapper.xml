@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.AccountMapper">
+	<resultMap id="accountMap" type="AccountDto">
+		<id property="accountId" column="account_id" />
+		<result property="email" column="email" />
+		<result property="password" column="password" />
+		<result property="username" column="name" />
+		<result property="nickname" column="nickname" />
+		<result property="phone" column="phone" />
+		<result property="image" column="image" />
+		<result property="createDate" column="create_date" />
+		<result property="updateDate" column="update_date" />
+		<collection property="authorities" column="authority" ofType="org.springframework.security.core.authority.SimpleGrantedAuthority" >
+			<constructor>
+				<arg name="role" column="authority"/>
+			</constructor>
+		</collection>
+	</resultMap>
+
+	<insert id="create" parameterType="AccountDto">
+		INSERT INTO account(email,
+		password, name, nickname, phone, image, create_date, update_date)
+		VALUES
+		(#{email}, #{password}, #{username}, #{nickname}, #{phone}, #{image}, now(), now())
+	</insert>
+
+	<select id="findById" resultMap="accountMap">
+		SELECT account_id, email, password, name, nickname, phone, image, 
+		create_date, update_date, user_role.role_id, role.authority
+		FROM account
+		LEFT JOIN user_role ON user_role.user_id = account.account_id
+		LEFT JOIN role ON user_role.role_id = role.id
+		WHERE account_id = #{accountId}
+	</select>
+	
+	<select id="findByEmail" resultMap="accountMap">
+		SELECT account_id, email, password, name, nickname, phone, image, 
+		create_date, update_date, user_role.role_id, role.authority
+		FROM account
+		LEFT JOIN user_role ON user_role.user_id = account.account_id
+		LEFT JOIN role ON user_role.role_id = role.id
+		WHERE email = #{email}
+	</select>
+	
+	<select id="findByNickName" resultMap="accountMap">
+		SELECT account_id, email, password, name, nickname, phone, image, 
+		create_date, update_date, user_role.role_id, role.authority
+		FROM account
+		LEFT JOIN user_role ON user_role.user_id = account.account_id
+		LEFT JOIN role ON user_role.role_id = role.id
+		WHERE nickname = #{nickname}
+	</select>
+	
+	<select id="findByNameAndPhone" resultType="accountDto">
+		SELECT account_id as accountId, email, password, name as username, nickname, phone, image, 
+		create_date as createDate, update_date as updateDate
+		FROM account
+		WHERE name = #{username} AND phone = #{phone}
+	</select>
+	
+	<select id="findEmailByPhone">
+		SELECT email FROM account WHERE phone = #{phone}
+	</select>
+	
+	<update id="update">
+		UPDATE account 
+		SET nickname = #{nickname}, phone = #{phone}, update_date = now() 
+		WHERE account_id = #{accountId}
+	</update>
+	
+	<delete id="deleteByEmail">
+		DELETE FROM account 
+		WHERE email = #{accountDto.email};
+	</delete>
+	
+	<update id="accountImageUpdate">
+		UPDATE account 
+		SET image = #{imagePath}, update_date = now() 
+		WHERE account_id = #{accountId}
+	</update>
+	
+	<update id="passwordUpdate">
+		UPDATE account 
+		SET password = #{password}, update_date = now() 
+		WHERE account_id = #{accountId}
+	</update>
+	
+	<select id="searchEmail">
+		
+	</select>
+
+</mapper>

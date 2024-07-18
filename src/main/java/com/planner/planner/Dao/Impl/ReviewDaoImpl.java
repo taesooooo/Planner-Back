@@ -31,8 +31,8 @@ public class ReviewDaoImpl implements ReviewDao {
 	// 동적 쿼리
 	private final String INSERT_REVIEW_SQL = "INSERT INTO review(planner_id, title, content, areacode, thumbnail, writer, writer_id, create_date, update_date) VALUES(:planner_id, :title, :content, :areaCode, :thumbnail, :writer, :writerId, now(), now());";
 	// 동적 쿼리
-	private final String FIND_ALL_REVIEW_SQL = "SELECT review_id, planner_id, title, content, areacode, thumbnail, writer, writer_id, like_count, create_date, update_date "
-			+ "FROM review ";
+	private final String FIND_ALL_REVIEW_SQL = "SELECT R.review_id, R.planner_id, R.title, R.content, R.areacode, R.thumbnail, R.writer, R.writer_id, R.like_count, R.create_date, R.update_date "
+			+ "FROM review AS R";
 	private final String FIND_REVIEW_SQL = "SELECT R.review_id, R.planner_id, R.title, R.content, R.areacode, R.thumbnail, R.writer, R.writer_id, R.like_count, R.create_date, R.update_date, \r\n"
 			+ "RC.comment_id AS RC_comment_id, RC.review_id AS RC_review_id, RC.writer_id AS RC_writer_id, RC.content AS RC_content, \r\n"
 			+ "RC.parent_id AS RC_parent_id, RC.create_date AS RC_create_date, RC.update_date AS RC_update_date, AC.nickname AS AC_nickname \r\n"
@@ -51,7 +51,7 @@ public class ReviewDaoImpl implements ReviewDao {
 	}
 
 	@Override
-	public int insertReview(ReviewDto reviewDto, AccountDto accountDto, String thumbnailName ) {
+	public int createReview(ReviewDto reviewDto, AccountDto accountDto, String thumbnail ) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		
 		SqlParameterSource parameterSource = new MapSqlParameterSource()
@@ -59,7 +59,7 @@ public class ReviewDaoImpl implements ReviewDao {
 				.addValue("title", reviewDto.getTitle())
 				.addValue("content", reviewDto.getContent())
 				.addValue("areaCode", reviewDto.getAreaCode(), reviewDto.getAreaCode() != null ? Types.INTEGER : Types.NULL)
-				.addValue("thumbnail", thumbnailName)
+				.addValue("thumbnail", thumbnail)
 				.addValue("writer", accountDto.getNickname())
 				.addValue("writerId", accountDto.getAccountId());
 
@@ -67,9 +67,18 @@ public class ReviewDaoImpl implements ReviewDao {
 		
 		return keyHolder.getKey().intValue();
 	}
+	
+	@Override
+	public ReviewDto findById(int reviewId) {
+		MapSqlParameterSource parameterSource = new MapSqlParameterSource()
+				.addValue("reviewId", reviewId);
+		
+		ReviewDto review = namedParameterJdbcTemplate.query(FIND_REVIEW_SQL, parameterSource, new ReviewResultSetExtrator());
+		return review;
+	}
 
 	@Override
-	public List<ReviewDto> findAllReview(CommonRequestParamDto requestParamDto, PageInfo pageInfo) {
+	public List<ReviewDto> findAll(CommonRequestParamDto requestParamDto, PageInfo pageInfo) {
 		StringBuilder sb = new StringBuilder(FIND_ALL_REVIEW_SQL);
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		
@@ -98,15 +107,6 @@ public class ReviewDaoImpl implements ReviewDao {
 		List<ReviewDto> list = namedParameterJdbcTemplate.query(sb.toString(), parameterSource, new ReviewRowMapper());
 					
 		return list;
-	}
-
-	@Override
-	public ReviewDto findById(int reviewId) {
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource()
-				.addValue("reviewId", reviewId);
-		
-		ReviewDto review = namedParameterJdbcTemplate.query(FIND_REVIEW_SQL, parameterSource, new ReviewResultSetExtrator());
-		return review;
 	}
 
 	@Override

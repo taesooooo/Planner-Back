@@ -9,9 +9,13 @@ import com.planner.planner.Common.ValidationGroups.PlanUpdateGroup;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Getter
 public class PlanDto {
@@ -25,5 +29,5 @@ public class PlanDto {
 	private List<PlanLocationDto> planLocations;
 	
 	@Min(value = 1, message = "인덱스가 잘못되었습니다.", groups = PlanUpdateGroup.class)
-	private int index;
+	private int planIndex;
 }

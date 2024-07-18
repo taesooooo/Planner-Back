@@ -1,6 +1,8 @@
-package com.planner.planner.Dao;
+package com.planner.planner.Mapper;
 
 import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
 
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.Security.UserIdentifierDao;
@@ -8,11 +10,15 @@ import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlannerDto;
 
-public interface PlannerDao extends UserIdentifierDao {
+@Mapper
+public interface PlannerMapper extends UserIdentifierDao {
 	// 플래너 생성, 조회, 수정, 삭제
 	public int createPlanner(AccountDto user, PlannerDto plannerDto);
+	
+	@Override
+	public PlannerDto findById(int dataId) throws Exception;
 
-	public PlannerDto findPlannerByPlannerId(Integer accountId, int plannerId);
+	public PlannerDto findByPlannerId(Integer accountId, int plannerId);
 
 	public List<PlannerDto> findListByAccountId(Integer accountId, CommonRequestParamDto commonRequestParamDto,
 			PageInfo pageInfo) throws Exception;
@@ -30,14 +36,4 @@ public interface PlannerDao extends UserIdentifierDao {
 	public int getListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 
 	public int getLikeListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
-
-//	public int getTotalCount(int accountId);
-//
-//	public int getTotalCountByLike(int accountId);
-//
-//	public int getTotalCountByLike(int accountId, String keyword);
-//
-//	public int getTotalCountByKeyword(String keyword);
-//
-//	public int getTotalCountByKeyword(int accountId, String keyword);
 }

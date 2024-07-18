@@ -9,8 +9,8 @@ import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.ReviewDto;
 
 public interface ReviewDao extends UserIdentifierDao {
-	public int insertReview(ReviewDto reviewDto, AccountDto accountDto, String thumbnailName);
-	public List<ReviewDto> findAllReview(CommonRequestParamDto commonRequestParamDto, PageInfo pageInfo);
+	public int createReview(ReviewDto reviewDto, AccountDto accountDto, String thumbnail);
+	public List<ReviewDto> findAll(CommonRequestParamDto commonRequestParamDto, PageInfo pageInfo);
 	public ReviewDto findById(int reviewId);
 	public void updateReview(int reviewId, ReviewDto reviewDto);
 	public void updateReviewThumbnail(int reviewId, String thumbnailName);

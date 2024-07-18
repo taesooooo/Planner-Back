@@ -50,7 +50,7 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 	public void inviteMembers(int plannerId, PlanMemberInviteDto members) throws Exception {
 		List<AccountDto> users = new ArrayList<AccountDto>();
 		for (String nickName : members.getMembers()) {
-			AccountDto user = accountDao.findAccountIdByNickName(nickName);
+			AccountDto user = accountDao.findByNickName(nickName);
 			if (user == null) {
 				throw new UserNotFoundException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
 			}
@@ -92,7 +92,7 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 	@Override
 	public void deleteMember(int plannerId, String nickName) throws Exception {
 		List<PlanMemberDto> members = planMemberDao.findMembersByPlannerId(plannerId);
-		AccountDto user = accountDao.findAccountIdByNickName(nickName);
+		AccountDto user = accountDao.findByNickName(nickName);
 		if (user == null) {
 			throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
 		}

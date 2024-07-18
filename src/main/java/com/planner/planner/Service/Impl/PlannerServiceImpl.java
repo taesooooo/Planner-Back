@@ -3,6 +3,7 @@ package com.planner.planner.Service.Impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,13 +46,14 @@ public class PlannerServiceImpl implements PlannerService {
 	@Override
 	public int newPlanner(int accountId, PlannerDto plannerDto) throws Exception {
 		// 플래너 생성
-		int plannerId = plannerDao.insertPlanner(plannerDto);
+		AccountDto creatorUser = (AccountDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		int plannerId = plannerDao.createPlanner(creatorUser, plannerDto);
 
 		List<AccountDto> users = new ArrayList<AccountDto>();
 		List<String> memberNickNames = plannerDto.getPlanMembers();
 
 		for (String nickName : memberNickNames) {
-			AccountDto user = accountDao.findAccountIdByNickName(nickName);
+			AccountDto user = accountDao.findByNickName(nickName);
 			if (user == null) {
 				throw new UserNotFoundException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
 			}
@@ -59,7 +61,7 @@ public class PlannerServiceImpl implements PlannerService {
 		}
 		
 		// 생성자 바로 등록
-		planMemberDao.insertPlanMember(plannerId, plannerDto.getAccountId());
+		planMemberDao.insertPlanMember(plannerId, creatorUser.getAccountId());
 
 		// 초대
 		for (AccountDto user : users) {
@@ -94,11 +96,11 @@ public class PlannerServiceImpl implements PlannerService {
 
 	@Override
 	public Page<PlannerDto> findPlannersByAccountId(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
-		PageInfo pInfo = new PageInfo.Builder()
-				.setPageNum(commonRequestParamDto.getPageNum())
-				.setPageItemCount(commonRequestParamDto.getItemCount())
+		PageInfo pInfo = PageInfo.builder()
+				.pageNum(commonRequestParamDto.getPageNum())
+				.pageItemCount(commonRequestParamDto.getItemCount())
 				.build();
-		List<PlannerDto> plannerList = plannerDao.findPlannersByAccountId(accountId, commonRequestParamDto, pInfo);
+		List<PlannerDto> plannerList = plannerDao.findListByAccountId(accountId, commonRequestParamDto, pInfo);
 		
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();
@@ -122,11 +124,11 @@ public class PlannerServiceImpl implements PlannerService {
 
 	@Override
 	public Page<PlannerDto> findPlannerAll(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
-		PageInfo pInfo = new PageInfo.Builder()
-				.setPageNum(commonRequestParamDto.getPageNum())
-				.setPageItemCount(commonRequestParamDto.getItemCount())
+		PageInfo pInfo = PageInfo.builder()
+				.pageNum(commonRequestParamDto.getPageNum())
+				.pageItemCount(commonRequestParamDto.getItemCount())
 				.build();
-		List<PlannerDto> plannerList = plannerDao.findPlannerAll(accountId, commonRequestParamDto, pInfo);
+		List<PlannerDto> plannerList = plannerDao.findAll(accountId, commonRequestParamDto, pInfo);
 		
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();
@@ -143,11 +145,11 @@ public class PlannerServiceImpl implements PlannerService {
 	
 	@Override
 	public Page<PlannerDto> getLikePlannerList(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
-		PageInfo pInfo = new PageInfo.Builder()
-				.setPageNum(commonRequestParamDto.getPageNum())
-				.setPageItemCount(commonRequestParamDto.getItemCount())
+		PageInfo pInfo = PageInfo.builder()
+				.pageNum(commonRequestParamDto.getPageNum())
+				.pageItemCount(commonRequestParamDto.getItemCount())
 				.build();
-		List<PlannerDto> plannerList = plannerDao.findLikePlannerList(accountId, commonRequestParamDto, pInfo);
+		List<PlannerDto> plannerList = plannerDao.findLikeList(accountId, commonRequestParamDto, pInfo);
 
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();

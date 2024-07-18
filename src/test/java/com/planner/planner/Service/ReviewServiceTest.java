@@ -73,12 +73,12 @@ public class ReviewServiceTest {
 		
 		int testTotalCount = testList.size();
 		
-		when(reviewDao.findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
+		when(reviewDao.findAll(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
 		when(reviewDao.getTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<ReviewDto> reviewList = reviewService.findAllReview(paramDto);
 		
-		verify(reviewDao).findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(reviewDao).findAll(any(CommonRequestParamDto.class), any(PageInfo.class));
 		verify(reviewDao).getTotalCount(any(CommonRequestParamDto.class));
 		
 		assertThat(reviewList).isNotNull();
@@ -98,12 +98,12 @@ public class ReviewServiceTest {
 		
 		int testTotalCount = 1;
 		
-		when(reviewDao.findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
+		when(reviewDao.findAll(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
 		when(reviewDao.getTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<ReviewDto> reviewList = reviewService.findAllReview(paramDto);
 		
-		verify(reviewDao).findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(reviewDao).findAll(any(CommonRequestParamDto.class), any(PageInfo.class));
 		verify(reviewDao).getTotalCount(any(CommonRequestParamDto.class));
 		
 		assertThat(reviewList).isNotNull();
@@ -124,12 +124,12 @@ public class ReviewServiceTest {
 		
 		int testTotalCount = 1;
 		
-		when(reviewDao.findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
+		when(reviewDao.findAll(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
 		when(reviewDao.getTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<ReviewDto> reviewList = reviewService.findAllReview(paramDto);
 		
-		verify(reviewDao).findAllReview(any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(reviewDao).findAll(any(CommonRequestParamDto.class), any(PageInfo.class));
 		verify(reviewDao).getTotalCount(any(CommonRequestParamDto.class));
 		
 		assertThat(reviewList).isNotNull();
@@ -157,9 +157,9 @@ public class ReviewServiceTest {
 				.fileNames(fileList)
 				.build();
 		
-		when(reviewDao.insertReview(any(ReviewDto.class),any(AccountDto.class), anyString())).thenReturn(1);
+		when(reviewDao.createReview(any(ReviewDto.class),any(AccountDto.class), anyString())).thenReturn(1);
 		
-		int reviewId = reviewDao.insertReview(review, user, thumbnailName);
+		int reviewId = reviewDao.createReview(review, user, thumbnailName);
 		
 		assertThat(reviewId).isEqualTo(1);
 	}

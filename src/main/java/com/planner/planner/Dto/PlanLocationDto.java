@@ -4,9 +4,13 @@ import com.planner.planner.Common.ValidationGroups.PlanLocationCreateGroup;
 import com.planner.planner.Common.ValidationGroups.PlanLocationUpdateGroup;
 
 import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Getter
 public class PlanLocationDto {

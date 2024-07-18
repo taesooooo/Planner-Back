@@ -202,9 +202,9 @@ public class SpotServiceImpl implements SpotService {
 
 	@Override
 	public Page<SpotLikeDto> getSpotLikeList(int accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
-		PageInfo pageInfo = new PageInfo.Builder()
-				.setPageNum(commonRequestParamDto.getPageNum())
-				.setPageItemCount(commonRequestParamDto.getItemCount())
+		PageInfo pageInfo = PageInfo.builder()
+				.pageNum(commonRequestParamDto.getPageNum())
+				.pageItemCount(commonRequestParamDto.getItemCount())
 				.build();
 		
 		List<SpotLikeDto> spotLikelist = spotDao.selectSpotLikeList(accountId, commonRequestParamDto, pageInfo);

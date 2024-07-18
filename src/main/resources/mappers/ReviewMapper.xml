@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.ReviewMapper">
+	<!-- 리뷰 기본 맵 -->
+	<resultMap id="reviewMap" type="ReviewDto">
+		<id property="reviewId" column="review_id"/>
+		<result property="plannerId" column="planner_id"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="areaCode" column="areacode"/>
+		<result property="thumbnail" column="thumbnail"/>
+		<result property="writer" column="writer"/>
+		<result property="writerId" column="writer_id"/>
+		<result property="createDate" column="create_date"/>
+		<result property="updateDate" column="update_date"/>
+	</resultMap>
+	
+	<resultMap id="reviewCommentMap" type="CommentDto">
+		<id property="commentId" column="RC_comment_id"/>
+		<result property="reviewId" column="RC_review_id"/>
+		<result property="writerId" column="RC_writer_id"/>
+		<result property="writer" column="AC_nickname"/>
+		<result property="content" column="RC_content"/>
+		<result property="parentId" column="RC_parent_id"/>
+		<result property="createDate" column="RC_create_date"/>
+		<result property="updateDate" column="RC_update_date"/>
+	</resultMap>
+	
+	<resultMap id="reviewDetailMap" type="ReviewDto" extends="reviewMap">
+		<collection property="comments" ofType="CommentDto">
+			<id property="commentId" column="RC_comment_id"/>
+			<result property="reviewId" column="RC_review_id"/>
+			<result property="writerId" column="RC_writer_id"/>
+			<result property="writer" column="AC_nickname"/>
+			<result property="content" column="RC_content"/>
+			<result property="parentId" column="RC_parent_id"/>
+			<result property="createDate" column="RC_create_date"/>
+			<result property="updateDate" column="RC_update_date"/>
+		</collection>
+	</resultMap>
+	
+	<!-- 리뷰 공통 기본 컬럼 -->
+	<sql id="reviewColmunSql">
+		R.review_id, R.planner_id, R.title, R.content, R.areacode, R.thumbnail, R.writer, R.writer_id, R.like_count, R.create_date, R.update_date  
+	</sql>
+	
+	<!-- 리뷰 where 공통 조건 문 -->
+	<sql id="whereIfSql">
+		<if test="commonRequestParamDto.keyword != null and commonRequestParamDto.keyword != ''" >
+				<bind name="str" value="'%' + commonRequestParamDto.keyword + '%'" />
+				title LIKE #{str}
+		</if>
+		<if test="commonRequestParamDto.areaCode != null and commonRequestParamDto.areaCode != 0">
+			AND P.area_code = #{commonRequestParamDto.areaCode} 
+		</if>
+	</sql>
+	
+	<insert id="createReview" parameterType="ReviewDto" useGeneratedKeys="true" keyProperty="reviewDto.reviewId" keyColumn="review_id">
+		INSERT INTO review(planner_id, title, content, areacode, thumbnail, writer, writer_id, create_date, update_date) 
+		VALUES (#{reviewDto.plannerId}, #{reviewDto.title}, #{reviewDto.content}, #{reviewDto.areaCode}, #{thumbnail}, #{accountDto.nickname}, #{accountDto.accountId}, now(), now())
+	</insert>
+	
+	<select id="findById" resultMap="reviewDetailMap">
+		SELECT 
+			<include refid="reviewColmunSql"></include>,
+			RC.comment_id AS RC_comment_id, RC.review_id AS RC_review_id, RC.writer_id AS RC_writer_id, RC.content AS RC_content, 
+			RC.parent_id AS RC_parent_id, RC.create_date AS RC_create_date, RC.update_date AS RC_update_date, AC.nickname AS AC_nickname 
+		FROM review AS R
+		LEFT JOIN review_comment AS RC ON RC.review_id = R.review_id 
+		LEFT JOIN account AS AC ON AC.account_id = RC.writer_id 
+		WHERE R.review_id = #{reviewId}
+	</select>
+	
+	<select id="findAll" resultType="ReviewDto">
+		SELECT 
+			<include refid="reviewColmunSql"></include>
+		FROM review AS R
+		<where>
+			<include refid="whereIfSql"></include>
+		</where>
+		<if test="commonRequestParamDto.sortCriteria.name() == 'LATEST'">
+			ORDER BY review_id DESC 
+		</if>
+		<if test="commonRequestParamDto.sortCriteria.name() == 'LIKECOUNT'">
+			ORDER BY like_count DESC 
+		</if>
+		LIMIT #{pageInfo.pageOffSet}, #{pageInfo.pageItemCount}
+	</select>
+	
+	<update id="updateReview">
+		UPDATE review 
+		SET 
+			title = #{reviewDto.title}, 
+			content = #{reviewDto.content}, 
+			areacode = #{reviewDto.areaCode}, 
+			update_date = now() 
+		WHERE review_id = #{reviewId};
+	</update>
+	
+	<update id="updateReviewThumbnail">
+		UPDATE review 
+		SET 
+			thumbnail = #{thumbnailName}, 
+			update_date = now() 
+		WHERE review_id = #{reviewId};
+	</update>
+	
+	<delete id="deleteReview">
+		DELETE FROM review 
+		WHERE review_id = #{reviewId}
+	</delete>
+	
+	<select id="findTotalCount">
+		SELECT count(*) FROM review 
+		<where>
+			<include refid="whereIfSql"></include>
+		</where>
+	</select>
+	
+</mapper>
+

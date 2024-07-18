@@ -76,13 +76,13 @@ public class PlanMemberServiceTest {
 				PlanMemberDto.builder().planMemberId(1).accountId(1).plannerId(1).build());
 		
 		
-		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(inviteMember);
+		when(accountDao.findByNickName(anyString())).thenReturn(inviteMember);
 		when(plannerDao.findPlannerByPlannerId(isNull(), anyInt())).thenReturn(planner);
 		when(planMemberDao.findMembersByPlannerId(anyInt())).thenReturn(invitedMember);
 		
 		planMemberService.inviteMembers(plannerId, invitenMembers);
 		
-		verify(accountDao, times(1)).findAccountIdByNickName(anyString());
+		verify(accountDao, times(1)).findByNickName(anyString());
 		verify(plannerDao, times(1)).findPlannerByPlannerId(isNull(), anyInt());
 		verify(planMemberDao, times(1)).findMembersByPlannerId(anyInt());
 		verify(invitationDao, times(1)).createInvitation(any(InvitationDto.class));
@@ -108,14 +108,14 @@ public class PlanMemberServiceTest {
 				PlanMemberDto.builder().planMemberId(1).accountId(1).plannerId(1).build(),
 				PlanMemberDto.builder().planMemberId(2).accountId(2).plannerId(1).build());
 		
-		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(inviteMember);
+		when(accountDao.findByNickName(anyString())).thenReturn(inviteMember);
 		when(plannerDao.findPlannerByPlannerId(isNull(), anyInt())).thenReturn(planner);
 		when(planMemberDao.findMembersByPlannerId(anyInt())).thenReturn(invitedMember);
 		
 		assertThatThrownBy(() -> planMemberService.inviteMembers(plannerId, invitenMembers))
 				.isExactlyInstanceOf(DuplicatePlanMemberException.class);
 		
-		verify(accountDao, times(1)).findAccountIdByNickName(anyString());
+		verify(accountDao, times(1)).findByNickName(anyString());
 		verify(plannerDao, times(1)).findPlannerByPlannerId(isNull(), anyInt());
 		verify(planMemberDao, times(1)).findMembersByPlannerId(anyInt());
 	}
@@ -128,12 +128,12 @@ public class PlanMemberServiceTest {
 		
 		PlanMemberInviteDto invitenMembers= PlanMemberInviteDto.builder().members(inviteMemberEmails).build();
 		
-		when(accountDao.findAccountIdByNickName(anyString())).thenReturn(null);
+		when(accountDao.findByNickName(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> planMemberService.inviteMembers(plannerId, invitenMembers))
 				.isExactlyInstanceOf(UserNotFoundException.class);
 		
-		verify(accountDao, times(1)).findAccountIdByNickName(anyString());
+		verify(accountDao, times(1)).findByNickName(anyString());
 	}
 	
 	@Test
@@ -146,12 +146,12 @@ public class PlanMemberServiceTest {
 		AccountDto user = AccountDto.builder().accountId(2).build();
 		
 		when(planMemberDao.findMembersByPlannerId(plannerId)).thenReturn(members);
-		when(accountDao.findAccountIdByNickName(testNickName)).thenReturn(user);
+		when(accountDao.findByNickName(testNickName)).thenReturn(user);
 		
 		planMemberService.deleteMember(plannerId, testNickName);
 
 		verify(planMemberDao).findMembersByPlannerId(anyInt());
-		verify(accountDao).findAccountIdByNickName(anyString());
+		verify(accountDao).findByNickName(anyString());
 		verify(planMemberDao).deletePlanMember(anyInt(), anyInt());
 	}
 	
@@ -164,13 +164,13 @@ public class PlanMemberServiceTest {
 		members.add(PlanMemberDto.builder().planMemberId(2).accountId(2).plannerId(1).build());
 
 		when(planMemberDao.findMembersByPlannerId(plannerId)).thenReturn(members);
-		when(accountDao.findAccountIdByNickName(testNickName)).thenReturn(null);
+		when(accountDao.findByNickName(testNickName)).thenReturn(null);
 		
 		assertThatThrownBy(() -> planMemberService.deleteMember(plannerId, testNickName))
 				.isExactlyInstanceOf(UserNotFoundException.class);
 		
 		verify(planMemberDao).findMembersByPlannerId(anyInt());
-		verify(accountDao).findAccountIdByNickName(anyString());
+		verify(accountDao).findByNickName(anyString());
 	}
 	
 	@Test
@@ -183,13 +183,13 @@ public class PlanMemberServiceTest {
 		AccountDto user = AccountDto.builder().accountId(3).build();
 		
 		when(planMemberDao.findMembersByPlannerId(plannerId)).thenReturn(members);
-		when(accountDao.findAccountIdByNickName(testNickName)).thenReturn(user);
+		when(accountDao.findByNickName(testNickName)).thenReturn(user);
 		
 		assertThatThrownBy(() -> planMemberService.deleteMember(plannerId, testNickName))
 				.isExactlyInstanceOf(MemberNotFoundException.class);
 
 		verify(planMemberDao).findMembersByPlannerId(anyInt());
-		verify(accountDao).findAccountIdByNickName(anyString());
+		verify(accountDao).findByNickName(anyString());
 	}
 
 }

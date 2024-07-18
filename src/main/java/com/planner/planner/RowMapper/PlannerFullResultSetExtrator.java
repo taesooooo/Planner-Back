@@ -58,7 +58,7 @@ public class PlannerFullResultSetExtrator implements ResultSetExtractor<PlannerD
 					PlanDto newPlan = PlanDto.builder()
 							.planId(planId)
 							.planDate(rs.getDate("plan_date").toLocalDate())
-							.index(rs.getInt("plan_index"))
+							.planIndex(rs.getInt("plan_index"))
 							.plannerId(rs.getInt("planner_id"))
 							.planLocations(planLocations)
 							.build();

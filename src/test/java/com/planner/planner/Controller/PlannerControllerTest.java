@@ -681,7 +681,7 @@ public class PlannerControllerTest {
 		planLocations.add(PlanLocationDto.builder().locationId(3).locationContentId(3000).locationName("하늘").locationImage("").locationTransportation(1).index(3072).planId(1).build());
 		
 		List<PlanDto> plans = new ArrayList<PlanDto>();
-		plans.add(PlanDto.builder().planId(1).planLocations(planLocations).index(1024).plannerId(plannerId).build());
+		plans.add(PlanDto.builder().planId(1).planLocations(planLocations).planIndex(1024).plannerId(plannerId).build());
 
 		PlannerDto planner = PlannerDto.builder()
 				.plannerId(plannerId)
@@ -718,7 +718,7 @@ public class PlannerControllerTest {
 				.planId(planId)
 				.planDate(planDate)
 				.planLocations(null)
-				.index(index)
+				.planIndex(index)
 				.plannerId(plannerId)
 				.build();
 	}

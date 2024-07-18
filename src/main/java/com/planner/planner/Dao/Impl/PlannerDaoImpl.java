@@ -15,8 +15,8 @@ import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
-import com.planner.planner.Common.Security.UserIdentifier;
 import com.planner.planner.Dao.PlannerDao;
+import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.RowMapper.PlannerFullResultSetExtrator;
@@ -80,9 +80,18 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public int insertPlanner(PlannerDto plannerDto) {
+	public int createPlanner(AccountDto user, PlannerDto plannerDto) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		SqlParameterSource parameterSource = new BeanPropertySqlParameterSource(plannerDto);
+		SqlParameterSource parameterSource = new MapSqlParameterSource()
+				.addValue("accountId", user.getAccountId())
+				.addValue("creator", user.getNickname())
+				.addValue("areaCode", plannerDto.getAreaCode())
+				.addValue("title", plannerDto.getTitle())
+				.addValue("planDateStart", plannerDto.getPlanDateStart())
+				.addValue("planDateEnd", plannerDto.getPlanDateEnd())
+				.addValue("expense", plannerDto.getExpense())
+				.addValue("memberCount", plannerDto.getMemberCount())
+				.addValue("memberTypeId", plannerDto.getMemberTypeId());
 		
 		int result = namedParameterJdbcTemplate.update(INSERT_PLANNER_SQL, parameterSource, keyHolder, new String[] { "planner_id" } );
 		
@@ -110,7 +119,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public List<PlannerDto> findPlannersByAccountId(Integer accountId, CommonRequestParamDto commonRequestParamDto, PageInfo pageInfo) {		
+	public List<PlannerDto> findListByAccountId(Integer accountId, CommonRequestParamDto commonRequestParamDto, PageInfo pageInfo) {		
 		StringBuilder sb = new StringBuilder(FIND_PLANNER_COMMON_SQL);
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		
@@ -145,7 +154,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public List<PlannerDto> findPlannerAll(Integer accountId, CommonRequestParamDto commonRequestParamDto, PageInfo pageInfo) throws Exception {
+	public List<PlannerDto> findAll(Integer accountId, CommonRequestParamDto commonRequestParamDto, PageInfo pageInfo) throws Exception {
 		StringBuilder sb = new StringBuilder(FIND_PLANNER_COMMON_SQL);
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 
@@ -179,7 +188,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 	
 	@Override
-	public List<PlannerDto> findLikePlannerList(Integer accountId, CommonRequestParamDto commonRequestParamDto, PageInfo pageInfo) {
+	public List<PlannerDto> findLikeList(Integer accountId, CommonRequestParamDto commonRequestParamDto, PageInfo pageInfo) {
 		StringBuilder sb = new StringBuilder(FIND_PLANNER_COMMON_SQL);
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		

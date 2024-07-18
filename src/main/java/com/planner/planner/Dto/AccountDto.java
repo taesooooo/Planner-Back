@@ -2,6 +2,7 @@ package com.planner.planner.Dto;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,11 +21,15 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @JsonInclude(value = Include.NON_NULL)
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class AccountDto implements UserDetails, UserIdentifier {
 
@@ -47,17 +52,18 @@ public class AccountDto implements UserDetails, UserIdentifier {
 	@Size(min = 11, max = 11, message = "휴대폰 번호를 다시 작성해주세요.", groups = { RegisterGroup.class, AccountUpdateGroup.class })
 	private String phone;
 	private String image;
-	private Collection<? extends GrantedAuthority> authorities;
+	
 	
 	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
 	private LocalDateTime createDate;
 	@JsonFormat(pattern = "YYYY-MM-dd hh:mm:ss")
 	private LocalDateTime updateDate;
+	private List<GrantedAuthority> authorities;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
-		return null;
+		return authorities;
 	}
 
 	@Override

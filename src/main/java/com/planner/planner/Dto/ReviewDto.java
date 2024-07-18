@@ -10,9 +10,13 @@ import com.planner.planner.Common.Security.UserIdentifier;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Getter
 public class ReviewDto implements UserIdentifier {
