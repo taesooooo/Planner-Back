@@ -69,7 +69,7 @@ public class PlanLocationDaoImpl implements PlanLocationDao {
 				planLocationDto.getLocationMapx(),
 				planLocationDto.getLocationMapy(),
 				planLocationDto.getLocationTransportation(),
-				planLocationDto.getIndex(),
+				planLocationDto.getLocationIndex(),
 				planLocationDto.getLocationId());
 		return result;
 	}

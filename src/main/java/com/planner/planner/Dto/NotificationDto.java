@@ -6,9 +6,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.planner.planner.Common.Notification.NotificationType;
 import com.planner.planner.Common.Security.UserIdentifier;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Getter
 public class NotificationDto implements UserIdentifier {

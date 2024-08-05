@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.SpotMapper">
+	<insert id="createSpotLike">
+		INSERT INTO spot_like (account_id, content_id, area_code, title, image, like_date) VALUES 
+		(
+			#{accountId}, 
+			#{spotLikeDto.contentId}, 
+			#{spotLikeDto.areaCode}, 
+			#{spotLikeDto.title}, 
+			#{spotLikeDto.image}, 
+			now()
+		);
+	</insert>
+	
+	<delete id="deleteSpotLike">
+		DELETE FROM spot_like 
+		WHERE account_id = #{accountId} and content_id = #{contentId};
+	</delete>
+	
+	<sql id="commonFindSql">
+		SELECT 
+			SL.like_id, 
+			SL.account_id, 
+			SL.content_id, 
+			SL.area_code, 
+			SL.title, 
+			SL.image, 
+			SL.like_date, 
+			SUB.like_count 
+		FROM spot_like AS SL 
+		INNER JOIN ( 
+			SELECT content_id, count(content_id) AS like_count 
+			FROM spot_like 
+			WHERE content_id IN (
+				SELECT content_id 
+				FROM spot_like 
+				WHERE account_id) 
+			GROUP BY content_id ) AS SUB ON SUB.content_id = SL.content_id
+	</sql>
+	
+	<sql id="commonFindWhereSql">
+		<if test="commonRequestParamDto.keyword != null and commonRequestParamDto.keyword != ''" >
+			<bind name="str" value="'%' + commonRequestParamDto.keyword + '%'" />
+			title LIKE #{str}
+		</if>
+		<if test="commonRequestParamDto.areaCode != null and commonRequestParamDto.areaCode != 0">
+			area_code = #{commonRequestParamDto.areaCode} 
+		</if>
+	</sql>
+	
+	<select id="findSpotLike" resultType="SpotLikeDto">
+		<include refid="commonFindSql"></include>
+		WHERE SL.account_id = #{accountId} AND SL.content_id = #{contentId} 
+	</select>
+	
+	<select id="findSpotLikeList" resultType="SpotLikeDto">
+		<include refid="commonFindSql"></include>
+		<where>
+			account_id = #{accountId}
+			<include refid="commonFindWhereSql"></include>
+		</where>
+		<if test="commonRequestParamDto.sortCriteria.name() == 'LATEST'">
+			ORDER BY like_id DESC 
+		</if>
+		<if test="commonRequestParamDto.sortCriteria.name() == 'LIKECOUNT'">
+			ORDER BY like_count DESC 
+		</if>
+		LIMIT #{pageInfo.pageOffSet}, #{pageInfo.pageItemCount}
+	</select>
+	
+	<select id="findListTotalCount" resultType="Integer">
+		SELECT count(content_id) FROM spot_like
+		<where>
+			account_id = #{accountId}
+			<include refid="commonFindWhereSql"></include>
+		</where>
+	</select>
+	
+	<select id="findSpotLikeCountByContentId" resultType="Integer">
+		SELECT count(content_id) as like_count FROM spot_like 
+		WHERE content_id = #{contentId};
+	</select>
+	
+	<select id="findSpotLikeCountByContentIdList" resultType="SpotLikeCountDto">
+		SELECT content_id, count(content_id) as like_count FROM spot_like 
+		WHERE content_id IN 
+		<foreach collection="contentIdList" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+		GROUP BY content_id;
+	</select>
+	
+	<sql id="commonFindLikeStateSql">
+		SELECT 
+			like_id, 
+			account_id, 
+			content_id, 
+			area_code, 
+			title, 
+			image, 
+			like_date 
+		FROM spot_like 
+		WHERE content_id IN
+		<foreach collection="contentIdList" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach> 
+		and account_id = #{accountId};
+	</sql>
+	
+	<select id="findSpotLikeStateByContentId" resultType="Boolean">
+		<include refid="commonFindLikeStateSql"></include>
+	</select>
+	
+	<select id="findSpotLikeStateByContentIdList" resultType="SpotLikeDto">
+		<include refid="commonFindLikeStateSql"></include>
+	</select>
+</mapper>

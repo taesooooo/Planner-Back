@@ -33,7 +33,7 @@ public class PlanMemberDaoImpl implements PlanMemberDao {
 	}
 
 	@Override
-	public List<PlanMemberDto> findMembersByPlannerId(int plannerId) throws Exception {
+	public List<PlanMemberDto> findPlanMemberListByPlannerId(int plannerId) throws Exception {
 		try {
 			List<PlanMemberDto> members = jdbcTemplate.query(FINDS_PLAN_MEMBER_SQL, new PlanMemberRowMapper(), plannerId);
 			return members;			
@@ -44,7 +44,8 @@ public class PlanMemberDaoImpl implements PlanMemberDao {
 	}
 
 	@Override
-	public void deletePlanMember(int plannerId, int accountId) throws Exception {
+	public int deletePlanMember(int plannerId, int accountId) throws Exception {
 		int result = jdbcTemplate.update(DELETE_PLAN_MEMBER_SQL, plannerId, accountId);
+		return result;
 	}
 }

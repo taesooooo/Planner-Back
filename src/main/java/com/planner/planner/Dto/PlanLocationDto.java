@@ -29,6 +29,6 @@ public class PlanLocationDto {
 	private int locationTransportation;
 	
 	@Min(value = 1, message = "인덱스가 잘못되었습니다.", groups = PlanLocationUpdateGroup.class)
-	private int index;
+	private int locationIndex;
 	private int planId;
 }

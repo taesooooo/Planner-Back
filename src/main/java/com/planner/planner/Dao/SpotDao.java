@@ -10,13 +10,13 @@ import com.planner.planner.Dto.SpotLikeCountDto;
 import com.planner.planner.Dto.SpotLikeDto;
 
 public interface SpotDao {
-	public boolean insertSpotLike(int accountId, SpotLikeDto spotLikeDto) throws SQLException;
+	public boolean createSpotLike(int accountId, SpotLikeDto spotLikeDto) throws SQLException;
 
 	public boolean deleteSpotLike(int accountId, int contentId) throws Exception;
 	
-	public SpotLikeDto findSpotLikeByContentId(int accountId, int contentId) throws Exception;
+	public SpotLikeDto findSpotLike(int accountId, int contentId) throws Exception;
 
-	public List<SpotLikeDto> selectSpotLikeList(int accountId, CommonRequestParamDto requestParamDto, PageInfo pageInfo)
+	public List<SpotLikeDto> findSpotLikeList(int accountId, CommonRequestParamDto requestParamDto, PageInfo pageInfo)
 			throws Exception;
 
 	public int findListTotalCount(int accountId, CommonRequestParamDto requestParamDto) throws Exception;

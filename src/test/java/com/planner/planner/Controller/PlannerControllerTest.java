@@ -676,9 +676,9 @@ public class PlannerControllerTest {
 		List<String> members = new ArrayList<String>();
 		members.add("test2");
 		List<PlanLocationDto> planLocations = new ArrayList<PlanLocationDto>();
-		planLocations.add(PlanLocationDto.builder().locationId(1).locationContentId(1000).locationName("바다").locationImage("").locationTransportation(1).index(1024).planId(1).build());
-		planLocations.add(PlanLocationDto.builder().locationId(2).locationContentId(2000).locationName("땅").locationImage("").locationTransportation(1).index(2048).planId(1).build());
-		planLocations.add(PlanLocationDto.builder().locationId(3).locationContentId(3000).locationName("하늘").locationImage("").locationTransportation(1).index(3072).planId(1).build());
+		planLocations.add(PlanLocationDto.builder().locationId(1).locationContentId(1000).locationName("바다").locationImage("").locationTransportation(1).locationIndex(1024).planId(1).build());
+		planLocations.add(PlanLocationDto.builder().locationId(2).locationContentId(2000).locationName("땅").locationImage("").locationTransportation(1).locationIndex(2048).planId(1).build());
+		planLocations.add(PlanLocationDto.builder().locationId(3).locationContentId(3000).locationName("하늘").locationImage("").locationTransportation(1).locationIndex(3072).planId(1).build());
 		
 		List<PlanDto> plans = new ArrayList<PlanDto>();
 		plans.add(PlanDto.builder().planId(1).planLocations(planLocations).planIndex(1024).plannerId(plannerId).build());
@@ -733,7 +733,7 @@ public class PlannerControllerTest {
 				.locationMapx(123.1234567891)
 				.locationMapy(12.1234567891)
 				.locationTransportation(transportation)
-				.index(index)
+				.locationIndex(index)
 				.planId(planId)
 				.build();
 	}

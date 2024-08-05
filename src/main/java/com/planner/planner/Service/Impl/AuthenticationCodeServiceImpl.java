@@ -79,6 +79,6 @@ public class AuthenticationCodeServiceImpl implements AuthenticationCodeService 
 
 	@Override
 	public void delete(String phone) {
-		this.authentcationCodeDao.delete(phone);
+		this.authentcationCodeDao.deleteByPhone(phone);
 	}
 }

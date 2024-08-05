@@ -20,7 +20,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public void createNotification(int accountId, NotificationDto notificationDto) throws Exception{
-		notificationDao.createNotification(accountId, notificationDto);
+		notificationDao.insertNotification(accountId, notificationDto);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public void notificationRead(int notificationId) throws Exception{
-		notificationDao.updateRead(notificationId, true);
+		notificationDao.readNotification(notificationId, true);
 	}
 
 	@Override

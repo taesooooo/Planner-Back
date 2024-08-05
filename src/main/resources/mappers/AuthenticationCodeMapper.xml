@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.AuthenticationCodeMapper">
+	<insert id="createByPhone">
+		INSERT INTO authentication_code(phone, code) VALUES 
+		(
+			#{phone}, 
+			#{code}
+		);
+	</insert>
+	
+	<insert id="createByEmail">
+		INSERT INTO authentication_code(email, code) VALUES 
+		(
+			#{email}, 
+			#{code}
+		);
+	</insert>
+	
+	<sql id="commonFindBySql">
+		SELECT 
+			id, 
+			phone, 
+			email, 
+			code, 
+			code_confirm, 
+			expire_date, 
+			create_date 
+		FROM authentication_code 
+		WHERE ${column} = ${value} AND create_date = (
+			SELECT 
+				MAX(create_date) 
+			FROM authentication_code 
+			WHERE ${column} = ${value})
+		;
+	</sql>
+	
+	<select id="findByPhone" resultType="AuthenticationCodeDto">
+		<include refid="commonFindBySql">
+			<property name="column" value="phone"/>
+			<property name="value" value="#{phone}"/>
+		</include>
+	</select>
+	
+	<select id="findByEmail" resultType="AuthenticationCodeDto">
+		<include refid="commonFindBySql">
+			<property name="column" value="email"/>
+			<property name="value" value="#{email}"/>
+		</include>
+	</select>
+	
+	<sql id="commonUpdateCodeConfirmSql">
+		UPDATE authentication_code 
+		SET 
+			code_confirm = TRUE 
+	</sql>
+	
+	<update id="updateCodeConfirmByPhone">
+		<include refid="commonUpdateCodeConfirmSql"></include>
+		WHERE phone = #{phone};
+	</update>
+	
+	<update id="updateCodeConfirmByEmail">
+		<include refid="commonUpdateCodeConfirmSql"></include>
+		WHERE email = #{email};
+	</update>
+	
+	<delete id="deleteByPhone">
+		DELETE FROM authentication_code 
+		WHERE phone = #{phone};
+	</delete>
+</mapper>

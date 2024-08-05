@@ -68,7 +68,7 @@ public class SpotServiceImpl implements SpotService {
 					
 					int likeCount = 0;
 					if(likeCountDto.isPresent()) {
-						likeCount = likeCountDto.get().getCount();
+						likeCount = likeCountDto.get().getLikeCount();
 					}
 
 					SpotDto spot = SpotDto.builder()
@@ -111,7 +111,7 @@ public class SpotServiceImpl implements SpotService {
 	
 				int likeCount = 0;
 				if (likeCountDto.isPresent()) {
-					likeCount = likeCountDto.get().getCount();
+					likeCount = likeCountDto.get().getLikeCount();
 				}
 	
 				SpotDto spot = SpotDto.builder()
@@ -153,7 +153,7 @@ public class SpotServiceImpl implements SpotService {
 		
 					int likeCount = 0;
 					if (likeCountDto.isPresent()) {
-						likeCount = likeCountDto.get().getCount();
+						likeCount = likeCountDto.get().getLikeCount();
 					}
 
 					SpotDto spot = SpotDto.builder()
@@ -192,7 +192,7 @@ public class SpotServiceImpl implements SpotService {
 
 	@Override
 	public boolean addSpotLike(int accountId, SpotLikeDto spotLikeDto) throws Exception {
-		return spotDao.insertSpotLike(accountId, spotLikeDto);
+		return spotDao.createSpotLike(accountId, spotLikeDto);
 	}
 
 	@Override
@@ -207,7 +207,7 @@ public class SpotServiceImpl implements SpotService {
 				.pageItemCount(commonRequestParamDto.getItemCount())
 				.build();
 		
-		List<SpotLikeDto> spotLikelist = spotDao.selectSpotLikeList(accountId, commonRequestParamDto, pageInfo);
+		List<SpotLikeDto> spotLikelist = spotDao.findSpotLikeList(accountId, commonRequestParamDto, pageInfo);
 		
 		int totalCount = 0;
 		

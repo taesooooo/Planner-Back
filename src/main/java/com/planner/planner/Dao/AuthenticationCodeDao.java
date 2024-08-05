@@ -9,5 +9,5 @@ public interface AuthenticationCodeDao {
 	public AuthenticationCodeDto findByEmail(String email);
 	public boolean updateCodeConfirmByPhone(String phone);
 	public boolean updateCodeConfirmByEmail(String email);
-	public void delete(String phone);
+	public void deleteByPhone(String phone);
 }

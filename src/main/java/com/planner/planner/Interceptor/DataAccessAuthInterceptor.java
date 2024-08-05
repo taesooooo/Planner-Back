@@ -67,7 +67,7 @@ public class DataAccessAuthInterceptor implements HandlerInterceptor {
 		}
 		else if(pathVariables.get("contentId") != null) {
 			int contentId = Integer.parseInt(pathVariables.get("contentId"));
-			SpotLikeDto likeDto = spotDao.findSpotLikeByContentId(userId, contentId);
+			SpotLikeDto likeDto = spotDao.findSpotLike(userId, contentId);
 			
 			if(likeDto == null) {
 				throw new DataNotFoundException("해당하는 좋아요 정보를 찾지 못했습니다.");
@@ -116,7 +116,7 @@ public class DataAccessAuthInterceptor implements HandlerInterceptor {
 		}
 		else if(pathVariables.get("fileName") != null) {
 			String fileName = pathVariables.get("fileName");
-			FileInfoDto fileInfoDto = fileUploadDao.getFileInfo(fileName);
+			FileInfoDto fileInfoDto = fileUploadDao.findByFileName(fileName);
 			
 			if(fileInfoDto == null) {
 				throw new DataNotFoundException("해당하는 파일 정보를 찾지 못했습니다.");

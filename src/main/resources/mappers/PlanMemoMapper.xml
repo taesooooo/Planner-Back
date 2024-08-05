@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.PlanMemoMapper">
+	<insert id="insertPlanMemo" useGeneratedKeys="true" keyColumn="memo_id" keyProperty="planMemoDto.memoId">
+		INSERT INTO plan_memo(memo_title, memo_content, memo_create_date, memo_update_date, planner_id) VALUES
+		(
+			#{planMemoDto.title}, 
+			#{planMemoDto.content}, 
+			NOW(), 
+			NOW(), 
+			#{plannerId}
+		);
+	</insert>
+	
+	<select id="findPlanMemoListByPlannerId" resultType="PlanMemoDto">
+		SELECT 
+			M.memo_id AS memo_id, 
+			M.memo_title AS title, 
+			M.memo_content AS content, 
+			M.memo_create_date AS create_date, 
+			M.memo_update_date AS update_date 
+		FROM plan_memo AS M 
+		WHERE M.planner_id = #{plannerId};
+	</select>
+	
+	<update id="updatePlanMemo">
+		UPDATE plan_memo AS M 
+		SET 
+			M.memo_title = #{planMemoDto.title}, 
+			M.memo_content = #{planMemoDto.content}, 
+			M.memo_update_date = NOW() 
+		WHERE M.memo_id = #{planMemoId};
+	</update>
+	
+	<delete id="deletePlanMemo">
+		DELETE FROM plan_memo 
+		WHERE memo_id = #{planMemoId};
+	</delete>
+</mapper>

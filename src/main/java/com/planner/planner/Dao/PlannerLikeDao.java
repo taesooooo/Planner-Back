@@ -10,5 +10,5 @@ public interface PlannerLikeDao {
 
 	public boolean isLike(int accountId, int plannerId);
 
-	public List<Integer> returnLikePlannerIdList(int accountId, List<Integer> plannerIdList);
+	public List<Integer> findLikePlannerIdList(int accountId, List<Integer> plannerIdList);
 }

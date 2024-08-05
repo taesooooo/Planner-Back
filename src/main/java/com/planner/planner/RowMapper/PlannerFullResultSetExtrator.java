@@ -82,7 +82,7 @@ public class PlannerFullResultSetExtrator implements ResultSetExtractor<PlannerD
 								.locationMapx(rs.getDouble("location_mapx"))
 								.locationMapy(rs.getDouble("location_mapy"))
 								.locationTransportation(rs.getInt("location_transportation"))
-								.index(rs.getInt("location_index"))
+								.locationIndex(rs.getInt("location_index"))
 								.planId(rs.getInt("plan_id"))
 								.build();
 						planLocations.add(pl);				

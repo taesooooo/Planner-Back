@@ -72,7 +72,7 @@ public class FileServiceTest {
 				.uploadDate(LocalDateTime.now())
 				.build();
 
-		when(fileUploadDao.getFileInfo(fileName)).thenReturn(fileInfo);
+		when(fileUploadDao.findByFileName(fileName)).thenReturn(fileInfo);
 		
 		FileInfoDto info = fileUploadService.findFileInfo(fileName);
 		
@@ -85,7 +85,7 @@ public class FileServiceTest {
 		String filePath = fileStore.getBoardDir() + fileName;
 		//FileInfoDto fileInfo = new FileInfoDto(1, 1, 1, fileName, filePath, MediaType.IMAGE_JPEG_VALUE, LocalDateTime.now());
 		
-		when(fileUploadDao.getFileInfo(fileName)).thenReturn(null);
+		when(fileUploadDao.findByFileName(fileName)).thenReturn(null);
 		
 		assertThatThrownBy(() -> fileUploadService.findFileInfo(fileName))
 				.isExactlyInstanceOf(Exception.class);
@@ -121,7 +121,7 @@ public class FileServiceTest {
 		File f = new File(fileStore.getBoardDir() + file.getOriginalFilename());
 		f.getParentFile().mkdirs();
 		file.transferTo(f);
-		when(fileUploadDao.getFileInfo(file.getOriginalFilename())).thenReturn(fileInfo);
+		when(fileUploadDao.findByFileName(file.getOriginalFilename())).thenReturn(fileInfo);
 		
 		UploadFileDto data = fileUploadService.loadImage(file.getOriginalFilename());
 		
@@ -145,7 +145,7 @@ public class FileServiceTest {
 
 		f.getParentFile().mkdirs();
 		//file.transferTo(f);
-		when(fileUploadDao.getFileInfo(file.getOriginalFilename())).thenReturn(fileInfo);
+		when(fileUploadDao.findByFileName(file.getOriginalFilename())).thenReturn(fileInfo);
 
 		assertThatThrownBy(() -> fileUploadService.loadImage(file.getOriginalFilename()))
 				.isExactlyInstanceOf(NoSuchFileException.class);

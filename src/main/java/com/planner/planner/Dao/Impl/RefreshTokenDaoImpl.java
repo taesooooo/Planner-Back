@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.planner.planner.Dao.RefreshTokenDao;
 import com.planner.planner.Dto.RefreshTokenDto;
-import com.planner.planner.RowMapper.ReflashTokenRowMapper;
+import com.planner.planner.RowMapper.RefreshTokenRowMapper;
 
 @Repository
 public class RefreshTokenDaoImpl implements RefreshTokenDao {
@@ -28,7 +28,7 @@ public class RefreshTokenDaoImpl implements RefreshTokenDao {
 	}
 
 	@Override
-	public boolean create(String email, String token) throws Exception {
+	public boolean createRefreshToken(String email, String token) throws Exception {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource()
 				.addValue("email", email)
 				.addValue("token", token);
@@ -43,7 +43,7 @@ public class RefreshTokenDaoImpl implements RefreshTokenDao {
 				.addValue("email", email);
 		
 		try {
-			return namedParameterJdbcTemplate.queryForObject(FIND_BY_EMAIL_SQL, parameterSource, new ReflashTokenRowMapper());
+			return namedParameterJdbcTemplate.queryForObject(FIND_BY_EMAIL_SQL, parameterSource, new RefreshTokenRowMapper());
 		}
 		catch (EmptyResultDataAccessException e) {
 			return null;
@@ -56,7 +56,7 @@ public class RefreshTokenDaoImpl implements RefreshTokenDao {
 				.addValue("token", token);
 		
 		try {
-			return namedParameterJdbcTemplate.queryForObject(FIND_BY_TOKEN_SQL, parameterSource, new ReflashTokenRowMapper());
+			return namedParameterJdbcTemplate.queryForObject(FIND_BY_TOKEN_SQL, parameterSource, new RefreshTokenRowMapper());
 		}
 		catch (EmptyResultDataAccessException e) {
 			return null;
@@ -64,7 +64,7 @@ public class RefreshTokenDaoImpl implements RefreshTokenDao {
 	}
 
 	@Override
-	public boolean update(String email, String token) throws Exception {
+	public boolean updateRefreshToken(String email, String token) throws Exception {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource()
 				.addValue("email", email)
 				.addValue("token", token);
@@ -75,7 +75,7 @@ public class RefreshTokenDaoImpl implements RefreshTokenDao {
 	}
 
 	@Override
-	public boolean delete(String email) throws Exception {
+	public boolean deleteRefreshToken(String email) throws Exception {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource()
 				.addValue("email", email);
 		

@@ -46,7 +46,7 @@ public class PlanMemoDaoImpl implements PlanMemoDao {
 	}
 
 	@Override
-	public List<PlanMemoDto> findPlanMemoByPlannerId(int plannerId) {
+	public List<PlanMemoDto> findPlanMemoListByPlannerId(int plannerId) {
 		List<PlanMemoDto> list = jdbcTemplate.query(FINDS_PLANMEMO_SQL, new PlanMemoRowMapper(), plannerId);
 		return list;
 	}

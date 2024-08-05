@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.NotificationMapper">
+	<insert id="insertNotification" useGeneratedKeys="true" keyColumn="id" keyProperty="notificationDto.id">
+		INSERT INTO notification(account_id, content, link, noti_type) VALUES 
+		(
+			#{accountId}, 
+			#{notificationDto.content}, 
+			#{notificationDto.link}, 
+			#{notificationDto.notificationType}
+		);
+	</insert>
+	
+	<sql id="commonNotificationSql">
+		SELECT 
+				id, 
+				account_id, 
+				content, 
+				link, 
+				state AS isRead, 
+				noti_type AS notificationType, 
+				create_date, 
+				update_date 
+		FROM notification 
+	</sql>
+	
+	<select id="findById" resultType="NotificationDto">
+		<include refid="commonNotificationSql"></include>
+		WHERE id = #{notificationId};
+	</select>
+	
+	<select id="findAllByAccountId" resultType="NotificationDto">
+		<include refid="commonNotificationSql"></include>
+		WHERE account_id = #{accountId};
+	</select>
+	
+	<update id="readNotification">
+		UPDATE notification 
+		SET 
+			state = #{state}, 
+			update_date = NOW() 
+		WHERE id = #{notificationId};
+	</update>
+	
+	<delete id="deleteNotification">
+		DELETE FROM notification 
+		WHERE id = #{notificationId};
+	</delete>
+</mapper>

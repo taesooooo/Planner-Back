@@ -80,7 +80,7 @@ public class AuthenticationCodeDaoImpl implements AuthenticationCodeDao {
 	}
 
 	@Override
-	public void delete(String phone) {
+	public void deleteByPhone(String phone) {
 		this.jdbcTemplate.update(DELETE_SQL, phone);
 	}
 

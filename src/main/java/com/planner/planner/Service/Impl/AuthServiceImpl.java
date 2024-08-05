@@ -55,10 +55,10 @@ public class AuthServiceImpl implements AuthService {
 
 		RefreshTokenDto refreshTokenDto = refreshTokenDao.findByEmail(user.getEmail());
 		if (refreshTokenDto == null) {
-			refreshTokenDao.create(user.getEmail(), refreshToken);
+			refreshTokenDao.createRefreshToken(user.getEmail(), refreshToken);
 		}
 		else {
-			refreshTokenDao.update(user.getEmail(), refreshToken);
+			refreshTokenDao.updateRefreshToken(user.getEmail(), refreshToken);
 		}
 
 		LoginInfoDto loginDto = LoginInfoDto.builder()
@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
 		
 		RefreshTokenDto refreshTokenDto = refreshTokenDao.findByEmail(user.getEmail());
 		if (refreshTokenDto != null) {
-			refreshTokenDao.delete(user.getEmail());
+			refreshTokenDao.deleteRefreshToken(user.getEmail());
 		}
 		
 		return true;
@@ -103,7 +103,7 @@ public class AuthServiceImpl implements AuthService {
 		String newAccessToken = jwtUtil.createAccessToken(user.getAccountId());
 		String newRefreshToken = jwtUtil.createRefreshToken();
 
-		refreshTokenDao.update(user.getEmail(), newRefreshToken);
+		refreshTokenDao.updateRefreshToken(user.getEmail(), newRefreshToken);
 		
 		ReissueTokenDto reissueTokenDto = ReissueTokenDto.builder()
 				.accessToken(newAccessToken)

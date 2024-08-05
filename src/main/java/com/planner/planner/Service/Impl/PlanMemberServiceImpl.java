@@ -43,7 +43,7 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 
 	@Override
 	public List<PlanMemberDto> findMembersByPlannerId(int plannerId) throws Exception {
-		return planMemberDao.findMembersByPlannerId(plannerId);
+		return planMemberDao.findPlanMemberListByPlannerId(plannerId);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 			throw new PlannerNotFoundException("존재하지 않는 플래너 입니다.");
 		}
 		
-		List<PlanMemberDto> invitedUsers = planMemberDao.findMembersByPlannerId(plannerId);
+		List<PlanMemberDto> invitedUsers = planMemberDao.findPlanMemberListByPlannerId(plannerId);
 		boolean isInvited = invitedUsers.stream()
 				.anyMatch((item) -> users.stream().anyMatch((user) -> user.getAccountId() == item.getAccountId()));
 		
@@ -85,13 +85,13 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 					.notificationType(NotificationType.PLANNER_INVITE)
 					.build();
 			
-			notificationDao.createNotification(user.getAccountId(), notificationDto);	
+			notificationDao.insertNotification(user.getAccountId(), notificationDto);	
 		}
 	}
 
 	@Override
 	public void deleteMember(int plannerId, String nickName) throws Exception {
-		List<PlanMemberDto> members = planMemberDao.findMembersByPlannerId(plannerId);
+		List<PlanMemberDto> members = planMemberDao.findPlanMemberListByPlannerId(plannerId);
 		AccountDto user = accountDao.findByNickName(nickName);
 		if (user == null) {
 			throw new UserNotFoundException("사용자를 찾을 수 없습니다.");

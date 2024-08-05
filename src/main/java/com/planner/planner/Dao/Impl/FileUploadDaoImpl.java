@@ -28,9 +28,14 @@ public class FileUploadDaoImpl implements FileUploadDao {
 	public FileUploadDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
+	
+	@Override
+	public void createFileInfo(int userId, FileInfoDto fileInfo) {
+		jdbcTemplate.update(INSERT_FILEINFO_SQL, userId, fileInfo.getFileName(), fileInfo.getFilePath(), fileInfo.getFileType());
+	}
 
 	@Override
-	public FileInfoDto getFileInfo(String fileName) {
+	public FileInfoDto findByFileName(String fileName) {
 		try {
 			FileInfoDto fileInfo = jdbcTemplate.queryForObject(SELECT_FILEINFO_BY_FILENAME_SQL, new FileInfoRowMapper(), fileName);
 			return fileInfo;
@@ -41,15 +46,11 @@ public class FileUploadDaoImpl implements FileUploadDao {
 	}
 
 	@Override
-	public List<FileInfoDto> getTempFileInfoList() {
+	public List<FileInfoDto> findTempFileList() {
 		List<FileInfoDto> fileInfo = jdbcTemplate.query(SELECT_FILEINFO_TEMPLIST_SQL, new FileInfoRowMapper());
 		return fileInfo.isEmpty() ? null : fileInfo;
 	}
 
-	@Override
-	public void createFileInfo(int userId, FileInfoDto fileInfo) {
-		jdbcTemplate.update(INSERT_FILEINFO_SQL, userId, fileInfo.getFileName(), fileInfo.getFilePath(), fileInfo.getFileType());
-	}
 
 	@Override
 	public void updateBoardId(int boardId, List<String> fileNames) {
@@ -60,7 +61,7 @@ public class FileUploadDaoImpl implements FileUploadDao {
 	}
 
 	@Override
-	public void deleteFileInfoById(int fileId) {
+	public void deleteById(int fileId) {
 		jdbcTemplate.update(DELETE_FILEINFO_BY_FILEID_SQL, fileId);
 	}
 

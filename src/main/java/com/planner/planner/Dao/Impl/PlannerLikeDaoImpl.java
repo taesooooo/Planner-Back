@@ -50,7 +50,7 @@ public class PlannerLikeDaoImpl implements PlannerLikeDao {
 	}
 
 	@Override
-	public List<Integer> returnLikePlannerIdList(int accountId, List<Integer> plannerIdList) {
+	public List<Integer> findLikePlannerIdList(int accountId, List<Integer> plannerIdList) {
 		String plannerIds = plannerIdList.stream().map(String::valueOf).collect(Collectors.joining(","));
 		String sql = String.format(FINDS_PLANNER_LIKE__PLANNER_ID_LIST, plannerIds);
 		List<Integer> list = jdbcTemplate.queryForList(sql, Integer.class, accountId);

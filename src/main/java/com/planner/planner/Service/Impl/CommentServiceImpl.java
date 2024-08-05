@@ -65,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
 				.notificationType(NotificationType.COMMENT)
 				.build();
 		
-		notificationDao.createNotification(notificationUserId, notification);
+		notificationDao.insertNotification(notificationUserId, notification);
 		
 		return newCommentId;
 	}
@@ -87,7 +87,7 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public void deleteComment(int reviewId, int commentId) throws Exception {
-		commentDao.deleteCommet(reviewId, commentId);
+		commentDao.deleteComment(reviewId, commentId);
 	}
 
 }

@@ -13,7 +13,7 @@ public class SpotLikeCountMapper implements RowMapper<SpotLikeCountDto> {
 	public SpotLikeCountDto mapRow(ResultSet rs, int rowNum) throws SQLException {
 		return SpotLikeCountDto.builder()
 				.contentId(rs.getInt("content_id"))
-				.count(rs.getInt("like_count"))
+				.likeCount(rs.getInt("like_count"))
 				.build();
 	}
 }

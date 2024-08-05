@@ -9,7 +9,7 @@ public interface PlanMemoDao {
 	// 메모 생성, 조회, 수정, 삭제
 	public int insertPlanMemo(int plannerId, PlanMemoDto planMemoDto);
 
-	public List<PlanMemoDto> findPlanMemoByPlannerId(int plannerId);
+	public List<PlanMemoDto> findPlanMemoListByPlannerId(int plannerId);
 
 	public int updatePlanMemo(int planMemoId, PlanMemoDto planMemoDto);
 

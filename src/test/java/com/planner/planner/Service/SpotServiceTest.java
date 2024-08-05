@@ -102,11 +102,11 @@ public class SpotServiceTest {
 		List<SpotLikeCountDto> spotLikeCountList = new ArrayList<SpotLikeCountDto>();
 		spotLikeCountList.add(SpotLikeCountDto.builder()
 				.contentId(2733967)
-				.count(1)
+				.likeCount(1)
 				.build());
 		spotLikeCountList.add(SpotLikeCountDto.builder()
 				.contentId(2763807)
-				.count(1)
+				.likeCount(1)
 				.build());
 
 		//
@@ -183,11 +183,11 @@ public class SpotServiceTest {
 		List<SpotLikeCountDto> spotLikeCountList = new ArrayList<SpotLikeCountDto>();
 		spotLikeCountList.add(SpotLikeCountDto.builder()
 				.contentId(2733967)
-				.count(1)
+				.likeCount(1)
 				.build());
 		spotLikeCountList.add(SpotLikeCountDto.builder()
 				.contentId(2763807)
-				.count(1)
+				.likeCount(1)
 				.build());
 
 		//
@@ -236,7 +236,7 @@ public class SpotServiceTest {
 				.image("테스트이미지")
 				.build();
 		
-		when(spotDao.insertSpotLike(anyInt(), any())).thenReturn(true);
+		when(spotDao.createSpotLike(anyInt(), any())).thenReturn(true);
 
 		boolean like = spotService.addSpotLike(accountId, spotLikeDto);
 		
@@ -280,7 +280,7 @@ public class SpotServiceTest {
 				.build());
 
 		//
-		when(spotDao.selectSpotLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(list);
+		when(spotDao.findSpotLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(list);
 		when(spotDao.findListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(2);
 		
 		Page<SpotLikeDto> spotList = spotService.getSpotLikeList(1, paramDto);
@@ -309,7 +309,7 @@ public class SpotServiceTest {
 				.build());
 
 		//
-		when(spotDao.selectSpotLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(list);
+		when(spotDao.findSpotLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(list);
 		when(spotDao.findListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(1);
 		
 		Page<SpotLikeDto> spotList = spotService.getSpotLikeList(1, paramDto);

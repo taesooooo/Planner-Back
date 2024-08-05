@@ -104,7 +104,7 @@ public class ReviewServiceImpl implements ReviewService {
 			String thumbnailName = null;
 			String fileName = reviewDto.getFileNames().get(0);
 			
-			FileInfoDto thumbnail = fileUploadDao.getFileInfo(StringUtils.stripFilenameExtension(fileName) + "_thumb." + StringUtils.getFilenameExtension(fileName));
+			FileInfoDto thumbnail = fileUploadDao.findByFileName(StringUtils.stripFilenameExtension(fileName) + "_thumb." + StringUtils.getFilenameExtension(fileName));
 			if(thumbnail != null) {
 				thumbnailName = thumbnail.getFileName();
 			}
@@ -136,7 +136,7 @@ public class ReviewServiceImpl implements ReviewService {
 		String thumbnailName = null;
 		if (fileList != null && !fileList.isEmpty()) {
 			// 게시글 이미지에서 첫번째 이미지를 가져와 생성
-			FileInfoDto fileInfo = fileUploadDao.getFileInfo(fileList.get(0));
+			FileInfoDto fileInfo = fileUploadDao.findByFileName(fileList.get(0));
 			if (fileInfo != null) {
 				// 이미지 리사이징
 				BufferedImage resizeImage = imageUtil.resize(new File(fileInfo.getFilePath()));

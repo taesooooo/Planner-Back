@@ -34,7 +34,7 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public FileInfoDto findFileInfo(String fileName) throws Exception {
-		FileInfoDto fileInfo = fileUploadDao.getFileInfo(fileName);
+		FileInfoDto fileInfo = fileUploadDao.findByFileName(fileName);
 		if(fileInfo == null) {
 			throw new Exception(fileName + "에 대한 정보를 찾지 못했습니다.");
 		}
@@ -98,7 +98,7 @@ public class FileServiceImpl implements FileService {
 		}
 		
 		file.delete();
-		fileUploadDao.deleteFileInfoById(fileInfo.getFileId());
+		fileUploadDao.deleteById(fileInfo.getFileId());
 	}
 
 	@Override

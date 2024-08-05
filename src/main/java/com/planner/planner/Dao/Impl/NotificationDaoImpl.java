@@ -28,7 +28,7 @@ public class NotificationDaoImpl implements NotificationDao {
 	}
 
 	@Override
-	public void createNotification(int accountId, NotificationDto notificationDto) throws Exception {
+	public void insertNotification(int accountId, NotificationDto notificationDto) throws Exception {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource()
 				.addValue("accountId", accountId)
@@ -61,7 +61,7 @@ public class NotificationDaoImpl implements NotificationDao {
 	}
 
 	@Override
-	public void updateRead(int notificationId, boolean state) throws Exception {
+	public void readNotification(int notificationId, boolean state) throws Exception {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource()
 				.addValue("id", notificationId)
 				.addValue("isRead", state);

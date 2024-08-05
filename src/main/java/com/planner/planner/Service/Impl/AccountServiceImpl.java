@@ -142,7 +142,7 @@ public class AccountServiceImpl implements AccountService {
 				.notificationType(NotificationType.ACCOUNT)
 				.build();
 		
-		notificationDao.createNotification(accountId, notification);
+		notificationDao.insertNotification(accountId, notification);
 		
 		return true;
 	}

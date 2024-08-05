@@ -12,5 +12,5 @@ public interface PlanLocationDao {
 
 	public int updatePlanLocation(int planLocationId, PlanLocationDto planLocationDto);
 
-	public int deletePlanLocation(int planLocationDto);
+	public int deletePlanLocation(int planLocationId);
 }

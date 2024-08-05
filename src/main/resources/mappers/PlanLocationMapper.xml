@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.PlanLocationMapper">
+	<insert id="insertPlanLocation" useGeneratedKeys="true" keyColumn="location_id" keyProperty="planLocationDto.locationId">
+		INSERT INTO plan_location(location_name, location_content_id, location_image, location_addr, location_mapx, location_mapy, location_transportation, location_index, plan_id) VALUES 
+		(
+			#{planLocationDto.locationName}, 
+			#{planLocationDto.locationContentId}, 
+			#{planLocationDto.locationImage}, 
+			#{planLocationDto.locationAddr}, 
+			#{planLocationDto.locationMapx}, 
+			#{planLocationDto.locationMapy}, 
+			#{planLocationDto.locationTransportation}, 
+			(
+				SELECT ifnull(MAX(pl.location_index), 0) + 1024 
+				FROM plan_location AS pl 
+				WHERE pl.plan_id = #{planId}
+			), 
+			#{planId}
+		);
+	</insert>
+	
+	<select id="findPlanLocationListByPlanId" resultType="PlanLocationDto">
+		SELECT 
+			plan_location.location_id, 
+			plan_location.location_name, 
+			plan_location.location_content_id, 
+			plan_location.location_image, 
+			plan_location.location_addr, 
+			plan_location.location_mapx, 
+			plan_location.location_mapy, 
+			plan_location.location_transportation, 
+			plan_location.location_index, 
+			plan_location.plan_id 
+		FROM plan_location  
+		WHERE plan_location.plan_id = #{planId} 
+		ORDER BY plan_location.location_index;
+	</select>
+	
+	<update id="updatePlanLocation">
+		UPDATE plan_location AS PL 
+		SET 
+			PL.location_name = #{planLocationDto.locationName}, 
+			PL.location_content_id = #{planLocationDto.locationContentId}, 
+			PL.location_image = #{planLocationDto.locationImage} , 
+			PL.location_addr = #{planLocationDto.locationAddr}, 
+			PL.location_mapx = #{planLocationDto.locationMapx}, 
+			PL.location_mapy = #{planLocationDto.locationMapy}, 
+			PL.location_transportation = #{planLocationDto.locationTransportation}, 
+			PL.location_index = #{planLocationDto.locationIndex} 
+		WHERE PL.location_id = #{planLocationId};
+	</update>
+	
+	<delete id="deletePlanLocation">
+		DELETE FROM plan_location 
+		WHERE plan_location.location_id =#{planLocationId};
+	</delete>
+</mapper>

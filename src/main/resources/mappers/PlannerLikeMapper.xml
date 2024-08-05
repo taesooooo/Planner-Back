@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.PlannerLikeMapper">
+	<insert id="plannerLike">
+		INSERT INTO planner_like(account_id, planner_id, like_date) VALUES
+		(
+			#{accountId}, 
+			#{plannerId}, 
+			NOW()
+		);
+	</insert>
+	
+	<delete id="plannerUnLike">
+		DELETE FROM planner_like 
+		WHERE account_id = #{accountId} AND planner_id = #{plannerId};
+	</delete>
+	
+	<select id="isLike" resultType="Boolean">
+		SELECT 
+			count(*) as count 
+		FROM planner_like AS PL 
+		WHERE PL.account_id = #{accountId} AND PL.planner_id = #{plannerId};
+	</select>
+	
+	<select id="findLikePlannerIdList" resultType="Integer">
+		SELECT 
+			planner_id 
+		FROM planner_like 
+		WHERE planner_id IN
+		<foreach collection="plannerIdList" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach> 
+		 AND account_id = #{accountId};
+	</select>
+</mapper>

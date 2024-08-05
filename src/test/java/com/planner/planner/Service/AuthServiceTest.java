@@ -131,7 +131,7 @@ public class AuthServiceTest {
 		
 		LoginInfoDto user = authService.login(newTestUser);
 		
-		verify(refreshTokenDao).create(newTestUser.getEmail(), refreshToken);
+		verify(refreshTokenDao).createRefreshToken(newTestUser.getEmail(), refreshToken);
 		
 		assertThat(user)
 			.usingRecursiveComparison()
@@ -163,7 +163,7 @@ public class AuthServiceTest {
 		
 		LoginInfoDto user = authService.login(newTestUser);
 		
-		verify(refreshTokenDao).update(newTestUser.getEmail(), refreshToken);
+		verify(refreshTokenDao).updateRefreshToken(newTestUser.getEmail(), refreshToken);
 		
 		assertThat(user)
 			.usingRecursiveComparison()
@@ -191,7 +191,7 @@ public class AuthServiceTest {
 		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(newAccessToken);
 		when(jwtUtil.createRefreshToken()).thenReturn(newRefreshToken);
-		when(refreshTokenDao.update(anyString(), anyString())).thenReturn(true);
+		when(refreshTokenDao.updateRefreshToken(anyString(), anyString())).thenReturn(true);
 		
 		ReissueTokenDto newTokenDto = authService.reissueToken(testRefreshToken);
 		

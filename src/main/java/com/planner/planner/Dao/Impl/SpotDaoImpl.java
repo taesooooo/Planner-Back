@@ -56,7 +56,7 @@ public class SpotDaoImpl implements SpotDao {
 	}
 	
 	@Override
-	public boolean insertSpotLike(int accountId, SpotLikeDto spotLikeDto) throws SQLException {
+	public boolean createSpotLike(int accountId, SpotLikeDto spotLikeDto) throws SQLException {
 		try {
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource()
 					.addValue("accountId", accountId)
@@ -84,7 +84,7 @@ public class SpotDaoImpl implements SpotDao {
 	}
 
 	@Override
-	public SpotLikeDto findSpotLikeByContentId(int accountId, int contentId) throws Exception {
+	public SpotLikeDto findSpotLike(int accountId, int contentId) throws Exception {
 		StringBuilder sb = new StringBuilder(SELECT_SPOT_LIKE_LIST_SQL);
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		
@@ -101,7 +101,7 @@ public class SpotDaoImpl implements SpotDao {
 	}
 
 	@Override
-	public List<SpotLikeDto> selectSpotLikeList(int accountId, CommonRequestParamDto requestParamDto, PageInfo pageInfo) throws Exception {
+	public List<SpotLikeDto> findSpotLikeList(int accountId, CommonRequestParamDto requestParamDto, PageInfo pageInfo) throws Exception {
 		StringBuilder sb = new StringBuilder(SELECT_SPOT_LIKE_LIST_SQL);
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		

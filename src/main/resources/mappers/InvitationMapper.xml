@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.InvitationMapper">
+	<insert id="createInvitation" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO invitation(account_id, planner_id, invite_date, expire_date) VALUES 
+		(
+			#{accountId}, 
+			#{plannerId}, 
+			NOW(), 
+			TIMESTAMPADD(DAY, 7, NOW())
+		);
+	</insert>
+	
+	<select id="findById" resultType="InvitationDto">
+		SELECT 
+			id, 
+			account_id, 
+			planner_id, 
+			invite_date, 
+			expire_date 
+		FROM invitation 
+		WHERE id = #{id};
+	</select>
+	
+	<delete id="deleteById">
+		DELETE FROM invitation 
+		WHERE id = #{id};
+	</delete>
+</mapper>

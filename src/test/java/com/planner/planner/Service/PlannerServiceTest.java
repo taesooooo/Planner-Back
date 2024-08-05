@@ -89,7 +89,7 @@ public class PlannerServiceTest {
 		verify(accountDao, times(1)).findByNickName(anyString());
 		verify(planMemberDao, times(1)).insertPlanMember(anyInt(), anyInt());
 		verify(invitationDao, times(1)).createInvitation(any(InvitationDto.class));
-		verify(notificationDao, times(1)).createNotification(anyInt(), any(NotificationDto.class));
+		verify(notificationDao, times(1)).insertNotification(anyInt(), any(NotificationDto.class));
 	}
 	
 	@Test

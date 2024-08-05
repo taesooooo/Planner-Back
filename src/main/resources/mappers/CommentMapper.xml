@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.CommentMapper">
+	<insert id="insertComment" useGeneratedKeys="true" keyColumn="comment_id" keyProperty="comment.commentId">
+		INSERT INTO review_comment(review_id, writer_id, content, parent_id, create_date, update_date) VALUES 
+		(
+			#{accountId}, 
+			#{reviewId}, 
+			#{comment.content}, 
+			#{comment.parentId}, 
+			NOW(), 
+			NOW()
+		);
+	</insert>
+	
+	<sql id="commonCommentSql">
+		SELECT 
+			RC.comment_id, 
+			RC.review_id, 
+			RC.writer_id, 
+			RC.content, 
+			RC.parent_id, 
+			RC.create_date, 
+			RC.update_date, 
+			A.nickname AS writer 
+		FROM review_comment AS RC 
+		LEFT JOIN account AS A ON A.account_id = RC.writer_id 
+	</sql>
+	
+	<select id="findById" resultType="CommentDto">
+		<include refid="commonCommentSql"></include>
+		WHERE comment_id = #{commentId};
+	</select>
+	
+	<select id="findAll" resultType="CommentDto">
+		<include refid="commonCommentSql"></include>
+		WHERE review_id = #{reivewId};
+	</select>
+	
+	<update id="updateComment">
+		UPDATE review_comment 
+		SET 
+			content = #{comment.content}, 
+			update_date = NOW() 
+		WHERE review_id = #{reviewId} AND comment_id = #{comment.commentId}
+	</update>
+	
+	<update id="deleteComment">
+		UPDATE review_comment 
+		SET 
+			writer_id = NULL, 
+			content = '', 
+			update_date = NOW() 
+		WHERE review_id = #{reviewId} AND comment_id = #{commentId}
+	</update>
+</mapper>

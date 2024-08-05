@@ -78,7 +78,7 @@ public class PlannerServiceImpl implements PlannerService {
 					.link(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
 					.notificationType(NotificationType.PLANNER_INVITE).build();
 			
-			notificationDao.createNotification(user.getAccountId(), notificationDto);
+			notificationDao.insertNotification(user.getAccountId(), notificationDto);
 
 		}
 		

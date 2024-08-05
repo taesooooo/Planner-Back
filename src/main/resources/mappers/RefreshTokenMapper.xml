@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.RefreshTokenMapper">
+	<insert id="createRefreshToken" >
+		INSERT INTO refresh_token(email, token) VALUES 
+		(
+			#{email}, 
+			#{token}
+		);
+	</insert>
+	
+	<sql id="commonColumnSql">
+		SELECT id, email, token FROM refresh_token
+	</sql>
+	
+	<select id="findByEmail" resultType="RefreshTokenDto">
+		<include refid="commonColumnSql"></include>
+		WHERE email = #{email}
+	</select>
+	
+	<select id="findByToken" resultType="RefreshTokenDto">
+		<include refid="commonColumnSql"></include>
+		WHERE token = #{token}
+	</select>
+	
+	<update id="updateRefreshToken">
+		UPDATE refresh_token 
+		SET 
+			token = #{token} 
+		WHERE email = #{email}
+	</update>
+	
+	
+	<delete id="deleteRefreshToken">
+		DELETE FROM refresh_token 
+		WHERE email = #{email};
+	</delete>
+</mapper>

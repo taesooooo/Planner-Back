@@ -50,15 +50,15 @@ public class CommentDaoImpl implements CommentDao {
 	}
 
 	@Override
-	public List<CommentDto> selectAllComment(int reviewId) throws Exception {
-		List<CommentDto> list = jdbcTemplate.query(SELECT_COMMENT_BY_REVIEW_ID_SQL, new CommentRowMapper(), reviewId);
-		return list;
-	}
-
-	@Override
 	public CommentDto findById(int commentId) throws Exception {
 		CommentDto comment = jdbcTemplate.queryForObject(SELECT_COMMENT_BY_COMMENT_ID_SQL, new CommentRowMapper(), commentId);
 		return comment;
+	}
+	
+	@Override
+	public List<CommentDto> findAll(int reviewId) throws Exception {
+		List<CommentDto> list = jdbcTemplate.query(SELECT_COMMENT_BY_REVIEW_ID_SQL, new CommentRowMapper(), reviewId);
+		return list;
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class CommentDaoImpl implements CommentDao {
 	}
 
 	@Override
-	public void deleteCommet(int reviewId, int commentId) throws Exception {
+	public void deleteComment(int reviewId, int commentId) throws Exception {
 		jdbcTemplate.update(DELETE_COMMENT_SQL, reviewId, commentId);
 	}
 	

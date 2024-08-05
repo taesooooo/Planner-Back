@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.planner.planner.Dto.RefreshTokenDto;
 
-public class ReflashTokenRowMapper implements RowMapper<RefreshTokenDto>{
+public class RefreshTokenRowMapper implements RowMapper<RefreshTokenDto>{
 
 	@Override
 	public RefreshTokenDto mapRow(ResultSet rs, int rowNum) throws SQLException {
