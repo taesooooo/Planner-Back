@@ -18,26 +18,26 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.RefreshTokenDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.LoginInfoDto;
 import com.planner.planner.Dto.RefreshTokenDto;
 import com.planner.planner.Dto.ReissueTokenDto;
+import com.planner.planner.Exception.PasswordCheckFailException;
 import com.planner.planner.Exception.TokenNotFoundException;
 import com.planner.planner.Exception.UserNotFoundException;
-import com.planner.planner.Exception.PasswordCheckFailException;
+import com.planner.planner.Mapper.AccountMapper;
+import com.planner.planner.Mapper.RefreshTokenMapper;
 import com.planner.planner.Service.Impl.AuthServiceImpl;
 import com.planner.planner.Util.JwtUtil;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceTest {
 	@Mock
-	private AccountDao accountDao;
+	private AccountMapper accountMapper;
 	@Mock
 	private BCryptPasswordEncoder passwordEncoder;
 	@Mock
-	private RefreshTokenDao refreshTokenDao;
+	private RefreshTokenMapper refreshTokenMapper;
 	@Mock
 	private JwtUtil jwtUtil;
 	@InjectMocks
@@ -52,7 +52,7 @@ public class AuthServiceTest {
 	public void 회원가입() {
 		AccountDto newTestUser = createUser(1);
 		
-		when(accountDao.create(any())).thenReturn(true);
+		when(accountMapper.create(any())).thenReturn(true);
 		
 		boolean user = authService.register(newTestUser);
 		
@@ -76,11 +76,11 @@ public class AuthServiceTest {
 				.refreshToken(refreshToken)
 				.build();
 		
-		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
+		when(accountMapper.findByEmail(anyString())).thenReturn(newTestUser);
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(accessToken);
 		when(jwtUtil.createRefreshToken()).thenReturn(refreshToken);
-		when(refreshTokenDao.findByEmail(anyString())).thenReturn(refreshTokenDto);
+		when(refreshTokenMapper.findByEmail(anyString())).thenReturn(refreshTokenDto);
 		
 		LoginInfoDto user = authService.login(newTestUser);
 		
@@ -93,7 +93,7 @@ public class AuthServiceTest {
 	public void 로그인_비밀번호_틀린경우() throws Exception {
 		AccountDto newTestUser = createUser(1);
 		
-		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
+		when(accountMapper.findByEmail(anyString())).thenReturn(newTestUser);
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
 		
@@ -105,7 +105,7 @@ public class AuthServiceTest {
 	public void 로그인_아이디_없는경우() throws Exception {
 		AccountDto newTestUser = createUser(1);
 		
-		when(accountDao.findByEmail(anyString())).thenReturn(null);
+		when(accountMapper.findByEmail(anyString())).thenReturn(null);
 
 		assertThatThrownBy(() -> authService.login(newTestUser))
 			.isInstanceOf(UserNotFoundException.class);
@@ -123,15 +123,15 @@ public class AuthServiceTest {
 				.refreshToken(refreshToken)
 				.build();
 		
-		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
+		when(accountMapper.findByEmail(anyString())).thenReturn(newTestUser);
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(accessToken);
 		when(jwtUtil.createRefreshToken()).thenReturn(refreshToken);
-		when(refreshTokenDao.findByEmail(anyString())).thenReturn(null);
+		when(refreshTokenMapper.findByEmail(anyString())).thenReturn(null);
 		
 		LoginInfoDto user = authService.login(newTestUser);
 		
-		verify(refreshTokenDao).createRefreshToken(newTestUser.getEmail(), refreshToken);
+		verify(refreshTokenMapper).createRefreshToken(newTestUser.getEmail(), refreshToken);
 		
 		assertThat(user)
 			.usingRecursiveComparison()
@@ -155,15 +155,15 @@ public class AuthServiceTest {
 				.refreshToken(refreshToken)
 				.build();
 		
-		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
+		when(accountMapper.findByEmail(anyString())).thenReturn(newTestUser);
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(accessToken);
 		when(jwtUtil.createRefreshToken()).thenReturn(refreshToken);
-		when(refreshTokenDao.findByEmail(anyString())).thenReturn(refreshTokenDto);
+		when(refreshTokenMapper.findByEmail(anyString())).thenReturn(refreshTokenDto);
 		
 		LoginInfoDto user = authService.login(newTestUser);
 		
-		verify(refreshTokenDao).updateRefreshToken(newTestUser.getEmail(), refreshToken);
+		verify(refreshTokenMapper).updateRefreshToken(newTestUser.getEmail(), refreshToken);
 		
 		assertThat(user)
 			.usingRecursiveComparison()
@@ -187,11 +187,11 @@ public class AuthServiceTest {
 				.build();
 		
 		
-		when(refreshTokenDao.findByToken(anyString())).thenReturn(refreshTokenDto);
-		when(accountDao.findByEmail(anyString())).thenReturn(newTestUser);
+		when(refreshTokenMapper.findByToken(anyString())).thenReturn(refreshTokenDto);
+		when(accountMapper.findByEmail(anyString())).thenReturn(newTestUser);
 		when(jwtUtil.createAccessToken(anyInt())).thenReturn(newAccessToken);
 		when(jwtUtil.createRefreshToken()).thenReturn(newRefreshToken);
-		when(refreshTokenDao.updateRefreshToken(anyString(), anyString())).thenReturn(true);
+		when(refreshTokenMapper.updateRefreshToken(anyString(), anyString())).thenReturn(true);
 		
 		ReissueTokenDto newTokenDto = authService.reissueToken(testRefreshToken);
 		
@@ -210,7 +210,7 @@ public class AuthServiceTest {
 				.build();
 		
 		
-		when(refreshTokenDao.findByToken(anyString())).thenReturn(null);
+		when(refreshTokenMapper.findByToken(anyString())).thenReturn(null);
 
 
 		assertThatThrownBy(() -> authService.reissueToken(testRefreshToken))
@@ -227,8 +227,8 @@ public class AuthServiceTest {
 				.build();
 		
 		
-		when(refreshTokenDao.findByToken(anyString())).thenReturn(refreshTokenDto);
-		when(accountDao.findByEmail(anyString())).thenReturn(null);
+		when(refreshTokenMapper.findByToken(anyString())).thenReturn(refreshTokenDto);
+		when(accountMapper.findByEmail(anyString())).thenReturn(null);
 
 		
 		assertThatThrownBy(() -> authService.reissueToken(testRefreshToken))

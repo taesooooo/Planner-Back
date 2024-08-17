@@ -4,15 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.planner.planner.Common.Notification.NotificationLink;
 import com.planner.planner.Common.Notification.NotificationMessage;
 import com.planner.planner.Common.Notification.NotificationType;
-import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.InvitationDao;
-import com.planner.planner.Dao.NotificationDao;
-import com.planner.planner.Dao.PlanMemberDao;
-import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.InvitationDto;
 import com.planner.planner.Dto.NotificationDto;
@@ -23,46 +19,47 @@ import com.planner.planner.Exception.DuplicatePlanMemberException;
 import com.planner.planner.Exception.MemberNotFoundException;
 import com.planner.planner.Exception.PlannerNotFoundException;
 import com.planner.planner.Exception.UserNotFoundException;
+import com.planner.planner.Mapper.AccountMapper;
+import com.planner.planner.Mapper.InvitationMapper;
+import com.planner.planner.Mapper.NotificationMapper;
+import com.planner.planner.Mapper.PlanMemberMapper;
+import com.planner.planner.Mapper.PlannerMapper;
 import com.planner.planner.Service.PlanMemberService;
 
-@Service
-public class PlanMemberServiceImpl implements PlanMemberService {
-	private AccountDao accountDao;
-	private PlanMemberDao planMemberDao;
-	private PlannerDao plannerDao;
-	private InvitationDao invitationDao;
-	private NotificationDao notificationDao;
-	
-	public PlanMemberServiceImpl(AccountDao accountDao, PlanMemberDao planMemberDao, PlannerDao plannerDao, InvitationDao invitationDao, NotificationDao notificationDao) {
-		this.accountDao = accountDao;
-		this.planMemberDao = planMemberDao;
-		this.plannerDao = plannerDao;
-		this.invitationDao = invitationDao;
-		this.notificationDao = notificationDao;
-	}
+import lombok.RequiredArgsConstructor;
 
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class PlanMemberServiceImpl implements PlanMemberService {
+	private final AccountMapper accountMapper;
+	private final PlanMemberMapper planMemberMapper;
+	private final PlannerMapper plannerMapper;
+	private final InvitationMapper invitationMapper;
+	private final NotificationMapper notificationMapper;
+	
 	@Override
 	public List<PlanMemberDto> findMembersByPlannerId(int plannerId) throws Exception {
-		return planMemberDao.findPlanMemberListByPlannerId(plannerId);
+		return planMemberMapper.findPlanMemberListByPlannerId(plannerId);
 	}
 
 	@Override
 	public void inviteMembers(int plannerId, PlanMemberInviteDto members) throws Exception {
 		List<AccountDto> users = new ArrayList<AccountDto>();
 		for (String nickName : members.getMembers()) {
-			AccountDto user = accountDao.findByNickName(nickName);
+			AccountDto user = accountMapper.findByNickName(nickName);
 			if (user == null) {
 				throw new UserNotFoundException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
 			}
 			users.add(user);
 		}
 		
-		PlannerDto planner = plannerDao.findPlannerByPlannerId(null, plannerId);
+		PlannerDto planner = plannerMapper.findByPlannerId(null, plannerId);
 		if (planner == null) {
 			throw new PlannerNotFoundException("존재하지 않는 플래너 입니다.");
 		}
 		
-		List<PlanMemberDto> invitedUsers = planMemberDao.findPlanMemberListByPlannerId(plannerId);
+		List<PlanMemberDto> invitedUsers = planMemberMapper.findPlanMemberListByPlannerId(plannerId);
 		boolean isInvited = invitedUsers.stream()
 				.anyMatch((item) -> users.stream().anyMatch((user) -> user.getAccountId() == item.getAccountId()));
 		
@@ -76,7 +73,7 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 					.plannerId(plannerId)
 					.build();
 			
-			int inviteId = invitationDao.createInvitation(invitation);
+			int inviteId = invitationMapper.createInvitation(invitation);
 			
 			NotificationDto notificationDto = NotificationDto.builder()
 					.accountId(user.getAccountId())
@@ -85,14 +82,14 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 					.notificationType(NotificationType.PLANNER_INVITE)
 					.build();
 			
-			notificationDao.insertNotification(user.getAccountId(), notificationDto);	
+			notificationMapper.insertNotification(user.getAccountId(), notificationDto);	
 		}
 	}
 
 	@Override
 	public void deleteMember(int plannerId, String nickName) throws Exception {
-		List<PlanMemberDto> members = planMemberDao.findPlanMemberListByPlannerId(plannerId);
-		AccountDto user = accountDao.findByNickName(nickName);
+		List<PlanMemberDto> members = planMemberMapper.findPlanMemberListByPlannerId(plannerId);
+		AccountDto user = accountMapper.findByNickName(nickName);
 		if (user == null) {
 			throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
 		}
@@ -100,7 +97,7 @@ public class PlanMemberServiceImpl implements PlanMemberService {
 		if (!isMatch) {
 			throw new MemberNotFoundException("멤버를 찾을 수 없습니다.");
 		}
-		planMemberDao.deletePlanMember(plannerId, user.getAccountId());
+		planMemberMapper.deletePlanMember(plannerId, user.getAccountId());
 	}
 
 }

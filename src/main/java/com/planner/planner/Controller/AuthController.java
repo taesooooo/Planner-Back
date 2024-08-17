@@ -73,7 +73,7 @@ public class AuthController {
 		}
 
 		AuthenticationCodeDto authCode = authenticationCodeService.findByEmail(accountDto.getEmail());
-		if (authCode == null || !authCode.isConfirm()) {
+		if (authCode == null || !authCode.isCodeConfirm()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new ResponseMessage(false, "인증되지 않았습니다. 다시 시도해 주세요."));
 		}

@@ -48,7 +48,7 @@ public class AuthenticationCodeMapperTest {
 				.id(1)
 				.phone("01012345678")
 				.code("123456")
-				.confirm(false)
+				.codeConfirm(false)
 				.expireDate(LocalDateTime.of(2024, 07, 28, 11, 03, 00))
 				.createDate(null)
 				.build();
@@ -69,7 +69,7 @@ public class AuthenticationCodeMapperTest {
 				.id(2)
 				.email("testEmail")
 				.code("123456")
-				.confirm(false)
+				.codeConfirm(false)
 				.expireDate(LocalDateTime.of(2024, 07, 28, 11, 03, 00))
 				.createDate(null)
 				.build();

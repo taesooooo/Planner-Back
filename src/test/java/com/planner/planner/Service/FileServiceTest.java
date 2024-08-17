@@ -25,9 +25,9 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.planner.planner.Dao.FileUploadDao;
 import com.planner.planner.Dto.FileInfoDto;
 import com.planner.planner.Dto.UploadFileDto;
+import com.planner.planner.Mapper.FileUploadMapper;
 import com.planner.planner.Service.Impl.FileServiceImpl;
 import com.planner.planner.Util.FileStore;
 
@@ -42,7 +42,7 @@ public class FileServiceTest {
 	private FileServiceImpl fileUploadService;
 	
 	@Mock
-	private FileUploadDao fileUploadDao;
+	private FileUploadMapper fileUploadMapper;
 	
 	@Spy
 	private FileStore fileStore;
@@ -72,7 +72,7 @@ public class FileServiceTest {
 				.uploadDate(LocalDateTime.now())
 				.build();
 
-		when(fileUploadDao.findByFileName(fileName)).thenReturn(fileInfo);
+		when(fileUploadMapper.findByFileName(fileName)).thenReturn(fileInfo);
 		
 		FileInfoDto info = fileUploadService.findFileInfo(fileName);
 		
@@ -85,7 +85,7 @@ public class FileServiceTest {
 		String filePath = fileStore.getBoardDir() + fileName;
 		//FileInfoDto fileInfo = new FileInfoDto(1, 1, 1, fileName, filePath, MediaType.IMAGE_JPEG_VALUE, LocalDateTime.now());
 		
-		when(fileUploadDao.findByFileName(fileName)).thenReturn(null);
+		when(fileUploadMapper.findByFileName(fileName)).thenReturn(null);
 		
 		assertThatThrownBy(() -> fileUploadService.findFileInfo(fileName))
 				.isExactlyInstanceOf(Exception.class);
@@ -107,21 +107,22 @@ public class FileServiceTest {
 	@Test
 	public void 이미지_가져오기() throws Exception {
 		MockMultipartFile file = new MockMultipartFile("images", "a.jpg", MediaType.IMAGE_JPEG_VALUE, "/jpg image/".getBytes());
+		//System.out.println(fileStore.getBaseLocation() + FileStore.boardDir + File.separator + file.getOriginalFilename());
+		File f = new File(fileStore.getBoardDir() + file.getOriginalFilename());
+		f.getParentFile().mkdirs();
+		file.transferTo(f);
+		
 		FileInfoDto fileInfo = FileInfoDto.builder()
 				.fileId(1)
 				.fileWriterId(1)
 				.fileBoradId(1)
 				.fileName("a.jpg")
-				.filePath("\\a.jpg")
+				.filePath(f.getAbsolutePath())
 				.fileType(MediaType.IMAGE_JPEG_VALUE)
 				.uploadDate(LocalDateTime.now())
 				.build(); 
 		
-		//System.out.println(fileStore.getBaseLocation() + FileStore.boardDir + File.separator + file.getOriginalFilename());
-		File f = new File(fileStore.getBoardDir() + file.getOriginalFilename());
-		f.getParentFile().mkdirs();
-		file.transferTo(f);
-		when(fileUploadDao.findByFileName(file.getOriginalFilename())).thenReturn(fileInfo);
+		when(fileUploadMapper.findByFileName(file.getOriginalFilename())).thenReturn(fileInfo);
 		
 		UploadFileDto data = fileUploadService.loadImage(file.getOriginalFilename());
 		
@@ -141,11 +142,11 @@ public class FileServiceTest {
 				.fileType(MediaType.IMAGE_JPEG_VALUE)
 				.uploadDate(LocalDateTime.now())
 				.build(); 
-		File f = new File(fileStore.getBaseLocation() + fileStore.getBoardDir() + File.separator + file.getOriginalFilename());
+		File f = new File(fileStore.getBoardDir() + File.separator + file.getOriginalFilename());
 
 		f.getParentFile().mkdirs();
 		//file.transferTo(f);
-		when(fileUploadDao.findByFileName(file.getOriginalFilename())).thenReturn(fileInfo);
+		when(fileUploadMapper.findByFileName(file.getOriginalFilename())).thenReturn(fileInfo);
 
 		assertThatThrownBy(() -> fileUploadService.loadImage(file.getOriginalFilename()))
 				.isExactlyInstanceOf(NoSuchFileException.class);
@@ -164,7 +165,7 @@ public class FileServiceTest {
 	public void 업로드_파일_삭제() throws Exception {
 		String fileName = "a.jpg";
 
-		String filePath = fileStore.getBaseLocation() + fileStore.getBoardDir() + File.separator + fileName;
+		String filePath = fileStore.getBoardDir() + File.separator + fileName;
 		FileInfoDto fileInfo = FileInfoDto.builder()
 				.fileId(1)
 				.fileWriterId(1)
@@ -186,7 +187,7 @@ public class FileServiceTest {
 	public void 업로드_파일_삭제_파일_없는경우() throws Exception {
 		String fileName = "a.jpg";
 
-		String filePath = fileStore.getBaseLocation() + fileStore.getBoardDir() + File.separator + fileName;
+		String filePath = fileStore.getBoardDir() + File.separator + fileName;
 		FileInfoDto fileInfo = FileInfoDto.builder()
 				.fileId(1)
 				.fileWriterId(1)

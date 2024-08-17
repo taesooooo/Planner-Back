@@ -1,5 +1,6 @@
 package com.planner.planner.Service.Impl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -9,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
-import com.planner.planner.Dao.SpotDao;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.SpotDetailDto;
 import com.planner.planner.Dto.SpotDto;
@@ -21,20 +21,19 @@ import com.planner.planner.Dto.OpenApi.CommonBasedDto;
 import com.planner.planner.Dto.OpenApi.CommonDetailDto;
 import com.planner.planner.Dto.OpenApi.CommonListDto;
 import com.planner.planner.Dto.OpenApi.OpenApiDto;
+import com.planner.planner.Mapper.SpotMapper;
 import com.planner.planner.Service.OpenAPIService;
 import com.planner.planner.Service.SpotService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class SpotServiceImpl implements SpotService {
 
-	private OpenAPIService apiService;
-	private SpotDao spotDao;
-
-	public SpotServiceImpl(SpotDao spotDao, OpenAPIService apiService) {
-		this.spotDao = spotDao;
-		this.apiService = apiService;
-	}
+	private final OpenAPIService apiService;
+	private final SpotMapper spotMapper;
 
 	@Override
 	public SpotListDto<AreaCodeDto> getAreaNum() throws Exception {
@@ -54,8 +53,8 @@ public class SpotServiceImpl implements SpotService {
 				.map(item -> Integer.parseInt(item.getContentId()))
 				.collect(Collectors.toList());
 		
-		List<SpotLikeDto> spotLikeList = spotDao.findSpotLikeStateByContentIdList(accountId, contentIdList);
-		List<SpotLikeCountDto> spotLikeCountList = spotDao.findSpotLikeCountByContentIdList(contentIdList);
+		List<SpotLikeDto> spotLikeList = spotMapper.findSpotLikeStateByContentIdList(accountId, contentIdList);
+		List<SpotLikeCountDto> spotLikeCountList = spotMapper.findSpotLikeCountByContentIdList(contentIdList);
 
 		List<SpotDto> spotList = apiData.getItems().stream()
 				.map(item -> {
@@ -97,8 +96,8 @@ public class SpotServiceImpl implements SpotService {
 				.map(item -> Integer.parseInt(item.getContentId()))
 				.collect(Collectors.toList());
 		
-		List<SpotLikeDto> spotLikeList = spotDao.findSpotLikeStateByContentIdList(accountId, contentIdList);
-		List<SpotLikeCountDto> spotLikeCountList = spotDao.findSpotLikeCountByContentIdList(contentIdList);
+		List<SpotLikeDto> spotLikeList = spotMapper.findSpotLikeStateByContentIdList(accountId, contentIdList);
+		List<SpotLikeCountDto> spotLikeCountList = spotMapper.findSpotLikeCountByContentIdList(contentIdList);
 
 		List<SpotDto> spotList = apiData.getItems().stream()
 				.map(item -> {
@@ -139,8 +138,8 @@ public class SpotServiceImpl implements SpotService {
 				.map(item -> Integer.parseInt(item.getContentId()))
 				.collect(Collectors.toList());
 		
-		List<SpotLikeDto> spotLikeList = spotDao.findSpotLikeStateByContentIdList(accountId, contentIdList);
-		List<SpotLikeCountDto> spotLikeCountList = spotDao.findSpotLikeCountByContentIdList(contentIdList);
+		List<SpotLikeDto> spotLikeList = spotMapper.findSpotLikeStateByContentIdList(accountId, contentIdList);
+		List<SpotLikeCountDto> spotLikeCountList = spotMapper.findSpotLikeCountByContentIdList(contentIdList);
 			
 		List<SpotDto> spotList = apiData.getItems().stream()
 				.map(item -> {
@@ -178,8 +177,8 @@ public class SpotServiceImpl implements SpotService {
 	public SpotDetailDto getDetail(Integer accountId, int contentId) throws Exception {
 		CommonDetailDto detail = apiService.getDetail(contentId);
 		
-		int likeCount = spotDao.findSpotLikeCountByContentId(contentId);
-		boolean likeState = spotDao.findSpotLikeStateByContentId(accountId, contentId);
+		int likeCount = spotMapper.findSpotLikeCountByContentId(contentId);
+		boolean likeState = spotMapper.findSpotLikeStateByContentId(accountId, Arrays.asList(contentId) );
 
 		SpotDetailDto spotDetail = SpotDetailDto.builder()
 				.detail(detail)
@@ -192,12 +191,12 @@ public class SpotServiceImpl implements SpotService {
 
 	@Override
 	public boolean addSpotLike(int accountId, SpotLikeDto spotLikeDto) throws Exception {
-		return spotDao.createSpotLike(accountId, spotLikeDto);
+		return spotMapper.createSpotLike(accountId, spotLikeDto);
 	}
 
 	@Override
 	public boolean removeSpotLike(int accountId, int contentId) throws Exception {
-		return spotDao.deleteSpotLike(accountId, contentId);
+		return spotMapper.deleteSpotLike(accountId, contentId);
 	}
 
 	@Override
@@ -207,11 +206,11 @@ public class SpotServiceImpl implements SpotService {
 				.pageItemCount(commonRequestParamDto.getItemCount())
 				.build();
 		
-		List<SpotLikeDto> spotLikelist = spotDao.findSpotLikeList(accountId, commonRequestParamDto, pageInfo);
+		List<SpotLikeDto> spotLikelist = spotMapper.findSpotLikeList(accountId, commonRequestParamDto, pageInfo);
 		
 		int totalCount = 0;
 		
-		totalCount = spotDao.findListTotalCount(accountId, commonRequestParamDto);
+		totalCount = spotMapper.findListTotalCount(accountId, commonRequestParamDto);
 
 		
 		Page<SpotLikeDto> spotLikePage = new Page.Builder<SpotLikeDto>()

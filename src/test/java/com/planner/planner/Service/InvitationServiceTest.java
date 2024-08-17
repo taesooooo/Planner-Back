@@ -11,17 +11,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.planner.planner.Dao.InvitationDao;
-import com.planner.planner.Dao.PlanMemberDao;
 import com.planner.planner.Exception.DataNotFoundException;
+import com.planner.planner.Mapper.InvitationMapper;
+import com.planner.planner.Mapper.PlanMemberMapper;
 import com.planner.planner.Service.Impl.InvitationServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 public class InvitationServiceTest {
 	@Mock
-	private InvitationDao invitationDao;
+	private InvitationMapper invitationMapper;
 	@Mock
-	private PlanMemberDao planMemberDao;
+	private PlanMemberMapper planMemberMapper;
 	
 	@InjectMocks
 	private InvitationServiceImpl invitationServiceImpl;
@@ -33,7 +33,7 @@ public class InvitationServiceTest {
 	
 	@Test
 	public void 초대_조회_없는경우() throws Exception {
-		when(invitationDao.findById(anyInt())).thenReturn(null);
+		when(invitationMapper.findById(anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> invitationServiceImpl.findById(anyInt()))
 				.isExactlyInstanceOf(DataNotFoundException.class);
@@ -41,7 +41,7 @@ public class InvitationServiceTest {
 	
 	@Test
 	public void 초대_수락_초대_데이터_없는경우() throws Exception {
-		when(invitationDao.findById(anyInt())).thenReturn(null);
+		when(invitationMapper.findById(anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> invitationServiceImpl.acceptInvite(anyInt()))
 				.isExactlyInstanceOf(DataNotFoundException.class);
@@ -49,7 +49,7 @@ public class InvitationServiceTest {
 	
 	@Test
 	public void 초대_거절_초대_데이터_없는경우() throws Exception {
-		when(invitationDao.findById(anyInt())).thenReturn(null);
+		when(invitationMapper.findById(anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> invitationServiceImpl.rejectInvite(anyInt()))
 				.isExactlyInstanceOf(DataNotFoundException.class);

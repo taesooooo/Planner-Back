@@ -14,16 +14,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.CommentDao;
-import com.planner.planner.Dao.NotificationDao;
-import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommentDto;
 import com.planner.planner.Dto.ReviewDto;
 import com.planner.planner.Exception.CommentNotFoundException;
 import com.planner.planner.Exception.ReviewNotFoundException;
 import com.planner.planner.Exception.UserNotFoundException;
+import com.planner.planner.Mapper.AccountMapper;
+import com.planner.planner.Mapper.CommentMapper;
+import com.planner.planner.Mapper.NotificationMapper;
+import com.planner.planner.Mapper.ReviewMapper;
 import com.planner.planner.Service.Impl.CommentServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,16 +33,16 @@ public class CommentServiceTest {
 	private CommentServiceImpl commentService;
 	
 	@Mock
-	private CommentDao commentDao;
+	private CommentMapper commentMapper;
 	
 	@Mock
-	private AccountDao accountDao;
+	private AccountMapper accountMapper;
 	
 	@Mock
-	private ReviewDao reviewDao;
+	private ReviewMapper reviewMapper;
 	
 	@Mock
-	private NotificationDao notificationDao;
+	private NotificationMapper notificationMapper;
 
 	@BeforeEach
 	public void setUp() throws Exception {
@@ -52,12 +52,12 @@ public class CommentServiceTest {
 	@DisplayName("댓글 작성 성공")
 	@Test
 	public void 댓글_작성_성공() throws Exception {
-		when(accountDao.findById(anyInt())).thenReturn(AccountDto.builder()
+		when(accountMapper.findById(anyInt())).thenReturn(AccountDto.builder()
 				.accountId(1)
 				.nickname("test")
 				.build());
-		when(commentDao.insertComment(anyInt(), anyInt(), any(CommentDto.class))).thenReturn(1);
-		when(reviewDao.findById(anyInt())).thenReturn(ReviewDto.builder()
+		when(commentMapper.insertComment(anyInt(), anyInt(), any(CommentDto.class))).thenReturn(1);
+		when(reviewMapper.findById(anyInt())).thenReturn(ReviewDto.builder()
 				.writerId(1)
 				.writer("test")
 				.build());
@@ -74,7 +74,7 @@ public class CommentServiceTest {
 	@DisplayName("댓글 작성시 요청된 사용자가 없는 경우")
 	@Test
 	public void 댓글_작성_요청_사용자_없는_경우() throws Exception {
-		when(accountDao.findById(anyInt())).thenReturn(null);
+		when(accountMapper.findById(anyInt())).thenReturn(null);
 
 		CommentDto newComment = CommentDto.builder()
 				.commentId(1)
@@ -88,12 +88,12 @@ public class CommentServiceTest {
 	@DisplayName("댓글 작성시 게시글이 없는 경우")
 	@Test
 	public void 댓글_작성_게시글_없는_경우() throws Exception {
-		when(accountDao.findById(anyInt())).thenReturn(AccountDto.builder()
+		when(accountMapper.findById(anyInt())).thenReturn(AccountDto.builder()
 				.accountId(1)
 				.nickname("test")
 				.build());
-		when(commentDao.insertComment(anyInt(), anyInt(), any(CommentDto.class))).thenReturn(1);
-		when(reviewDao.findById(anyInt())).thenReturn(null);
+		when(commentMapper.insertComment(anyInt(), anyInt(), any(CommentDto.class))).thenReturn(1);
+		when(reviewMapper.findById(anyInt())).thenReturn(null);
 		CommentDto newComment = CommentDto.builder()
 				.commentId(1)
 				.content("댓글 테스트")
@@ -106,7 +106,7 @@ public class CommentServiceTest {
 	@DisplayName("댓글 가져오기 - 댓글이 없는 경우")
 	@Test
 	public void 댓글_가져오기_없는경우() throws Exception {
-		when(commentDao.findById(anyInt())).thenReturn(null);
+		when(commentMapper.findById(anyInt())).thenReturn(null);
 		
 		 
 		assertThatThrownBy(() -> commentService.findByCommentId(1))

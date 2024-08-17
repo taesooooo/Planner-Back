@@ -27,9 +27,9 @@ public interface PlannerDao extends UserIdentifierDao {
 
 	public int deletePlanner(int plannerId);
 
-	public int getListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
+	public int findListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 
-	public int getLikeListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
+	public int findLikeListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception;
 
 //	public int getTotalCount(int accountId);
 //

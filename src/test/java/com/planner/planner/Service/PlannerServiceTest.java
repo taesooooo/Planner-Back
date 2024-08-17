@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,17 +24,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
-import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.InvitationDao;
-import com.planner.planner.Dao.NotificationDao;
-import com.planner.planner.Dao.PlanMemberDao;
-import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.InvitationDto;
@@ -44,6 +43,11 @@ import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.PlannerNotFoundException;
 import com.planner.planner.Exception.UserNotFoundException;
+import com.planner.planner.Mapper.AccountMapper;
+import com.planner.planner.Mapper.InvitationMapper;
+import com.planner.planner.Mapper.NotificationMapper;
+import com.planner.planner.Mapper.PlanMemberMapper;
+import com.planner.planner.Mapper.PlannerMapper;
 import com.planner.planner.Service.Impl.PlannerServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,15 +58,15 @@ public class PlannerServiceTest {
 	private PlannerServiceImpl plannerService;
 	
 	@Mock
-	private AccountDao accountDao;
+	private AccountMapper accountMapper;
 	@Mock
-	private PlannerDao plannerDao;
+	private PlannerMapper plannerMapper;
 	@Mock
-	private PlanMemberDao planMemberDao;
+	private PlanMemberMapper planMemberMapper;
 	@Mock
-	private InvitationDao invitationDao;
+	private InvitationMapper invitationMapper;
 	@Mock
-	private NotificationDao notificationDao;
+	private NotificationMapper notificationMapper;
 	
 	@Mock
 	private PlannerDto plannerDto;
@@ -71,25 +75,30 @@ public class PlannerServiceTest {
 	public void setUp() throws Exception {
 //		MockitoAnnotations.openMocks(this);
 	}
+	
+	@AfterEach
+	public void afterSetup() {
+		// 각 테스트에서는 각 계정이 있어야 하며 테스트가 종료시 시큐리티 컨텍스트에 있는 계정 정보를 제거
+		SecurityContextHolder.getContext().setAuthentication(null);
+	}
 
 	@Test
-	@WithUserDetails()
 	public void 새플래너_생성() throws Exception {
 		PlannerDto planner = createBasePlanner();
-		AccountDto creator = AccountDto.builder().accountId(1).nickname("test").build();
+		AccountDto creator = AccountDto.builder().accountId(1).email("test@naver.com").nickname("test").build();
 		List<AccountDto> users = new ArrayList<AccountDto>();
 		users.add(AccountDto.builder().accountId(2).build());
 		
-//		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(creator);
-		when(accountDao.findByNickName(anyString())).thenReturn(creator, users.get(0));
-		when(planMemberDao.insertPlanMember(anyInt(), anyInt())).thenReturn(0);
+		createSecurityContextPrincipal(creator);
+		when(accountMapper.findByNickName(anyString())).thenReturn(creator, users.get(0));
+		when(planMemberMapper.insertPlanMember(anyInt(), anyInt())).thenReturn(0);
 		
 		plannerService.newPlanner(1, planner);
 		
-		verify(accountDao, times(1)).findByNickName(anyString());
-		verify(planMemberDao, times(1)).insertPlanMember(anyInt(), anyInt());
-		verify(invitationDao, times(1)).createInvitation(any(InvitationDto.class));
-		verify(notificationDao, times(1)).insertNotification(anyInt(), any(NotificationDto.class));
+		verify(accountMapper, times(1)).findByNickName(anyString());
+		verify(planMemberMapper, times(1)).insertPlanMember(anyInt(), anyInt());
+		verify(invitationMapper, times(1)).createInvitation(any(InvitationDto.class));
+		verify(notificationMapper, times(1)).insertNotification(anyInt(), any(NotificationDto.class));
 	}
 	
 	@Test
@@ -98,12 +107,13 @@ public class PlannerServiceTest {
 		PlannerDto planner = createBasePlanner();
 		AccountDto creator = AccountDto.builder().accountId(1).build();
 		
-		when(accountDao.findByNickName(anyString())).thenReturn(null);
+		createSecurityContextPrincipal(creator);
+		when(accountMapper.findByNickName(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> plannerService.newPlanner(1, planner))
 				.isExactlyInstanceOf(UserNotFoundException.class);
 		
-		verify(accountDao).findByNickName(anyString());
+		verify(accountMapper).findByNickName(anyString());
 	}
 	
 	@Test
@@ -112,7 +122,7 @@ public class PlannerServiceTest {
 		int plannerId = 1;
 		PlannerDto planner = createPlanner(1);
 		
-		when(plannerDao.findPlannerByPlannerId(any(Integer.class), anyInt())).thenReturn(planner);
+		when(plannerMapper.findByPlannerId(any(Integer.class), anyInt())).thenReturn(planner);
 		
 		PlannerDto findPlanner = plannerService.findPlannerByPlannerId(accountId, plannerId);
 		
@@ -125,7 +135,7 @@ public class PlannerServiceTest {
 		int plannerId = 1;
 		PlannerDto planner = createPlanner(1);
 		
-		when(plannerDao.findPlannerByPlannerId(any(Integer.	class), anyInt())).thenReturn(null);
+		when(plannerMapper.findByPlannerId(any(Integer.	class), anyInt())).thenReturn(null);
 		
 		assertThatThrownBy(() -> plannerService.findPlannerByPlannerId(accountId, plannerId))
 				.isExactlyInstanceOf(PlannerNotFoundException.class);
@@ -146,13 +156,13 @@ public class PlannerServiceTest {
 		
 		int testTotalCount = planners.size();
 		
-		when(plannerDao.findListByAccountId(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
-		when(plannerDao.getListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
+		when(plannerMapper.findListByAccountId(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
+		when(plannerMapper.findListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<PlannerDto> plannerList = plannerService.findPlannersByAccountId(1, paramDto);
 		
-		verify(plannerDao).findListByAccountId(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
-		verify(plannerDao).getListTotalCount(anyInt(), any(CommonRequestParamDto.class));
+		verify(plannerMapper).findListByAccountId(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(plannerMapper).findListTotalCount(anyInt(), any(CommonRequestParamDto.class));
 		
 		assertThat(plannerList).isNotNull();
 		assertThat(plannerList.getList()).isNotNull();
@@ -174,13 +184,13 @@ public class PlannerServiceTest {
 		
 		int testTotalCount = planners.size();
 		
-		when(plannerDao.findListByAccountId(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
-		when(plannerDao.getListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
+		when(plannerMapper.findListByAccountId(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
+		when(plannerMapper.findListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<PlannerDto> plannerList = plannerService.findPlannersByAccountId(1, paramDto);
 		
-		verify(plannerDao).findListByAccountId(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
-		verify(plannerDao).getListTotalCount(anyInt(), any(CommonRequestParamDto.class));
+		verify(plannerMapper).findListByAccountId(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(plannerMapper).findListTotalCount(anyInt(), any(CommonRequestParamDto.class));
 		
 		assertThat(plannerList).isNotNull();
 		assertThat(plannerList.getList()).isNotNull();
@@ -201,13 +211,13 @@ public class PlannerServiceTest {
 		
 		int testTotalCount = planners.size();
 		
-		when(plannerDao.findAll(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
-		when(plannerDao.getListTotalCount(isNull(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
+		when(plannerMapper.findAll(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
+		when(plannerMapper.findListTotalCount(isNull(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<PlannerDto> plannerList = plannerService.findPlannerAll(1, paramDto);
 		
-		verify(plannerDao).findAll(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
-		verify(plannerDao).getListTotalCount(isNull(), any(CommonRequestParamDto.class));
+		verify(plannerMapper).findAll(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(plannerMapper).findListTotalCount(isNull(), any(CommonRequestParamDto.class));
 		
 		assertThat(plannerList).isNotNull();
 		assertThat(plannerList.getList()).isNotNull();
@@ -228,13 +238,13 @@ public class PlannerServiceTest {
 		
 		int testTotalCount = 1;
 		
-		when(plannerDao.findAll(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
-		when(plannerDao.getListTotalCount(isNull(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
+		when(plannerMapper.findAll(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
+		when(plannerMapper.findListTotalCount(isNull(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<PlannerDto> plannerList = plannerService.findPlannerAll(1, paramDto);
 		
-		verify(plannerDao).findAll(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
-		verify(plannerDao).getListTotalCount(isNull(), any(CommonRequestParamDto.class));
+		verify(plannerMapper).findAll(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(plannerMapper).findListTotalCount(isNull(), any(CommonRequestParamDto.class));
 		
 		assertThat(plannerList).isNotNull();
 		assertThat(plannerList.getList()).isNotNull();
@@ -255,13 +265,13 @@ public class PlannerServiceTest {
 		
 		int testTotalCount = planners.size();
 		
-		when(plannerDao.findLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
-		when(plannerDao.getLikeListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
+		when(plannerMapper.findLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
+		when(plannerMapper.findLikeListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, paramDto);
 		
-		verify(plannerDao).findLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
-		verify(plannerDao).getLikeListTotalCount(anyInt(), any(CommonRequestParamDto.class));
+		verify(plannerMapper).findLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(plannerMapper).findLikeListTotalCount(anyInt(), any(CommonRequestParamDto.class));
 		
 		assertThat(plannerList).isNotNull();
 		assertThat(plannerList.getList()).isNotNull();
@@ -283,13 +293,13 @@ public class PlannerServiceTest {
 		
 		int testTotalCount = planners.size();
 		
-		when(plannerDao.findLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
-		when(plannerDao.getLikeListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
+		when(plannerMapper.findLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(planners);
+		when(plannerMapper.findLikeListTotalCount(anyInt(), any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<PlannerDto> plannerList = plannerService.getLikePlannerList(1, paramDto);
 		
-		verify(plannerDao).findLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
-		verify(plannerDao).getLikeListTotalCount(anyInt(), any(CommonRequestParamDto.class));
+		verify(plannerMapper).findLikeList(anyInt(), any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(plannerMapper).findLikeListTotalCount(anyInt(), any(CommonRequestParamDto.class));
 		
 		assertThat(plannerList).isNotNull();
 		assertThat(plannerList.getList()).isNotNull();
@@ -378,5 +388,11 @@ public class PlannerServiceTest {
 				.build();
 		
 		return planner;
+	}
+	
+	// 유닛 테스트를 진행 하기 위해 따로 시큐리티 컨텍스트에 계정 정보를 넣어줌
+	private void createSecurityContextPrincipal(AccountDto user) {
+		Authentication auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(auth);
 	}
 }

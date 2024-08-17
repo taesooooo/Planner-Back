@@ -13,26 +13,28 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Config.Properites.CommonProperties;
-import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dto.SENS.Messages;
 import com.planner.planner.Dto.SENS.SMSRequestDto;
 import com.planner.planner.Dto.SENS.SMSResponesDto;
+import com.planner.planner.Mapper.AuthenticationCodeMapper;
 import com.planner.planner.Service.SENSService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class SENSServiceImpl implements SENSService {
 	
 	private final RestTemplate restTemplate;
 	
-	private final AuthenticationCodeDao authentcationCodeDao;
+	private final AuthenticationCodeMapper authentcationCodeMapper;
 	private final CommonProperties commonProperties;
 	
 	private ObjectMapper objectMapper = new ObjectMapper();

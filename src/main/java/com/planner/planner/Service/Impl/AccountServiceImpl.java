@@ -15,11 +15,6 @@ import com.planner.planner.Common.FileInfo;
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.Notification.NotificationMessage;
 import com.planner.planner.Common.Notification.NotificationType;
-import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.NotificationDao;
-import com.planner.planner.Dao.PasswordResetKeyDao;
-import com.planner.planner.Dao.PlanMemberDao;
-import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dao.Impl.AccountDaoImpl;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
@@ -28,44 +23,38 @@ import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Dto.SpotLikeDto;
 import com.planner.planner.Exception.UserNotFoundException;
+import com.planner.planner.Mapper.AccountMapper;
+import com.planner.planner.Mapper.NotificationMapper;
+import com.planner.planner.Mapper.PasswordResetKeyMapper;
+import com.planner.planner.Mapper.PlanMemberMapper;
+import com.planner.planner.Mapper.PlannerMapper;
 import com.planner.planner.Service.AccountService;
 import com.planner.planner.Service.PlannerService;
 import com.planner.planner.Service.SpotService;
 import com.planner.planner.Util.FileStore;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AccountDaoImpl.class);
 
-	private AccountDao accountDao;
-	private PlannerService plannerService;
-	private PlannerDao plannerDao;
-	private PlanMemberDao planMemberDao;
-	private SpotService spotService;
-	private NotificationDao notificationDao;
+	private final AccountMapper accountMapper;
+	private final PlannerService plannerService;
+	private final PlannerMapper plannerMapper;
+	private final PlanMemberMapper planMemberMapper;
+	private final SpotService spotService;
+	private final NotificationMapper notificationMapper;
 
-	private FileStore fileStore;
-	private BCryptPasswordEncoder passwordEncoder;
-	private PasswordResetKeyDao passwordResetKeyDao;
-
-	public AccountServiceImpl(AccountDao accountDao, PlannerService plannerService, PlannerDao plannerDao,
-			PlanMemberDao planMemberDao, SpotService spotService, NotificationDao notificationDao, FileStore fileStore,
-			BCryptPasswordEncoder passwordEncoder, PasswordResetKeyDao passwordResetKeyDao) {
-		this.accountDao = accountDao;
-		this.plannerService = plannerService;
-		this.plannerDao = plannerDao;
-		this.planMemberDao = planMemberDao;
-		this.spotService = spotService;
-		this.notificationDao = notificationDao;
-		this.fileStore = fileStore;
-		this.passwordEncoder = passwordEncoder;
-		this.passwordResetKeyDao = passwordResetKeyDao;
-	}
+	private final FileStore fileStore;
+	private final BCryptPasswordEncoder passwordEncoder;
+	private final PasswordResetKeyMapper passwordResetKeyMapper;
 
 	@Override
 	public AccountDto findById(int accountId) throws Exception {
-		AccountDto user = accountDao.findById(accountId);
+		AccountDto user = accountMapper.findById(accountId);
 		if(user == null) {
 			throw new UserNotFoundException();
 		}
@@ -74,7 +63,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public List<String> findEmailByPhone(String phone) throws Exception {
-		List<String> emails = accountDao.findEmailByPhone(phone);
+		List<String> emails = accountMapper.findEmailByPhone(phone);
 		if(emails.isEmpty()) {
 			throw new UserNotFoundException("해당 정보로 가입된 계정이 없습니다.");
 		}
@@ -83,7 +72,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public AccountDto findByEmail(String email) throws Exception {
-		AccountDto user = accountDao.findByEmail(email);
+		AccountDto user = accountMapper.findByEmail(email);
 		if(user == null) {
 			throw new UserNotFoundException();
 		}
@@ -92,7 +81,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public AccountDto findByNameAndPhone(String name, String phone) throws Exception {
-		List<AccountDto> users = accountDao.findByNameAndPhone(name, phone);
+		List<AccountDto> users = accountMapper.findByNameAndPhone(name, phone);
 		if(users.isEmpty()) {
 			throw new UserNotFoundException("해당하는 정보로 가입된 아이디가 존재하지 않습니다.");
 		}
@@ -102,7 +91,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public boolean accountUpdate(int accountId, String nickname, String phone) throws Exception {
-		return accountDao.update(accountId, nickname, phone);
+		return accountMapper.update(accountId, nickname, phone);
 	}
 	
 	@Override
@@ -111,7 +100,7 @@ public class AccountServiceImpl implements AccountService {
 		FileInfo path = fileStore.createFilePath(image, "Account");
 
 		// 기존 이미지 확인 후 삭제
-		File previousImage = fileStore.getFile(fileStore.getBaseLocation() + path);
+		File previousImage = fileStore.getFile(fileStore.getBaseLocation() + path.getAbsolutePath());
 		if(previousImage != null) {
 			previousImage.delete();
 		}
@@ -125,16 +114,16 @@ public class AccountServiceImpl implements AccountService {
 		image.transferTo(file);
 
 		// DB 업데이트
-		return accountDao.accountImageUpdate(accountId, path.getPath());
+		return accountMapper.accountImageUpdate(accountId, path.getPath());
 	}
 
 	@Override
 	public boolean passwordUpdate(int accountId, String password, String key) throws Exception {
 		String newPassword = passwordEncoder.encode(password);
 		
-		accountDao.passwordUpdate(accountId, newPassword);
+		accountMapper.passwordUpdate(accountId, newPassword);
 		
-		passwordResetKeyDao.deleteByResetKey(key);
+		passwordResetKeyMapper.deleteByResetKey(key);
 		
 		NotificationDto notification = NotificationDto.builder()
 				.accountId(accountId)
@@ -142,7 +131,7 @@ public class AccountServiceImpl implements AccountService {
 				.notificationType(NotificationType.ACCOUNT)
 				.build();
 		
-		notificationDao.insertNotification(accountId, notification);
+		notificationMapper.insertNotification(accountId, notification);
 		
 		return true;
 	}
@@ -164,7 +153,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public boolean searchEmail(String searchEmail) throws Exception {
-		AccountDto user = accountDao.searchEmail(searchEmail);
+		AccountDto user = accountMapper.findByEmail(searchEmail);
 		if(user == null) {
 			throw new UserNotFoundException(searchEmail + "는 존재하지 않습니다. 확인 후 다시 시도하세요.");
 		}
@@ -173,7 +162,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public List<String> findId(FindEmailDto findEmailDto) throws Exception {
-		List<AccountDto> users = accountDao.findByNameAndPhone(findEmailDto.getUserName(), findEmailDto.getPhone());
+		List<AccountDto> users = accountMapper.findByNameAndPhone(findEmailDto.getUserName(), findEmailDto.getPhone());
 		if(users.isEmpty()) {
 			throw new UserNotFoundException("해당하는 정보로 가입된 아이디가 존재하지 않습니다.");
 		}

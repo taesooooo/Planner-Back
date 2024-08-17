@@ -33,7 +33,7 @@
 			<id property="planId" column="plan_id" />
 			<result property="planDate" column="plan_date" />
 			<result property="plannerId" column="planner_id"/>
-			<result property="index" column="plan_index" />
+			<result property="planIndex" column="plan_index" />
 			<collection property="planLocations" ofType="PlanLocationDto">
 				<id property="locationId" column="location_id" />
 				<result property="locationContentId" column="location_content_id" />
@@ -43,7 +43,7 @@
 				<result property="locationMapx" column="location_mapx" />
 				<result property="locationMapy" column="location_mapy" />
 				<result property="locationTransportation" column="location_transportation" />
-				<result property="index" column="location_index" />
+				<result property="locationIndex" column="location_index" />
 				<result property="planId" column="plan_id" />
 			</collection>
 		</collection>
@@ -161,5 +161,26 @@
 	<delete id="deletePlanner" parameterType="int">
 		DELETE FROM planner WHERE planner_id = #{plannerId}
 	</delete>
+	
+	<select id="findListTotalCount" resultType="Integer">
+		SELECT count(*) AS total_count FROM planner AS P
+		<where>
+			<include refid="commonListWhereSql"></include>
+			<if test="accountId != null">
+				AND P.account_id = #{accountId}
+			</if>		
+		</where>
+	</select>
+	
+	<select id="findLikeListTotalCount" resultType="Integer">
+		SELECT count(*) AS total_count FROM planner_like AS PL
+		INNER JOIN planner AS P ON P.planner_id = PL.planner_id 
+		<where>
+			<include refid="commonListWhereSql"></include>
+			<if test="accountId != null">
+				AND PL.account_id = #{accountId}
+			</if>
+		</where>
+	</select>
 	
 </mapper>

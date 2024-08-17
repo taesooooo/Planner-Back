@@ -10,7 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.planner.planner.Dao.PlannerLikeDao;
+import com.planner.planner.Mapper.PlannerLikeMapper;
 import com.planner.planner.Service.Impl.PlannerLikeServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
@@ -19,7 +19,7 @@ public class PlannerLikeServiceTest {
 	private PlannerLikeServiceImpl plannerLikeService;
 	
 	@Mock
-	private PlannerLikeDao plannerLikeDao;
+	private PlannerLikeMapper plannerLikeMapper;
 	
 
 	@BeforeEach
@@ -31,22 +31,22 @@ public class PlannerLikeServiceTest {
 	public void 플래너_좋아요() {
 		int accountId = 1;
 		int plannerId = 1;
-		when(plannerLikeDao.isLike(accountId, plannerId)).thenReturn(false);
+		when(plannerLikeMapper.isLike(accountId, plannerId)).thenReturn(false);
 		
 		plannerLikeService.plannerLikeOrUnLike(accountId, plannerId);
 		
-		verify(plannerLikeDao).plannerLike(accountId, plannerId);
+		verify(plannerLikeMapper).plannerLike(accountId, plannerId);
 	}
 	
 	@Test
 	public void 플래너_좋아요_취소() {
 		int accountId = 1;
 		int plannerId = 1;
-		when(plannerLikeDao.isLike(accountId, plannerId)).thenReturn(true);
+		when(plannerLikeMapper.isLike(accountId, plannerId)).thenReturn(true);
 		
 		plannerLikeService.plannerLikeOrUnLike(accountId, plannerId);
 		
-		verify(plannerLikeDao).plannerUnLike(accountId, plannerId);
+		verify(plannerLikeMapper).plannerUnLike(accountId, plannerId);
 	}
 
 }

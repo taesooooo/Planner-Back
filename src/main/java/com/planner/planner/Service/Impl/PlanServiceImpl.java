@@ -1,32 +1,35 @@
 package com.planner.planner.Service.Impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.planner.planner.Dao.PlanDao;
 import com.planner.planner.Dto.PlanDto;
+import com.planner.planner.Mapper.PlanMapper;
 import com.planner.planner.Service.PlanService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class PlanServiceImpl implements PlanService {
-	private PlanDao planDao;
-	
-	public PlanServiceImpl(PlanDao planDao) {
-		this.planDao = planDao;
-	}
+	private final PlanMapper planMapper;
 
 	@Override
 	public int newPlan(int plannerId, PlanDto planDto) throws Exception {
-		return planDao.insertPlan(plannerId, planDto);
+		planMapper.insertPlan(plannerId, planDto);
+		
+		return planDto.getPlanId();
 	}
 
 	@Override
 	public void updatePlan(int planId, PlanDto planDto) throws Exception {
-		planDao.updatePlan(planId, planDto);
+		planMapper.updatePlan(planId, planDto);
 	}
 
 	@Override
 	public void deletePlan(int planId) throws Exception {
-		planDao.deletePlan(planId);
+		planMapper.deletePlan(planId);
 	}
 
 }

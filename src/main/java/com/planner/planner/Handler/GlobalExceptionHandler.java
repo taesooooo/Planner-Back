@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +51,9 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, "데이터를 찾지 못헀습니다"));
 	}
 
-	@ExceptionHandler({ForbiddenException.class, AccessDeniedException.class})
+	@ExceptionHandler({
+		ForbiddenException.class, 
+		AccessDeniedException.class})
 	public ResponseEntity<Object> ForbiddenUser(Exception e) {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "접근 권한이 없습니다."));
 	}
@@ -76,7 +79,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, e.getMessage()));
 	}
 
-	@ExceptionHandler(value = { 
+	@ExceptionHandler(value = {
+			DuplicateKeyException.class,
 			DuplicateLikeException.class,
 			DuplicatePlanMemberException.class })
 	public ResponseEntity<Object> duplicateLike(Exception e) {

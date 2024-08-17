@@ -79,7 +79,7 @@ public class FileStore {
 		//builder.append(baseLocation).append("\\");
 		//builder.append(file.getOriginalFilename());
 
-		FileInfo image = createImage(name, path + name, name, file);
+		FileInfo image = createImage(name, this.getAccountDir() + name, name, file);
 
 		return image;
 	}

@@ -6,27 +6,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.PasswordResetKeyDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PasswordResetkeyDto;
 import com.planner.planner.Exception.PasswordResetKeyNotFoundException;
 import com.planner.planner.Exception.UserNotFoundException;
+import com.planner.planner.Mapper.PasswordResetKeyMapper;
 import com.planner.planner.Service.EmailService;
 import com.planner.planner.Service.PasswordResetKeyService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class PasswordResetKeyServiceImpl implements PasswordResetKeyService {
 	
-	private PasswordResetKeyDao passwordResetKeyDao;
-	private AccountDao accountDao;
-	private EmailService emailService;
+	private final PasswordResetKeyMapper passwordResetKeyMapper;
+	private final AccountDao accountDao;
+	private final EmailService emailService;
 
-	public PasswordResetKeyServiceImpl(PasswordResetKeyDao passwordResetKeyDao, AccountDao accountDao, EmailService emailService) {
-		this.passwordResetKeyDao = passwordResetKeyDao;
-		this.accountDao = accountDao;
-		this.emailService = emailService;
-	}
 
 	@Override
 	public void createPasswordResetKey(String resetKey, AccountDto account) throws Exception {
@@ -35,14 +33,14 @@ public class PasswordResetKeyServiceImpl implements PasswordResetKeyService {
 			throw new UserNotFoundException();
 		}
 		
-		this.passwordResetKeyDao.createPasswordResetKey(resetKey, account.getAccountId());
+		this.passwordResetKeyMapper.createPasswordResetKey(resetKey, account.getAccountId());
 		
 		emailService.sendPasswordResetEmail(account.getEmail(), resetKey);
 	}
 
 	@Override
 	public PasswordResetkeyDto findBykey(String key) {
-		PasswordResetkeyDto pwResetKey = this.passwordResetKeyDao.findByResetKey(key);
+		PasswordResetkeyDto pwResetKey = this.passwordResetKeyMapper.findByResetKey(key);
 		if(pwResetKey == null) {
 			throw new PasswordResetKeyNotFoundException("존재 하지 않는 재설정 요청입니다.");
 		}
@@ -52,12 +50,12 @@ public class PasswordResetKeyServiceImpl implements PasswordResetKeyService {
 
 	@Override
 	public void deleteByKey(String key) {
-		this.passwordResetKeyDao.deleteByResetKey(key);
+		this.passwordResetKeyMapper.deleteByResetKey(key);
 	}
 
 	@Override
 	public boolean validatePasswordResetKey(String key) {
-		PasswordResetkeyDto resetKey = this.passwordResetKeyDao.findByResetKey(key);
+		PasswordResetkeyDto resetKey = this.passwordResetKeyMapper.findByResetKey(key);
 		if(resetKey == null) {
 			throw new PasswordResetKeyNotFoundException("존재 하지 않는 재설정 요청입니다.");
 		}

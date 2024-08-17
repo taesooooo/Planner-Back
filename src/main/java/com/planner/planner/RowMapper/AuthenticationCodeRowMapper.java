@@ -16,7 +16,7 @@ public class AuthenticationCodeRowMapper implements RowMapper<AuthenticationCode
 				.phone(rs.getString("phone"))
 				.email(rs.getString("email"))
 				.code(rs.getString("code"))
-				.confirm(rs.getBoolean("code_confirm"))
+				.codeConfirm(rs.getBoolean("code_confirm"))
 				.expireDate(rs.getTimestamp("expire_date").toLocalDateTime())
 				.createDate(rs.getTimestamp("create_date").toLocalDateTime())
 				.build();

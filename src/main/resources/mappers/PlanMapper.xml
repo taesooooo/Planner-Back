@@ -12,7 +12,7 @@
 		);
 	</insert>
 	
-	<select id="findPlanListByPlannerId" resultSets="PlanDto">
+	<select id="findPlanListByPlannerId" resultType="PlanDto">
 		SELECT plan.plan_id, plan.plan_date, plan.plan_index, plan.planner_id 
 		FROM plan 
 		WHERE plan.planner_id = #{plannerId}

@@ -42,10 +42,10 @@
 	<sql id="commonFindWhereSql">
 		<if test="commonRequestParamDto.keyword != null and commonRequestParamDto.keyword != ''" >
 			<bind name="str" value="'%' + commonRequestParamDto.keyword + '%'" />
-			title LIKE #{str}
+			AND title LIKE #{str}
 		</if>
 		<if test="commonRequestParamDto.areaCode != null and commonRequestParamDto.areaCode != 0">
-			area_code = #{commonRequestParamDto.areaCode} 
+			AND area_code = #{commonRequestParamDto.areaCode} 
 		</if>
 	</sql>
 	

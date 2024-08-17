@@ -11,30 +11,27 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.planner.planner.Dao.FileUploadDao;
 import com.planner.planner.Dto.FileInfoDto;
 import com.planner.planner.Dto.UploadFileDto;
+import com.planner.planner.Mapper.FileUploadMapper;
 import com.planner.planner.Service.FileService;
 import com.planner.planner.Util.FileStore;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
 	
-	private FileStore fileStore;
-	private FileUploadDao fileUploadDao;
+	private final FileStore fileStore;
+	private final FileUploadMapper fileUploadMapper;
 	
-	public FileServiceImpl(FileStore fileStore, FileUploadDao fileUploadDao) {
-		this.fileStore = fileStore;
-		this.fileUploadDao = fileUploadDao;
-	}
-
 	@Override
 	public FileInfoDto findFileInfo(String fileName) throws Exception {
-		FileInfoDto fileInfo = fileUploadDao.findByFileName(fileName);
+		FileInfoDto fileInfo = fileUploadMapper.findByFileName(fileName);
 		if(fileInfo == null) {
 			throw new Exception(fileName + "에 대한 정보를 찾지 못했습니다.");
 		}
@@ -56,7 +53,7 @@ public class FileServiceImpl implements FileService {
 			File f = new File(fileInfo.getFilePath());
 			images.get(i).transferTo(f);
 			
-			fileUploadDao.createFileInfo(userId, fileInfo);
+			fileUploadMapper.createFileInfo(userId, fileInfo);
 		}
 		
 		return fileList.stream().map(fileInfo -> fileInfo.getFileName()).collect(Collectors.toList());
@@ -98,12 +95,12 @@ public class FileServiceImpl implements FileService {
 		}
 		
 		file.delete();
-		fileUploadDao.deleteById(fileInfo.getFileId());
+		fileUploadMapper.deleteById(fileInfo.getFileId());
 	}
 
 	@Override
 	public void updateBoardId(List<String> fileNames, int boardId) {
-		fileUploadDao.updateBoardId(boardId, fileNames);
+		fileUploadMapper.updateBoardId(boardId, fileNames);
 	}
 	
 	private byte[] getFile(String filePath) throws IOException {

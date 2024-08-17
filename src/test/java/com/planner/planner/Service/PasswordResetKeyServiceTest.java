@@ -16,11 +16,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.PasswordResetKeyDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.PasswordResetkeyDto;
 import com.planner.planner.Exception.PasswordResetKeyNotFoundException;
 import com.planner.planner.Exception.UserNotFoundException;
+import com.planner.planner.Mapper.PasswordResetKeyMapper;
 import com.planner.planner.Service.Impl.PasswordResetKeyServiceImpl;
 import com.planner.planner.Util.RandomCode;
 
@@ -28,7 +28,7 @@ import com.planner.planner.Util.RandomCode;
 public class PasswordResetKeyServiceTest {
 	
 	@Mock
-	private PasswordResetKeyDao passwordResetKeyDao;
+	private PasswordResetKeyMapper passwordResetKeyMapper;
 	@Mock
 	private AccountDao accountDao;
 	@Mock
@@ -76,7 +76,7 @@ public class PasswordResetKeyServiceTest {
 	@Test
 	public void 재설정키_가져오기_없는경우() {
 		String resetKey = randomCode.createStrCode(6, true);
-		when(passwordResetKeyDao.findByResetKey(anyString())).thenReturn(null);
+		when(passwordResetKeyMapper.findByResetKey(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> passwordResetKeyService.findBykey(resetKey))
 		.isExactlyInstanceOf(PasswordResetKeyNotFoundException.class);
@@ -93,9 +93,9 @@ public class PasswordResetKeyServiceTest {
 				.createDate(LocalDateTime.now())
 				.build();
 		
-		when(passwordResetKeyDao.findByResetKey(anyString())).thenReturn(testResetKeyDto);
+		when(passwordResetKeyMapper.findByResetKey(anyString())).thenReturn(testResetKeyDto);
 		
-		PasswordResetkeyDto resetKeyDto = passwordResetKeyDao.findByResetKey(resetKey);
+		PasswordResetkeyDto resetKeyDto = passwordResetKeyMapper.findByResetKey(resetKey);
 		
 		assertThat(resetKeyDto)
 		.usingRecursiveComparison()
@@ -105,7 +105,7 @@ public class PasswordResetKeyServiceTest {
 	@Test
 	public void 재설정키_유효성검사_키_없는경우() {
 		String resetKey = randomCode.createStrCode(6, true);
-		when(passwordResetKeyDao.findByResetKey(anyString())).thenReturn(null);
+		when(passwordResetKeyMapper.findByResetKey(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> passwordResetKeyService.validatePasswordResetKey(resetKey))
 		.isExactlyInstanceOf(PasswordResetKeyNotFoundException.class);
@@ -122,7 +122,7 @@ public class PasswordResetKeyServiceTest {
 				.createDate(LocalDateTime.now())
 				.build();
 		
-		when(passwordResetKeyDao.findByResetKey(anyString())).thenReturn(testResetKeyDto);
+		when(passwordResetKeyMapper.findByResetKey(anyString())).thenReturn(testResetKeyDto);
 		
 		boolean check = passwordResetKeyService.validatePasswordResetKey(resetKey);
 		
@@ -140,7 +140,7 @@ public class PasswordResetKeyServiceTest {
 				.createDate(LocalDateTime.now())
 				.build();
 		
-		when(passwordResetKeyDao.findByResetKey(anyString())).thenReturn(testResetKeyDto);
+		when(passwordResetKeyMapper.findByResetKey(anyString())).thenReturn(testResetKeyDto);
 		
 		boolean check = passwordResetKeyService.validatePasswordResetKey(resetKey);
 		

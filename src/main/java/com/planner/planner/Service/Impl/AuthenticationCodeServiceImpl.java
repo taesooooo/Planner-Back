@@ -4,39 +4,38 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
-import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dto.AuthenticationCodeDto;
 import com.planner.planner.Exception.AuthenticationCodeExpireException;
 import com.planner.planner.Exception.AuthenticationCodeNotFoundException;
+import com.planner.planner.Mapper.AuthenticationCodeMapper;
 import com.planner.planner.Service.AuthenticationCodeService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class AuthenticationCodeServiceImpl implements AuthenticationCodeService {
 
-	private AuthenticationCodeDao authentcationCodeDao;
-
-	public AuthenticationCodeServiceImpl(AuthenticationCodeDao authentcationCodeDao) {
-		this.authentcationCodeDao = authentcationCodeDao;
-	}
+	private final AuthenticationCodeMapper authentcationCodeMapper;
 
 	@Override
 	public boolean createPhoneAuthenticationCode(String phone, String code) {
-		return authentcationCodeDao.createByPhone(phone, code);
+		return authentcationCodeMapper.createByPhone(phone, code);
 	}
 
 	@Override
 	public boolean createEmailAuthenticationCode(String email, String code) {
-		return authentcationCodeDao.createByEmail(email, code);
+		return authentcationCodeMapper.createByEmail(email, code);
 	}
 
 	@Override
 	public AuthenticationCodeDto findByPhone(String phone) {
-		return authentcationCodeDao.findByPhone(phone);
+		return authentcationCodeMapper.findByPhone(phone);
 	}
 
 	@Override
 	public AuthenticationCodeDto findByEmail(String email) {
-		return authentcationCodeDao.findByEmail(email);
+		return authentcationCodeMapper.findByEmail(email);
 	}
 
 	@Override
@@ -46,10 +45,10 @@ public class AuthenticationCodeServiceImpl implements AuthenticationCodeService 
 		AuthenticationCodeDto authCodeDto = null;
 
 		if (phoneCheck) {
-			authCodeDto = this.authentcationCodeDao.findByPhone(authenticationCodeDto.getPhone());
+			authCodeDto = this.authentcationCodeMapper.findByPhone(authenticationCodeDto.getPhone());
 		} 
 		else {
-			authCodeDto = this.authentcationCodeDao.findByEmail(authenticationCodeDto.getEmail());
+			authCodeDto = this.authentcationCodeMapper.findByEmail(authenticationCodeDto.getEmail());
 		}
 
 		if (authCodeDto == null) {
@@ -64,10 +63,10 @@ public class AuthenticationCodeServiceImpl implements AuthenticationCodeService 
 
 		if (authCodeDto.getCode().equals(authenticationCodeDto.getCode())) {
 			if (phoneCheck) {
-				this.authentcationCodeDao.updateCodeConfirmByPhone(authenticationCodeDto.getPhone());
+				this.authentcationCodeMapper.updateCodeConfirmByPhone(authenticationCodeDto.getPhone());
 			} 
 			else {
-				this.authentcationCodeDao.updateCodeConfirmByEmail(authenticationCodeDto.getEmail());
+				this.authentcationCodeMapper.updateCodeConfirmByEmail(authenticationCodeDto.getEmail());
 			}
 		} 
 		else {
@@ -79,6 +78,6 @@ public class AuthenticationCodeServiceImpl implements AuthenticationCodeService 
 
 	@Override
 	public void delete(String phone) {
-		this.authentcationCodeDao.deleteByPhone(phone);
+		this.authentcationCodeMapper.deleteByPhone(phone);
 	}
 }

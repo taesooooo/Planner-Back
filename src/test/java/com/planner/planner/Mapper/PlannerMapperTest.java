@@ -396,6 +396,36 @@ public class PlannerMapperTest {
 		assertThat(delete).isEqualTo(1);
 	}
 	
+	@DisplayName("플래너 총 개수 가져오기")
+	@Test
+	public void findListTotalCount() throws Exception {
+		CommonRequestParamDto commonRequestParamDto = CommonRequestParamDto.builder()
+				.itemCount(10)
+				.sortCriteria(SortCriteria.LATEST)
+				.keyword("")
+				.pageNum(1)
+				.build();
+		
+		int result = mapper.findListTotalCount(null, commonRequestParamDto);
+		
+		assertThat(result).isEqualTo(9);
+	}
+	
+	@DisplayName("플래너 좋아요 총 개수 가져오기")
+	@Test
+	public void findLikeListTotalCount() throws Exception {
+		CommonRequestParamDto commonRequestParamDto = CommonRequestParamDto.builder()
+				.itemCount(10)
+				.sortCriteria(SortCriteria.LATEST)
+				.keyword("")
+				.pageNum(1)
+				.build();
+		
+		int result = mapper.findLikeListTotalCount(null, commonRequestParamDto);
+		
+		assertThat(result).isEqualTo(11);
+	}
+	
 	
 	private PlannerDto createPlannerDto(int plannerId, int accountId, String creator, Integer areaCode, String title, 
 			LocalDate planDateStart, LocalDate planDateEnd, int expense, int memberCount, int memberType,

@@ -7,8 +7,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.planner.planner.Dao.AccountDao;
 import com.planner.planner.Dto.AccountDto;
+import com.planner.planner.Mapper.AccountMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,11 +17,11 @@ import lombok.RequiredArgsConstructor;
 public class UserDetailsServiceImpl implements UserDetailsService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 	
-	private final AccountDao accountDao;
+	private final AccountMapper accountMapper;
 	
 	@Override
 	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-		AccountDto accountDto = accountDao.findById(Integer.parseInt(id));
+		AccountDto accountDto = accountMapper.findById(Integer.parseInt(id));
 		if(accountDto == null) {
 			throw new UsernameNotFoundException(id);
 		}

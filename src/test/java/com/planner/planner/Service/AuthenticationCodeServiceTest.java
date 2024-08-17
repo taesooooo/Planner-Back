@@ -14,10 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.planner.planner.Dao.AuthenticationCodeDao;
 import com.planner.planner.Dto.AuthenticationCodeDto;
 import com.planner.planner.Exception.AuthenticationCodeExpireException;
 import com.planner.planner.Exception.AuthenticationCodeNotFoundException;
+import com.planner.planner.Mapper.AuthenticationCodeMapper;
 import com.planner.planner.Service.Impl.AuthenticationCodeServiceImpl;
 import com.planner.planner.Util.RandomCode;
 
@@ -25,7 +25,7 @@ import com.planner.planner.Util.RandomCode;
 public class AuthenticationCodeServiceTest {
 	
 	@Mock
-	private AuthenticationCodeDao authenticationCodeDao;
+	private AuthenticationCodeMapper authenticationCodeMapper;
 	@Mock
 	private SENSService sensService;
 	@Mock
@@ -48,7 +48,7 @@ public class AuthenticationCodeServiceTest {
 				.createDate(LocalDateTime.now())
 				.build();
 		
-		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(null);
+		when(authenticationCodeMapper.findByPhone(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
 		.isInstanceOf(AuthenticationCodeNotFoundException.class);
@@ -63,7 +63,7 @@ public class AuthenticationCodeServiceTest {
 				.createDate(LocalDateTime.now())
 				.build();
 		
-		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(null);
+		when(authenticationCodeMapper.findByEmail(anyString())).thenReturn(null);
 		
 		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
 		.isInstanceOf(AuthenticationCodeNotFoundException.class);
@@ -88,7 +88,7 @@ public class AuthenticationCodeServiceTest {
 				.createDate(dateTime)
 				.build();
 		
-		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(findCode);
+		when(authenticationCodeMapper.findByPhone(anyString())).thenReturn(findCode);
 		
 		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
 		.isInstanceOf(AuthenticationCodeExpireException.class);
@@ -113,7 +113,7 @@ public class AuthenticationCodeServiceTest {
 				.createDate(dateTime)
 				.build();
 		
-		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(findCode);
+		when(authenticationCodeMapper.findByEmail(anyString())).thenReturn(findCode);
 		
 		assertThatThrownBy(() -> codeService.codeCheck(requestDto))
 		.isInstanceOf(AuthenticationCodeExpireException.class);
@@ -138,7 +138,7 @@ public class AuthenticationCodeServiceTest {
 				.createDate(dateTime)
 				.build();
 		
-		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(findCode);
+		when(authenticationCodeMapper.findByPhone(anyString())).thenReturn(findCode);
 		
 		boolean result = codeService.codeCheck(requestDto);
 		
@@ -164,7 +164,7 @@ public class AuthenticationCodeServiceTest {
 				.createDate(dateTime)
 				.build();
 		
-		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(findCode);
+		when(authenticationCodeMapper.findByEmail(anyString())).thenReturn(findCode);
 		
 		boolean result = codeService.codeCheck(requestDto);
 		
@@ -190,7 +190,7 @@ public class AuthenticationCodeServiceTest {
 				.createDate(dateTime)
 				.build();
 		
-		when(authenticationCodeDao.findByPhone(anyString())).thenReturn(findCode);
+		when(authenticationCodeMapper.findByPhone(anyString())).thenReturn(findCode);
 		
 		boolean result = codeService.codeCheck(requestDto);
 		
@@ -216,7 +216,7 @@ public class AuthenticationCodeServiceTest {
 				.createDate(dateTime)
 				.build();
 		
-		when(authenticationCodeDao.findByEmail(anyString())).thenReturn(findCode);
+		when(authenticationCodeMapper.findByEmail(anyString())).thenReturn(findCode);
 		
 		boolean result = codeService.codeCheck(requestDto);
 		

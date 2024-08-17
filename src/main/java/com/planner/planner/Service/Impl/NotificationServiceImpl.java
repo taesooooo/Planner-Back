@@ -4,28 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.planner.planner.Dao.NotificationDao;
 import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Exception.NotificationNotFoundException;
+import com.planner.planner.Mapper.NotificationMapper;
 import com.planner.planner.Service.NotificationService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
-	private NotificationDao notificationDao;
-	
-	public NotificationServiceImpl(NotificationDao notificationDao) {
-		this.notificationDao = notificationDao;
-	}
+	private final NotificationMapper notificationMapper;
 
 	@Override
 	public void createNotification(int accountId, NotificationDto notificationDto) throws Exception{
-		notificationDao.insertNotification(accountId, notificationDto);
+		notificationMapper.insertNotification(accountId, notificationDto);
 	}
 
 	@Override
 	public NotificationDto findById(int notificationId) throws Exception {
-		NotificationDto notification = notificationDao.findById(notificationId);
+		NotificationDto notification = notificationMapper.findById(notificationId);
 		if(notification == null) {
 			throw new NotificationNotFoundException("해당하는 알림을 찾을 수 없습니다.");
 		}
@@ -35,7 +36,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public List<NotificationDto> findAllByAccountId(int accountId) throws Exception{
-		List<NotificationDto> list = notificationDao.findAllByAccountId(accountId);
+		List<NotificationDto> list = notificationMapper.findAllByAccountId(accountId);
 		if(list == null) {
 			list = new ArrayList<NotificationDto>();
 		}
@@ -45,12 +46,12 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public void notificationRead(int notificationId) throws Exception{
-		notificationDao.readNotification(notificationId, true);
+		notificationMapper.readNotification(notificationId, true);
 	}
 
 	@Override
 	public void deleteNotification(int notificationId) throws Exception{
-		notificationDao.deleteNotification(notificationId);
+		notificationMapper.deleteNotification(notificationId);
 	}
 
 }

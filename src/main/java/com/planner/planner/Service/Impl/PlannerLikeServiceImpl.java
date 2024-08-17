@@ -1,25 +1,26 @@
 package com.planner.planner.Service.Impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.planner.planner.Dao.PlannerLikeDao;
+import com.planner.planner.Mapper.PlannerLikeMapper;
 import com.planner.planner.Service.PlannerLikeService;
 
-@Service
-public class PlannerLikeServiceImpl implements PlannerLikeService {
-	private PlannerLikeDao plannerLikeDao;
+import lombok.RequiredArgsConstructor;
 
-	public PlannerLikeServiceImpl(PlannerLikeDao plannerLikeDao) {
-		this.plannerLikeDao = plannerLikeDao;
-	}
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class PlannerLikeServiceImpl implements PlannerLikeService {
+	private final PlannerLikeMapper plannerLikeMapper;
 
 	@Override
 	public void plannerLikeOrUnLike(int accountId, int plannerId) {
-		boolean isLike = plannerLikeDao.isLike(accountId, plannerId);
+		boolean isLike = plannerLikeMapper.isLike(accountId, plannerId);
 		if (isLike) {
-			plannerLikeDao.plannerUnLike(accountId, plannerId);
+			plannerLikeMapper.plannerUnLike(accountId, plannerId);
 		} else {
-			plannerLikeDao.plannerLike(accountId, plannerId);
+			plannerLikeMapper.plannerLike(accountId, plannerId);
 		}
 	}
 

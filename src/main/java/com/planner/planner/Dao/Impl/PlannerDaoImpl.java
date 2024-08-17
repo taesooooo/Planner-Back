@@ -249,7 +249,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public int getListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+	public int findListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		StringBuilder sb = new StringBuilder(FIND_TOTAL_COUNT_SQL);
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		
@@ -276,7 +276,7 @@ public class PlannerDaoImpl implements PlannerDao {
 	}
 
 	@Override
-	public int getLikeListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
+	public int findLikeListTotalCount(Integer accountId, CommonRequestParamDto commonRequestParamDto) throws Exception {
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 		StringBuilder sb = new StringBuilder(FIND_TOTAL_COUNT_LIKE_SQL);
 		

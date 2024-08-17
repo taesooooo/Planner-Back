@@ -25,10 +25,10 @@ import org.slf4j.LoggerFactory;
 import com.planner.planner.Common.Page;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
-import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.ReviewDto;
+import com.planner.planner.Mapper.ReviewMapper;
 import com.planner.planner.Service.Impl.ReviewServiceImpl;
 import com.planner.planner.Util.FileStore;
 
@@ -44,7 +44,7 @@ public class ReviewServiceTest {
 	private ReviewServiceImpl reviewService;
 	
 	@Mock
-	private ReviewDao reviewDao;
+	private ReviewMapper reviewMapper;
 	
 	@Mock
 	private AccountService accountService;
@@ -73,13 +73,13 @@ public class ReviewServiceTest {
 		
 		int testTotalCount = testList.size();
 		
-		when(reviewDao.findAll(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
-		when(reviewDao.getTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
+		when(reviewMapper.findAll(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
+		when(reviewMapper.findTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<ReviewDto> reviewList = reviewService.findAllReview(paramDto);
 		
-		verify(reviewDao).findAll(any(CommonRequestParamDto.class), any(PageInfo.class));
-		verify(reviewDao).getTotalCount(any(CommonRequestParamDto.class));
+		verify(reviewMapper).findAll(any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(reviewMapper).findTotalCount(any(CommonRequestParamDto.class));
 		
 		assertThat(reviewList).isNotNull();
 		assertThat(reviewList.getList()).isNotNull();
@@ -98,13 +98,13 @@ public class ReviewServiceTest {
 		
 		int testTotalCount = 1;
 		
-		when(reviewDao.findAll(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
-		when(reviewDao.getTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
+		when(reviewMapper.findAll(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
+		when(reviewMapper.findTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<ReviewDto> reviewList = reviewService.findAllReview(paramDto);
 		
-		verify(reviewDao).findAll(any(CommonRequestParamDto.class), any(PageInfo.class));
-		verify(reviewDao).getTotalCount(any(CommonRequestParamDto.class));
+		verify(reviewMapper).findAll(any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(reviewMapper).findTotalCount(any(CommonRequestParamDto.class));
 		
 		assertThat(reviewList).isNotNull();
 		assertThat(reviewList.getList()).isNotNull();
@@ -124,13 +124,13 @@ public class ReviewServiceTest {
 		
 		int testTotalCount = 1;
 		
-		when(reviewDao.findAll(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
-		when(reviewDao.getTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
+		when(reviewMapper.findAll(any(CommonRequestParamDto.class), any(PageInfo.class))).thenReturn(testList);
+		when(reviewMapper.findTotalCount(any(CommonRequestParamDto.class))).thenReturn(testTotalCount);
 		
 		Page<ReviewDto> reviewList = reviewService.findAllReview(paramDto);
 		
-		verify(reviewDao).findAll(any(CommonRequestParamDto.class), any(PageInfo.class));
-		verify(reviewDao).getTotalCount(any(CommonRequestParamDto.class));
+		verify(reviewMapper).findAll(any(CommonRequestParamDto.class), any(PageInfo.class));
+		verify(reviewMapper).findTotalCount(any(CommonRequestParamDto.class));
 		
 		assertThat(reviewList).isNotNull();
 		assertThat(reviewList.getList()).isNotNull();
@@ -157,9 +157,9 @@ public class ReviewServiceTest {
 				.fileNames(fileList)
 				.build();
 		
-		when(reviewDao.createReview(any(ReviewDto.class),any(AccountDto.class), anyString())).thenReturn(1);
+		when(reviewMapper.createReview(any(ReviewDto.class),any(AccountDto.class), anyString())).thenReturn(1);
 		
-		int reviewId = reviewDao.createReview(review, user, thumbnailName);
+		int reviewId = reviewMapper.createReview(review, user, thumbnailName);
 		
 		assertThat(reviewId).isEqualTo(1);
 	}

@@ -27,7 +27,7 @@ public class AuthenticationCodeDto {
 	@NotBlank(message = "인증 코드는 필수 입니다.")
 	@Pattern(regexp = "^[0-9]{6}", message = "인증 코드를 정확히 입력해주세요.")
 	private String code;
-	private boolean confirm;
+	private boolean codeConfirm;
 	private LocalDateTime expireDate;
 	private LocalDateTime createDate;
 }

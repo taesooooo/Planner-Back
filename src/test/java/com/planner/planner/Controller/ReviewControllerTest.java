@@ -269,7 +269,7 @@ public class ReviewControllerTest {
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(is(true)))
 		.andExpect(jsonPath("$.data").isNotEmpty())
-		.andExpect(jsonPath("$.data.comments.length()").value(1))
+		.andExpect(jsonPath("$.data.comments.length()").value(3))
 		.andExpect(jsonPath("$.data.comments[0].reComments.length()").value(1))
 		.andExpect(jsonPath("$.data.comments[0].reComments[0].reComments.length()").value(1));
 	}

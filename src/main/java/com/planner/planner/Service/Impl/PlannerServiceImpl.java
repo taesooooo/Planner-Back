@@ -12,11 +12,6 @@ import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.Notification.NotificationLink;
 import com.planner.planner.Common.Notification.NotificationMessage;
 import com.planner.planner.Common.Notification.NotificationType;
-import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.InvitationDao;
-import com.planner.planner.Dao.NotificationDao;
-import com.planner.planner.Dao.PlanMemberDao;
-import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.InvitationDto;
@@ -24,36 +19,36 @@ import com.planner.planner.Dto.NotificationDto;
 import com.planner.planner.Dto.PlannerDto;
 import com.planner.planner.Exception.PlannerNotFoundException;
 import com.planner.planner.Exception.UserNotFoundException;
+import com.planner.planner.Mapper.AccountMapper;
+import com.planner.planner.Mapper.InvitationMapper;
+import com.planner.planner.Mapper.NotificationMapper;
+import com.planner.planner.Mapper.PlanMemberMapper;
+import com.planner.planner.Mapper.PlannerMapper;
 import com.planner.planner.Service.PlannerService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class PlannerServiceImpl implements PlannerService {
-	private AccountDao accountDao;
-	private PlannerDao plannerDao;
-	private PlanMemberDao planMemberDao;
-	private InvitationDao invitationDao;
-	private NotificationDao notificationDao;
-	
-	public PlannerServiceImpl(AccountDao accountDao, PlannerDao plannerDao, PlanMemberDao planMemberDao, InvitationDao invitationDao, NotificationDao notificationDao) {
-		this.accountDao = accountDao;
-		this.plannerDao = plannerDao;
-		this.planMemberDao = planMemberDao;
-		this.invitationDao = invitationDao;
-		this.notificationDao = notificationDao;
-	}
+	private final AccountMapper accountMapper;
+	private final PlannerMapper plannerMapper;
+	private final PlanMemberMapper planMemberMapper;
+	private final InvitationMapper invitationMapper;
+	private final NotificationMapper notificationMapper;
 	
 	@Override
 	public int newPlanner(int accountId, PlannerDto plannerDto) throws Exception {
 		// 플래너 생성
 		AccountDto creatorUser = (AccountDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		int plannerId = plannerDao.createPlanner(creatorUser, plannerDto);
+		int plannerId = plannerMapper.createPlanner(creatorUser, plannerDto);
 
 		List<AccountDto> users = new ArrayList<AccountDto>();
 		List<String> memberNickNames = plannerDto.getPlanMembers();
 
 		for (String nickName : memberNickNames) {
-			AccountDto user = accountDao.findByNickName(nickName);
+			AccountDto user = accountMapper.findByNickName(nickName);
 			if (user == null) {
 				throw new UserNotFoundException(nickName + "에 해당하는 사용자를 찾지 못했습니다.");
 			}
@@ -61,7 +56,7 @@ public class PlannerServiceImpl implements PlannerService {
 		}
 		
 		// 생성자 바로 등록
-		planMemberDao.insertPlanMember(plannerId, creatorUser.getAccountId());
+		planMemberMapper.insertPlanMember(plannerId, creatorUser.getAccountId());
 
 		// 초대
 		for (AccountDto user : users) {
@@ -70,7 +65,7 @@ public class PlannerServiceImpl implements PlannerService {
 					.accountId(user.getAccountId())
 					.plannerId(plannerId).build();
 
-			int inviteId = invitationDao.createInvitation(invitation);
+			int inviteId = invitationMapper.createInvitation(invitation);
 
 			NotificationDto notificationDto = NotificationDto.builder()
 					.accountId(user.getAccountId())
@@ -78,7 +73,7 @@ public class PlannerServiceImpl implements PlannerService {
 					.link(String.format(NotificationLink.PLANNER_INVITE_LINK, inviteId))
 					.notificationType(NotificationType.PLANNER_INVITE).build();
 			
-			notificationDao.insertNotification(user.getAccountId(), notificationDto);
+			notificationMapper.insertNotification(user.getAccountId(), notificationDto);
 
 		}
 		
@@ -87,7 +82,7 @@ public class PlannerServiceImpl implements PlannerService {
 
 	@Override
 	public PlannerDto findPlannerByPlannerId(Integer accountId, int plannerId) throws Exception {
-		PlannerDto planner = plannerDao.findPlannerByPlannerId(accountId, plannerId);
+		PlannerDto planner = plannerMapper.findByPlannerId(accountId, plannerId);
 		if (planner == null) {
 			throw new PlannerNotFoundException("존재하지 않는 플래너 입니다.");
 		}
@@ -100,19 +95,19 @@ public class PlannerServiceImpl implements PlannerService {
 				.pageNum(commonRequestParamDto.getPageNum())
 				.pageItemCount(commonRequestParamDto.getItemCount())
 				.build();
-		List<PlannerDto> plannerList = plannerDao.findListByAccountId(accountId, commonRequestParamDto, pInfo);
+		List<PlannerDto> plannerList = plannerMapper.findListByAccountId(accountId, commonRequestParamDto, pInfo);
 		
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();
 		
 //		if(keyword != null && !keyword.isEmpty()) {
-//			totalCount = plannerDao.getTotalCountByKeyword(accountId, keyword);
+//			totalCount = plannerMapper.getTotalCountByKeyword(accountId, keyword);
 //		}
 //		else {
-//			totalCount = plannerDao.getTotalCount(accountId);
+//			totalCount = plannerMapper.getTotalCount(accountId);
 //		}
 		
-		totalCount = plannerDao.getListTotalCount(accountId, commonRequestParamDto);
+		totalCount = plannerMapper.findListTotalCount(accountId, commonRequestParamDto);
 
 		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
 				.setList(plannerList)
@@ -128,12 +123,12 @@ public class PlannerServiceImpl implements PlannerService {
 				.pageNum(commonRequestParamDto.getPageNum())
 				.pageItemCount(commonRequestParamDto.getItemCount())
 				.build();
-		List<PlannerDto> plannerList = plannerDao.findAll(accountId, commonRequestParamDto, pInfo);
+		List<PlannerDto> plannerList = plannerMapper.findAll(accountId, commonRequestParamDto, pInfo);
 		
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();
 		
-		totalCount = plannerDao.getListTotalCount(null, commonRequestParamDto);
+		totalCount = plannerMapper.findListTotalCount(null, commonRequestParamDto);
 		
 		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
 				.setList(plannerList)
@@ -149,19 +144,19 @@ public class PlannerServiceImpl implements PlannerService {
 				.pageNum(commonRequestParamDto.getPageNum())
 				.pageItemCount(commonRequestParamDto.getItemCount())
 				.build();
-		List<PlannerDto> plannerList = plannerDao.findLikeList(accountId, commonRequestParamDto, pInfo);
+		List<PlannerDto> plannerList = plannerMapper.findLikeList(accountId, commonRequestParamDto, pInfo);
 
 		int totalCount = 0;
 		String keyword = commonRequestParamDto.getKeyword();
 		
 //		if(keyword != null && !keyword.isEmpty()) {
-//			totalCount = plannerDao.getTotalCountByLike(accountId, keyword);
+//			totalCount = plannerMapper.getTotalCountByLike(accountId, keyword);
 //		}
 //		else {
-//			totalCount = plannerDao.getTotalCountByLike(accountId);
+//			totalCount = plannerMapper.getTotalCountByLike(accountId);
 //		}
 		
-		totalCount = plannerDao.getLikeListTotalCount(accountId, commonRequestParamDto);
+		totalCount = plannerMapper.findLikeListTotalCount(accountId, commonRequestParamDto);
 		
 		Page<PlannerDto> plannerListPage = new Page.Builder<PlannerDto>()
 				.setList(plannerList)
@@ -173,12 +168,12 @@ public class PlannerServiceImpl implements PlannerService {
 
 	@Override
 	public void updatePlanner(int plannerId, PlannerDto plannerDto) throws Exception {
-		plannerDao.updatePlanner(plannerId, plannerDto);
+		plannerMapper.updatePlanner(plannerId, plannerDto);
 	}
 
 	@Override
 	public void deletePlanner(int plannerId) throws Exception {
-		plannerDao.deletePlanner(plannerId);
+		plannerMapper.deletePlanner(plannerId);
 	}
 
 }

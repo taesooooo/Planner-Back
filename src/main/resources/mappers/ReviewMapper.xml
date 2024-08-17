@@ -41,7 +41,17 @@
 	
 	<!-- 리뷰 공통 기본 컬럼 -->
 	<sql id="reviewColmunSql">
-		R.review_id, R.planner_id, R.title, R.content, R.areacode, R.thumbnail, R.writer, R.writer_id, R.like_count, R.create_date, R.update_date  
+		R.review_id, 
+		R.planner_id, 
+		R.title, 
+		R.content, 
+		R.areacode, 
+		R.thumbnail, 
+		R.writer, 
+		R.writer_id, 
+		R.like_count, 
+		R.create_date, 
+		R.update_date  
 	</sql>
 	
 	<!-- 리뷰 where 공통 조건 문 -->
@@ -51,20 +61,36 @@
 				title LIKE #{str}
 		</if>
 		<if test="commonRequestParamDto.areaCode != null and commonRequestParamDto.areaCode != 0">
-			AND P.area_code = #{commonRequestParamDto.areaCode} 
+			AND R.areacode = #{commonRequestParamDto.areaCode} 
 		</if>
 	</sql>
 	
 	<insert id="createReview" parameterType="ReviewDto" useGeneratedKeys="true" keyProperty="reviewDto.reviewId" keyColumn="review_id">
-		INSERT INTO review(planner_id, title, content, areacode, thumbnail, writer, writer_id, create_date, update_date) 
-		VALUES (#{reviewDto.plannerId}, #{reviewDto.title}, #{reviewDto.content}, #{reviewDto.areaCode}, #{thumbnail}, #{accountDto.nickname}, #{accountDto.accountId}, now(), now())
+		INSERT INTO review(planner_id, title, content, areacode, thumbnail, writer, writer_id, create_date, update_date) VALUES 
+		(
+			#{reviewDto.plannerId}, 
+			#{reviewDto.title}, 
+			#{reviewDto.content}, 
+			#{reviewDto.areaCode}, 
+			#{thumbnail}, 
+			#{accountDto.nickname}, 
+			#{accountDto.accountId}, 
+			now(), 
+			now()
+		)
 	</insert>
 	
 	<select id="findById" resultMap="reviewDetailMap">
 		SELECT 
 			<include refid="reviewColmunSql"></include>,
-			RC.comment_id AS RC_comment_id, RC.review_id AS RC_review_id, RC.writer_id AS RC_writer_id, RC.content AS RC_content, 
-			RC.parent_id AS RC_parent_id, RC.create_date AS RC_create_date, RC.update_date AS RC_update_date, AC.nickname AS AC_nickname 
+			RC.comment_id AS RC_comment_id, 
+			RC.review_id AS RC_review_id, 
+			RC.writer_id AS RC_writer_id, 
+			RC.content AS RC_content, 
+			RC.parent_id AS RC_parent_id, 
+			RC.create_date AS RC_create_date, 
+			RC.update_date AS RC_update_date, 
+			AC.nickname AS AC_nickname 
 		FROM review AS R
 		LEFT JOIN review_comment AS RC ON RC.review_id = R.review_id 
 		LEFT JOIN account AS AC ON AC.account_id = RC.writer_id 
@@ -111,7 +137,7 @@
 	</delete>
 	
 	<select id="findTotalCount">
-		SELECT count(*) FROM review 
+		SELECT count(*) FROM review AS R
 		<where>
 			<include refid="whereIfSql"></include>
 		</where>

@@ -1,7 +1,6 @@
 package com.planner.planner.Controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
@@ -34,13 +33,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.AuthenticationCodeDto;
 import com.planner.planner.Filter.JwtAuthenticationFilter;
+import com.planner.planner.Mapper.AuthenticationCodeMapper;
 import com.planner.planner.Util.JwtUtil;
 
 import jakarta.servlet.http.Cookie;
 
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
-//@Transactional
+@Transactional
 public class AuthControllerTest {
 	private static final Logger logger = LoggerFactory.getLogger(AuthControllerTest.class);
 
@@ -50,6 +50,9 @@ public class AuthControllerTest {
 	private JwtUtil jwtUtil;
 	@Autowired
 	private UserDetailsService userDetailsService;
+	
+	@Autowired
+	private AuthenticationCodeMapper authCodeMapper;
 	
 	private MockMvc mockMvc;
 
@@ -267,7 +270,7 @@ public class AuthControllerTest {
 	@DisplayName("휴대폰 인증코드 확인 정상")
 	public void 휴대폰_인증코드_확인_정상() throws Exception {
 		AuthenticationCodeDto authenticationCodeDto = AuthenticationCodeDto.builder()
-				.phone("01012345678")
+				.phone("01087654321")
 				.code("123456")
 				.build();
 		
@@ -284,7 +287,7 @@ public class AuthControllerTest {
 	@DisplayName("이메일 인증 코드 확인 정상")
 	public void 이메일_인증코드_확인_정상() throws Exception {
 		AuthenticationCodeDto authenticationCodeDto = AuthenticationCodeDto.builder()
-				.email("test@naver.com")
+				.email("test2@naver.com")
 				.code("123456")
 				.build();
 		

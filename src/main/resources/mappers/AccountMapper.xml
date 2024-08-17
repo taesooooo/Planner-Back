@@ -22,7 +22,7 @@
 		INSERT INTO account(email,
 		password, name, nickname, phone, image, create_date, update_date)
 		VALUES
-		(#{email}, #{password}, #{username}, #{nickname}, #{phone}, #{image}, now(), now())
+		(#{email}, #{password}, #{username}, #{nickname}, #{phone}, '', now(), now())
 	</insert>
 
 	<select id="findById" resultMap="accountMap">
@@ -85,9 +85,4 @@
 		SET password = #{password}, update_date = now() 
 		WHERE account_id = #{accountId}
 	</update>
-	
-	<select id="searchEmail">
-		
-	</select>
-
 </mapper>
