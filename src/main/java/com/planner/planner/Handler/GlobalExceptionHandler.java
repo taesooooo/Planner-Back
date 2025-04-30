@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.RestClientResponseException;
 
 import com.planner.planner.Exception.AuthenticationCodeExpireException;
 import com.planner.planner.Exception.DuplicateLikeException;
@@ -37,7 +39,8 @@ import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-	private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+	
+	private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<Object> Exception(Exception e) {
@@ -123,5 +126,18 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Object> mailException(Exception e) {
 		e.printStackTrace();
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseMessage(false, "메일 전송 실패"));
+	}
+	
+	@ExceptionHandler(RestClientResponseException.class)
+	public ResponseEntity<Object> RestClientResponseException(RestClientResponseException e){
+		log.error("내부 API 서버 호출 실패 ", e.getMessage(), e);
+		e.printStackTrace();
+		int errorCode = e.getStatusCode().value();
+		
+		if(e.getStatusCode().is4xxClientError()) {
+			return ResponseEntity.status(errorCode).body(new ResponseMessage(false, "잘못된 요청입니다. 다시 확인해주시요."));
+		}
+
+		return ResponseEntity.status(errorCode).body(new ResponseMessage(false, "문제가 발생했습니다. 다시 시도하십시오. 문제가 계속된다면 문의하여 주시기 바랍니다."));			
 	}
 }
