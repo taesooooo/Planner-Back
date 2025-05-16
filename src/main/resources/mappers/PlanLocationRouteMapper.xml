@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.planner.planner.Mapper.PlanLocationRouteMapper">
+	<resultMap type="PlanLocationRouteDto" id="routeMap">
+		<result column="id" property="id"/>
+		<result column="plan_id" property="planId"/>
+		<result column="start_index" property="startIndex"/>
+		<result column="end_index" property="endIndex"/>
+		<result column="routeWKT" property="routeWKT"/>
+	</resultMap>
+	
+	<!-- mapper 인터페이스에서 인수가 두개이기 때문에 @Param을 생략하지 않음 -->
+	<insert id="createPlanLocationRoute" useGeneratedKeys="true" keyColumn="id" keyProperty="routeDto.id">
+		INSERT INTO plan_location_route (plan_id, start_index, end_index, route) 
+		VALUES 
+		(#{routeDto.planId}, #{routeDto.startIndex}, #{routeDto.endIndex}, ST_GeomFromText(#{route}))
+	</insert>
+	
+	<select id="findPlanLocationRouteById" resultMap="routeMap">
+		SELECT id, plan_id, start_index, end_index, ST_AsText(route) as routeWKT
+		FROM plan_location_route
+		WHERE id = #{id}
+	</select>
+	
+	<select id="findPlanLocationRouteListByPlanId" resultMap="routeMap">
+		SELECT id, plan_id, start_index, end_index, ST_AsText(route) as routeWKT
+		FROM plan_location_route
+		WHERE plan_id = #{planId}
+	</select>
+	
+	<update id="updatePlanLocationRouteById">
+		UPDATE plan_location_route 
+		SET route = ST_GeomFromText(#{route})
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="deletePlanLocationRouteById">
+		DELETE 
+		FROM plan_location_route
+		WHERE id = #{id}
+	</delete>
+</mapper>

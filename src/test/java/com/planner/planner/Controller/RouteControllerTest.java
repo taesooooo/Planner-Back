@@ -31,7 +31,7 @@ public class RouteControllerTest {
 	@Test
 	@DisplayName("경로 탐색 서버 API 호출 - 정상")
 	public void routeTest() throws Exception {
-		this.mockMvc.perform(get("/api/routes")
+		this.mockMvc.perform(get("/api/routes/find")
 				.queryParam("start", "33.4824388,126.4898217")
 				.queryParam("end", "33.4845859,126.4963428")
 				.accept(MediaType.APPLICATION_JSON_VALUE)

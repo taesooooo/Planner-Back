@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class MapRouteController {
 	private final MapRouteService mapRouteService;
 	
-	@GetMapping
+	@GetMapping("/find")
 	public ResponseEntity<Object> findPath(RouteDto coordinates) {
 		RouteResultDto result = mapRouteService.findPath(coordinates);
 		return ResponseEntity.status(HttpStatus.OK).body(result);
