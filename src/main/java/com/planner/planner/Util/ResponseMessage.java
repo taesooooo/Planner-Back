@@ -9,6 +9,10 @@ public class ResponseMessage {
 	private Object data;
 	@JsonInclude(value = Include.NON_NULL)
 	private String token;
+	
+	public ResponseMessage() {
+		
+	}
 
 	public ResponseMessage(boolean state,Object message) {
 		this.state = state;

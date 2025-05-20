@@ -1,6 +1,9 @@
 package com.planner.planner.Service.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,13 +36,24 @@ public class PlanLocationRouteServiceImpl implements PlanLocationRouteService {
 	}
 
 	@Override
-	public void findPlanLocationRouteById(int id) {
-		planLocationRouteMapper.findPlanLocationRouteById(id);
+	public PlanLocationRouteDto findPlanLocationRouteById(int id) {
+		PlanLocationRouteDto locationRouteDto = planLocationRouteMapper.findPlanLocationRouteById(id);
+		List<Coordinate> list = WKTToList(locationRouteDto.getRouteWKT());
+		
+		return locationRouteDto.toBuilder().routeList(list).build();
 	}
 
 	@Override
-	public void findPlanLocationRouteByPlanId(int planId) {
-		planLocationRouteMapper.findPlanLocationRouteListByPlanId(planId);
+	public List<PlanLocationRouteDto> findPlanLocationRouteListByPlanId(int planId) {
+		List<PlanLocationRouteDto> list = planLocationRouteMapper.findPlanLocationRouteListByPlanId(planId);
+		
+		List<PlanLocationRouteDto> locationRouteDtoList = new ArrayList<PlanLocationRouteDto>();
+		for(PlanLocationRouteDto dto : list) {
+			List<Coordinate> coordinateList = WKTToList(dto.getRouteWKT());
+			locationRouteDtoList.add(dto.toBuilder().routeList(coordinateList).build());
+		}
+		
+		return locationRouteDtoList;
 	}
 
 	@Override
@@ -59,9 +73,10 @@ public class PlanLocationRouteServiceImpl implements PlanLocationRouteService {
 	}
 	
 	private String coordinateListToWKT(List<Coordinate> routeList) {
+		// LINESTRING(0 0, 1 1, 2 2)
 		StringBuilder sb = new StringBuilder();
 		sb.append("LINESTRING(");
-		for(int i=0;i<routeList.size() - 1; i++) {
+		for(int i=0;i<routeList.size(); i++) {
 			Coordinate point = routeList.get(i);
 			sb.append(point.getLongitude() + " " + point.getLatitude());
 			
@@ -69,10 +84,29 @@ public class PlanLocationRouteServiceImpl implements PlanLocationRouteService {
 				sb.append(",");
 			}
 			
-			sb.append(")");
 		}
 		
+		sb.append(")");
+		
 		return sb.toString();
+	}
+	
+	private List<Coordinate> WKTToList(String route) {
+		// LINESTRING(0 0, 1 1, 2 2)
+		
+		// \\d+\\s\\d+
+		// \\d+(\\.\\d+)?\\s\\d+(\\.\\d+)?
+		String expression = "\\d+(\\.\\d+)?\\s\\d+(\\.\\d+)?";
+		Pattern pattern = Pattern.compile(expression);
+		Matcher matcher = pattern.matcher(route);
+		
+		List<Coordinate> list = new ArrayList<Coordinate>();
+		while(matcher.find()) {
+			String[] result = matcher.group().split(" ");
+			list.add(new Coordinate(Double.parseDouble(result[0]), Double.parseDouble(result[1])));
+		}
+		
+		return list;
 	}
 
 }
