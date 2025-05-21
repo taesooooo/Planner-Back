@@ -9,9 +9,9 @@ import com.planner.planner.Dto.PlanLocationRouteDto;
 
 @Mapper
 public interface PlanLocationRouteMapper {
-	public int createPlanLocationRoute(@Param("routeDto") PlanLocationRouteDto planLocationRouteDto, @Param("route") String geometryWKT);
+	public int createPlanLocationRoute(PlanLocationRouteDto planLocationRouteDto);
 	public PlanLocationRouteDto findPlanLocationRouteById(int id);
 	public List<PlanLocationRouteDto> findPlanLocationRouteListByPlanId(int planId);
-	public int updatePlanLocationRouteById(@Param("id")int id, @Param("route") String geometryWKT);
+	public int updatePlanLocationRouteById(PlanLocationRouteDto routeDto);
 	public int deletePlanLocationRouteById(int id);
 }

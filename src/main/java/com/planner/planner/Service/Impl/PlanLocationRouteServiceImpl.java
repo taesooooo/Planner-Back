@@ -28,9 +28,7 @@ public class PlanLocationRouteServiceImpl implements PlanLocationRouteService {
 	
 	@Override
 	public int createPlanLocationRoute(PlanLocationRouteDto planLocationRouteDto) {
-		String lineString = coordinateListToWKT(planLocationRouteDto.getRouteList());
-		
-		int result = planLocationRouteMapper.createPlanLocationRoute(planLocationRouteDto, lineString);
+		int result = planLocationRouteMapper.createPlanLocationRoute(planLocationRouteDto);
 		
 		return planLocationRouteDto.getId();
 	}
@@ -38,29 +36,22 @@ public class PlanLocationRouteServiceImpl implements PlanLocationRouteService {
 	@Override
 	public PlanLocationRouteDto findPlanLocationRouteById(int id) {
 		PlanLocationRouteDto locationRouteDto = planLocationRouteMapper.findPlanLocationRouteById(id);
-		List<Coordinate> list = WKTToList(locationRouteDto.getRouteWKT());
-		
-		return locationRouteDto.toBuilder().routeList(list).build();
+
+		return locationRouteDto;
 	}
 
 	@Override
 	public List<PlanLocationRouteDto> findPlanLocationRouteListByPlanId(int planId) {
 		List<PlanLocationRouteDto> list = planLocationRouteMapper.findPlanLocationRouteListByPlanId(planId);
-		
-		List<PlanLocationRouteDto> locationRouteDtoList = new ArrayList<PlanLocationRouteDto>();
-		for(PlanLocationRouteDto dto : list) {
-			List<Coordinate> coordinateList = WKTToList(dto.getRouteWKT());
-			locationRouteDtoList.add(dto.toBuilder().routeList(coordinateList).build());
-		}
-		
-		return locationRouteDtoList;
+
+		return list;
 	}
 
 	@Override
 	public boolean updatePlanLocationRouteById(PlanLocationRouteDto planLocationRouteDto) {
-		String lineString = coordinateListToWKT(planLocationRouteDto.getRouteList());
+//		String lineString = coordinateListToWKT(planLocationRouteDto.getRouteList());
 		
-		int result = planLocationRouteMapper.updatePlanLocationRouteById(planLocationRouteDto.getId(), lineString);
+		int result = planLocationRouteMapper.updatePlanLocationRouteById(planLocationRouteDto);
 		
 		return result > 0 ? true : false;
 	}
@@ -71,42 +62,4 @@ public class PlanLocationRouteServiceImpl implements PlanLocationRouteService {
 		
 		return result > 0 ? true : false;
 	}
-	
-	private String coordinateListToWKT(List<Coordinate> routeList) {
-		// LINESTRING(0 0, 1 1, 2 2)
-		StringBuilder sb = new StringBuilder();
-		sb.append("LINESTRING(");
-		for(int i=0;i<routeList.size(); i++) {
-			Coordinate point = routeList.get(i);
-			sb.append(point.getLongitude() + " " + point.getLatitude());
-			
-			if(i != routeList.size() - 1) {
-				sb.append(",");
-			}
-			
-		}
-		
-		sb.append(")");
-		
-		return sb.toString();
-	}
-	
-	private List<Coordinate> WKTToList(String route) {
-		// LINESTRING(0 0, 1 1, 2 2)
-		
-		// \\d+\\s\\d+
-		// \\d+(\\.\\d+)?\\s\\d+(\\.\\d+)?
-		String expression = "\\d+(\\.\\d+)?\\s\\d+(\\.\\d+)?";
-		Pattern pattern = Pattern.compile(expression);
-		Matcher matcher = pattern.matcher(route);
-		
-		List<Coordinate> list = new ArrayList<Coordinate>();
-		while(matcher.find()) {
-			String[] result = matcher.group().split(" ");
-			list.add(new Coordinate(Double.parseDouble(result[0]), Double.parseDouble(result[1])));
-		}
-		
-		return list;
-	}
-
 }

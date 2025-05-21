@@ -17,12 +17,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.ReflectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.planner.planner.Common.Coordinate;
 import com.planner.planner.Common.PageInfo;
 import com.planner.planner.Common.SortCriteria;
 import com.planner.planner.Dto.AccountDto;
 import com.planner.planner.Dto.CommonRequestParamDto;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
+import com.planner.planner.Dto.PlanLocationRouteDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
 
@@ -98,6 +100,22 @@ public class PlannerMapperTest {
 						.planId(1)
 						.build()))
 				.planIndex(1024)
+				.planLocationRoutes(Arrays.asList(PlanLocationRouteDto.builder()
+						.id(1)
+						.planId(1)
+						.startIndex(0)
+						.endIndex(1)
+						.routeList(Arrays.asList(new Coordinate(0.00, 0.00),new Coordinate(1.11, 1.11), new Coordinate(2.22, 2.22)))
+						.routeWKT("LINESTRING(0 0,1.11 1.11,2.22 2.22)")
+						.build(),
+						PlanLocationRouteDto.builder()
+						.id(2)
+						.planId(1)
+						.startIndex(1)
+						.endIndex(2)
+						.routeList(Arrays.asList(new Coordinate(2.22, 2.22),new Coordinate(3.33, 3.33), new Coordinate(4.44, 4.44)))
+						.routeWKT("LINESTRING(2.22 2.22,3.33 3.33,4.44 4.44)")
+						.build()))
 				.build(),
 				PlanDto.builder()
 				.planId(3)
@@ -115,6 +133,7 @@ public class PlannerMapperTest {
 						.locationIndex(2048)
 						.planId(3)
 						.build()))
+				.planLocationRoutes(Arrays.asList())
 				.planIndex(2048)
 				.build(),
 				PlanDto.builder()
@@ -134,6 +153,22 @@ public class PlannerMapperTest {
 						.planId(2)
 						.build()))
 				.planIndex(3072)
+				.planLocationRoutes(Arrays.asList(PlanLocationRouteDto.builder()
+						.id(3)
+						.planId(2)
+						.startIndex(0)
+						.endIndex(1)
+						.routeList(Arrays.asList(new Coordinate(33.11, 129.11),new Coordinate(33.22, 129.22), new Coordinate(33.33, 129.33)))
+						.routeWKT("LINESTRING(129.11 33.11,129.22 33.22,129.33 33.33)")
+						.build(),
+						PlanLocationRouteDto.builder()
+						.id(4)
+						.planId(2)
+						.startIndex(1)
+						.endIndex(2)
+						.routeList(Arrays.asList(new Coordinate(33.44, 129.44),new Coordinate(33.55, 129.55), new Coordinate(33.66, 129.66)))
+						.routeWKT("LINESTRING(129.44 33.44,129.55 33.55,129.66 33.66)")
+						.build()))
 				.build()
 				);
 		
@@ -424,44 +459,5 @@ public class PlannerMapperTest {
 		int result = mapper.findLikeListTotalCount(null, commonRequestParamDto);
 		
 		assertThat(result).isEqualTo(11);
-	}
-	
-	
-	private PlannerDto createPlannerDto(int plannerId, int accountId, String creator, Integer areaCode, String title, 
-			LocalDate planDateStart, LocalDate planDateEnd, int expense, int memberCount, int memberType,
-			int likeCount, boolean likeState, String createDate, String updateDate, String thumbnail) {		
-		return PlannerDto.builder()
-				.plannerId(plannerId)
-				.accountId(accountId)
-				.creator(creator)
-				.areaCode(areaCode)
-				.title(title)
-				.planDateStart(planDateStart)
-				.planDateEnd(planDateEnd)
-				.expense(expense)
-				.memberCount(memberCount)
-				.memberTypeId(memberType)
-				.likeCount(likeCount)
-				.likeState(likeState)
-				.createDate(LocalDateTime.parse(createDate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-				.updateDate(LocalDateTime.parse(updateDate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-				.thumbnail(thumbnail)
-				.build();
-	}
-	
-	private CommonRequestParamDto createCommonRequestParamDto(int itemCount, SortCriteria sortCriteria, String keyword, int pageNum) {
-		return CommonRequestParamDto.builder()
-				.itemCount(itemCount)
-				.sortCriteria(sortCriteria)
-				.keyword(keyword)
-				.pageNum(pageNum)
-				.build();
-	}
-	
-	private PageInfo createPageInfo(int pageNum, int pageItemCount) {
-		return PageInfo.builder()
-				.pageNum(pageNum)
-				.pageItemCount(pageItemCount)
-				.build();
 	}
 }

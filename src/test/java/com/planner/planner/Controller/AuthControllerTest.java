@@ -287,7 +287,7 @@ public class AuthControllerTest {
 	@DisplayName("이메일 인증 코드 확인 정상")
 	public void 이메일_인증코드_확인_정상() throws Exception {
 		AuthenticationCodeDto authenticationCodeDto = AuthenticationCodeDto.builder()
-				.email("test2@naver.com")
+				.email("test2@")
 				.code("123456")
 				.build();
 		

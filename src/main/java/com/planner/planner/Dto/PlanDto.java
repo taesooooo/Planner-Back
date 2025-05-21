@@ -30,4 +30,6 @@ public class PlanDto {
 	
 	@Min(value = 1, message = "인덱스가 잘못되었습니다.", groups = PlanUpdateGroup.class)
 	private int planIndex;
+	
+	private List<PlanLocationRouteDto> planLocationRoutes;
 }

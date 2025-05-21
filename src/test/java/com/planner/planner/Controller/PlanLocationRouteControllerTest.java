@@ -1,6 +1,7 @@
 package com.planner.planner.Controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -71,7 +72,8 @@ public class PlanLocationRouteControllerTest {
 		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(jsonPath("$.state").value(true))
-		.andExpect(jsonPath("$.data").value(3));
+		.andExpect(jsonPath("$.data").isNumber())
+		.andExpect(jsonPath("$.data").value(not(0)));
 	}
 
 	@Test

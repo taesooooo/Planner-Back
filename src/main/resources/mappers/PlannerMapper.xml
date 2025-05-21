@@ -46,6 +46,14 @@
 				<result property="locationIndex" column="location_index" />
 				<result property="planId" column="plan_id" />
 			</collection>
+			<collection property="planLocationRoutes" ofType="PlanLocationRouteDto">
+				<id column="PLR_id" property="id"/>
+				<result column="PLR_plan_id" property="planId"/>
+				<result column="start_index" property="startIndex"/>
+				<result column="end_index" property="endIndex"/>
+				<result column="routeWKT" property="routeList" typeHandler="com.planner.planner.TypeHandler.GeometryTypeHandler"/>
+				<result column="routeWKT" property="routeWKT"/>
+			</collection>
 		</collection>
 	</resultMap>
 
@@ -56,9 +64,9 @@
 	
 	<sql id="commonPlanner">
 		SELECT P.planner_id, P.account_id, P.creator, P.area_code, P.title, P.plan_date_start, P.plan_date_end, P.expense, P.member_count, P.member_type_id, SUB.like_count, P.create_date, P.update_date,  
-		plan_loc_one.location_image AS thumbnail, 
+		plan_loc_one.location_image AS thumbnail  
 		<!-- 좋아요 체크 -->
-		<if test="accountId != null">CASE WHEN PL.like_id > 0 THEN 'TRUE' ELSE 'FALSE' END as like_state </if>
+		<if test="accountId != null">, CASE WHEN PL.like_id > 0 THEN 'TRUE' ELSE 'FALSE' END as like_state </if>
 		FROM planner AS P 
 		LEFT JOIN (SELECT planner_id, MIN(plan_id) as plan_id FROM plan GROUP BY planner_id) AS plan_one ON plan_one.planner_id = P.planner_id 
 		LEFT JOIN (SELECT plan_id, location_image FROM plan_location) AS plan_loc_one ON plan_loc_one.plan_id = plan_one.plan_id 
@@ -72,6 +80,7 @@
 		SUB.like_count, A.create_date, A.update_date, plan_loc_one.location_image AS thumbnail, 
 		C.nickname, M.memo_id, M.memo_title, M.memo_content, M.memo_create_date, M.memo_update_date, D.plan_date, D.plan_index, D.plan_id, 
 		E.location_id, E.location_name, E.location_content_id, E.location_image, E.location_addr, E.location_mapx, E.location_mapy, E.location_transportation, E.location_index, E.plan_id, 
+		PLR.id AS PLR_id, PLR.plan_id AS PLR_plan_id, PLR.start_index, PLR.end_index, ST_AsText(PLR.route) AS routeWKT, 
 		CASE WHEN PL.like_id > 0 THEN 'TRUE' ELSE 'FALSE' END as like_state
 		FROM planner AS A 
 		LEFT JOIN (SELECT planner_id, MIN(plan_id) as plan_id FROM plan GROUP BY planner_id) AS plan_one ON plan_one.planner_id = A.planner_id 
@@ -81,6 +90,7 @@
 		LEFT JOIN plan_memo AS M ON A.planner_id = M.planner_id 
 		LEFT JOIN plan AS D ON A.planner_id = D.planner_id 
 		LEFT JOIN plan_location AS E ON D.plan_id = E.plan_id 
+		LEFT JOIN plan_location_route AS PLR ON E.plan_id = PLR.plan_id 
 		LEFT JOIN planner_like AS PL ON A.planner_id = PL.planner_id <if test="accountId != null">AND PL.account_id = #{accountId} </if>
 		LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON A.planner_id = SUB.planner_id 
 <!-- 		WHERE A.planner_id = #{plannerId} 

@@ -6,14 +6,15 @@
 		<result column="plan_id" property="planId"/>
 		<result column="start_index" property="startIndex"/>
 		<result column="end_index" property="endIndex"/>
+		<result column="routeWKT" property="routeList" typeHandler="com.planner.planner.TypeHandler.GeometryTypeHandler"/>
 		<result column="routeWKT" property="routeWKT"/>
 	</resultMap>
 	
 	<!-- mapper 인터페이스에서 인수가 두개이기 때문에 @Param을 생략하지 않음 -->
-	<insert id="createPlanLocationRoute" useGeneratedKeys="true" keyColumn="id" keyProperty="routeDto.id">
+	<insert id="createPlanLocationRoute" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="PlanLocationRouteDto">
 		INSERT INTO plan_location_route (plan_id, start_index, end_index, route) 
 		VALUES 
-		(#{routeDto.planId}, #{routeDto.startIndex}, #{routeDto.endIndex}, ST_GeomFromText(#{route}))
+		(#{planId}, #{startIndex}, #{endIndex}, ST_GeomFromText(#{routeList, typeHandler=com.planner.planner.TypeHandler.GeometryTypeHandler}))
 	</insert>
 	
 	<select id="findPlanLocationRouteById" resultMap="routeMap">
@@ -28,9 +29,9 @@
 		WHERE plan_id = #{planId}
 	</select>
 	
-	<update id="updatePlanLocationRouteById">
+	<update id="updatePlanLocationRouteById" parameterType="PlanLocationRouteDto">
 		UPDATE plan_location_route 
-		SET route = ST_GeomFromText(#{route})
+		SET route = ST_GeomFromText(#{routeList, typeHandler=com.planner.planner.TypeHandler.GeometryTypeHandler})
 		WHERE id = #{id}
 	</update>
 	

@@ -35,22 +35,30 @@ class PlanLocationRouteMapperTest {
 	@DisplayName("일정 여행지 루트 생성")
 	@Test
 	public void createPlanLocationRoute() {
-		PlanLocationRouteDto dto = PlanLocationRouteDto.builder().planId(1).startIndex(0).endIndex(1)
-				.routeList(Arrays.asList(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2))).build();
-		
-		String lineString = "LINESTRING(0 0,1 1,2 2)";
-		
-		int result = planLocationRouteMapper.createPlanLocationRoute(dto, lineString);
+		PlanLocationRouteDto dto = PlanLocationRouteDto.builder()
+				.planId(1)
+				.startIndex(0)
+				.endIndex(1)
+				.routeList(Arrays.asList(new Coordinate(0, 0), new Coordinate(1, 1), new Coordinate(2, 2)))
+				.build();
+	
+		int result = planLocationRouteMapper.createPlanLocationRoute(dto);
 		
 		assertThat(result).isEqualTo(1);
-		assertThat(dto.getId()).isEqualTo(3);
+		assertThat(dto.getId()).isEqualTo(5);
 	}
 	
 	@DisplayName("일정 여행지 루트 가져오기(아이디)")
 	@Test
 	public void findPlanLocationRouteById() {
-		PlanLocationRouteDto testDto = PlanLocationRouteDto.builder().id(1).planId(1).startIndex(0).endIndex(1)
-				.routeWKT("LINESTRING(0 0,1 1,2 2)").build();
+		PlanLocationRouteDto testDto = PlanLocationRouteDto.builder()
+				.id(1)
+				.planId(1)
+				.startIndex(0)
+				.endIndex(1)
+				.routeList(List.of(new Coordinate(0.00, 0.00),new Coordinate(1.11, 1.11), new Coordinate(2.22, 2.22)))
+				.routeWKT("LINESTRING(0 0,1.11 1.11,2.22 2.22)")
+				.build();
 		
 		PlanLocationRouteDto dto = planLocationRouteMapper.findPlanLocationRouteById(1);
 		
@@ -62,8 +70,22 @@ class PlanLocationRouteMapperTest {
 	@Test
 	public void findPlanLocationRouteListByPlanId() {
 		List<PlanLocationRouteDto> testList = Arrays.asList(
-				PlanLocationRouteDto.builder().id(1).planId(1).startIndex(0).endIndex(1).routeWKT("LINESTRING(0 0,1 1,2 2)").build(),
-				PlanLocationRouteDto.builder().id(2).planId(1).startIndex(1).endIndex(2).routeWKT("LINESTRING(2 2,3 3,4 4)").build());
+				PlanLocationRouteDto.builder()
+					.id(1)
+					.planId(1)
+					.startIndex(0)
+					.endIndex(1)
+					.routeList(List.of(new Coordinate(0.00, 0.00),new Coordinate(1.11, 1.11), new Coordinate(2.22, 2.22)))
+					.routeWKT("LINESTRING(0 0,1.11 1.11,2.22 2.22)")
+					.build(),
+				PlanLocationRouteDto.builder()
+					.id(2)
+					.planId(1)
+					.startIndex(1)
+					.endIndex(2)
+					.routeList(List.of(new Coordinate(2.22, 2.22),new Coordinate(3.33, 3.33), new Coordinate(4.44, 4.44)))
+					.routeWKT("LINESTRING(2.22 2.22,3.33 3.33,4.44 4.44)")
+					.build());
 
 		List<PlanLocationRouteDto> dtoList = planLocationRouteMapper.findPlanLocationRouteListByPlanId(1);
 		
@@ -73,7 +95,12 @@ class PlanLocationRouteMapperTest {
 	@DisplayName("일정 여행지 루트 수정(아이디)")
 	@Test
 	public void updatePlanLocationRouteById() {
-		int result = planLocationRouteMapper.updatePlanLocationRouteById(1, "LINESTRING(2 2,1 1,0 0)");
+		PlanLocationRouteDto testDto = PlanLocationRouteDto.builder()
+				.id(1)
+				.routeList(List.of(new Coordinate(5.55, 5.55), new Coordinate(6.66, 6.66), new Coordinate(7.77, 7.77)))
+				.build();
+		
+		int result = planLocationRouteMapper.updatePlanLocationRouteById(testDto);
 		
 		assertThat(result).isEqualTo(1);
 	}

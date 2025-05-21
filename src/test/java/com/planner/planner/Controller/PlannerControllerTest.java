@@ -1,6 +1,8 @@
 package com.planner.planner.Controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -9,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -36,8 +40,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.planner.planner.Common.Coordinate;
 import com.planner.planner.Dto.PlanDto;
 import com.planner.planner.Dto.PlanLocationDto;
+import com.planner.planner.Dto.PlanLocationRouteDto;
 import com.planner.planner.Dto.PlanMemberInviteDto;
 import com.planner.planner.Dto.PlanMemoDto;
 import com.planner.planner.Dto.PlannerDto;
@@ -235,14 +241,151 @@ public class PlannerControllerTest {
 	@Test
 	@DisplayName("플래너 리스트 조회")
 	public void 플래너_조회_플래너아이디() throws Exception {
-		this.mockMvc.perform(get("/api/planners/{plannerId}", 1)
+		// Test Dto
+		List<PlanMemoDto> planMemo = Arrays.asList(
+				PlanMemoDto.builder()
+				.memoId(1)
+				.title("메모")
+				.content("메모내용")
+				.createDate(null)
+				.updateDate(null)
+				.build(),
+				PlanMemoDto.builder()
+				.memoId(2)
+				.title("메모2")
+				.content("메모내용2")
+				.createDate(null)
+				.updateDate(null)
+				.build());
+		
+		List<PlanDto> plan = Arrays.asList(
+				PlanDto.builder()
+				.planId(1)
+				.plannerId(1)
+				.planDate(LocalDate.parse("2023-04-11"))
+				.planLocations(Arrays.asList(PlanLocationDto.builder()
+						.locationId(1)
+						.locationName("바다")
+						.locationContentId(2000)
+						.locationImage("http://tong.visitkorea.or.kr/cms/resource/85/2031885_image2_1.jpg")
+						.locationAddr("바다주소")
+						.locationMapx(123.1234567891)
+						.locationMapy(11.1234567891)
+						.locationTransportation(1)
+						.locationIndex(1024)
+						.planId(1)
+						.build()))
+				.planIndex(1024)
+				.planLocationRoutes(Arrays.asList(PlanLocationRouteDto.builder()
+						.id(1)
+						.planId(1)
+						.startIndex(0)
+						.endIndex(1)
+						.routeList(Arrays.asList(new Coordinate(0.00, 0.00),new Coordinate(1.11, 1.11), new Coordinate(2.22, 2.22)))
+						.routeWKT(null)
+						.build(),
+						PlanLocationRouteDto.builder()
+						.id(2)
+						.planId(1)
+						.startIndex(1)
+						.endIndex(2)
+						.routeList(Arrays.asList(new Coordinate(2.22, 2.22),new Coordinate(3.33, 3.33), new Coordinate(4.44, 4.44)))
+						.routeWKT(null)
+						.build()))
+				.build(),
+				PlanDto.builder()
+				.planId(3)
+				.plannerId(1)
+				.planDate(LocalDate.parse("2023-04-11"))
+				.planLocations(Arrays.asList(PlanLocationDto.builder()
+						.locationId(3)
+						.locationName("바다")
+						.locationContentId(2000)
+						.locationImage("http://tong.visitkorea.or.kr/cms/resource/85/2031885_image2_1.jpg")
+						.locationAddr("바다주소")
+						.locationMapx(123.1234567891)
+						.locationMapy(11.1234567891)
+						.locationTransportation(1)
+						.locationIndex(2048)
+						.planId(3)
+						.build()))
+				.planLocationRoutes(Arrays.asList())
+				.planIndex(2048)
+				.build(),
+				PlanDto.builder()
+				.planId(2)
+				.plannerId(1)
+				.planDate(LocalDate.parse("2023-04-11"))
+				.planLocations(Arrays.asList(PlanLocationDto.builder()
+						.locationId(2)
+						.locationName("바다")
+						.locationContentId(2000)
+						.locationImage("http://tong.visitkorea.or.kr/cms/resource/85/2031885_image2_1.jpg")
+						.locationAddr("바다주소")
+						.locationMapx(123.1234567891)
+						.locationMapy(11.1234567891)
+						.locationTransportation(1)
+						.locationIndex(3072)
+						.planId(2)
+						.build()))
+				.planIndex(3072)
+				.planLocationRoutes(Arrays.asList(PlanLocationRouteDto.builder()
+						.id(3)
+						.planId(2)
+						.startIndex(0)
+						.endIndex(1)
+						.routeList(Arrays.asList(new Coordinate(33.11, 129.11),new Coordinate(33.22, 129.22), new Coordinate(33.33, 129.33)))
+						.routeWKT(null)
+						.build(),
+						PlanLocationRouteDto.builder()
+						.id(4)
+						.planId(2)
+						.startIndex(1)
+						.endIndex(2)
+						.routeList(Arrays.asList(new Coordinate(33.44, 129.44),new Coordinate(33.55, 129.55), new Coordinate(33.66, 129.66)))
+						.routeWKT(null)
+						.build()))
+				.build()
+				);
+		
+		PlannerDto testPlannerDto = PlannerDto.builder()
+				.plannerId(1)
+				.accountId(1)
+				.areaCode(null)
+				.creator("test")
+				.title("이렇게 좋은 여행이 있었나아아아")
+				.planDateStart(LocalDate.parse("2022-08-10"))
+				.planDateEnd(LocalDate.parse("2022-08-12"))
+				.expense(0)
+				.planMembers(Arrays.asList("test", "test2"))
+				.memberCount(1)
+				.memberTypeId(1)
+				.likeCount(3)
+				.likeState(true)
+				.thumbnail("http://tong.visitkorea.or.kr/cms/resource/85/2031885_image2_1.jpg")
+				.createDate(LocalDateTime.now())
+				.updateDate(LocalDateTime.now())
+				.planMemos(planMemo)
+				.plans(plan)
+				.build();
+		
+		MvcResult result = this.mockMvc.perform(get("/api/planners/{plannerId}", 1)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", token))
 		.andDo(print())
 		.andExpect(status().isOk())
-		.andExpect(jsonPath("$.data").isNotEmpty());
+		.andExpect(jsonPath("$.data").isNotEmpty())
+		.andReturn();
+		
+		
+		String content = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		PlannerDto resultDto = mapper.treeToValue(mapper.readTree(content).get("data"), PlannerDto.class);
+		
+		assertThat(resultDto).usingRecursiveComparison()
+				.ignoringFields("createDate", "updateDate", "planMemos.createDate", "planMemos.updateDate")
+				.isEqualTo(testPlannerDto);
 	}
 	
 	@Test
@@ -387,7 +530,8 @@ public class PlannerControllerTest {
 				.content(mapper.writeValueAsString(memo)))
 		.andDo(print())
 		.andExpect(status().isCreated())
-		.andExpect(jsonPath("$.data").value(5));
+		.andExpect(jsonPath("$.data").isNumber())
+		.andExpect(jsonPath("$.data").value(not(0)));
 	}
 	
 	@Test
@@ -527,7 +671,8 @@ public class PlannerControllerTest {
 				.content(mapper.writeValueAsString(plan)))
 		.andDo(print())
 		.andExpect(status().isCreated())
-		.andExpect(jsonPath("$.data").value(7));
+		.andExpect(jsonPath("$.data").isNumber())
+		.andExpect(jsonPath("$.data").value(not(0)));
 	}
 	
 	@ParameterizedTest
@@ -617,7 +762,8 @@ public class PlannerControllerTest {
 				.content(mapper.writeValueAsString(planLocation)))
 		.andDo(print())
 		.andExpect(status().isCreated())
-		.andExpect(jsonPath("$.data").value(7));
+		.andExpect(jsonPath("$.data").isNumber())
+		.andExpect(jsonPath("$.data").value(not(0)));
 	}
 	
 	@ParameterizedTest

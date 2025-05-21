@@ -1,5 +1,6 @@
 package com.planner.planner.Service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,7 +38,7 @@ class PlanLocationRouteServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		List<Coordinate> routeList = Arrays.asList(new Coordinate(0.00, 0.00), new Coordinate(1.11, 1.11), new Coordinate(2.22, 2.22));
+		List<Coordinate> routeList = List.of(new Coordinate(0.00, 0.00), new Coordinate(1.11, 1.11), new Coordinate(2.22, 2.22));
 
 		testDto = PlanLocationRouteDto.builder().id(1).planId(1).routeList(routeList).build();
 	}
@@ -45,46 +46,71 @@ class PlanLocationRouteServiceTest {
 	@DisplayName("일정 경로 생성")
 	@Test
 	void createPlanLocationRoute() {
-		when(planLocationRouteMapper.createPlanLocationRoute(any(), anyString())).thenReturn(1);
+		when(planLocationRouteMapper.createPlanLocationRoute(any(PlanLocationRouteDto.class))).thenReturn(1);
 
 		int id = planLocationRouteService.createPlanLocationRoute(testDto);
 
 		assertEquals(testDto.getId(), id);
-		verify(planLocationRouteMapper).createPlanLocationRoute(eq(testDto), anyString());
 	}
 
 	@DisplayName("일정 경로 가져오기 - 아이디")
 	@Test
 	void findPlanLocationRouteById() {
-		String wkt = "LINESTRING(0.00 0.00,1.11 1.11,2.22 2.22)";
-		PlanLocationRouteDto dtoWithWkt = PlanLocationRouteDto.builder().id(1).routeWKT(wkt).build();
+		PlanLocationRouteDto testDto = PlanLocationRouteDto.builder()
+				.id(1)
+				.planId(1)
+				.startIndex(0)
+				.endIndex(1)
+				.routeList(List.of(new Coordinate(0.00, 0.00),new Coordinate(1.11, 1.11), new Coordinate(2.22, 2.22)))
+				.routeWKT("LINESTRING(0 0,1.11 1.11,2.22 2.22)")
+				.build();
 
-		when(planLocationRouteMapper.findPlanLocationRouteById(1)).thenReturn(dtoWithWkt);
+		when(planLocationRouteMapper.findPlanLocationRouteById(1)).thenReturn(testDto);
 
 		PlanLocationRouteDto result = planLocationRouteService.findPlanLocationRouteById(1);
 
-		assertEquals(3, result.getRouteList().size());
-		assertEquals(0, result.getRouteList().get(0).getLongitude());
+		assertThat(result).usingRecursiveComparison()
+				.isEqualTo(testDto);
 	}
 	
 	@DisplayName("일정 경로 리스트 가져오기 - 플랜 아이디")
 	@Test
 	void findPlanLocationRouteListByPlanId() {
-		String wkt = "LINESTRING(0.00 0.00,1.11 1.11,2.22 2.22)";
-		List<PlanLocationRouteDto> mockList = List.of(PlanLocationRouteDto.builder().id(1).routeWKT(wkt).build());
+		List<PlanLocationRouteDto> testList = Arrays.asList(
+				PlanLocationRouteDto.builder()
+					.id(1)
+					.planId(1)
+					.startIndex(0)
+					.endIndex(1)
+					.routeList(List.of(new Coordinate(0.00, 0.00),new Coordinate(1.11, 1.11), new Coordinate(2.22, 2.22)))
+					.routeWKT("LINESTRING(0 0,1.11 1.11,2.22 2.22)")
+					.build(),
+				PlanLocationRouteDto.builder()
+					.id(2)
+					.planId(1)
+					.startIndex(1)
+					.endIndex(2)
+					.routeList(List.of(new Coordinate(2.22, 2.22),new Coordinate(3.33, 3.33), new Coordinate(4.44, 4.44)))
+					.routeWKT("LINESTRING(2.22 2.22,3.33 3.33,4.44 4.44)")
+					.build());
 
-		when(planLocationRouteMapper.findPlanLocationRouteListByPlanId(1)).thenReturn(mockList);
+		when(planLocationRouteMapper.findPlanLocationRouteListByPlanId(1)).thenReturn(testList);
 
 		List<PlanLocationRouteDto> resultList = planLocationRouteService.findPlanLocationRouteListByPlanId(1);
 
-		assertEquals(1, resultList.size());
-		assertEquals(3, resultList.get(0).getRouteList().size());
+		assertThat(resultList).usingRecursiveComparison()
+				.isEqualTo(testList);
 	}
 
 	@DisplayName("일정 경로 수정 - 아이디")
 	@Test
 	void updatePlanLocationRouteById() {
-		when(planLocationRouteMapper.updatePlanLocationRouteById(eq(1), anyString())).thenReturn(1);
+		PlanLocationRouteDto testDto = PlanLocationRouteDto.builder()
+				.id(1)
+				.routeList(List.of(new Coordinate(5.55, 5.55), new Coordinate(6.66, 6.66), new Coordinate(7.77, 7.77)))
+				.build();
+		
+		when(planLocationRouteMapper.updatePlanLocationRouteById(any(PlanLocationRouteDto.class))).thenReturn(1);
 
 		boolean result = planLocationRouteService.updatePlanLocationRouteById(testDto);
 
