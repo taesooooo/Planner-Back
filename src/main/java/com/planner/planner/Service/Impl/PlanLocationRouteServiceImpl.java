@@ -48,10 +48,8 @@ public class PlanLocationRouteServiceImpl implements PlanLocationRouteService {
 	}
 
 	@Override
-	public boolean updatePlanLocationRouteById(PlanLocationRouteDto planLocationRouteDto) {
-//		String lineString = coordinateListToWKT(planLocationRouteDto.getRouteList());
-		
-		int result = planLocationRouteMapper.updatePlanLocationRouteById(planLocationRouteDto);
+	public boolean updatePlanLocationRouteById(int locationRouteId, PlanLocationRouteDto planLocationRouteDto) {
+		int result = planLocationRouteMapper.updatePlanLocationRouteById(locationRouteId, planLocationRouteDto);
 		
 		return result > 0 ? true : false;
 	}

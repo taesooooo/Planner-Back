@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -110,9 +111,9 @@ class PlanLocationRouteServiceTest {
 				.routeList(List.of(new Coordinate(5.55, 5.55), new Coordinate(6.66, 6.66), new Coordinate(7.77, 7.77)))
 				.build();
 		
-		when(planLocationRouteMapper.updatePlanLocationRouteById(any(PlanLocationRouteDto.class))).thenReturn(1);
+		when(planLocationRouteMapper.updatePlanLocationRouteById(anyInt(), any(PlanLocationRouteDto.class))).thenReturn(1);
 
-		boolean result = planLocationRouteService.updatePlanLocationRouteById(testDto);
+		boolean result = planLocationRouteService.updatePlanLocationRouteById(1, testDto);
 
 		assertTrue(result);
 	}

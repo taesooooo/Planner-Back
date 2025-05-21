@@ -8,6 +8,6 @@ public interface PlanLocationRouteService {
 	public int createPlanLocationRoute(PlanLocationRouteDto planLocationRouteDto);
 	public PlanLocationRouteDto findPlanLocationRouteById(int id);
 	public List<PlanLocationRouteDto> findPlanLocationRouteListByPlanId(int planId);
-	public boolean updatePlanLocationRouteById(PlanLocationRouteDto planLocationRouteDto);
+	public boolean updatePlanLocationRouteById(int locationRouteId, PlanLocationRouteDto planLocationRouteDto);
 	public boolean deletePlanLocationRouteById(int id);
 }

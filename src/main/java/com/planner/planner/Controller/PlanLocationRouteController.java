@@ -43,10 +43,10 @@ public class PlanLocationRouteController {
 	}
 	
 	@PatchMapping(value="/location-routes/{locationRouteId}")
-	public ResponseEntity<Object> updateLocationRoutes(@PathVariable int planId, @PathVariable int locationRouteId) {
-		PlanLocationRouteDto locationRouteDto = planLocationRouteService.findPlanLocationRouteById(locationRouteId);
+	public ResponseEntity<Object> updateLocationRoutes(@PathVariable int planId, @PathVariable int locationRouteId, @RequestBody PlanLocationRouteDto locationRouteDto) {
+		planLocationRouteService.updatePlanLocationRouteById(locationRouteId, locationRouteDto);
 		
-		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, locationRouteDto));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, ""));
 	}
 	
 	@DeleteMapping(value="/location-routes/{locationRouteId}")

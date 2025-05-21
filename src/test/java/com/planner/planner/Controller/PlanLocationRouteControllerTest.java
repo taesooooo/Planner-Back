@@ -61,6 +61,8 @@ public class PlanLocationRouteControllerTest {
 		int testPlanId = 1;
 		PlanLocationRouteDto newDto = PlanLocationRouteDto.builder()
 				.planId(1)
+				.startIndex(0)
+				.endIndex(1)
 				.routeList(List.of(new Coordinate(1.11, 1.11), new Coordinate(2.22, 2.22)))
 				.build();
 

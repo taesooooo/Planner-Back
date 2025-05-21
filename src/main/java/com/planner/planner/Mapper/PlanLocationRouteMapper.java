@@ -12,6 +12,6 @@ public interface PlanLocationRouteMapper {
 	public int createPlanLocationRoute(PlanLocationRouteDto planLocationRouteDto);
 	public PlanLocationRouteDto findPlanLocationRouteById(int id);
 	public List<PlanLocationRouteDto> findPlanLocationRouteListByPlanId(int planId);
-	public int updatePlanLocationRouteById(PlanLocationRouteDto routeDto);
+	public int updatePlanLocationRouteById(@Param("id") int locationRouteId, @Param("routeDto") PlanLocationRouteDto routeDto);
 	public int deletePlanLocationRouteById(int id);
 }

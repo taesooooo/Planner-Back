@@ -95,12 +95,13 @@ class PlanLocationRouteMapperTest {
 	@DisplayName("일정 여행지 루트 수정(아이디)")
 	@Test
 	public void updatePlanLocationRouteById() {
+		int locationRouteId = 1;
 		PlanLocationRouteDto testDto = PlanLocationRouteDto.builder()
 				.id(1)
 				.routeList(List.of(new Coordinate(5.55, 5.55), new Coordinate(6.66, 6.66), new Coordinate(7.77, 7.77)))
 				.build();
 		
-		int result = planLocationRouteMapper.updatePlanLocationRouteById(testDto);
+		int result = planLocationRouteMapper.updatePlanLocationRouteById(locationRouteId, testDto);
 		
 		assertThat(result).isEqualTo(1);
 	}
