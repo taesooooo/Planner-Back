@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.planner.planner.Dto.RouteDto;
 import com.planner.planner.Dto.RouteResultDto;
 import com.planner.planner.Service.MapRouteService;
+import com.planner.planner.Util.ResponseMessage;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +22,6 @@ public class MapRouteController {
 	@GetMapping("/find")
 	public ResponseEntity<Object> findPath(RouteDto coordinates) {
 		RouteResultDto result = mapRouteService.findPath(coordinates);
-		return ResponseEntity.status(HttpStatus.OK).body(result);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(true, "", result));
 	}
 }
