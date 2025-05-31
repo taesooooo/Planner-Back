@@ -31,7 +31,7 @@
 	
 	<update id="updatePlanLocationRouteById">
 		UPDATE plan_location_route 
-		SET route = ST_GeomFromText(#{routeDto.routeList, typeHandler=com.planner.planner.TypeHandler.GeometryTypeHandler})
+		SET start_index = #{routeDto.startIndex}, end_index = #{routeDto.endIndex}, route = ST_GeomFromText(#{routeDto.routeList, typeHandler=com.planner.planner.TypeHandler.GeometryTypeHandler})
 		WHERE id = #{id}
 	</update>
 	
