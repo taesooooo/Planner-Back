@@ -1,18 +1,18 @@
 package com.planner.planner.Service.Impl;
 
 import java.net.URI;
-import java.util.HashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.planner.planner.Dto.RouteDto;
 import com.planner.planner.Dto.RouteResultDto;
 import com.planner.planner.Service.MapRouteService;
 
@@ -27,21 +27,19 @@ public class MapRouteServiceImpl implements MapRouteService {
 	private String pathFinderUri;
 	
 	@Override
-	public RouteResultDto findPath(RouteDto routeDto) {
+	public List<RouteResultDto> findPath(List<String> list) {
 		URI uri = UriComponentsBuilder
 			    .fromHttpUrl(pathFinderUri)
-			    .queryParam("start", routeDto.getStart())
-			    .queryParam("end", routeDto.getEnd())
+			    .queryParam("coordinates", list)
 			    .build()
 			    .toUri();
-		
-		ResponseEntity<RouteResultDto> response = restClient.get()
+		log.info("경로 탐색 요청 시작");
+		ResponseEntity<List<RouteResultDto>> response = restClient.get()
 					.uri(uri)
 					.accept(MediaType.APPLICATION_JSON)
 					.retrieve()
-					.toEntity(RouteResultDto.class);
+					.toEntity(new ParameterizedTypeReference<List<RouteResultDto>>(){});
 
 		return response.getBody();
 	}
-
 }

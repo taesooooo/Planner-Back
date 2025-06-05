@@ -1,8 +1,9 @@
 package com.planner.planner.Service;
 
-import com.planner.planner.Dto.RouteDto;
+import java.util.List;
+
 import com.planner.planner.Dto.RouteResultDto;
 
 public interface MapRouteService {
-	public RouteResultDto findPath(RouteDto routeDto);
+	public List<RouteResultDto> findPath(List<String> list);
 }
