@@ -34,7 +34,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 	@Override
 	public CommonListDto<AreaCodeDto> getAreaNum() throws Exception{
-		String apiUrl = commonProperties.getOpenApi().getBaseUrl()+"/areaCode1?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
+		String apiUrl = commonProperties.getOpenApi().getAreaCode()+"?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
 				+"&MobileOS="+commonProperties.getOpenApi().getMobileOS()
 				+"&MobileApp="+commonProperties.getOpenApi().getMobileAPP()
 				+"&numOfRows=17"
@@ -64,7 +64,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 	@Override
 	public CommonListDto<CommonBasedDto> getAreaList(OpenApiDto openApiDto) throws Exception {
-		String apiUrl = commonProperties.getOpenApi().getBaseUrl()+"/areaBasedList1?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
+		String apiUrl = commonProperties.getOpenApi().getAreaBasedList()+"?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
 				+"&MobileOS="+commonProperties.getOpenApi().getMobileOS()
 				+"&MobileApp="+commonProperties.getOpenApi().getMobileAPP()
 				+"&numOfRows="+openApiDto.getNumOfRows()
@@ -92,7 +92,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 					.addr1(node.get("addr1").asText())
 					.addr2(node.get("addr2").asText())
 					.areaCode(node.get("areacode").asText())
-					.bookTour(node.get("booktour").asText())
+//					.bookTour(node.get("booktour").asText())
 					.cat1(node.get("cat1").asText())
 					.cat2(node.get("cat2").asText())
 					.cat3(node.get("cat3").asText())
@@ -117,7 +117,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 	@Override
 	public CommonListDto<CommonBasedDto> getLocationBasedList(OpenApiDto openApiDto) throws Exception {
-		String apiUrl = commonProperties.getOpenApi().getBaseUrl()+"/areaBasedList1?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
+		String apiUrl = commonProperties.getOpenApi().getAreaBasedList()+"?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
 				+"&MobileOS="+commonProperties.getOpenApi().getMobileOS()
 				+"&MobileApp="+commonProperties.getOpenApi().getMobileAPP()
 				+"&numOfRows="+openApiDto.getNumOfRows()
@@ -146,7 +146,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 					.addr1(node.get("addr1").asText())
 					.addr2(node.get("addr2").asText())
 					.areaCode(node.get("areacode").asText())
-					.bookTour(node.get("booktour").asText())
+//					.bookTour(node.get("booktour").asText())
 					.cat1(node.get("cat1").asText())
 					.cat2(node.get("cat2").asText())
 					.cat3(node.get("cat3").asText())
@@ -176,7 +176,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 			throw new NoValidArgumentException("키워드는 공백이거나 빈칸일 수 었습니다.");
 		}
 		
-		String apiUrl = commonProperties.getOpenApi().getBaseUrl()+"/searchKeyword1?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
+		String apiUrl = commonProperties.getOpenApi().getSearchKeyword()+"?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
 				+"&MobileOS="+commonProperties.getOpenApi().getMobileOS()
 				+"&MobileApp="+commonProperties.getOpenApi().getMobileAPP()
 				+"&numOfRows="+openApiDto.getNumOfRows()
@@ -207,7 +207,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 						.addr1(node.get("addr1").asText())
 						.addr2(node.get("addr2").asText())
 						.areaCode(node.get("areacode").asText())
-						.bookTour(node.get("booktour").asText())
+//						.bookTour(node.get("booktour").asText())
 						.cat1(node.get("cat1").asText())
 						.cat2(node.get("cat2").asText())
 						.cat3(node.get("cat3").asText())
@@ -235,7 +235,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 	{
 		JsonNode data = null;
 
-		String apiUrl = commonProperties.getOpenApi().getBaseUrl()+"/detailCommon1?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
+		String apiUrl = commonProperties.getOpenApi().getDetailCommon()+"?ServiceKey="+commonProperties.getOpenApi().getServiceKey()
 				+"&MobileOS="+commonProperties.getOpenApi().getMobileOS()
 				+"&MobileApp="+commonProperties.getOpenApi().getMobileAPP()
 				+"&contentId="+contentId
