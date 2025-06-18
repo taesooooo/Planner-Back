@@ -111,7 +111,7 @@ public class AuthController {
 				.sameSite("Strict")
 				.maxAge(jwtUtil.getRefreshExpirationTime())
 				.build();
-		
+
 		return ResponseEntity.status(HttpStatus.OK)
 				.header(HttpHeaders.SET_COOKIE, cookie.toString())
 				.body(new ResponseMessage(true, "로그인 성공", loginInfo));
@@ -120,16 +120,16 @@ public class AuthController {
 	@DeleteMapping(value = "/logout")
 	public ResponseEntity<Object> logout(HttpServletRequest req) throws Exception {
 		Integer userId = UserIdUtil.getUserId(req);
-		
+
 		authService.logout(userId);
-		
+
 		// 리프레시 토큰 쿠키 삭제
 		ResponseCookie cookie = ResponseCookie.from("RefreshToken", null)
 				.httpOnly(true)
 				.sameSite("Strict")
 				.maxAge(0)
 				.build();
-		
+
 		return ResponseEntity.status(HttpStatus.OK)
 				.header(HttpHeaders.SET_COOKIE, cookie.toString())
 				.body(new ResponseMessage(true, "로그아웃 되었습니다."));
@@ -139,7 +139,7 @@ public class AuthController {
 	public ResponseEntity<Object> authenticationCode(
 			@RequestParam(value = "phone", required = false) @Pattern(regexp = "^010[0-9]{4}[0-9]{4}", message = "번호를 제대로 입력해주세요.") String phone,
 			@RequestParam(value = "email", required = false) @Email(message = "정확한 이메일을 입력해주세요.") String email)
-			throws Exception {
+					throws Exception {
 
 		String code = randomCode.createCode();
 		boolean isSent = false;
@@ -181,35 +181,26 @@ public class AuthController {
 	@PostMapping(value = "/token-reissue")
 	public ResponseEntity<Object> tokenReissue(HttpServletRequest req, @CookieValue(value = "RefreshToken", required = false) String refreshTokenCookie) throws Exception {
 		String refreshToken = refreshTokenCookie;
-		
+
 		if(refreshTokenCookie == null || refreshTokenCookie.isEmpty()) {
 			// 액세스 또는 리프레시 토큰이 없는 경우 토큰이 없다고 리턴
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(false, "필요한 토큰이 없습니다."));
 		}
 
-		try {
-			if (jwtUtil.verifyToken(refreshToken)) {
-				// 재발급 서비스 호출
-				ReissueTokenDto reissueTokenDto = authService.reissueToken(refreshToken);
-				
-				ResponseCookie cookie = ResponseCookie.from("RefreshToken", reissueTokenDto.getRefreshToken())
-						.httpOnly(true)
-						.sameSite("Strict")
-						.maxAge(jwtUtil.getRefreshExpirationTime())
-						.build();
-				
-				return ResponseEntity.status(HttpStatus.OK)
-						.header(HttpHeaders.SET_COOKIE, cookie.toString())
-						.body(new ResponseMessage(true, "", reissueTokenDto));
-				
-			}
-			else {
-				// 토큰이 이상하거나 잘못된 토큰인 경우 접근권한 없음 리턴
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseMessage(false, "잘못된 토큰입니다."));
-			}
-		}
-		catch (ExpiredJwtException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, "다시 로그인 하세요."));
-		}
+		jwtUtil.verifyToken(refreshToken);
+		// 재발급 서비스 호출
+		ReissueTokenDto reissueTokenDto = authService.reissueToken(refreshToken);
+
+		ResponseCookie cookie = ResponseCookie.from("RefreshToken", reissueTokenDto.getRefreshToken())
+				.httpOnly(true)
+				.sameSite("Strict")
+				.maxAge(jwtUtil.getRefreshExpirationTime())
+				.build();
+
+		return ResponseEntity.status(HttpStatus.OK)
+				.header(HttpHeaders.SET_COOKIE, cookie.toString())
+				.body(new ResponseMessage(true, "", reissueTokenDto));
+
+
 	}
 }

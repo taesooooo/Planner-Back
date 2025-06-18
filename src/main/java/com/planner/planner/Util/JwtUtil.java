@@ -16,8 +16,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.planner.planner.Config.Properites.CommonProperties;
+import com.planner.planner.Exception.InValidTokenException;
+import com.planner.planner.Exception.TokenExpiredException;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -83,22 +86,15 @@ public class JwtUtil {
 		return authorizationToken.substring("Bearer".length());
 	}
 
-	public Boolean verifyToken(String token) {
+	public void verifyToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-			return true;
-		} catch (SignatureException e) {
-			logger.info("토큰 검증 실패!");
-			return false;
-		} catch (ExpiredJwtException e) {
-			logger.info("토큰 만료시간 종료!");
-			throw e;
-		} catch (UnsupportedJwtException e) {
-			logger.info("지원하지 않는 토큰!");
-			return false;
-		} catch (MalformedJwtException e) {
-			logger.info("토큰구성이 올바르지 않습니다.");
-			return false;
+		} 
+		catch (ExpiredJwtException e) {
+			throw new TokenExpiredException("토큰이 만료되었습니다.", e);
+		}
+		catch(JwtException e) {
+			throw new InValidTokenException("잘못된 토큰입니다.", e);
 		}
 	}
 

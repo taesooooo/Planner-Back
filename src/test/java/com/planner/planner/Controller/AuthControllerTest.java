@@ -345,7 +345,7 @@ public class AuthControllerTest {
 				.accept(MediaType.APPLICATION_JSON)
 				.cookie(new Cookie("RefreshToken", "aaaa.bbbb.ccc")))
 		.andDo(print())
-		.andExpect(status().isForbidden());
+		.andExpect(status().isUnauthorized());
 	}
 	
 	@Test

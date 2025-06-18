@@ -23,6 +23,7 @@ import com.planner.planner.Exception.AuthenticationCodeExpireException;
 import com.planner.planner.Exception.DuplicateLikeException;
 import com.planner.planner.Exception.DuplicatePlanMemberException;
 import com.planner.planner.Exception.ForbiddenException;
+import com.planner.planner.Exception.InValidTokenException;
 import com.planner.planner.Exception.NoValidArgumentException;
 import com.planner.planner.Exception.AuthenticationCodeNotFoundException;
 import com.planner.planner.Exception.DataNotFoundException;
@@ -33,6 +34,7 @@ import com.planner.planner.Exception.TokenNotFoundException;
 import com.planner.planner.Exception.UserNotFoundException;
 import com.planner.planner.Exception.PasswordCheckFailException;
 import com.planner.planner.Exception.TokenCheckFailException;
+import com.planner.planner.Exception.TokenExpiredException;
 import com.planner.planner.Util.ResponseMessage;
 
 import jakarta.validation.ConstraintViolationException;
@@ -72,8 +74,9 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseMessage(false, e.getMessage()));
 	}
 
-	@ExceptionHandler(TokenCheckFailException.class)
+	@ExceptionHandler({TokenCheckFailException.class, TokenExpiredException.class, InValidTokenException.class})
 	public ResponseEntity<Object> authCheckfail(Exception e) {
+		log.error(e.getMessage(), e);
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseMessage(false, e.getMessage()));
 	}
 
