@@ -106,6 +106,9 @@ public class JwtUtil {
 		String payloadJson = new String(decoder.decode(split[1]));
 		
 		Map<String, Object> payload = mapper.readValue(payloadJson, Map.class);
+		if(payload.isEmpty() || payload.get("userId") == null) {
+			throw new InValidTokenException("토큰에 필요한 정보가 없습니다.");
+		}
 		
 		int id = (int) payload.get("userId");
 		

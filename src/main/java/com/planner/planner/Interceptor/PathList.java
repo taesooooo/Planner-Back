@@ -8,6 +8,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+@Deprecated
 public class PathList {
 	private PathMatcher pathMatcher;
 	private Map<String, ArrayList<RequestMethod>> addPathList;

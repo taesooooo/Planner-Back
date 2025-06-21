@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 
 import com.planner.planner.Common.Security.AccessCheck;
 import com.planner.planner.Dao.AccountDao;
@@ -20,6 +22,7 @@ import com.planner.planner.Dao.InvitationDao;
 import com.planner.planner.Dao.NotificationDao;
 import com.planner.planner.Dao.PlannerDao;
 import com.planner.planner.Dao.ReviewDao;
+import com.planner.planner.Filter.ExceptionHandlerFliter;
 import com.planner.planner.Filter.JwtAuthenticationFilter;
 import com.planner.planner.Util.JwtUtil;
 
@@ -76,6 +79,7 @@ public class SecurityConfiguration {
 		// fromLogin, httpBaisc 로그인 방식 비활성화
 		.formLogin(formLogin -> formLogin.disable())
 		.httpBasic(httpBasic -> httpBasic.disable())
+		.addFilterBefore(new ExceptionHandlerFliter(), WebAsyncManagerIntegrationFilter.class)
 		.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 		
 		return httpSecurity.build();

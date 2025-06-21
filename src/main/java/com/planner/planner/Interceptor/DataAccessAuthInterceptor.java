@@ -28,6 +28,7 @@ import com.planner.planner.Util.UserIdUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Deprecated
 @Component
 public class DataAccessAuthInterceptor implements HandlerInterceptor {
 	

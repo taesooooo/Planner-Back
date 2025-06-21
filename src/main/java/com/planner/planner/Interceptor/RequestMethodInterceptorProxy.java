@@ -6,6 +6,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Deprecated
 public class RequestMethodInterceptorProxy implements HandlerInterceptor {
 	private PathList pathList;
 	private HandlerInterceptor handlerInterceptor;

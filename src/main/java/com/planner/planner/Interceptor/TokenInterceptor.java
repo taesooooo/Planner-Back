@@ -13,6 +13,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Deprecated
 @Component
 public class TokenInterceptor implements HandlerInterceptor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TokenInterceptor.class);
@@ -35,13 +36,10 @@ public class TokenInterceptor implements HandlerInterceptor {
 		String token = jwtUtil.seperateToken(bearerToken);
 		if (token != null) {
 			try {
-				if (jwtUtil.verifyToken(token)) {
+					jwtUtil.verifyToken(token);
 					request.setAttribute("userId", jwtUtil.getUserId(token));
 					return true;
-				}
-				else {
-					throw new TokenCheckFailException("검증에 실패헀습니다.");
-				}
+
 			}
 			catch (ExpiredJwtException e) {
 				throw new TokenCheckFailException("유효기간이 만료되었습니다.");

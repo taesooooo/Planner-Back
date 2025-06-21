@@ -6,6 +6,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Deprecated
 public class TokenInterceptorProxy implements HandlerInterceptor {
 	private PathList pathList;
 	private PathList eitherPathList;
