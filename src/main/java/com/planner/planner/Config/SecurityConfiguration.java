@@ -46,7 +46,7 @@ public class SecurityConfiguration {
 		.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		// 요청에 대한 인증 규칙 설정(요청 메소드마다 권한확인이 필요하기 때문에 메소드 보안 방법을 사용한다.)
 		.authorizeHttpRequests(auth -> auth
-				.requestMatchers(PathRequest.toH2Console()).permitAll()
+//				.requestMatchers(PathRequest.toH2Console()).permitAll()
 				.requestMatchers("/api/auth/**").permitAll()
 				.requestMatchers("/api/upload/**").permitAll()
 				// 유저
@@ -74,6 +74,7 @@ public class SecurityConfiguration {
 				// 여행지 - 없음
 				
 				// 기타
+				.requestMatchers(HttpMethod.GET, "/api/planners/**", "/api/reviews/**", "/api/spots/**", "/api/upload/files/**", "/api/routes/**", "/api/auth/logout").permitAll()
 				.anyRequest().authenticated())
 		.headers(headers -> headers.frameOptions(f -> f.sameOrigin()))
 		// fromLogin, httpBaisc 로그인 방식 비활성화
