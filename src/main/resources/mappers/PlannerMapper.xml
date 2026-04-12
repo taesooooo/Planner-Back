@@ -69,7 +69,7 @@
 		<if test="accountId != null">, CASE WHEN PL.like_id > 0 THEN 'TRUE' ELSE 'FALSE' END as like_state </if>
 		FROM planner AS P 
 		LEFT JOIN (SELECT planner_id, MIN(plan_id) as plan_id FROM plan GROUP BY planner_id) AS plan_one ON plan_one.planner_id = P.planner_id 
-		LEFT JOIN (SELECT plan_id, location_image FROM plan_location) AS plan_loc_one ON plan_loc_one.plan_id = plan_one.plan_id 
+		LEFT JOIN (SELECT plan_id, MIN(location_image) as location_image FROM plan_location GROUP BY plan_id) AS plan_loc_one ON plan_loc_one.plan_id = plan_one.plan_id 
 		LEFT JOIN (SELECT planner_id, count(planner_id) as like_count FROM planner_like GROUP BY planner_id) AS SUB ON P.planner_id = SUB.planner_id
 		<!-- 좋아요 확인하기 위한 조인 --> 
 		<if test="accountId != null">LEFT JOIN planner_like AS PL ON P.planner_id = PL.planner_id AND PL.account_id = #{accountId} </if>
@@ -116,9 +116,9 @@
 		LIMIT #{pageInfo.pageOffSet}, #{pageInfo.pageItemCount}
 	</sql>
 	
-	<select id="findById" resultMap="plannerDetailMap">
+	<select id="findById" resultMap="plannerMap">
 		<include refid="commonPlanner" />
-		WHERE A.planner_id = ${plannerId}
+		WHERE P.planner_id = ${plannerId}
 	</select>
 	
 	<select id="findByPlannerId" resultMap="plannerDetailMap" >
