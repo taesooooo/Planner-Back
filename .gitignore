@@ -119,3 +119,7 @@ buildNumber.properties
 .classpath
 
 # End of https://www.toptal.com/developers/gitignore/api/eclipse,java,maven
+
+# vscode
+.vscode/
+.settings/

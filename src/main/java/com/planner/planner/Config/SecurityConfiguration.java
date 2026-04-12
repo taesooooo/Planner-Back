@@ -1,6 +1,5 @@
 package com.planner.planner.Config;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,18 +11,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 
 import com.planner.planner.Common.Security.AccessCheck;
-import com.planner.planner.Dao.AccountDao;
-import com.planner.planner.Dao.CommentDao;
-import com.planner.planner.Dao.InvitationDao;
-import com.planner.planner.Dao.NotificationDao;
-import com.planner.planner.Dao.PlannerDao;
-import com.planner.planner.Dao.ReviewDao;
 import com.planner.planner.Filter.ExceptionHandlerFliter;
 import com.planner.planner.Filter.JwtAuthenticationFilter;
+import com.planner.planner.Mapper.AccountMapper;
+import com.planner.planner.Mapper.CommentMapper;
+import com.planner.planner.Mapper.InvitationMapper;
+import com.planner.planner.Mapper.NotificationMapper;
+import com.planner.planner.Mapper.PlannerMapper;
+import com.planner.planner.Mapper.ReviewMapper;
 import com.planner.planner.Util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -50,27 +48,27 @@ public class SecurityConfiguration {
 				.requestMatchers("/api/auth/**").permitAll()
 				.requestMatchers("/api/upload/**").permitAll()
 				// 유저
-				.requestMatchers("/api/users/{accountId}", "/api/users/{accountId}/**").access(new AccessCheck(getBean(AccountDao.class), "#accountId"))
+				.requestMatchers("/api/users/{accountId}", "/api/users/{accountId}/**").access(new AccessCheck(getBean(AccountMapper.class), "#accountId"))
 				.requestMatchers("/api/users/search-member").authenticated()
 				.requestMatchers("/api/users/find-email").permitAll()
 				.requestMatchers("/api/users/find-password").permitAll()
 				.requestMatchers("/api/users/change-password").permitAll()
 				// 알림
-				.requestMatchers(HttpMethod.POST,  "/api/notifications/{notificationId}/read").access(new AccessCheck(getBean(NotificationDao.class), "#notificationId"))
-				.requestMatchers(HttpMethod.DELETE,  "/api/notifications/{notificationId}").access(new AccessCheck(getBean(NotificationDao.class), "#notificationId"))
+				.requestMatchers(HttpMethod.POST,  "/api/notifications/{notificationId}/read").access(new AccessCheck(getBean(NotificationMapper.class), "#notificationId"))
+				.requestMatchers(HttpMethod.DELETE,  "/api/notifications/{notificationId}").access(new AccessCheck(getBean(NotificationMapper.class), "#notificationId"))
 				// 초대
-				.requestMatchers("/api/invitation/{inviteId}/**").access(new AccessCheck(getBean(InvitationDao.class), "#inviteId"))
+				.requestMatchers("/api/invitation/{inviteId}/**").access(new AccessCheck(getBean(InvitationMapper.class), "#inviteId"))
 				// 플래너 - 메모, 일정, 여행지 포함
 				.requestMatchers(HttpMethod.POST, "/api/planners/{plannerId}/like").permitAll()
-				.requestMatchers(HttpMethod.POST, "/api/planners/{plannerId}/**").access(new AccessCheck(getBean(PlannerDao.class), "#plannerId"))
-				.requestMatchers(HttpMethod.PATCH,  "/api/planners/{plannerId}/**").access(new AccessCheck(getBean(PlannerDao.class), "#plannerId"))
-				.requestMatchers(HttpMethod.DELETE,  "/api/planners/{plannerId}/**").access(new AccessCheck(getBean(PlannerDao.class), "#plannerId"))
+				.requestMatchers(HttpMethod.POST, "/api/planners/{plannerId}/**").access(new AccessCheck(getBean(PlannerMapper.class), "#plannerId"))
+				.requestMatchers(HttpMethod.PATCH,  "/api/planners/{plannerId}/**").access(new AccessCheck(getBean(PlannerMapper.class), "#plannerId"))
+				.requestMatchers(HttpMethod.DELETE,  "/api/planners/{plannerId}/**").access(new AccessCheck(getBean(PlannerMapper.class), "#plannerId"))
 				// 리뷰
-				.requestMatchers(HttpMethod.PATCH,  "/api/reviews/{reviewId}").access(new AccessCheck(getBean(ReviewDao.class), "#reviewId"))
-				.requestMatchers(HttpMethod.DELETE,  "/api/reviews/{reviewId}").access(new AccessCheck(getBean(ReviewDao.class), "#reviewId"))
+				.requestMatchers(HttpMethod.PATCH,  "/api/reviews/{reviewId}").access(new AccessCheck(getBean(ReviewMapper.class), "#reviewId"))
+				.requestMatchers(HttpMethod.DELETE,  "/api/reviews/{reviewId}").access(new AccessCheck(getBean(ReviewMapper.class), "#reviewId"))
 				// 리뷰 댓글
-				.requestMatchers(HttpMethod.PATCH,  "/api/reviews/{reviewId}/comments/{commentId}").access(new AccessCheck(getBean(CommentDao.class), "#commentId"))
-				.requestMatchers(HttpMethod.DELETE,  "/api/reviews/{reviewId}/comments/{commentId}").access(new AccessCheck(getBean(CommentDao.class), "#commentId"))
+				.requestMatchers(HttpMethod.PATCH,  "/api/reviews/{reviewId}/comments/{commentId}").access(new AccessCheck(getBean(CommentMapper.class), "#commentId"))
+				.requestMatchers(HttpMethod.DELETE,  "/api/reviews/{reviewId}/comments/{commentId}").access(new AccessCheck(getBean(CommentMapper.class), "#commentId"))
 				// 여행지 - 없음
 				
 				// 기타
