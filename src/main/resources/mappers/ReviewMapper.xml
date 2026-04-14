@@ -117,6 +117,7 @@
 		UPDATE review 
 		SET 
 			title = #{reviewDto.title}, 
+			planner_id = #{reviewDto.plannerId},
 			content = #{reviewDto.content}, 
 			areacode = #{reviewDto.areaCode}, 
 			update_date = now() 
