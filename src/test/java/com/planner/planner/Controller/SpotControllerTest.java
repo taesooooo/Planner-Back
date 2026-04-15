@@ -106,7 +106,7 @@ public class SpotControllerTest {
 	@Test
 	@DisplayName("여행지 세부사항 조회")
 	public void 여행지_세부사항_가져오기() throws Exception {
-		mockMvc.perform(get("/api/spots/lists/{contentId}", 2733967)
+		mockMvc.perform(get("/api/spots/lists/{contentId}", 2820184)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
 				.header("Authorization", token)

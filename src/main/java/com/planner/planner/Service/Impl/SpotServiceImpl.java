@@ -178,7 +178,8 @@ public class SpotServiceImpl implements SpotService {
 		CommonDetailDto detail = apiService.getDetail(contentId);
 		
 		int likeCount = spotMapper.findSpotLikeCountByContentId(contentId);
-		boolean likeState = spotMapper.findSpotLikeStateByContentId(accountId, Arrays.asList(contentId) );
+		List<SpotLikeDto> spotLikeList = spotMapper.findSpotLikeStateByContentIdList(accountId, Arrays.asList(contentId));
+		boolean likeState = !spotLikeList.isEmpty();
 
 		SpotDetailDto spotDetail = SpotDetailDto.builder()
 				.detail(detail)

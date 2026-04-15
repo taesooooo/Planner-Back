@@ -239,11 +239,11 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 				+"&MobileOS="+commonProperties.getOpenApi().getMobileOS()
 				+"&MobileApp="+commonProperties.getOpenApi().getMobileAPP()
 				+"&contentId="+contentId
-				+"&defaultYN=Y"
-				+"&firstImageYN=Y"
-				+"&addrinfoYN=Y"
-				+"&mapinfoYN=Y"
-				+"&overviewYN=Y"
+				// +"&defaultYN=Y"
+				// +"&firstImageYN=Y"
+				// +"&addrinfoYN=Y"
+				// +"&mapinfoYN=Y"
+				// +"&overviewYN=Y"
 				+"&_type=json";
 
 		data = getApiData(apiUrl);
@@ -292,11 +292,14 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 //			JsonNode dataNode = node.get("response").get("body").get("items");
 			// response > body
 			data = node.get("response").get("body");
+			reader.close();
 			//data = ((ObjectNode) dataNode).put("totalCount", totalCount);
 		}
 		else {
 			return null;
 		}
+
+		conn.disconnect();
 		
 		return data;
 	}
